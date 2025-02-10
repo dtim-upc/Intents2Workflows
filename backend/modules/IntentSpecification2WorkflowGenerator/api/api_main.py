@@ -19,6 +19,8 @@ app = Flask(__name__)
 CORS(app)
 
 temporary_folder = os.path.abspath(r'./api/temp_files')
+if not os.path.exists(temporary_folder):
+    os.makedirs(temporary_folder)
 
 @app.get('/problems')
 def get_problems():
