@@ -17,7 +17,6 @@ api/dbFiles
 *.rdf
 *.lck
 *.bak_002d
-*.html
 *.png
 *.crc
 

@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes import data_product, intent, workflow
 from database.database import init_db
 
+import uvicorn
+
 app = FastAPI()
 
 # Initialize Database
@@ -24,5 +26,4 @@ app.include_router(intent.router)
 app.include_router(workflow.router)
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
