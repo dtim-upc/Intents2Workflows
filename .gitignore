@@ -12,7 +12,6 @@ api/dbFiles
 *.lock
 *.db
 *.xml
-*.ttl
 *.jar
 *.rdf
 *.lck

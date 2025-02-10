@@ -1,0 +1,241 @@
+@prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tb: <https://extremexp.eu/ontology/tbox#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dmop:containsNulls rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:delimiter rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:doubleQuote rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:encoding rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:fileFormat rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:hasColumnName rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:hasDataPrimitiveTypeColumn rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:hasHeader rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:hasMaxValue rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:hasMeanValue rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:hasMinValue rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:hasPosition rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:hasStandardDeviation rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:isCategorical rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:isFeature rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:isNormalized rdfs:subPropertyOf dmop:DatasetValueInfoProperty .
+
+dmop:isUnique rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:lineDelimiter rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:numberOfColumns rdfs:subPropertyOf dmop:DatasetInfoProperty .
+
+dmop:numberOfRows rdfs:subPropertyOf dmop:DatasetInfoProperty .
+
+dmop:path rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:quoteChar rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+dmop:skipInitialSpace rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
+
+tb: a owl:Ontology ;
+    rdfs:label "ExtremeXP Ontology TBox" .
+
+tb:LoaderTransformation a owl:Class ;
+    rdfs:subClassOf tb:Transformation .
+
+tb:applies a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:Algorithm .
+
+tb:copy_input a owl:DatatypeProperty ;
+    rdfs:domain tb:CopyTransformation ;
+    rdfs:range xsd:integer .
+
+tb:copy_output a owl:DatatypeProperty ;
+    rdfs:domain tb:CopyTransformation ;
+    rdfs:range xsd:integer .
+
+tb:createdFor a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:Intent .
+
+tb:exposesParameter a owl:ObjectProperty ;
+    rdfs:domain tb:Component ;
+    rdfs:range tb:Parameter .
+
+tb:followedBy a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range tb:Step .
+
+tb:forParameter a owl:ObjectProperty ;
+    rdfs:domain tb:ParameterValue ;
+    rdfs:range tb:Parameter .
+
+tb:hasApplier a owl:ObjectProperty ;
+    rdfs:domain tb:LearnerComponent,
+        tb:LearnerImplementation ;
+    rdfs:range tb:ApplierComponent,
+        tb:ApplierImplementation .
+
+tb:hasData a owl:ObjectProperty ;
+    rdfs:domain tb:IOSpec ;
+    rdfs:range tb:Data .
+
+tb:hasDatatype a owl:ObjectProperty ;
+    rdfs:domain tb:Parameter .
+
+tb:hasDefaultValue a owl:ObjectProperty ;
+    rdfs:domain tb:Parameter .
+
+tb:hasImplementation a owl:ObjectProperty ;
+    rdfs:domain tb:Component ;
+    rdfs:range tb:Implementation .
+
+tb:hasInput a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range tb:IO .
+
+tb:hasLearner a owl:ObjectProperty ;
+    rdfs:domain tb:ApplierComponent,
+        tb:ApplierImplementation ;
+    rdfs:range tb:LearnerComponent,
+        tb:LearnerImplementation .
+
+tb:hasOutput a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range tb:IO .
+
+tb:hasParameter a owl:ObjectProperty ;
+    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ],
+        tb:Implementation ;
+    rdfs:range tb:Parameter .
+
+tb:hasParameterValue a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range tb:ParameterValue .
+
+tb:hasStep a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:Step .
+
+tb:hasTag a owl:ObjectProperty ;
+    rdfs:domain tb:IOSpec ;
+    rdfs:range tb:DataTag .
+
+tb:hasTransformation a owl:ObjectProperty ;
+    rdfs:domain tb:Component ;
+    rdfs:range rdf:List .
+
+tb:has_position a owl:DatatypeProperty ;
+    rdfs:domain [ owl:unionOf ( tb:IO tb:IOSpec tb:Step tb:Parameter ) ] ;
+    rdfs:range xsd:integer .
+
+tb:has_value a rdf:Property ;
+    rdfs:domain tb:ParameterValue .
+
+tb:overData a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:Data .
+
+tb:overridesParameter a owl:ObjectProperty ;
+    rdfs:domain tb:Component ;
+    rdfs:range tb:ParameterValue .
+
+tb:runs a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range [ owl:unionOf ( tb:Workflow tb:Implementation ) ] .
+
+tb:solves a owl:ObjectProperty ;
+    rdfs:domain [ owl:unionOf ( tb:Algorithm tb:Workflow ) ] ;
+    rdfs:range tb:Problem .
+
+tb:specifiesInput a owl:ObjectProperty ;
+    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ] ;
+    rdfs:range tb:IOSpec .
+
+tb:specifiesOutput a owl:ObjectProperty ;
+    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ] ;
+    rdfs:range tb:IOSpec .
+
+tb:subProblemOf a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:domain tb:Problem ;
+    rdfs:range tb:Problem .
+
+tb:tackles a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range [ owl:unionOf ( tb:Problem tb:Algorithm ) ] .
+
+tb:transformation_language a owl:DatatypeProperty ;
+    rdfs:domain tb:Transformation ;
+    rdfs:range xsd:string .
+
+tb:transformation_query a owl:DatatypeProperty ;
+    rdfs:domain tb:Transformation ;
+    rdfs:range xsd:string .
+
+tb:usingParameter a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range [ owl:unionOf ( tb:Parameter tb:ParameterValue ) ] .
+
+tb:DataTag a owl:Class .
+
+tb:CopyTransformation a owl:Class ;
+    rdfs:subClassOf tb:Transformation .
+
+tb:Data a owl:Class .
+
+tb:LearnerComponent a owl:Class ;
+    rdfs:subClassOf tb:Component ;
+    owl:disjointWith tb:ApplierComponent .
+
+tb:LearnerImplementation a owl:Class ;
+    rdfs:subClassOf tb:Implementation ;
+    owl:disjointWith tb:ApplierImplementation .
+
+tb:Algorithm a owl:Class .
+
+tb:ApplierComponent a owl:Class ;
+    rdfs:subClassOf tb:Component .
+
+tb:ApplierImplementation a owl:Class ;
+    rdfs:subClassOf tb:Implementation .
+
+tb:IO a owl:Class .
+
+tb:Intent a owl:Class .
+
+tb:Problem a owl:Class .
+
+tb:Transformation a owl:Class .
+
+tb:IOSpec a owl:Class .
+
+tb:ParameterValue a owl:Class .
+
+tb:Component a owl:Class .
+
+tb:Parameter a owl:Class .
+
+tb:Implementation a owl:Class .
+
+tb:Step a owl:Class .
+
+tb:Workflow a owl:Class .
+
