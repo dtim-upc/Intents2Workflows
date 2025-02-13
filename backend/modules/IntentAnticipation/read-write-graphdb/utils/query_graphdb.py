@@ -3,47 +3,40 @@ import urllib.parse
 import json
 import pandas as pd
 import rdflib
-from rdflib import Graph, URIRef, XSD, Literal
+from rdflib import Graph, URIRef, XSD, Literal, Namespace
 from rdflib.namespace import RDF, RDFS
 import math
 import os
 from utils import save_workflow
 
-# GraphDB REST API
-## https://graphdb.ontotext.com/documentation/10.1/using-the-graphdb-rest-api.html
 
-base_url = os.getenv('GRAPHDB_URL')
-repository = "test-repo"
-last_inserted_user= None
+def load_graph():
 
-def execute_sparql_query(base_url, repository, query):
-    """
-    Executes a SPARQL query using GraphDB's REST API and returns the results.
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
+    file_path = os.path.normpath(ontology_path)
+
+    g = Graph()
+    g.parse(file_path, format='ttl')
+
+    return g
+
+def store_graph(graph):
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
+    file_path = os.path.normpath(ontology_path)
+
+    graph.serialize(destination=file_path, format='ttl')
+
+
+
+def execute_sparql_query(graph, query):
     
-    Args:
-    - base_url (str): The base URL of the GraphDB server.
-    - repository (str): The name of the GraphDB repository.
-    - query (str): The SPARQL query to execute.
-    
-    Returns:
-    - dict: The JSON response from the SPARQL endpoint.
-    """
     try:
-        # URL encode the query using quote_plus for proper URL encoding
-        encoded_query = urllib.parse.quote_plus(query)
-        
-        url = f"{base_url}/repositories/{repository}?query={encoded_query}"
-        
-        headers = {
-            "Accept": "application/sparql-results+json"
-        }
-        
-        # Make the GET request to the SPARQL endpoint
-        response = requests.get(url, headers=headers)
-        
-        response.raise_for_status()  
+        results = graph.query(query)
 
-        return response.json()
+        return results
         
     except requests.exceptions.RequestException as e:
         # Log the exception details and re-raise it
@@ -62,6 +55,7 @@ def get_intent(user, dataset):
     - str: The most used intent.
     """
     
+    graph = load_graph()
     found = False
     intent = None
     
@@ -82,11 +76,12 @@ def get_intent(user, dataset):
     LIMIT 1
     """
     
-    results = execute_sparql_query(base_url, repository, query)
+    results = execute_sparql_query(graph, query)
     
-    if results["results"]["bindings"]:
-        intent = results["results"]["bindings"][0]["intent"]["value"]
-        found = True
+    if results:
+        for row in results:
+            intent = row.intent
+            found = True
     
     # If not found, look for the dataset usage by any user
     if not found:
@@ -105,11 +100,12 @@ def get_intent(user, dataset):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            intent = results["results"]["bindings"][0]["intent"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+    
+        if results:
+            for row in results:
+                intent = row.intent
+                found = True
     
     # If still not found, look for the most used intent by the user
     if not found:
@@ -128,11 +124,12 @@ def get_intent(user, dataset):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            intent = results["results"]["bindings"][0]["intent"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+    
+        if results:
+            for row in results:
+                intent = row.intent
+                found = True
     
     # If still not found, get the most used intent overall
     if not found:
@@ -149,11 +146,12 @@ def get_intent(user, dataset):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            intent = results["results"]["bindings"][0]["intent"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+    
+        if results:
+            for row in results:
+                intent = row.intent
+                found = True
     
     return intent.split("#")[-1]
 
@@ -169,7 +167,7 @@ def get_metric(user, dataset, intent):
     Returns:
     - str: The most used metric.
     """
-    
+    graph = load_graph()
     found = False
     metric = None
     
@@ -192,11 +190,12 @@ def get_metric(user, dataset, intent):
     LIMIT 1
     """
     
-    results = execute_sparql_query(base_url, repository, query)
+    results = execute_sparql_query(graph, query)
     
-    if results["results"]["bindings"]:
-        metric = results["results"]["bindings"][0]["metric"]["value"]
-        found = True
+    if results:
+        for row in results:
+            metric = row.metric
+            found = True
     
     # If not found, look for the dataset usage by any user for the intent
     if not found:
@@ -217,11 +216,12 @@ def get_metric(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            metric = results["results"]["bindings"][0]["metric"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+
+        if results:
+            for row in results:
+                metric = row.metric
+                found = True
     
     # If still not found, look for the most used metric by the user for the intent
     if not found:
@@ -242,11 +242,12 @@ def get_metric(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            metric = results["results"]["bindings"][0]["metric"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+
+        if results:
+            for row in results:
+                metric = row.metric
+                found = True
     
     # If still not found, get the most used metric overall for the intent
     if not found:
@@ -265,12 +266,11 @@ def get_metric(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        print(results)
-        
-        if results["results"]["bindings"]:
-            metric = results["results"]["bindings"][0]["metric"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                metric = row.metric
+                found = True
     
     return metric.split("#")[-1]
 
@@ -287,6 +287,8 @@ def get_preprocessing(user, dataset, intent):
     Returns:
     - bool: True if preprocessing is required, False otherwise.
     """
+
+    graph = load_graph()
     found = False
     preprocessing = True
 
@@ -304,11 +306,11 @@ def get_preprocessing(user, dataset, intent):
         ?task ml:hasConstraint ml:ConstraintNoPreprocessing
     }}
     """
-    results = execute_sparql_query(base_url, repository, query)
-
-    if results["results"]["bindings"]:
-        constraint_task = int(results["results"]["bindings"][0]["constraintTaskCount"]["value"])
-        found = True
+    results = execute_sparql_query(graph, query)
+    if results:
+        for row in results:
+            constraint_task = int(row.constraintTaskCount)
+            found = True
 
     if found:
         # Count total tasks achieved by the user with the dataset
@@ -323,10 +325,11 @@ def get_preprocessing(user, dataset, intent):
             ?workflow ml:achieves ?task.
         }}
         """
-        results_aux = execute_sparql_query(base_url, repository, query_aux)
-
-        if results_aux["results"]["bindings"]:
-            total_tasks = int(results_aux["results"]["bindings"][0]["taskCount"]["value"])
+        results = execute_sparql_query(graph, query_aux)
+        if results:
+            for row in results:
+                total_tasks = int(row.taskCount)
+                found = True
 
             if total_tasks > 0:
                 if constraint_task / total_tasks < 0.5:
@@ -347,11 +350,12 @@ def get_preprocessing(user, dataset, intent):
             ?task ml:hasConstraint ml:ConstraintNoPreprocessing
         }}
         """
-        results = execute_sparql_query(base_url, repository, query)
 
-        if results["results"]["bindings"]:
-            constraint_task = int(results["results"]["bindings"][0]["constraintTaskCount"]["value"])
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                constraint_task = int(row.constraintTaskCount)
+                found = True
 
         if found:
             query_aux = f"""
@@ -364,10 +368,11 @@ def get_preprocessing(user, dataset, intent):
                 ?workflow ml:achieves ?task.
             }}
             """
-            results_aux = execute_sparql_query(base_url, repository, query_aux)
-
-            if results_aux["results"]["bindings"]:
-                total_tasks = int(results_aux["results"]["bindings"][0]["taskCount"]["value"])
+            results = execute_sparql_query(graph, query_aux)
+            if results:
+                for row in results:
+                    total_tasks = int(row.taskCount)
+                    found = True
 
                 # Check if total_tasks is not zero to avoid division by zero
                 if total_tasks > 0:
@@ -390,11 +395,11 @@ def get_preprocessing(user, dataset, intent):
             ?task ml:hasConstraint ml:ConstraintNoPreprocessing
         }}
         """
-        results = execute_sparql_query(base_url, repository, query)
-
-        if results["results"]["bindings"]:
-            constraint_task = int(results["results"]["bindings"][0]["constraintTaskCount"]["value"])
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                constraint_task = int(row.constraintTaskCount)
+                found = True
 
         if found:
             query_aux = f"""
@@ -408,10 +413,11 @@ def get_preprocessing(user, dataset, intent):
                 ?task ml:hasIntent ml:{intent}
             }}
             """
-            results_aux = execute_sparql_query(base_url, repository, query_aux)
-
-            if results_aux["results"]["bindings"]:
-                total_tasks = int(results_aux["results"]["bindings"][0]["taskCount"]["value"])
+            results = execute_sparql_query(graph, query_aux)
+            if results:
+                for row in results:
+                    total_tasks = int(row.taskCount)
+                    found = True
 
                 # Check if total_tasks is not zero to avoid division by zero
                 if total_tasks > 0:
@@ -432,11 +438,11 @@ def get_preprocessing(user, dataset, intent):
             ?task ml:hasConstraint ml:ConstraintNoPreprocessing
         }}
         """
-        results = execute_sparql_query(base_url, repository, query)
-
-        if results["results"]["bindings"]:
-            constraint_task = int(results["results"]["bindings"][0]["constraintTaskCount"]["value"])
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                constraint_task = int(row.constraintTaskCount)
+                found = True
 
         if found:
             query_aux = f"""
@@ -448,10 +454,11 @@ def get_preprocessing(user, dataset, intent):
                 ?task ml:hasIntent ml:{intent}
             }}
             """
-            results_aux = execute_sparql_query(base_url, repository, query_aux)
-
-            if results_aux["results"]["bindings"]:
-                total_tasks = int(results_aux["results"]["bindings"][0]["taskCount"]["value"])
+            results = execute_sparql_query(graph, query_aux)
+            if results:
+                for row in results:
+                    total_tasks = int(row.taskCount)
+                    found = True
 
                 # Check if total_tasks is not zero to avoid division by zero
                 if total_tasks > 0:
@@ -479,6 +486,7 @@ def get_algorithm(user, dataset, intent):
     - str: The most frequently used algorithm for the specified criteria, or None if no algorithm is found.
     """
 
+    graph = load_graph()
     found = False
     algorithm = None
     
@@ -501,11 +509,11 @@ def get_algorithm(user, dataset, intent):
     LIMIT 1
     """
     
-    results = execute_sparql_query(base_url, repository, query)
-    
-    if results["results"]["bindings"]:
-        algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-        found = True
+    results = execute_sparql_query(graph, query)
+    if results:
+        for row in results:
+            algorithm = row.algorithm
+            found = True
     
     # If not found, look for other users' usage of the dataset
     if not found:
@@ -526,11 +534,11 @@ def get_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True
     
     # If still not found, look for the user's usage of the same intent
     if not found:
@@ -552,11 +560,11 @@ def get_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True
     
     # If still not found, get the most used algorithm for the intent overall
     if not found:
@@ -576,11 +584,11 @@ def get_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True
     
     return algorithm.split("#")[-1] if algorithm else None
 
@@ -598,6 +606,7 @@ def get_preprocessing_algorithm(user, dataset, intent):
     - str: The most used preprocessing algorithm.
     """
     
+    graph = load_graph()
     found = False
     algorithm = None
     
@@ -620,11 +629,11 @@ def get_preprocessing_algorithm(user, dataset, intent):
     LIMIT 1
     """
     
-    results = execute_sparql_query(base_url, repository, query)
-    
-    if results["results"]["bindings"]:
-        algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-        found = True
+    results = execute_sparql_query(graph, query)
+    if results:
+        for row in results:
+            algorithm = row.algorithm
+            found = True
     
     # If not found, look for the dataset usage by any user with a preprocessing algorithm
     if not found:
@@ -645,11 +654,11 @@ def get_preprocessing_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True
     
     # If still not found, look for the user's usages of the same intent with a preprocessing algorithm
     if not found:
@@ -671,11 +680,11 @@ def get_preprocessing_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True
     
     # If still not found, get the most used preprocessing algorithm overall for the intent
     if not found:
@@ -695,11 +704,11 @@ def get_preprocessing_algorithm(user, dataset, intent):
         LIMIT 1
         """
         
-        results = execute_sparql_query(base_url, repository, query)
-        
-        if results["results"]["bindings"]:
-            algorithm = results["results"]["bindings"][0]["algorithm"]["value"]
-            found = True
+        results = execute_sparql_query(graph, query)
+        if results:
+            for row in results:
+                algorithm = row.algorithm
+                found = True    
     
     return algorithm.split("#")[-1]
 
@@ -712,7 +721,7 @@ def get_users_with_workflows():
     Returns:
     - list of str: User identifiers (names) who have at least one workflow.
     """
-    
+    graph = load_graph()
     query = """
     PREFIX ml: <http://localhost/8080/intentOntology#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -722,10 +731,12 @@ def get_users_with_workflows():
       ?user ml:runs ?workflow .
     }
     """
-    results = execute_sparql_query(base_url, repository, query)
+
+    results = execute_sparql_query(graph, query)
     users = []
-    if results["results"]["bindings"]:
-        users = [binding["user"]["value"].split('#')[-1] for binding in results["results"]["bindings"]]
+    if results:
+        for row in results:
+            users.append(row.user.split('#')[-1])
     
     return users
 
@@ -739,6 +750,7 @@ def get_users():
     """
     global last_inserted_user  # Declare the use of the global variable
     
+    graph = load_graph()
     query = """
     PREFIX ml: <http://localhost/8080/intentOntology#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -748,10 +760,11 @@ def get_users():
     ?user rdf:type ml:User .
     }
     """
-    results = execute_sparql_query(base_url, repository, query)
+    results = execute_sparql_query(graph, query)
     users = []
-    if results["results"]["bindings"]:
-        users = [binding["user"]["value"].split('#')[-1] for binding in results["results"]["bindings"]]
+    if results:
+        for row in results:
+            users.append(row.user.split('#')[-1])
 
 
     # Extract numeric part and find the highest number
@@ -783,38 +796,22 @@ def add_new_user(email):
     """
     result = get_users()  # Call the updated get_users function
     last_inserted_user = result["last_inserted_user"]   
-    repository_id = repository
-    url = f"{base_url}/repositories/{repository_id}/statements"
-
-    headers = {
-        "Content-Type": "application/sparql-update"
-    }
 
     # print(last_inserted_user)
     numeric_part = ''.join(filter(str.isdigit, last_inserted_user))
     new_user_id = f"User{int(numeric_part) + 1}"
 
-    query = f"""
-    PREFIX ml: <http://localhost/8080/intentOntology#>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    ML = Namespace("http://localhost/8080/intentOntology#")
 
-    INSERT DATA {{
-        ml:{new_user_id} rdf:type ml:User ;
-                ml:email "{email}".    
-    }}
-    """
+    # Add triples manually
+    graph = load_graph()
+    graph.add((URIRef(ML[new_user_id]), RDF.type, URIRef(ML.User)))
+    graph.add((URIRef(ML[new_user_id]), URIRef(ML.email), Literal(email)))
 
-    response = requests.post(url, headers=headers, data=query)
+    last_inserted_user = new_user_id
+    store_graph(graph)
 
-    if response.status_code == 204:
-        # Update the last inserted user
-        last_inserted_user = new_user_id
-        print(f"Added new user: {new_user_id}")
-        return new_user_id
-
-    else:
-        print(f"Error {response.status_code}: {response.text}")
-        return None
+    return new_user_id
 
 
 def find_user_by_email(email):
@@ -827,6 +824,7 @@ def find_user_by_email(email):
     Returns:
     - str: The user ID if a user with the specified email is found, or None if no such user exists.
     """
+    graph = load_graph()
     query = f"""
     PREFIX ml: <http://localhost/8080/intentOntology#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -837,9 +835,11 @@ def find_user_by_email(email):
         ?user ml:email "{email}" .
     }}
     """
-    results = execute_sparql_query(base_url, repository, query)
-    if results["results"]["bindings"]:
-        return results["results"]["bindings"][0]["user"]["value"].split('#')[-1]  # Return the first user directly
+
+    results = execute_sparql_query(graph, query)
+    if results:
+        for row in results:
+            return row.user.split('#')[-1]
     
     return None
 
@@ -854,13 +854,6 @@ def add_new_dataset(dataset_name):
     Returns:
     - str: The name of the added dataset if successful, or None if there was an error.
     """
-    repository_id = repository
-    url = f"{base_url}/repositories/{repository_id}/statements"
-
-    headers = {
-        "Content-Type": "application/sparql-update"
-    }
-
     dataset_uri = f"http://localhost/8080/intentOntology#{dataset_name}"
 
     query = f"""
@@ -871,15 +864,13 @@ def add_new_dataset(dataset_name):
         <{dataset_uri}> RDF:type ns_dmop:DataSet .
     }}
     """
+    graph = load_graph()
+    NS_DMOP = Namespace("http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#")
+    graph.add((URIRef(dataset_uri), RDF.type, URIRef(NS_DMOP.DataSet)))
+    store_graph(graph)
 
-    response = requests.post(url, headers=headers, data=query)
+    return dataset_name
 
-    if response.status_code == 204:
-        print(f"Added new dataset: {dataset_name}")
-        return dataset_name
-    else:
-        print(f"Error {response.status_code}: {response.text}")
-        return None
 
 
 def add_new_workflow(data):
@@ -922,9 +913,12 @@ def get_all_metrics():
     }}
     ORDER BY ASC(?object)
     """
-
-    results = execute_sparql_query(base_url, repository, query)
-    metrics = [binding['object']['value'].split('#')[-1] for binding in results['results']['bindings']]
+    graph = load_graph()
+    results = execute_sparql_query(graph, query)
+    metrics = []
+    if results:
+        for row in results:
+            metrics.append(row.object.split('#')[-1])
 
     return metrics
 
@@ -942,8 +936,12 @@ def get_all_algorithms():
     ORDER BY ASC(?algorithm)
     """
 
-    results = execute_sparql_query(base_url, repository, query)
-    algorithms = [binding['algorithm']['value'].split('#')[-1] for binding in results['results']['bindings']]
+    graph = load_graph()
+    results = execute_sparql_query(graph, query)
+    algorithms = []
+    if results:
+        for row in results:
+            algorithms.append(row.algorithm.split('#')[-1])
 
     return algorithms
 
@@ -961,7 +959,11 @@ def get_all_preprocessing_algorithms():
     ORDER BY ASC(?algorithm)
     """
 
-    results = execute_sparql_query(base_url, repository, query)
-    preprocessing_algorithms = [binding['algorithm']['value'].split('#')[-1] for binding in results['results']['bindings']]
+    graph = load_graph()
+    results = execute_sparql_query(graph, query)
+    preprocessing_algorithms = []
+    if results:
+        for row in results:
+            preprocessing_algorithms.append(row.algorithm.split('#')[-1])
 
     return preprocessing_algorithms

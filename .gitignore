@@ -18,6 +18,7 @@ api/dbFiles
 *.bak_002d
 *.png
 *.crc
+*.pyc
 
 frontend/package-lock.json
 backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
