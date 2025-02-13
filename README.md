@@ -22,7 +22,7 @@ Lets ensemble everything to be able to compile and make run the code.
 
 #### Backend <a name="backend-configuration"></a>
 
-1. Go to `Intents2Workflows/api`. First install all the required libraries with the following command:
+1. Go to `Intents2Workflows/backend/api`. First install all the required libraries with the following command:
 
    ```bash
    pip install -r requirements.txt    
@@ -31,9 +31,6 @@ Lets ensemble everything to be able to compile and make run the code.
    ```bash
    uvicorn main:app --port=8080     
    ```
-
-##### GraphDB
-To use the intent anticipation/generation module it is necessary to populate a GraphDB instance with an initial set of triples. To do so, first install and initialize GraphDB. Then, go to the deployed GraphDB URL (by default, [localhost:7200](http://localhost:7200/)), create a new repository with the name "test-repo", select _import_ on the top left and then _upload RDF files_. Upload the following file: `backend/Modules/IntentAnticipation/read-write-graphdb/graphdb-import/KnowledgeBase.nt`
 
 ##### Intents modules <a name="intents-configuration"></a>
 The intent-generation functionalities are separated into two different modules, which can be found in the backend folder. 
