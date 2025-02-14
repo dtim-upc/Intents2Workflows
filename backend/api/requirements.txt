@@ -5,4 +5,5 @@ flask
 flask-cors
 openai
 llamaapi
-dotenv
+python-dotenv
+python-multipart
