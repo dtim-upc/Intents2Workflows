@@ -1,11 +1,20 @@
 @prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
+@prefix dolce: <http://ontologydesignpatterns.org/ont/dul/DUL.owl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tb: <https://extremexp.eu/ontology/tbox#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+dolce:hasQuality a owl:ObjectProperty ;
+    rdfs:domain tb:Data,
+        tb:Workflow ;
+    rdfs:range tb:DataCharacteristics,
+        tb:WorkflowCharacterisitics .
+
 dmop:containsNulls rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
+
+dmop:containsOutliers rdfs:subPropertyOf dmop:DatasetInfoProperty .
 
 dmop:delimiter rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
 
@@ -27,6 +36,8 @@ dmop:hasMeanValue rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
 
 dmop:hasMinValue rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
 
+dmop:hasOutliers rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
 dmop:hasPosition rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
 dmop:hasStandardDeviation rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
@@ -37,7 +48,15 @@ dmop:isFeature rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
 dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
+dmop:isNormalDistribution rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
 dmop:isNormalized rdfs:subPropertyOf dmop:DatasetValueInfoProperty .
+
+dmop:isNormallyDistributed rdfs:subPropertyOf dmop:DatasetInfoProperty .
+
+dmop:isTestDataset rdfs:subPropertyOf dmop:DatasetInfoProperty .
+
+dmop:isTrainDataset rdfs:subPropertyOf dmop:DatasetInfoProperty .
 
 dmop:isUnique rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
@@ -59,9 +78,11 @@ tb: a owl:Ontology ;
 tb:LoaderTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
-tb:applies a owl:ObjectProperty ;
-    rdfs:domain tb:Workflow ;
-    rdfs:range tb:Algorithm .
+tb:PlotProperties a owl:Class .
+
+tb:PlotType a owl:Class .
+
+tb:WorkflowCharacteristics a owl:Class .
 
 tb:copy_input a owl:DatatypeProperty ;
     rdfs:domain tb:CopyTransformation ;
@@ -71,8 +92,8 @@ tb:copy_output a owl:DatatypeProperty ;
     rdfs:domain tb:CopyTransformation ;
     rdfs:range xsd:integer .
 
-tb:createdFor a owl:ObjectProperty ;
-    rdfs:domain tb:Workflow ;
+tb:defines a owl:ObjectProperty ;
+    rdfs:domain tb:User ;
     rdfs:range tb:Intent .
 
 tb:exposesParameter a owl:ObjectProperty ;
@@ -87,21 +108,35 @@ tb:forParameter a owl:ObjectProperty ;
     rdfs:domain tb:ParameterValue ;
     rdfs:range tb:Parameter .
 
+tb:generatedFor a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:Intent .
+
 tb:hasApplier a owl:ObjectProperty ;
     rdfs:domain tb:LearnerComponent,
         tb:LearnerImplementation ;
     rdfs:range tb:ApplierComponent,
         tb:ApplierImplementation .
 
-tb:hasData a owl:ObjectProperty ;
-    rdfs:domain tb:IOSpec ;
-    rdfs:range tb:Data .
+tb:hasConstraint a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:Constraint .
 
-tb:hasDatatype a owl:ObjectProperty ;
-    rdfs:domain tb:Parameter .
+tb:hasDatatag a owl:ObjectProperty ;
+    rdfs:domain tb:DataSpec ;
+    rdfs:range tb:DataTag .
 
-tb:hasDefaultValue a owl:ObjectProperty ;
-    rdfs:domain tb:Parameter .
+tb:hasEvaluation a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:ModelEvaluation .
+
+tb:hasEvaluationRequirement a owl:ObjectProperty ;
+    rdfs:domain tb:Requirement ;
+    rdfs:range tb:EvaluationRequirement .
+
+tb:hasFeedback a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:UserFeedback .
 
 tb:hasImplementation a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
@@ -109,45 +144,86 @@ tb:hasImplementation a owl:ObjectProperty ;
 
 tb:hasInput a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
-    rdfs:range tb:IO .
+    rdfs:range tb:Data .
 
 tb:hasLearner a owl:ObjectProperty ;
     rdfs:domain tb:ApplierComponent,
-        tb:ApplierImplementation ;
+        tb:ApplierImplementation,
+        tb:VisualizerComponent,
+        tb:VisualizerImplementation ;
     rdfs:range tb:LearnerComponent,
         tb:LearnerImplementation .
 
 tb:hasOutput a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
-    rdfs:range tb:IO .
+    rdfs:range tb:Data .
 
 tb:hasParameter a owl:ObjectProperty ;
-    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ],
-        tb:Implementation ;
+    rdfs:domain tb:Implementation ;
     rdfs:range tb:Parameter .
 
-tb:hasParameterValue a owl:ObjectProperty ;
-    rdfs:domain tb:Step ;
-    rdfs:range tb:ParameterValue .
+tb:hasRequirement a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:Requirement .
+
+tb:hasRule a owl:ObjectProperty ;
+    rdfs:domain tb:Component ;
+    rdfs:range tb:Rule .
 
 tb:hasStep a owl:ObjectProperty ;
     rdfs:domain tb:Workflow ;
     rdfs:range tb:Step .
 
-tb:hasTag a owl:ObjectProperty ;
-    rdfs:domain tb:IOSpec ;
-    rdfs:range tb:DataTag .
-
 tb:hasTransformation a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
     rdfs:range rdf:List .
 
+tb:hasValue a owl:ObjectProperty ;
+    rdfs:domain tb:DataCharacteristics,
+        tb:ModelEvaluation,
+        tb:ParameterSpecification ;
+    rdfs:range xsd:double,
+        xsd:string .
+
+tb:hasVisualizationRequirement a owl:ObjectProperty ;
+    rdfs:domain tb:Requirement ;
+    rdfs:range tb:VisualizationRequirement .
+
+tb:hasVisualizer a owl:ObjectProperty ;
+    rdfs:domain tb:LearnerComponent,
+        tb:LearnerImplementation ;
+    rdfs:range tb:VisualizerComponent,
+        tb:VisualizerImplementation .
+
+tb:has_component_threshold a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range xsd:double .
+
+tb:has_condition a owl:DatatypeProperty ;
+    rdfs:domain tb:Parameter ;
+    rdfs:range xsd:string .
+
+tb:has_datatype a owl:ObjectProperty ;
+    rdfs:domain tb:Parameter .
+
+tb:has_defaultvalue a owl:ObjectProperty ;
+    rdfs:domain tb:Parameter .
+
 tb:has_position a owl:DatatypeProperty ;
-    rdfs:domain [ owl:unionOf ( tb:IO tb:IOSpec tb:Step tb:Parameter ) ] ;
+    rdfs:domain [ owl:unionOf ( tb:Data tb:DataSpec tb:Step tb:Parameter ) ] ;
     rdfs:range xsd:integer .
 
-tb:has_value a rdf:Property ;
-    rdfs:domain tb:ParameterValue .
+tb:isHard a owl:ObjectProperty ;
+    rdfs:domain tb:Constraint ;
+    rdfs:range xsd:boolean .
+
+tb:onConstraint a owl:ObjectProperty ;
+    rdfs:domain tb:ConstraintValue ;
+    rdfs:range tb:Constraint .
+
+tb:onMetric a owl:ObjectProperty ;
+    rdfs:domain tb:EvaluationRequirement ;
+    rdfs:range tb:Metric .
 
 tb:overData a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
@@ -155,32 +231,54 @@ tb:overData a owl:ObjectProperty ;
 
 tb:overridesParameter a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
-    rdfs:range tb:ParameterValue .
+    rdfs:range tb:ParameterSpecification .
+
+tb:relatedtoDatatag a owl:ObjectProperty ;
+    rdfs:domain tb:Rule ;
+    rdfs:range tb:Datatag .
+
+tb:relatedtoTask a owl:ObjectProperty ;
+    rdfs:domain tb:Rule ;
+    rdfs:range tb:Task .
 
 tb:runs a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
-    rdfs:range [ owl:unionOf ( tb:Workflow tb:Implementation ) ] .
+    rdfs:range tb:Component .
 
 tb:solves a owl:ObjectProperty ;
-    rdfs:domain [ owl:unionOf ( tb:Algorithm tb:Workflow ) ] ;
-    rdfs:range tb:Problem .
+    rdfs:domain tb:Algorithm ;
+    rdfs:range tb:Task .
+
+tb:specifiedBy a owl:ObjectProperty ;
+    rdfs:domain tb:Parameter ;
+    rdfs:range tb:ParameterSpecification .
+
+tb:specifies a owl:ObjectProperty ;
+    rdfs:domain tb:Intent,
+        tb:ModelEvaluation ;
+    rdfs:range tb:Algorithm,
+        tb:Metric .
 
 tb:specifiesInput a owl:ObjectProperty ;
-    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ] ;
-    rdfs:range tb:IOSpec .
+    rdfs:domain tb:Implementation ;
+    rdfs:range tb:DataSpec .
 
 tb:specifiesOutput a owl:ObjectProperty ;
-    rdfs:domain [ owl:unionOf ( tb:Workflow tb:Implementation ) ] ;
-    rdfs:range tb:IOSpec .
+    rdfs:domain tb:Implementation ;
+    rdfs:range tb:DataSpec .
 
-tb:subProblemOf a owl:ObjectProperty,
+tb:specifiesValue a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:ParameterValue .
+
+tb:subtaskOf a owl:ObjectProperty,
         owl:TransitiveProperty ;
-    rdfs:domain tb:Problem ;
-    rdfs:range tb:Problem .
+    rdfs:domain tb:Task ;
+    rdfs:range tb:Task .
 
 tb:tackles a owl:ObjectProperty ;
-    rdfs:domain tb:Intent ;
-    rdfs:range [ owl:unionOf ( tb:Problem tb:Algorithm ) ] .
+    rdfs:domain tb:Task ;
+    rdfs:range tb:Intent .
 
 tb:transformation_language a owl:DatatypeProperty ;
     rdfs:domain tb:Transformation ;
@@ -190,16 +288,66 @@ tb:transformation_query a owl:DatatypeProperty ;
     rdfs:domain tb:Transformation ;
     rdfs:range xsd:string .
 
-tb:usingParameter a owl:ObjectProperty ;
-    rdfs:domain tb:Intent ;
-    rdfs:range [ owl:unionOf ( tb:Parameter tb:ParameterValue ) ] .
+tb:usesParameter a owl:ObjectProperty ;
+    rdfs:domain tb:Step ;
+    rdfs:range tb:Parameter .
+
+tb:withMethod a owl:ObjectProperty ;
+    rdfs:domain tb:EvaluationRequirement ;
+    rdfs:range tb:Method .
+
+tb:ConstraintValue a owl:Class .
 
 tb:DataTag a owl:Class .
+
+tb:Method a owl:Class .
+
+tb:User a owl:Class .
+
+tb:UserFeedback a owl:Class .
+
+tb:VisualizationRequirement a owl:Class .
+
+tb:Algorithm a owl:Class .
 
 tb:CopyTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
-tb:Data a owl:Class .
+tb:DataCharacteristics a owl:Class .
+
+tb:Metric a owl:Class .
+
+tb:ParameterValue a owl:Class .
+
+tb:VisualizerComponent a owl:Class ;
+    rdfs:subClassOf tb:Component ;
+    owl:disjointWith tb:ApplierComponent,
+        tb:LearnerComponent .
+
+tb:VisualizerImplementation a owl:Class ;
+    rdfs:subClassOf tb:Implementation ;
+    owl:disjointWith tb:ApplierImplementation,
+        tb:LearnerImplementation .
+
+tb:Constraint a owl:Class .
+
+tb:EvaluationRequirement a owl:Class .
+
+tb:ModelEvaluation a owl:Class .
+
+tb:ParameterSpecification a owl:Class .
+
+tb:Requirement a owl:Class .
+
+tb:Rule a owl:Class .
+
+tb:ApplierComponent a owl:Class ;
+    rdfs:subClassOf tb:Component .
+
+tb:ApplierImplementation a owl:Class ;
+    rdfs:subClassOf tb:Implementation .
+
+tb:DataSpec a owl:Class .
 
 tb:LearnerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;
@@ -209,33 +357,21 @@ tb:LearnerImplementation a owl:Class ;
     rdfs:subClassOf tb:Implementation ;
     owl:disjointWith tb:ApplierImplementation .
 
-tb:Algorithm a owl:Class .
-
-tb:ApplierComponent a owl:Class ;
-    rdfs:subClassOf tb:Component .
-
-tb:ApplierImplementation a owl:Class ;
-    rdfs:subClassOf tb:Implementation .
-
-tb:IO a owl:Class .
-
-tb:Intent a owl:Class .
-
-tb:Problem a owl:Class .
-
 tb:Transformation a owl:Class .
 
-tb:IOSpec a owl:Class .
+tb:Data a owl:Class .
 
-tb:ParameterValue a owl:Class .
+tb:Task a owl:Class .
 
-tb:Component a owl:Class .
-
-tb:Parameter a owl:Class .
+tb:Workflow a owl:Class .
 
 tb:Implementation a owl:Class .
 
 tb:Step a owl:Class .
 
-tb:Workflow a owl:Class .
+tb:Component a owl:Class .
+
+tb:Intent a owl:Class .
+
+tb:Parameter a owl:Class .
 

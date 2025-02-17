@@ -259,7 +259,7 @@ def add_properties(ontology: Graph):
         ontology.add((s, RDFS.subPropertyOf, o))
 
 
-def main(dest: str = '../modified-ontologies/tbox.ttl') -> None:
+def main(dest: str = '../ontologies/tbox.ttl') -> None:
     ontology = init_ontology()
     add_classes(ontology)
     add_properties(ontology)

@@ -449,7 +449,7 @@ def add_shapes(cbox):
 
 
 
-def main(dest='../modified-ontologies/cbox.ttl'):
+def main(dest='../ontologies/cbox.ttl'):
     cbox = init_cbox()
     add_problems(cbox)
     add_algorithms(cbox)
