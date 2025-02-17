@@ -1,4 +1,4 @@
-from .knime_implementation import KnimeImplementation, KnimeParameter, KnimeBaseBundle
+from .knime_implementation import KnimeImplementation, KnimeParameter, KnimeBaseBundle, KnimeDefaultFeature
 from ..core import *
 from common import *
 
@@ -21,17 +21,27 @@ normalizer_implementation = KnimeImplementation(
     implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.base.node.preproc.pmml.normalize.NormalizerPMMLNodeFactory2',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature,
 )
 
 min_max_scaling_component = Component(
     name='Min-Max Scaling',
     implementation=normalizer_implementation,
     overriden_parameters=[
-        ('Normalization mode', 1),
+        ParameterSpecification(next((param for param in normalizer_implementation.parameters.keys() if param.knime_key == 'mode'), None), 1),
     ],
+    rules={
+        (cb.Classification, 2):[
+            {'rule': cb.NotOutlieredDatasetShape, 'weight': 2},
+            {'rule': cb.NotNormalDistributionDatasetShape, 'weight': 1}
+        ],
+        (cb.DataVisualization, 1): [
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     exposed_parameters=[
-        'New minimum',
-        'New maximum',
+        next((param for param in normalizer_implementation.parameters.keys() if param.knime_key == 'newmin'), None),
+        next((param for param in normalizer_implementation.parameters.keys() if param.knime_key == 'newmax'), None),
     ],
     transformations=[
         CopyTransformation(1, 1),
@@ -77,8 +87,17 @@ z_score_scaling_component = Component(
     name='Z-Score Scaling',
     implementation=normalizer_implementation,
     overriden_parameters=[
-        ('Normalization mode', 2),
+        ParameterSpecification(next((param for param in normalizer_implementation.parameters.keys() if param.knime_key == 'mode'), None), 2),
     ],
+    rules={
+        (cb.Classification, 3):[
+            {'rule': cb.NormalDistributionDatasetShape, 'weight': 2},
+            {'rule': cb.OutlieredDatasetShape, 'weight': 1}
+        ],
+        (cb.DataVisualization, 1): [
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         Transformation(
@@ -121,8 +140,17 @@ decimal_scaling_component = Component(
     name='Decimal Scaling',
     implementation=normalizer_implementation,
     overriden_parameters=[
-        ('Normalization mode', 3),
+        ParameterSpecification(next((param for param in normalizer_implementation.parameters.keys() if param.knime_key == 'mode'), None), 3),
     ],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.NotNormalDistributionDatasetShape, 'weight': 1},
+            {'rule': cb.OutlieredDatasetShape, 'weight': 1}
+        ],
+        (cb.DataVisualization, 2): [
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         Transformation(
@@ -166,7 +194,7 @@ normalizer_applier_implementation = KnimeImplementation(
     ],
     input=[
         cb.NormalizerModel,
-        cb.TabularDataset,
+        cb.TestTabularDatasetShape,
     ],
     output=[
         cb.NormalizerModel,
@@ -176,6 +204,7 @@ normalizer_applier_implementation = KnimeImplementation(
     counterpart=normalizer_implementation,
     knime_node_factory='org.knime.base.node.preproc.pmml.normalize.NormalizerPMMLApplyNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature,
 )
 
 normalizer_applier_component = Component(
@@ -244,7 +273,7 @@ WHERE {
     ]
 )
 
-"""
+
 min_max_scaling_applier_component = Component(
     name='Min-Max Scaling Applier',
     implementation=normalizer_applier_implementation,
@@ -370,4 +399,4 @@ INSERT DATA {
     ],
     counterpart=decimal_scaling_component,
 )
-"""
+

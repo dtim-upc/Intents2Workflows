@@ -8,13 +8,14 @@ from ontology_populator.implementations.core.parameter import LiteralValue
 class KnimeImplementation(Implementation):
 
     def __init__(self, name: str, algorithm: URIRef, parameters: List[Parameter],
-                 knime_node_factory: str, knime_bundle: 'KnimeBundle',
+                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature',
                  input: List[Union[URIRef, List[URIRef]]] = None, output: List[URIRef] = None,
                  implementation_type=tb.Implementation, counterpart: 'Implementation' = None,
                  ) -> None:
         super().__init__(name, algorithm, parameters, input, output, implementation_type, counterpart)
         self.knime_node_factory = knime_node_factory
         self.knime_bundle = knime_bundle
+        self.knime_feature = knime_feature
 
     def add_to_graph(self, g: Graph):
         super().add_to_graph(g)
@@ -32,11 +33,18 @@ class KnimeImplementation(Implementation):
         g.add((self.uri_ref, tb.term('knime-node-bundle-vendor'), Literal(self.knime_bundle.vendor)))
         g.add((self.uri_ref, tb.term('knime-node-bundle-version'), Literal(self.knime_bundle.version)))
 
+        # Feature
+        g.add((self.uri_ref, tb.term('knime-node-feature-name'), Literal(self.knime_feature.name)))
+        g.add((self.uri_ref, tb.term('knime-node-feature-symbolic-name'), Literal(self.knime_feature.symbolic_name)))
+        g.add((self.uri_ref, tb.term('knime-node-feature-vendor'), Literal(self.knime_feature.vendor)))
+        g.add((self.uri_ref, tb.term('knime-node-feature-version'), Literal(self.knime_feature.version)))
+
         # Parameters
         for parameter in self.parameters.values():
             if isinstance(parameter, KnimeParameter):
                 g.add((parameter.uri_ref, tb.knime_key, Literal(parameter.knime_key)))
                 g.add((parameter.uri_ref, tb.knime_path, Literal(parameter.path)))
+                g.add((parameter.uri_ref, tb.has_datatype, Literal(parameter.datatype)))
 
         return self.uri_ref
 
@@ -59,6 +67,23 @@ class KnimeBundle:
         self.vendor = vendor
         self.version = version
 
-
 KnimeBaseBundle = KnimeBundle('KNIME Base Nodes', 'org.knime.base', 'KNIME AG, Zurich, Switzerland',
                               "4.7.0.v202301251625")
+KnimeDynamicBundle = KnimeBundle('D3 Samples for KNIME Dynamic JavaScript Node Generation',
+                               'org.knime.dynamic.js.base', 'KNIME AG, Zurich, Switzerland',
+                               '4.7.0.v202211082357')
+KnimeJSBundle = KnimeBundle('KNIME JavaScript Base Views', 'org.knime.js.views', 'KNIME AG, Zurich, Switzerland',
+                            '4.7.0.v202211091556') 
+
+
+class KnimeFeature:
+    def __init__(self, name: str, symbolic_name: str, vendor: str, version: str) -> None:
+        super().__init__()
+        self.name = name
+        self.symbolic_name = symbolic_name
+        self.vendor = vendor
+        self.version = version
+
+KnimeDefaultFeature = KnimeFeature('', '', '', '0.0.0')
+KnimeJSViewsFeature = KnimeFeature('KNIME JavaScript Views', 'org.knime.features.js.views.feature.group',
+                                   'KNIME AG, Zurich, Switzerland', '4.7.0.v202211091556')

@@ -3,15 +3,21 @@ from typing import List, Union
 
 from rdflib.collection import Collection
 
-from common import *
+import os 
+import sys
 from .parameter import Parameter
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
+from common import *
+
 
 LiteralValue = Union[str, bool, int, float, None]
 
 
 class Implementation:
-    def __init__(self, name: str, algorithm: URIRef, parameters: List[Parameter],
-                 input: List[Union[URIRef, List[URIRef]]] = None, output: List[URIRef] = None,
+    def __init__(self, name: str, algorithm: URIRef,
+                 parameters: List[Parameter],
+                 input: List[Union[URIRef, List[URIRef]]] = None,
+                 output: List[URIRef] = None,
                  implementation_type=tb.Implementation,
                  counterpart: 'Implementation' = None,
                  namespace: Namespace = cb,
@@ -21,15 +27,15 @@ class Implementation:
         self.url_name = f'implementation-{self.name.replace(" ", "_").replace("-", "_").lower()}'
         self.namespace = namespace
         self.uri_ref = self.namespace[self.url_name]
+        self.parameters = {param: param for param in parameters}
         self.algorithm = algorithm
-        self.parameters = {param.label: param for param in parameters}
         self.input = input or []
         self.output = output or []
-        assert implementation_type in {tb.Implementation, tb.LearnerImplementation, tb.ApplierImplementation}
+        assert implementation_type in {tb.Implementation, tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
         self.implementation_type = implementation_type
         self.counterpart = counterpart
         if self.counterpart is not None:
-            assert implementation_type in {tb.LearnerImplementation, tb.ApplierImplementation}
+            assert implementation_type in {tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
             if self.counterpart.counterpart is None:
                 self.counterpart.counterpart = self
 
@@ -45,7 +51,7 @@ class Implementation:
         # Input triples
         for i, input_tag in enumerate(self.input):
             input_node = BNode()
-            g.add((input_node, RDF.type, tb.IOSpec))
+            g.add((input_node, RDF.type, tb.DataSpec)) 
             g.add((self.uri_ref, tb.specifiesInput, input_node))
             g.add((input_node, tb.has_position, Literal(i)))
             if isinstance(input_tag, list):
@@ -56,31 +62,31 @@ class Implementation:
                     g.add((input_shape, RDF.type, tb.DataTag))
                     g.add((input_shape, RDF.type, SH.NodeShape))
                     g.add((input_shape, SH['and'], input_collection))
-                    g.add((input_node, tb.hasTag, input_shape))
+                    g.add((input_node, tb.hasDatatag, input_shape))
                 else:
-                    g.add((input_node, tb.hasTag, input_tag[0]))
+                    g.add((input_node, tb.hasDatatag, input_tag[0]))
             else:
-                g.add((input_node, tb.hasTag, input_tag))
+                g.add((input_node, tb.hasDatatag, input_tag))
 
         # Output triples
         for i, output_tag in enumerate(self.output):
             output_node = BNode()
-            g.add((output_node, RDF.type, tb.IOSpec))
+            g.add((output_node, RDF.type, tb.DataSpec)) 
             g.add((self.uri_ref, tb.specifiesOutput, output_node))
-            g.add((output_node, tb.hasTag, output_tag))
+            g.add((output_node, tb.hasDatatag, output_tag))
             g.add((output_node, tb.has_position, Literal(i)))
 
         # Parameter triples
         for i, parameter in enumerate(self.parameters.values()):
             g.add((parameter.uri_ref, RDF.type, tb.Parameter))
             g.add((parameter.uri_ref, RDFS.label, Literal(parameter.label)))
-            g.add((parameter.uri_ref, tb.hasDatatype, parameter.datatype))
+            g.add((parameter.uri_ref, tb.has_datatype, parameter.datatype))
             g.add((parameter.uri_ref, tb.has_position, Literal(i)))
             g.add((parameter.uri_ref, tb.has_condition, Literal(parameter.condition)))
             if isinstance(parameter.default_value, URIRef):
-                g.add((parameter.uri_ref, tb.hasDefaultValue, parameter.default_value))
+                g.add((parameter.uri_ref, tb.has_defaultvalue, parameter.default_value))
             else:
-                g.add((parameter.uri_ref, tb.hasDefaultValue, Literal(parameter.default_value)))
+                g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(parameter.default_value)))
             g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
 
         return self.uri_ref

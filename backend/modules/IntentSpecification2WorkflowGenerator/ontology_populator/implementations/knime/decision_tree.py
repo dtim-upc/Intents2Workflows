@@ -1,12 +1,12 @@
 from ontology_populator.implementations.core import *
 from common import *
-from ontology_populator.implementations.knime import KnimeImplementation, KnimeParameter, KnimeBaseBundle
+from ontology_populator.implementations.knime import KnimeImplementation, KnimeParameter, KnimeBaseBundle, KnimeDefaultFeature
 
 decision_tree_learner_implementation = KnimeImplementation(
     name='Decision Tree Learner',
     algorithm=cb.DecisionTree,
     parameters=[
-        KnimeParameter("Class column", XSD.string, '$$LABEL$$', 'classifyColumn'),
+        KnimeParameter("DT Class column", XSD.string, '$$LABEL_CATEGORICAL$$', 'classifyColumn'),
         KnimeParameter("Number of records to store for view", XSD.int, 10000, 'numverRecordsToView'),
         KnimeParameter("Min number records per node", XSD.int, 10, 'minNumberRecordsPerNode'),
         KnimeParameter("Pruning method", XSD.string, "No pruning", 'pruningMethod'),
@@ -25,7 +25,7 @@ decision_tree_learner_implementation = KnimeImplementation(
         KnimeParameter("Root split column", XSD.string, None, 'firstSplitColumn'),
     ],
     input=[
-        cb.LabeledTabularDatasetShape,
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape]
     ],
     output=[
         cb.DecisionTreeModel,
@@ -33,6 +33,7 @@ decision_tree_learner_implementation = KnimeImplementation(
     implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.base.node.mine.decisiontree2.learner2.DecisionTreeLearnerNodeFactory3',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 decision_tree_learner_component = Component(
@@ -41,23 +42,23 @@ decision_tree_learner_component = Component(
     transformations=[
     ],
     exposed_parameters=[
-        'Class column',
-        'Number of records to store for view',
-        'Min number records per node',
-        'Pruning method',
-        'Reduced error pruning',
-        'Quality Measure',
-        'Average split point',
-        'Number of threads',
-        'Max number of nominal values',
-        'Binary nominal splits',
-        'Filter invalid',
-        'Skip nominal columns without domain information',
-        'No true child strategy',
-        'Missing value strategy',
-        'Force root split columns',
-        'Root split column',
-    ],
+        next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'classifyColumn'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'numverRecordsToView'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'minNumberRecordsPerNode'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'pruningMethod'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'enableReducedErrorPruning'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'splitQualityMeasure'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'splitAverage'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'numProcessors'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'maxNumNominalValues'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'binaryNominalSplit'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'FilterNominalValuesFromParent'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'skipColumnsWithoutDomain'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'returnNullPrediction'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'lastPrediction'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'useFirstSplitColumn'), None),
+        # next((param for param in decision_tree_learner_implementation.parameters.keys() if param.knime_key == 'firstSplitColumn'), None),
+    ]
 )
 
 decision_tree_predictor_implementation = KnimeImplementation(
@@ -72,15 +73,16 @@ decision_tree_predictor_implementation = KnimeImplementation(
     ],
     input=[
         cb.DecisionTreeModel,
-        cb.TabularDataset,
+        cb.TestTabularDatasetShape,
     ],
     output=[
-        cb.LabeledTabularDatasetShape,
+        cb.TabularDatasetShape,
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=decision_tree_learner_implementation,
     knime_node_factory='org.knime.base.node.mine.decisiontree2.predictor2.DecTreePredictorNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 decision_tree_predictor_component = Component(

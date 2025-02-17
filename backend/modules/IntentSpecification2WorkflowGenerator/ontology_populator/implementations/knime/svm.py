@@ -1,12 +1,12 @@
 from common import *
-from .knime_implementation import KnimeImplementation, KnimeBaseBundle, KnimeParameter
+from .knime_implementation import KnimeImplementation, KnimeBaseBundle, KnimeParameter, KnimeDefaultFeature
 from ..core import *
 
 svm_learner_implementation = KnimeImplementation(
     name='SVM Learner',
     algorithm=cb.SVM,
     parameters=[
-        KnimeParameter("Class column", XSD.string, "$$LABEL$$", 'classcol'),
+        KnimeParameter("SVM Class column", XSD.string, "$$LABEL_CATEGORICAL$$", 'classcol'),
         KnimeParameter("Overlapping Penalty", XSD.double, 1.0, 'c_parameter'),
         KnimeParameter("Bias", XSD.double, 1.0, 'kernel_param_Bias'),
         KnimeParameter("Power", XSD.double, 1.0, 'kernel_param_Power'),
@@ -17,7 +17,7 @@ svm_learner_implementation = KnimeImplementation(
         KnimeParameter("Kernel type", XSD.string, None, 'kernel_type'),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NonNullTabularDatasetShape, cb.NormalizedTabularDatasetShape],
     ],
     output=[
         cb.SVMModel,
@@ -25,20 +25,21 @@ svm_learner_implementation = KnimeImplementation(
     implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.base.node.mine.svm.learner.SVMLearnerNodeFactory2',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 polynomial_svm_learner_component = Component(
     name='Polynomial SVM Learner',
     implementation=svm_learner_implementation,
     overriden_parameters=[
-        ('Kernel type', 'Polynomial'),
+        ParameterSpecification(next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_type'), None), 'Polynomial'),
     ],
     exposed_parameters=[
-        'Class column',
-        'Overlapping Penalty',
-        'Bias',
-        'Power',
-        'Gamma',
+        next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'classcol'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'c_parameter'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_Bias'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_Power'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_Gamma'), None),
     ],
     transformations=[
         Transformation(
@@ -60,13 +61,13 @@ hypertangent_svm_learner_component = Component(
     name='HyperTangent SVM Learner',
     implementation=svm_learner_implementation,
     overriden_parameters=[
-        ('Kernel type', 'HyperTangent'),
+        ParameterSpecification(next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_type'), None), 'HyperTangent'),
     ],
     exposed_parameters=[
-        'Class column',
-        'Overlapping Penalty',
-        'Kappa',
-        'Delta',
+        next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'classcol'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'c_parameter'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_kappa'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_delta'), None),
     ],
     transformations=[
         Transformation(
@@ -83,12 +84,12 @@ rbf_svm_learner_component = Component(
     name='RBF SVM Learner',
     implementation=svm_learner_implementation,
     overriden_parameters=[
-        ('Kernel type', 'RBF'),
+        ParameterSpecification(next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_type'), None), 'RBF'),
     ],
     exposed_parameters=[
-        'Class column',
-        'Overlapping Penalty',
-        'Sigma',
+        next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'classcol'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'c_parameter'), None),
+        # next((param for param in svm_learner_implementation.parameters.keys() if param.knime_key == 'kernel_param_sigma'), None),
     ],
     transformations=[
         Transformation(
@@ -105,22 +106,23 @@ svm_predictor_implementation = KnimeImplementation(
     name='SVM Predictor',
     algorithm=cb.SVM,
     parameters=[
-        KnimeParameter("Prediction column name", XSD.string, "Prediction ($$LABEL$$)", 'prediction column name'),
+        KnimeParameter("SVM Prediction column name", XSD.string, "Prediction ($$LABEL$$)", 'prediction column name'),
         KnimeParameter("Change prediction", XSD.boolean, False, 'change prediction'),
         KnimeParameter("Add probabilities", XSD.boolean, False, 'add probabilities'),
         KnimeParameter("Class probability suffix", XSD.string, "", 'class probability suffix'),
     ],
     input=[
         cb.SVMModel,
-        [cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
+        [cb.TestTabularDatasetShape, cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
     ],
     output=[
-        cb.LabeledTabularDatasetShape,
+        cb.TabularDatasetShape,
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=svm_learner_implementation,
     knime_node_factory='org.knime.base.node.mine.svm.predictor2.SVMPredictorNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature,
 )
 
 svm_predictor_component = Component(

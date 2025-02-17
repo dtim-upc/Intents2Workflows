@@ -1,4 +1,4 @@
-from .knime_implementation import KnimeImplementation, KnimeParameter, KnimeBaseBundle
+from .knime_implementation import KnimeImplementation, KnimeParameter, KnimeBaseBundle, KnimeDefaultFeature
 from ..core import *
 from common import *
 
@@ -36,17 +36,32 @@ missing_value_implementation = KnimeImplementation(
     implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.base.node.preproc.pmml.missingval.compute.MissingValueHandlerNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 mean_imputation_component = Component(
     name='Mean Imputation',
     implementation=missing_value_implementation,
     overriden_parameters=[
-        ('Integer', 'org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory'),
-        ('Float', 'org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory'),
-        ('String', 'org.knime.base.node.preproc.pmml.missingval.handlers.MostFrequentValueMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'Integer'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'Float'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'String'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.handlers.MostFrequentValueMissingCellHandlerFactory'),
     ],
     exposed_parameters=[],
+    rules={
+        (cb.Classification, 2):[
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ],
+        (cb.DataVisualization, 1): [
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         Transformation(
@@ -66,11 +81,25 @@ drop_rows_component = Component(
     name='Drop Rows with Missing Values',
     implementation=missing_value_implementation,
     overriden_parameters=[
-        ('Integer', 'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
-        ('Float', 'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
-        ('String', 'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'Integer'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'Float'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
+        ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
+                                     if param.knime_key == 'factoryID' and param.label == 'String'), None),
+                               'org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory'),
     ],
     exposed_parameters=[],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.LowMVTabularDatasetShape, 'weight': 2}
+        ],
+        (cb.DataVisualization, 1): [
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         Transformation(
@@ -110,7 +139,7 @@ missing_value_applier_implementation = KnimeImplementation(
     ],
     input=[
         cb.MissingValueModel,
-        cb.TabularDataset,
+        cb.TestTabularDatasetShape,
     ],
     output=[
         cb.NonNullTabularDatasetShape,
@@ -118,6 +147,7 @@ missing_value_applier_implementation = KnimeImplementation(
     implementation_type=tb.ApplierImplementation,
     knime_node_factory='org.knime.base.node.preproc.pmml.missingval.apply.MissingValueApplyNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature,
 )
 
 missing_value_applier_component = Component(

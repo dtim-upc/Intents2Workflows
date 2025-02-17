@@ -1,13 +1,13 @@
 from common import *
-from .knime_implementation import KnimeBaseBundle, KnimeParameter, KnimeImplementation
+from .knime_implementation import KnimeBaseBundle, KnimeParameter, KnimeImplementation, KnimeDefaultFeature
 from ..core import *
 
 partitioning_implementation = KnimeImplementation(
-    name='Partitioning',
+    name='Data Partitioning',
     algorithm=cb.Partitioning,
     parameters=[
-        KnimeParameter("Size of First Partition", XSD.string, "Relative", "method"),
-        KnimeParameter("Sampling Method", XSD.string, "Random", "samplingMethod"),
+        KnimeParameter("Size of First Partition", XSD.string, None, "method"),
+        KnimeParameter("Sampling Method", XSD.string, None, "samplingMethod"),
         KnimeParameter("Fraction (Relative size)", XSD.double, 0.8, "fraction"),
         KnimeParameter("Count (Absolute size)", XSD.int, 100, "count"),
         KnimeParameter("Random seed", XSD.string, None, "random_seed"),
@@ -17,24 +17,32 @@ partitioning_implementation = KnimeImplementation(
         cb.TabularDataset,
     ],
     output=[
-        cb.TrainDataset,
-        cb.TestDataset,
+        cb.TrainTabularDatasetShape,
+        cb.TestTabularDatasetShape,
     ],
     knime_node_factory='org.knime.base.node.preproc.partition.PartitionNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
+
+implementation_parameters = partitioning_implementation.parameters
 
 random_relative_train_test_split_component = Component(
     name='Random Relative Train-Test Split',
     implementation=partitioning_implementation,
     overriden_parameters=[
-        ("Size of First Partition", "Relative"),
-        ("Sampling Method", "Random"),
+        ParameterSpecification(list(implementation_parameters.keys())[0], "Relative"),
+        ParameterSpecification(list(implementation_parameters.keys())[1], "Random")
     ],
     exposed_parameters=[
-        "Fraction (Relative size)",
-        "Random seed",
+        list(implementation_parameters.keys())[2],
+        list(implementation_parameters.keys())[4],
     ],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         CopyTransformation(1, 2),
@@ -46,7 +54,9 @@ DELETE {
 }
 INSERT {
     $output1 dmop:numberOfRows ?newRows1 .
+    $output1 dmop:isTrainDataset True .
     $output2 dmop:numberOfRows ?newRows2 .
+    $output2 dmop:isTestDataset True .
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
@@ -62,13 +72,18 @@ random_absolute_train_test_split_component = Component(
     name='Random Absolute Train-Test Split',
     implementation=partitioning_implementation,
     overriden_parameters=[
-        ("Size of First Partition", "Absolute"),
-        ("Sampling Method", "Random"),
+        ParameterSpecification(list(implementation_parameters.keys())[0], "Absolute"),
+        ParameterSpecification(list(implementation_parameters.keys())[1], "Random")
     ],
     exposed_parameters=[
-        "Count (Absolute size)",
-        "Random seed",
+        list(implementation_parameters.keys())[3],
+        list(implementation_parameters.keys())[4],
     ],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         CopyTransformation(1, 2),
@@ -80,7 +95,9 @@ DELETE {
 }
 INSERT {
     $output1 dmop:numberOfRows ?newRows1 .
+    $output1 dmop:isTrainDataset True .
     $output2 dmop:numberOfRows ?newRows2 .
+    $output2 dmop:isTestDataset True .
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
@@ -96,12 +113,17 @@ top_relative_train_test_split_component = Component(
     name='Top K Relative Train-Test Split',
     implementation=partitioning_implementation,
     overriden_parameters=[
-        ("Size of First Partition", "Relative"),
-        ("Sampling Method", "First"),
+        ParameterSpecification(list(implementation_parameters.keys())[0], "Relative"),
+        ParameterSpecification(list(implementation_parameters.keys())[1], "First"),
     ],
     exposed_parameters=[
-        "Fraction (Relative size)",
+        list(implementation_parameters.keys())[2],
     ],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         CopyTransformation(1, 2),
@@ -113,7 +135,9 @@ DELETE {
 }
 INSERT {
     $output1 dmop:numberOfRows ?newRows1 .
+    $output1 dmop:isTrainDataset True .
     $output2 dmop:numberOfRows ?newRows2 .
+    $output2 dmop:isTestDataset True .
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
@@ -129,12 +153,17 @@ top_absolute_train_test_split_component = Component(
     name='Top K Absolute Train-Test Split',
     implementation=partitioning_implementation,
     overriden_parameters=[
-        ("Size of First Partition", "Absolute"),
-        ("Sampling Method", "First"),
+        ParameterSpecification(list(implementation_parameters.keys())[0], "Absolute"),
+        ParameterSpecification(list(implementation_parameters.keys())[1], "First"),
     ],
     exposed_parameters=[
-        "Count (Absolute size)",
+        list(implementation_parameters.keys())[3],
     ],
+    rules={
+        (cb.Classification, 1):[
+            {'rule': cb.TabularDataset, 'weight': 1}
+        ]
+    },
     transformations=[
         CopyTransformation(1, 1),
         CopyTransformation(1, 2),
@@ -146,7 +175,9 @@ DELETE {
 }
 INSERT {
     $output1 dmop:numberOfRows ?newRows1 .
+    $output1 dmop:isTrainDataset True .
     $output2 dmop:numberOfRows ?newRows2 .
+    $output2 dmop:isTestDataset True .
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
