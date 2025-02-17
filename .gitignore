@@ -22,6 +22,7 @@ api/dbFiles
 
 frontend/package-lock.json
 backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
+backend/api/datasets
 
 !orm.xml
 !persistence.xml

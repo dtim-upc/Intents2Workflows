@@ -220,6 +220,9 @@ ns1:User3 a ns1:User ;
 ns1:User4 a ns1:User ;
     ns1:email "test@user.com" .
 
+ns1:User5 a ns1:User ;
+    ns1:email "test@user.com" .
+
 ns1:iris.csv a <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#DataSet> .
 
 ns1:nn ns1:runs ns1:Worflownniris-1685115892 .
@@ -2075,6 +2078,8 @@ ns1:sklearn-StandardScaler-with_std ns1:specifiedBy ns1:User10analcatdata_author
         ns1:User13analcatdata_authorshipStandardScalerwith_std-1683183663,
         ns1:User13vehicleStandardScalerwith_std-1683183744,
         ns1:User13wiltStandardScalerwith_std-1683183667 .
+
+ns1:titanic.csv a <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#DataSet> .
 
 ns1:GesturePhaseSegmentationProcessed a <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#DataSet> .
 
