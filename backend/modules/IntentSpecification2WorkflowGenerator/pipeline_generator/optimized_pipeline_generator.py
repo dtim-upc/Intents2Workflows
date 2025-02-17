@@ -486,6 +486,9 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
         if isinstance(value.value, str) and '$$LABEL$$' in value.value:
             new_value = value.replace('$$LABEL$$', f'{get_inputs_label_name(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
+        if isinstance(value.value, str) and '$$LABEL_CATEGORICAL$$' in value.value: #this allows target column to be defined withou exposed parameters
+            new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{get_inputs_label_name(graph, inputs)}')
+            parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$NUMERIC_COLUMNS$$' in value.value:
             new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{get_inputs_numeric_columns(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
@@ -518,6 +521,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(com_col) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
+    print(parameters)
 
     return parameters
 
@@ -976,7 +980,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             
             singular_param_specs = assign_to_parameter_specs(workflow_graph, singular_parameters)
             singular_param_specs.update(singular_overridden_parameters)
-            tqdm.write(str(singular_param_specs))
+            #tqdm.write(str(singular_param_specs))
 
             
 
@@ -1043,7 +1047,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             train_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, train_component)
             train_param_specs = assign_to_parameter_specs(workflow_graph, train_parameters)
             train_param_specs.update(train_overridden_paramspecs)
-            tqdm.write(str(train_param_specs))
+            #tqdm.write(str(train_param_specs))
             train_step = add_step(workflow_graph, workflow,
                                 train_step_name,
                                 train_component,
@@ -1110,7 +1114,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 test_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, train_component)
                 test_param_specs = assign_to_parameter_specs(workflow_graph, test_parameters)
                 test_param_specs.update(test_overridden_paramspecs)
-                tqdm.write(str(test_param_specs))
+                #tqdm.write(str(test_param_specs))
 
                 test_step = add_step(workflow_graph, workflow,
                                     test_step_name,
