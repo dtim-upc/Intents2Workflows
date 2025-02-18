@@ -37,18 +37,20 @@ def get_custom_ontology_only_problems():
 def connect_algorithms(ontology, algos_list):
     impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
                    for algo in algos_list for (imp, _) in get_all_implementations(ontology, None, algo)}
+    print(impls_algos)
 
     linked_impls = {}
 
     impls_list = list(impls_algos.keys())
     
-    for i in range(len(impls_list) - 1):
-        preceding_impl = impls_list[i]
-        following_impls = impls_list[i + 1:]
+    for preceding_impl in impls_list:
+        following_impls = impls_list
 
         out_specs = get_implementation_output_specs(ontology, preceding_impl)
         out_spec_set = {out_sp for out_spec in out_specs for out_sp in out_spec}
 
+        preceding_impl_key = impls_algos[preceding_impl]
+        linked_impls.setdefault(preceding_impl_key, [])
         
         for following_impl in following_impls:
 
@@ -56,15 +58,10 @@ def connect_algorithms(ontology, algos_list):
             in_spec_set = {in_sp for in_spec in in_specs for in_sp in in_spec}
 
             if out_spec_set & in_spec_set:
-                
-                preceding_impl_key = impls_algos[preceding_impl]
                 following_impl_key = impls_algos[following_impl]
 
-                linked_impls.setdefault(preceding_impl_key, [])
                 if following_impl_key not in linked_impls[preceding_impl_key]:
                     linked_impls[preceding_impl_key].append(following_impl_key)
-    
-    linked_impls[following_impl_key] = []
 
     return linked_impls
 
@@ -90,12 +87,13 @@ def abstract_planner(ontology: Graph, intent: Graph) -> Tuple[
         alg_plans[alg[0]].append(impl)
     
     plans = {}
+    #print(algs_shapes)
     for alg in algs:
         if cb.TrainTabularDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms(ontology, [cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms(ontology, [cb.DataLoading, alg])
-
+    #print(plans)
     return plans, alg_plans
     
 
