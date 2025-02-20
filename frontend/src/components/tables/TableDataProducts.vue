@@ -46,14 +46,12 @@
   <script setup>
   import { onMounted, ref} from "vue";
   import {useDataProductsStore} from 'src/stores/dataProductsStore.js'
-  import {useProjectsStore} from 'src/stores/projectsStore.js'
   import NoDataImage from "src/assets/NoDataImage.vue";
   import ConfirmDialog from "src/components/utils/ConfirmDialog.vue";
   import EditDataProductForm from "src/components/forms/EditDataProductForm.vue";
   import FullScreenToggle from "./TableUtils/FullScreenToggle.vue";
   
   const dataProductsStore = useDataProductsStore()
-  const projectID = useProjectsStore().currentProject.projectId
   
   const selectedDataProduct = ref(null)
   
@@ -70,7 +68,7 @@
   ]
 
   onMounted(async() => {
-    await dataProductsStore.getDataProducts(projectID)
+    await dataProductsStore.getDataProducts()
   })
   
   let confirmDelete = () => {}

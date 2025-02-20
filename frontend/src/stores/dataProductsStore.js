@@ -24,7 +24,7 @@ export const useDataProductsStore = defineStore('dataProducts', {
       }
     },
     
-    async postDataProduct(projectID, data) {
+/*     async postDataProduct(projectID, data) {
       try {
         await dataProductAPI.postDataProduct(projectID, data);
         notify.positive("Data product stored successfully");
@@ -44,7 +44,7 @@ export const useDataProductsStore = defineStore('dataProducts', {
         notify.negative("Error editing the data product");
         console.error("Error:", error);
       }
-    },
+    }, */
     
     async deleteDataProduct(fileName) {
       try {
@@ -58,7 +58,7 @@ export const useDataProductsStore = defineStore('dataProducts', {
     },
 
     // ------------ Download/materialize operations
-    async materializeDataProduct(projectID, dataProductID) { // To be ingested by the intent API
+/*     async materializeDataProduct(projectID, dataProductID) { // To be ingested by the intent API
       try {
         const response = await dataProductAPI.materializeDataProduct(projectID, dataProductID);
         this.selectedDataProductPath = response.data;
@@ -77,7 +77,7 @@ export const useDataProductsStore = defineStore('dataProducts', {
         notify.negative("Error downloading the data");
         console.error("Error:", error);
       }
-    },
+    }, */
 
     async downloadDataProduct(fileName) { // The user downloads it from the frontend
       try {

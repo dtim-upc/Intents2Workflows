@@ -62,7 +62,6 @@
 import {ref, onMounted, computed} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
-import {useProjectsStore} from 'stores/projectsStore.js'
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from 'quasar'
 
@@ -72,7 +71,6 @@ const $q = useQuasar()
 
 const intentsStore = useIntentsStore()
 const dataProductsStore = useDataProductsStore()
-const projectID = useProjectsStore().currentProject.projectId
 
 const intentName = computed({ get: () => intentsStore.intentName})
 const selectedDataProdutName = computed({ get: () => intentsStore.selectedDataProdutName})
@@ -106,7 +104,7 @@ const handleSubmit = async() => {
   data.append("data_product", selectedDataProduct.name)
 
   await intentsStore.postIntent(data)
-  await intentsStore.getAllIntents(projectID, data) // Refresh the list of intents
+  await intentsStore.getAllIntents() // Refresh the list of intents
 
   //$q.loading.show({message: 'Materializing data product...'}) // Then, create the csv file from the dataProduct
   //await dataProductsStore.materializeDataProduct(projectID, selectedDataProduct.id)
@@ -141,7 +139,7 @@ const resetForm = () => {
 }
 
 onMounted(async() => {
-  await dataProductsStore.getDataProducts(projectID)
+  await dataProductsStore.getDataProducts()
   intentsStore.getProblems()
 })
 

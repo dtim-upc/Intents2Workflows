@@ -41,7 +41,6 @@
 import {onMounted, computed} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
-import {useProjectsStore} from 'stores/projectsStore.js'
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from 'quasar'
 
@@ -51,7 +50,6 @@ const $q = useQuasar()
 
 const intentsStore = useIntentsStore()
 const dataProductsStore = useDataProductsStore()
-const projectID = useProjectsStore().currentProject.projectId
 
 const intentName = computed({
   get: () => intentsStore.intentName,
@@ -112,7 +110,7 @@ const getAttributes = computed(() => {
 })
 
 onMounted(async() => {
-  await dataProductsStore.getDataProducts(projectID)
+  await dataProductsStore.getDataProducts()
   intentsStore.getProblems()
 })
 

@@ -27,7 +27,6 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import { useDataProductsStore } from "src/stores/dataProductsStore.js";
-import { useProjectsStore } from "src/stores/projectsStore.js";
 
 const props = defineProps({
   show: {type: Boolean, default: false, required: true},
@@ -35,7 +34,6 @@ const props = defineProps({
 });
 
 const dataProductsStore = useDataProductsStore()
-const projectID = useProjectsStore().currentProject.projectId
 
 // Emits to associate the show prop with the parent component
 const emit = defineEmits(["update:show"])
@@ -55,10 +53,10 @@ watch(() => props.dataProductData, (newVal) => {
   editedDataProduct.description = newVal ? newVal.datasetDescription : '';
 }, { immediate: true });
 
-const onSubmit = () => {
+/* const onSubmit = () => {
   const data = new FormData();
   data.append("dataProductName", editedDataProduct.name);
   data.append("dataProductDescription", editedDataProduct.description);
   dataProductsStore.putDataProduct(editedDataProduct.id, projectID, data, () => emit('update:show', false))
-};
+}; */
 </script>

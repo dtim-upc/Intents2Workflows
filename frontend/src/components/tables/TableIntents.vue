@@ -92,7 +92,6 @@
 import {computed, onMounted, ref} from "vue";
 import {useIntentsStore} from "src/stores/intentsStore.js";
 import {useWorkflowsStore} from "src/stores/workflowsStore.js";
-import {useProjectsStore} from "src/stores/projectsStore.js";
 import {useRouter} from "vue-router";
 import ConfirmDialog from "src/components/utils/ConfirmDialog.vue";
 import NoDataImage from "src/assets/NoDataImage.vue";
@@ -103,7 +102,6 @@ import FullScreenToggle from "./TableUtils/FullScreenToggle.vue";
 
 const intentsStore = useIntentsStore()
 const workflowsStore = useWorkflowsStore()
-const projectID = useProjectsStore().currentProject.projectId
 const router = useRouter()
 
 const visualizedPlan = ref(null)
@@ -140,7 +138,7 @@ const columns = [
 ];
 
 onMounted(async() => {
-  await intentsStore.getAllIntents(projectID)
+  await intentsStore.getAllIntents()
 })
 
 const visualizeWorkflow = (visualRepresentation) => {

@@ -64,7 +64,7 @@ export const useIntentsStore = defineStore('intents', {
       }
     },
     
-    async putIntent(intentID, projectID, data, successCallback) {
+/*     async putIntent(intentID, projectID, data, successCallback) {
       try {
         await intentsAPI.putIntent(intentID, projectID, data);
         notify.positive(`Intent successfully edited`);
@@ -74,7 +74,7 @@ export const useIntentsStore = defineStore('intents', {
         notify.negative("Error editing an intent.");
         console.error("Error:", error);
       }
-    },
+    }, */
 
     async deleteIntent(intentName) {
       try {

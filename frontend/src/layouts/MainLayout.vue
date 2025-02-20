@@ -36,11 +36,11 @@
 
           <div class="fixed-bottom">
 
-            <q-item manual-focus>
+<!--             <q-item manual-focus>
               <q-item-section avatar>
                 <q-btn class="q-mr-xs" flat round @click="authStore.setDark()" :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"/>
               </q-item-section>
-            </q-item>
+            </q-item> -->
 
             <q-item manual-focus>
               <q-item-section avatar>
@@ -63,11 +63,11 @@
 
 <script setup>
 import {ref} from "vue";
-import ODIN_short from "components/icons/ODIN_short.vue";
-import {useAuthStore} from 'stores/authStore.js'
+// import ODIN_short from "components/icons/ODIN_short.vue";
+// import {useAuthStore} from 'stores/authStore.js'
 import SideBarElement from "./SideBarElement.vue";
 const miniState = ref(false)
-const authStore = useAuthStore()
+//const authStore = useAuthStore()
 
 </script>
 

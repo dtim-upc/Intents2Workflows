@@ -24,7 +24,6 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import { useIntentsStore } from "src/stores/intentsStore.js";
-import { useProjectsStore } from "src/stores/projectsStore.js";
 
 const props = defineProps({
   show: {type: Boolean, default: false, required: true},
@@ -32,7 +31,6 @@ const props = defineProps({
 });
 
 const intentsStore = useIntentsStore();
-const projectID = useProjectsStore().currentProject.projectId
 
 // Emits to associate the show prop with the parent component
 const emit = defineEmits(["update:show"])
@@ -51,9 +49,9 @@ watch(() => props.intentData, (newVal) => {
   editedIntent.name = newVal ? newVal.intentName : '';
 }, { immediate: true });
 
-const onSubmit = () => {
+/* const onSubmit = () => {
   const data = new FormData();
   data.append("intentName", editedIntent.name);
   intentsStore.putIntent(editedIntent.id, projectID, data, () => emit('update:show', false))
-}
+} */
 </script>

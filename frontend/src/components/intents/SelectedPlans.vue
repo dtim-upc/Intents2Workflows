@@ -69,14 +69,12 @@ import {ref} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useWorkflowsStore} from 'stores/workflowsStore.js'
 import DialogWithVisualizedPlan from "../../components/intents/visualize_plan/DialogWithVisualizedPlan.vue";
-import {useProjectsStore} from "../../stores/projectsStore";
 import { useQuasar } from 'quasar'
 import {intentsApi} from 'boot/axios';
 import FileSaver from 'file-saver';
 
 const intentsStore = useIntentsStore()
 const workflowsStore = useWorkflowsStore()
-const projectID = useProjectsStore().currentProject.projectId
 const $q = useQuasar()
 
 

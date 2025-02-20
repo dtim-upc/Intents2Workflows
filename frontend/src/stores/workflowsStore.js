@@ -22,7 +22,7 @@ export const useWorkflowsStore = defineStore('store', {
       }
     },
 
-    async putWorkflow(intentID, projectID, workflowID, data, successCallback) {
+    /* async putWorkflow(intentID, projectID, workflowID, data, successCallback) {
       try {
         await workflowAPI.putWorkflow(intentID, projectID, workflowID, data);
         notify.positive(`Workflow successfully edited`);
@@ -32,7 +32,7 @@ export const useWorkflowsStore = defineStore('store', {
         notify.negative("Error editing the workflow");
         console.error("Error:", error);
       }
-    },
+    }, */
 
     async deleteWorkflow(intentName, workflowName) {
       try {
