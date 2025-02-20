@@ -154,8 +154,11 @@ def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    
+    plan_id = request.json.get('plan_id', uuid.uuid4())
+    intent_name = get_intent_name(plan_graph)
 
-    file_path = os.path.join(temporary_folder, f'{uuid.uuid4()}.ttl')
+    file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
     plan_graph.serialize(file_path, format='turtle')
 
     knime_file_path = file_path[:-4] + '.knwf'

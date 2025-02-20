@@ -34,6 +34,10 @@ def get_custom_ontology_only_problems():
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph
 
+def get_intent_name(plan_graph:Graph) -> str:
+    intent_iri = get_intent_iri(plan_graph)
+    return intent_iri.fragment
+
 def connect_algorithms(ontology, algos_list):
     impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
                    for algo in algos_list for (imp, _) in get_all_implementations(ontology, None, algo)}
