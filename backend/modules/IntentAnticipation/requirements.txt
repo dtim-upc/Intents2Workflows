@@ -5,3 +5,4 @@ llamaapi
 python-dotenv
 rdflib
 pandas
+pykeen

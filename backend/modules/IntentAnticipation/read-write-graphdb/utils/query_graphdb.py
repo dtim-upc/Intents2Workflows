@@ -10,24 +10,45 @@ import os
 from utils import save_workflow
 
 
-def load_graph():
+def load_graph(format = 'tsv'):
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
-    file_path = os.path.normpath(ontology_path)
 
-    g = Graph()
-    g.parse(file_path, format='ttl')
+    if format == 'ttl':
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
+        file_path = os.path.normpath(ontology_path)
+
+        g = Graph()
+        g.parse(file_path, format='ttl')
+
+    else:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.tsv")
+        file_path = os.path.normpath(ontology_path)
+        df = pd.read_csv(file_path, sep="\t", header=None, dtype=str)
+        data = df.values
+        g = rdflib.Graph()
+        g.addN((rdflib.URIRef(s), rdflib.URIRef(p), rdflib.URIRef(o), g) for s, p, o in data)
 
     return g
 
-def store_graph(graph):
+def store_graph(graph, format = 'tsv'):
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
-    file_path = os.path.normpath(ontology_path)
+    if format == 'ttl':
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.ttl")
+        file_path = os.path.normpath(ontology_path)
 
-    graph.serialize(destination=file_path, format='ttl')
+        graph.serialize(destination=file_path, format='ttl')
+    else:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        ontology_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "KnowledgeBase.tsv")
+        file_path = os.path.normpath(ontology_path)
+        tsv_data = []
+        for subj, pred, obj in graph:
+            tsv_data.append((subj, pred, obj))
+        df = pd.DataFrame(tsv_data)
+        df.to_csv(file_path, sep="\t", index=False, header=False)
 
 
 
