@@ -58,7 +58,7 @@ def run_abstract_planner():
     task = data.get('problem', '')
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
-    percentage = data.get('preprocessing_percentage', 50) # Default value 50%. TODO: Get percentage through exposed parameters rather than hardcoding it
+    percentage = data.get('preprocessing_percentage', 100) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
