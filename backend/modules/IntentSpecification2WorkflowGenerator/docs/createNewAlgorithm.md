@@ -17,7 +17,7 @@
 
 1. Choose one engine from [`ontology_populator/implementations/`](../ontology_populator/implementations/) or [implement a new one](./addNewEngine.md)
 2. Create a new file on: `ontology_populator/implementations/<chosen enigne>/algorithm_name.py`.
-3. In that file create, at least, one implementation and one component. You must use the component and implementation definitions specific to the engine being used. Use an existing script as a template.
+3. In that file create, at least, one implementation and one component. You must use the component and implementation definitions specific to the engine being used. Use an existing script as a template. NOTE: Split shapes must be the first one defined among all preprocessing shapes.
 4. Update `ontology_populator/implementations/<chosen enigne>/__init__.py` accordingly
 5. Modify [`ontology_populator/cbox_generator.py`](../ontology_populator/cbox_generator.py). You should update:
     * ```add_algorithms()```: Add the new algorithm referenced by the implementation and the problem it solves.
