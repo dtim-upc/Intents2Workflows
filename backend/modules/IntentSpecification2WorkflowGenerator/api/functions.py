@@ -122,8 +122,9 @@ def workflow_planner(ontology: Graph, implementations: List, intent: Graph):
                               not satisfies_shape(ontology, ontology, shape, dataset)]
 
         available_transformations = {
-            shape: find_components_to_satisfy_shape(ontology, shape, exclude_appliers=True)
+            shape: get_implementation_components(ontology,imp)
             for shape in unsatisfied_shapes
+            for imp in find_implementations_to_satisfy_shape(ontology, shape, exclude_appliers=True)
         }
 
         for transformation, methods in available_transformations.items():
