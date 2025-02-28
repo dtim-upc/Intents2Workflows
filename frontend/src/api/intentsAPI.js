@@ -63,6 +63,9 @@ export default {
   getPreprocessingAlgorithm(email, dataset, problem) {
     return intentToGraphDBAPI.get('/get_preprocessing_algorithm?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
   },
+  getRecommendation(email, dataset, problem) {
+    return intentToGraphDBAPI.get('/get_recommendations?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
+  },
   getAllInfo() {
     return intentToGraphDBAPI.get('/get_all_info')
   },

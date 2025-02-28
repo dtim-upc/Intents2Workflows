@@ -288,14 +288,16 @@ export const useIntentsStore = defineStore('intents', {
       const dataset = this.selectedDataProdutName 
       const intent = this.selectedProblem 
 
-      let response = await intentsAPI.getMetric(user, dataset, intent);
-      this.selectedMetric = response.data.metric
-      response = await intentsAPI.getAlgorithm(user, dataset, intent);
+      let response = await intentsAPI.getRecommendation(user, dataset, intent);
       this.selectedAlgorithm = response.data.algorithm
-      response = await intentsAPI.getPreprocessing(user, dataset, intent);
-      this.selectedPreprocessing = response.data.preprocessing
-      response = await intentsAPI.getPreprocessingAlgorithm(user, dataset, intent);
-      this.selectedPreprocessingAlgorithm= response.data.preprocessing_algorithm
+      // let response = await intentsAPI.getMetric(user, dataset, intent);
+      // this.selectedMetric = response.data.metric
+      // response = await intentsAPI.getAlgorithm(user, dataset, intent);
+      // this.selectedAlgorithm = response.data.algorithm
+      // response = await intentsAPI.getPreprocessing(user, dataset, intent);
+      // this.selectedPreprocessing = response.data.preprocessing
+      // response = await intentsAPI.getPreprocessingAlgorithm(user, dataset, intent);
+      // this.selectedPreprocessingAlgorithm= response.data.preprocessing_algorithm
 
       this.selectedAlgorithm = "DecisionTree"
     },

@@ -4,7 +4,7 @@ from flask_cors import CORS
 from utils.query_graphdb import get_intent, get_metric, get_preprocessing, get_algorithm, get_preprocessing_algorithm, \
     get_users, add_new_user, find_user_by_email, add_new_dataset, add_new_workflow, get_all_metrics, get_all_algorithms, \
     get_all_preprocessing_algorithms
-from utils.kge_interaction import *
+from utils.recommendations import *
 
 app = Flask(__name__)
 CORS(app)
@@ -162,17 +162,17 @@ def get_preprocessing_algorithm_route():
     user = request.args.get('user')
     dataset = request.args.get('dataset')
     intent = request.args.get('intent')
+
     if not user or not dataset or not intent:
         return jsonify({"error": "Missing user, dataset, or intent parameter"}), 400
-
     try:
         preprocessing_algorithm = get_preprocessing_algorithm(user, dataset, intent)
         return jsonify({"preprocessing_algorithm": preprocessing_algorithm}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-            
-@app.route('/get_kge_recommendations', methods=['GET'])
-def get_kge_recommendations_route():
+
+@app.route('/get_recommendations', methods=['GET'])
+def get_recommendations_route():
     user = request.args.get('user')
     dataset = request.args.get('dataset')
     intent = request.args.get('intent')
@@ -181,11 +181,10 @@ def get_kge_recommendations_route():
 
     try:
         experiment = annotate_tsv(user,intent,dataset)
-        results = kge_recommendations(experiment)
+        results = recommendations(experiment,user,intent,dataset)
         return jsonify(results), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+        return jsonify({"error": str(e)}), 500   
 
 
 @app.route('/get_users', methods=['GET'])
