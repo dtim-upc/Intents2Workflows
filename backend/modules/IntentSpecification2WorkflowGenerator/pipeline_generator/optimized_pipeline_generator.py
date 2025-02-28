@@ -58,7 +58,7 @@ def get_intent_parameters(intent_graph: Graph):
     return {param['exp_param']:param['param_val'] for param in result}
 
 
-def get_algorithms_from_task(ontology: Graph, task: URIRef) -> Tuple[URIRef, URIRef]:
+def get_algorithms_from_task(ontology: Graph, task: URIRef) -> URIRef:
 
     algorithm_task_query = f"""
     PREFIX tb: <{tb}>
@@ -77,6 +77,19 @@ def get_algorithms_from_task(ontology: Graph, task: URIRef) -> Tuple[URIRef, URI
     result = ontology.query(algorithm_task_query).bindings
     algos = [algo['algorithm'] for algo in result]
     return algos
+
+def reinforce_constraint(ontology:Graph, shape_graph:Graph, node_shape:URIRef, unconstrained_nodes:List[URIRef]):
+    constrained_nodes = []
+
+    for node in unconstrained_nodes:
+        if satisfies_shape(ontology, shape_graph, shape=node_shape, focus=node):
+            constrained_nodes.append(node)
+    
+    return constrained_nodes
+
+def get_algorithms_from_task_constrained(ontology:Graph, shape_graph:Graph, task: URIRef) -> URIRef:
+    algs_unconstr = get_algorithms_from_task(ontology, task)
+    return reinforce_constraint(ontology, shape_graph, ab.AlgorithmConstraint, algs_unconstr)
 
 
 def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
@@ -190,17 +203,15 @@ def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm:
     return implementations_with_shapes
 
 
-def get_potential_implementations(ontology: Graph, task_iri: URIRef, algorithm: URIRef = None) -> \
-        List[Tuple[URIRef, List[URIRef]]]:
+def get_potential_implementations(ontology: Graph, algorithm: URIRef) -> \
+        List[URIRef]:
     main_implementation_query = f"""
     PREFIX tb: <{tb}>
     SELECT DISTINCT ?implementation
     WHERE {{
         ?implementation a tb:Implementation ;
-            tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
+            tb:implements {algorithm.n3()} .
         ?algorithm a tb:Algorithm ;
-            tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
-        ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
         FILTER NOT EXISTS{{
             ?implementation a tb:ApplierImplementation.
         }}
@@ -209,11 +220,13 @@ def get_potential_implementations(ontology: Graph, task_iri: URIRef, algorithm: 
     results = ontology.query(main_implementation_query).bindings
     implementations = [result['implementation'] for result in results]
 
-    implementations_with_shapes = [
-        (implementation, get_implementation_input_specs(ontology, implementation))
-        for implementation in implementations]
+    return implementations
 
-    return implementations_with_shapes
+
+def get_potential_implementations_constrained(ontology:Graph, shape_graph:Graph, algorithm: URIRef) -> \
+        List[Tuple[URIRef, List[URIRef]]]:
+    pot_impl_unconstr = get_potential_implementations(ontology, algorithm)
+    return reinforce_constraint(ontology, shape_graph, ab.ImplementationConstraint, pot_impl_unconstr)
 
 
 def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
@@ -240,8 +253,12 @@ def get_implementation_components(ontology: Graph, implementation: URIRef) -> Li
     results = ontology.query(components_query).bindings
     return [result['component'] for result in results]
 
+def get_implementation_components_constrained(ontology: Graph, shape_graph: Graph, implementation: URIRef) -> List[URIRef]:
+    pot_comp_unconstr = get_implementation_components(ontology, implementation)
+    return reinforce_constraint(ontology, shape_graph, ab.ComponentConstraint, pot_comp_unconstr)
 
-def find_components_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
+
+def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
     implementation_query = f"""
         PREFIX tb: <{tb}>
         SELECT ?implementation
@@ -259,10 +276,12 @@ def find_components_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_app
     """
     result = ontology.query(implementation_query).bindings
     implementations = [x['implementation'] for x in result]
-    components = [c
-                  for implementation in implementations
-                  for c in get_implementation_components(ontology, implementation)]
-    return components
+
+    return implementations
+
+def find_implementations_to_satisfy_shape_constrained(ontology: Graph, shape_graph:Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
+    pot_impl_unconstr = find_implementations_to_satisfy_shape(ontology,shape,exclude_appliers)
+    return reinforce_constraint(ontology,shape_graph,ab.ImplementationConstraint,pot_impl_unconstr)
 
 def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
     for i, io_shapes in enumerate(ios):
@@ -364,6 +383,10 @@ def identify_visual_io(ontology: Graph, ios: List[List[URIRef]], return_index: b
 
 def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus: URIRef) -> bool:
     conforms, g, report = validate(data_graph, shacl_graph=shacl_graph, validate_shapes=[shape], focus=focus)
+
+    if not conforms:
+        tqdm.write(report)
+
     return conforms
 
 def get_shape_target_class(ontology: Graph, shape: URIRef) -> URIRef:
@@ -521,7 +544,6 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(com_col) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
-    print(parameters)
 
     return parameters
 
@@ -817,16 +839,18 @@ PREFIX dmop: <{dmop}>
             for i in range(len(outputs)):
                 query = query.replace(f'$output{i + 1}', f'{outputs[i].n3()}')
             for param_spec, (param, value, order) in parameters_specs.items():
-                tqdm.write(param_spec)
-                tqdm.write(param)
-                tqdm.write(value)
-                tqdm.write(order)
+                #tqdm.write(param_spec)
+                #tqdm.write(param)
+                #tqdm.write(value)
+                #tqdm.write(order)
                 query = query.replace(f'$param{order + 1}', f'{value.n3()}')
                 query = query.replace(f'$parameter{order + 1}', f'{value.n3()}')
+            
+            #tqdm.write("Query:")
+            #tqdm.write(str(query))
             workflow_graph.update(query)
 
-            tqdm.write("Query:")
-            tqdm.write(str(query))
+            
 
 
 def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
@@ -1196,13 +1220,28 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
 
         intent_graph.add((intent_iri, tb.specifiesValue, Literal(param_val)))
         intent_graph.add((Literal(param_val), tb.forParameter, exp_param['exp_param']))
+    
+    g = Graph()
+    #g.parse('./shapeGraph.ttl')
 
+    algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,g,task)
+    tqdm.write(str(algs))
 
-    impls = get_potential_implementations(ontology, task, algorithm)
+    
+    pot_impls = []
+    for al in algs:
+        pot_impls.extend(get_potential_implementations_constrained(ontology, g, al))
+    
+    tqdm.write(str(pot_impls))
+
+    impls_with_shapes = [
+        (implementation, get_implementation_input_specs(ontology, implementation))
+        for implementation in pot_impls]
+    
     components = [
         (c, impl, inputs)
-        for impl, inputs in impls
-        for c in get_implementation_components(ontology, impl)
+        for impl, inputs in impls_with_shapes
+        for c in get_implementation_components_constrained(ontology, g, impl)
     ]
 
 
@@ -1215,6 +1254,7 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
 
     workflow_order = 0
 
+
     for component, implementation, inputs in tqdm(components, desc='Components', position=1):
         if log:
             tqdm.write(f'Component: {component.fragment} ({implementation.fragment})')
@@ -1226,12 +1266,14 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
         unsatisfied_shapes = [shape for shape in shapes_to_satisfy if
                               not satisfies_shape(ontology, ontology, shape, dataset)]
         print(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
+
         available_transformations = {
-            shape: find_components_to_satisfy_shape(ontology, shape, exclude_appliers=True)
+            shape: get_implementation_components_constrained(ontology,g,imp)
             for shape in unsatisfied_shapes
+            for imp in find_implementations_to_satisfy_shape_constrained(ontology, g, shape, exclude_appliers=True)
+
         }
         print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
-
         for tr, methods in available_transformations.items():
 
             best_components = get_best_components(ontology, task, methods, dataset, component_threshold)
@@ -1262,7 +1304,7 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
                     f'\t\tCombination {i + 1} / {len(transformation_combinations)}: {[x.fragment for x in transformation_combination]}')
 
             workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
-
+            
             wg, w = build_general_workflow(workflow_name, ontology, dataset, component,
                                            transformation_combination, intent_graph = intent_graph)
 
@@ -1274,11 +1316,12 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
             wg.serialize(os.path.join(destination_folder, f'{workflow_name}.ttl'), format='turtle')
             workflow_order += 1
 
+
 def interactive():
     intent_graph = get_graph_xp()
     intent = input('Introduce the intent name [ClassificationIntent]: ') or 'VisualizationIntent' #or 'ClassificationIntent'
     data = input('Introduce the dataset name [titanic.csv]: ') or 'titanic.csv'
-    task = input('Introduce the task name [Classification]: ') or  'DataVisualization' #or 'Classification'
+    task = input('Introduce the task name [Classification]: ') or 'Classification'
 
 
     intent_graph.add((ab.term(intent), RDF.type, tb.Intent))
@@ -1314,4 +1357,4 @@ def interactive():
     print(f'Workflows saved in {folder}')
 
 
-# interactive()
+#interactive()

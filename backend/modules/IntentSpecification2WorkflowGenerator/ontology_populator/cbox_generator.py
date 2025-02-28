@@ -99,6 +99,7 @@ def add_algorithms(cbox):
 
     for algorithm, problem in algorithms:
         cbox.add((algorithm, RDF.type, tb.Algorithm))
+        cbox.add((algorithm, RDFS.label, Literal(algorithm.fragment)))
         cbox.add((algorithm, tb.solves, problem))
 
 

@@ -50,6 +50,7 @@ cb: a owl:Ontology ;
     rdfs:label "ExtremeXP Ontology CBox" .
 
 cb:DBSCAN a tb:Algorithm ;
+    rdfs:label "DBSCAN" ;
     tb:solves cb:Clustering .
 
 cb:DecisionTreeModelShape a sh:NodeShape,
@@ -57,6 +58,7 @@ cb:DecisionTreeModelShape a sh:NodeShape,
     sh:targetClass cb:DecisionTreeModel .
 
 cb:DuplicateRemoval a tb:Algorithm ;
+    rdfs:label "DuplicateRemoval" ;
     tb:solves cb:DuplicationRemoval .
 
 cb:Explanation a tb:Task .
@@ -67,6 +69,7 @@ cb:FloatTabularDatasetShape a sh:NodeShape ;
     sh:targetClass dmop:TabularDataset .
 
 cb:HierarchicalClustering a tb:Algorithm ;
+    rdfs:label "HierarchicalClustering" ;
     tb:solves cb:Clustering .
 
 cb:IntegerTabularDatasetShape a sh:NodeShape ;
@@ -75,15 +78,19 @@ cb:IntegerTabularDatasetShape a sh:NodeShape ;
     sh:targetClass dmop:TabularDataset .
 
 cb:IsolationForest a tb:Algorithm ;
+    rdfs:label "IsolationForest" ;
     tb:solves cb:AnomalyDetection .
 
 cb:KMeans a tb:Algorithm ;
+    rdfs:label "KMeans" ;
     tb:solves cb:Clustering .
 
 cb:KNN a tb:Algorithm ;
+    rdfs:label "KNN" ;
     tb:solves cb:Classification .
 
 cb:KNNImputation a tb:Algorithm ;
+    rdfs:label "KNNImputation" ;
     tb:solves cb:MissingValueManagement .
 
 cb:LabelColumnShape a sh:NodeShape ;
@@ -91,18 +98,23 @@ cb:LabelColumnShape a sh:NodeShape ;
     sh:targetClass dmop:Column .
 
 cb:LabelExtraction a tb:Algorithm ;
+    rdfs:label "LabelExtraction" ;
     tb:solves cb:DataManagement .
 
 cb:LocalOutlierFactor a tb:Algorithm ;
+    rdfs:label "LocalOutlierFactor" ;
     tb:solves cb:AnomalyDetection .
 
 cb:MeanImputation a tb:Algorithm ;
+    rdfs:label "MeanImputation" ;
     tb:solves cb:MissingValueManagement .
 
 cb:MedianImputation a tb:Algorithm ;
+    rdfs:label "MedianImputation" ;
     tb:solves cb:MissingValueManagement .
 
 cb:MinMaxScaling a tb:Algorithm ;
+    rdfs:label "MinMaxScaling" ;
     tb:solves cb:Normalization .
 
 cb:MissingValueModelShape a sh:NodeShape,
@@ -110,9 +122,11 @@ cb:MissingValueModelShape a sh:NodeShape,
     sh:targetClass cb:MissingValueModel .
 
 cb:ModeImputation a tb:Algorithm ;
+    rdfs:label "ModeImputation" ;
     tb:solves cb:MissingValueManagement .
 
 cb:NaiveBayes a tb:Algorithm ;
+    rdfs:label "NaiveBayes" ;
     tb:solves cb:Classification .
 
 cb:NonNullNumericFeatureTabularDatasetShape a sh:NodeShape ;
@@ -130,14 +144,17 @@ cb:NumericTabularDatasetShape a sh:NodeShape ;
     sh:targetClass dmop:TabularDataset .
 
 cb:OneClassSVM a tb:Algorithm ;
+    rdfs:label "OneClassSVM" ;
     tb:solves cb:AnomalyDetection .
 
 cb:Prediction a tb:Task .
 
 cb:RandomForest a tb:Algorithm ;
+    rdfs:label "RandomForest" ;
     tb:solves cb:Classification .
 
 cb:RobustNormalization a tb:Algorithm ;
+    rdfs:label "RobustNormalization" ;
     tb:solves cb:Normalization .
 
 cb:SVMModelShape a sh:NodeShape,
@@ -145,6 +162,7 @@ cb:SVMModelShape a sh:NodeShape,
     sh:targetClass cb:SVMModel .
 
 cb:ZScoreScaling a tb:Algorithm ;
+    rdfs:label "ZScoreScaling" ;
     tb:solves cb:Normalization .
 
 cb:component-bar_chart_average_component a tb:VisualizerComponent ;
@@ -462,6 +480,7 @@ dmop:isTestDataset rdfs:subPropertyOf dmop:DatasetInfoProperty .
 dmop:isTrainDataset rdfs:subPropertyOf dmop:DatasetInfoProperty .
 
 cb:BarChart a tb:Algorithm ;
+    rdfs:label "BarChart" ;
     tb:solves cb:DataVisualization .
 
 cb:BarChartVisualization rdfs:subClassOf cb:Visualization .
@@ -482,6 +501,7 @@ cb:FeatureColumnShape a sh:NodeShape ;
     sh:targetClass dmop:Column .
 
 cb:HeatMap a tb:Algorithm ;
+    rdfs:label "HeatMap" ;
     tb:solves cb:DataVisualization .
 
 cb:HeatMapVisualization rdfs:subClassOf cb:Visualization .
@@ -491,6 +511,7 @@ cb:HeatMapVisualizationShape a sh:NodeShape,
     sh:targetClass cb:HeatMapVisualization .
 
 cb:Histogram a tb:Algorithm ;
+    rdfs:label "Histogram" ;
     tb:solves cb:DataVisualization .
 
 cb:HistogramVisualization rdfs:subClassOf cb:Visualization .
@@ -504,6 +525,7 @@ cb:LabelColumnProperty sh:datatype xsd:boolean ;
     sh:path dmop:isLabel .
 
 cb:LinePlot a tb:Algorithm ;
+    rdfs:label "LinePlot" ;
     tb:solves cb:DataVisualization .
 
 cb:LinePlotVisualization rdfs:subClassOf cb:Visualization .
@@ -543,9 +565,11 @@ cb:NumericColumnShape a sh:NodeShape ;
     sh:targetClass dmop:Column .
 
 cb:Partitioning a tb:Algorithm ;
+    rdfs:label "Partitioning" ;
     tb:solves cb:DataManagement .
 
 cb:PieChart a tb:Algorithm ;
+    rdfs:label "PieChart" ;
     tb:solves cb:DataVisualization .
 
 cb:PieChartVisualization rdfs:subClassOf cb:Visualization .
@@ -555,6 +579,7 @@ cb:PieChartVisualizationShape a sh:NodeShape,
     sh:targetClass cb:PieChartVisualization .
 
 cb:ScatterPlot a tb:Algorithm ;
+    rdfs:label "ScatterPlot" ;
     tb:solves cb:DataVisualization .
 
 cb:ScatterPlotVisualization rdfs:subClassOf cb:Visualization .
@@ -563,29 +588,29 @@ cb:ScatterPlotVisualizationShape a sh:NodeShape,
         tb:DataSpec ;
     sh:targetClass cb:ScatterPlotVisualization .
 
-cb:Shape_0d823a6d-e9d6-4432-8790-c89bad4255dd a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:TestTabularDatasetShape cb:NormalizedTabularDatasetShape cb:NonNullTabularDatasetShape ) .
-
-cb:Shape_5ce65e67-fb6e-41fd-a0f0-f3a8adb19319 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
-
-cb:Shape_7ec2f511-a9c9-430e-ab56-7731e56c6b81 a sh:NodeShape,
+cb:Shape_1abb20cc-68d4-4e19-bc2a-6c97cc789cc2 a sh:NodeShape,
         tb:DataTag ;
     sh:and ( cb:NonNullTabularDatasetShape cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
 
-cb:Shape_89b1d7a9-1f68-4e1d-9b43-5e51e733538d a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:LabeledTabularDatasetShape cb:TrainTabularDatasetShape ) .
-
-cb:Shape_b0ca344e-6a8e-4c19-a61d-0c4004551c6c a sh:NodeShape,
+cb:Shape_29f89c53-9c95-41ed-bcd4-146046bbb44e a sh:NodeShape,
         tb:DataTag ;
     sh:and ( cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
 
-cb:Shape_fba6e40c-5d2a-47f8-914f-19b370fc12ff a sh:NodeShape,
+cb:Shape_52ef214f-b43f-4350-a6f0-397551b257a0 a sh:NodeShape,
+        tb:DataTag ;
+    sh:and ( cb:LabeledTabularDatasetShape cb:TrainTabularDatasetShape ) .
+
+cb:Shape_56a2304c-7d27-4854-bcaf-577763a35153 a sh:NodeShape,
         tb:DataTag ;
     sh:and ( cb:LabeledTabularDatasetShape cb:TrainTabularDatasetShape cb:NonNullTabularDatasetShape cb:NormalizedTabularDatasetShape ) .
+
+cb:Shape_ce9bec26-7f92-48a8-8f4f-36d2799ef095 a sh:NodeShape,
+        tb:DataTag ;
+    sh:and ( cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
+
+cb:Shape_fa8594a6-0d5c-4544-b65b-684d5fd5c731 a sh:NodeShape,
+        tb:DataTag ;
+    sh:and ( cb:TestTabularDatasetShape cb:NormalizedTabularDatasetShape cb:NonNullTabularDatasetShape ) .
 
 cb:component-decimal_scaling a tb:LearnerComponent ;
     rdfs:label "Decimal Scaling" ;
@@ -670,12 +695,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -763,7 +788,7 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
@@ -771,7 +796,7 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -850,13 +875,13 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
@@ -3511,7 +3536,7 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_7ec2f511-a9c9-430e-ab56-7731e56c6b81 ;
+            tb:hasDatatag cb:Shape_1abb20cc-68d4-4e19-bc2a-6c97cc789cc2 ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:TabularDataset ;
@@ -5627,7 +5652,7 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Line Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_b0ca344e-6a8e-4c19-a61d-0c4004551c6c ;
+            tb:hasDatatag cb:Shape_29f89c53-9c95-41ed-bcd4-146046bbb44e ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:TabularDataset ;
@@ -6557,11 +6582,11 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:MissingValueModel ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
             tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasDatatag cb:MissingValueModel ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:NonNullTabularDatasetShape ;
             tb:has_position 0 ] .
@@ -7732,7 +7757,7 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Scatter Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_5ce65e67-fb6e-41fd-a0f0-f3a8adb19319 ;
+            tb:hasDatatag cb:Shape_ce9bec26-7f92-48a8-8f4f-36d2799ef095 ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:ScatterPlotVisualizationShape ;
@@ -8707,6 +8732,7 @@ ab:writer_location_flag_true_specification a tb:ParameterSpecification ;
 cb:DataManagement a tb:Task .
 
 cb:DecisionTree a tb:Algorithm ;
+    rdfs:label "DecisionTree" ;
     tb:solves cb:Classification .
 
 cb:LabeledTabularDatasetShape a sh:NodeShape ;
@@ -8718,6 +8744,7 @@ cb:LabeledTabularDatasetShape a sh:NodeShape ;
     sh:targetClass dmop:TabularDataset .
 
 cb:MissingValueRemoval a tb:Algorithm ;
+    rdfs:label "MissingValueRemoval" ;
     tb:solves cb:MissingValueManagement .
 
 cb:NonNullColumnProperty sh:datatype xsd:boolean ;
@@ -8740,6 +8767,7 @@ cb:OutlieredDatasetShape a sh:NodeShape,
     tb:has_weight 1 .
 
 cb:SVM a tb:Algorithm ;
+    rdfs:label "SVM" ;
     tb:solves cb:Classification .
 
 cb:component-missing_value_management_applier a tb:ApplierComponent ;
@@ -8917,7 +8945,7 @@ cb:implementation-decision_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Decision Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_89b1d7a9-1f68-4e1d-9b43-5e51e733538d ;
+            tb:hasDatatag cb:Shape_52ef214f-b43f-4350-a6f0-397551b257a0 ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:DecisionTreeModel ;
@@ -8954,11 +8982,11 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
             tb:hasDatatag cb:DecisionTreeModel ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasDatatag cb:TestTabularDatasetShape ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:TabularDatasetShape ;
             tb:has_position 0 ] .
@@ -9028,11 +9056,11 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:hasDatatag cb:TabularDataset ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:NonNullTabularDatasetShape ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
             tb:hasDatatag cb:MissingValueModel ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasDatatag cb:NonNullTabularDatasetShape ;
+            tb:has_position 0 ] .
 
 cb:implementation-normalizer_\(pmml\)-new_maximum a tb:Parameter ;
     rdfs:label "New maximum" ;
@@ -9070,11 +9098,11 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
             tb:hasDatatag cb:NormalizerModel ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasDatatag cb:TestTabularDatasetShape ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:NormalizerModel ;
             tb:has_position 0 ],
@@ -9125,7 +9153,7 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
             tb:hasDatatag cb:SVMModel ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_0d823a6d-e9d6-4432-8790-c89bad4255dd ;
+            tb:hasDatatag cb:Shape_fa8594a6-0d5c-4544-b65b-684d5fd5c731 ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:TabularDatasetShape ;
@@ -9858,7 +9886,7 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_fba6e40c-5d2a-47f8-914f-19b370fc12ff ;
+            tb:hasDatatag cb:Shape_56a2304c-7d27-4854-bcaf-577763a35153 ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasDatatag cb:SVMModel ;
