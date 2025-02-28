@@ -1,0 +1,3 @@
+http://localhost/7200/intentOntology#testuser	http://localhost/7200/intentOntology#specifies	http://localhost/7200/intentOntology#testuserClassificationiris.csv1740743877
+http://localhost/7200/intentOntology#testuserClassificationiris.csv1740743877	http://localhost/7200/intentOntology#hasIntent	http://localhost/7200/intentOntology#Classification
+http://localhost/7200/intentOntology#testuserClassificationiris.csv1740743877	http://localhost/7200/intentOntology#hasDataset	http://localhost/7200/intentOntology#iris.csv
