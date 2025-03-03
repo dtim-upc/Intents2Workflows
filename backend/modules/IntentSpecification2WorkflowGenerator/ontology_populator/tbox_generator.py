@@ -147,6 +147,7 @@ def add_properties(ontology: Graph):
         (tb.hasFeedback, tb.Workflow, tb.UserFeedback),
         (dolce.hasQuality, tb.Workflow, tb.WorkflowCharacterisitics),
         (tb.hasStep, tb.Workflow, tb.Step),
+        (tb.hasComponent, tb.Workflow, tb.Component),
         # Workflow Characteristics
         ### TO BE DEFINED
         # Model Evaluatoin

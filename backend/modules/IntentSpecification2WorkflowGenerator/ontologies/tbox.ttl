@@ -118,6 +118,10 @@ tb:hasApplier a owl:ObjectProperty ;
     rdfs:range tb:ApplierComponent,
         tb:ApplierImplementation .
 
+tb:hasComponent a owl:ObjectProperty ;
+    rdfs:domain tb:Workflow ;
+    rdfs:range tb:Component .
+
 tb:hasConstraint a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
     rdfs:range tb:Constraint .
@@ -369,9 +373,9 @@ tb:Implementation a owl:Class .
 
 tb:Step a owl:Class .
 
-tb:Component a owl:Class .
-
 tb:Intent a owl:Class .
 
 tb:Parameter a owl:Class .
+
+tb:Component a owl:Class .
 

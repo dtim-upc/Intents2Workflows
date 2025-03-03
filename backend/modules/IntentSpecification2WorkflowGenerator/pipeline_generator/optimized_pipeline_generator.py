@@ -384,8 +384,8 @@ def identify_visual_io(ontology: Graph, ios: List[List[URIRef]], return_index: b
 def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus: URIRef) -> bool:
     conforms, g, report = validate(data_graph, shacl_graph=shacl_graph, validate_shapes=[shape], focus=focus)
 
-    if not conforms:
-        tqdm.write(report)
+    #if not conforms:
+    #    tqdm.write(report)
 
     return conforms
 
@@ -802,7 +802,7 @@ def run_copy_transformation(ontology: Graph, workflow_graph: Graph, transformati
                             outputs: List[URIRef]):
     input_index = next(ontology.objects(transformation, tb.copy_input, True)).value
     output_index = next(ontology.objects(transformation, tb.copy_output, True)).value
-    tqdm.write(f"Copy transformation: i:{str(input_index)} o:{str(output_index)}")
+    #tqdm.write(f"Copy transformation: i:{str(input_index)} o:{str(output_index)}")
     input = inputs[input_index - 1]
     output = outputs[output_index - 1]
 
@@ -813,14 +813,14 @@ def run_component_transformation(ontology: Graph, workflow_graph: Graph, compone
                                  outputs: List[URIRef],
                                  parameters_specs: Dict[URIRef, Tuple[URIRef, Literal, Literal]]) -> None:
     transformations = get_component_transformations(ontology, component)
-    tqdm.write("run_component_transformation")
+    #tqdm.write("run_component_transformation")
     
     for transformation in transformations:
-        tqdm.write(str(transformation))
+        #tqdm.write(str(transformation))
         if (transformation, RDF.type, tb.CopyTransformation) in ontology:
             run_copy_transformation(ontology, workflow_graph, transformation, inputs, outputs)
         elif (transformation, RDF.type, tb.LoaderTransformation) in ontology:
-            tqdm.write("loader_transformation")
+            #tqdm.write("loader_transformation")
             continue
         else:
             prefixes = f'''
@@ -907,6 +907,28 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
 
     return sorted_components
 
+
+def prune_workflow_combinations(ontology:Graph, shape_graph:Graph, combinations: List[Tuple[int,URIRef]], main_component:URIRef) -> List[Tuple[int,URIRef]]:
+        
+        temporal_graph = ontology #WARNING: temporal_graph is just an alias. Ontology is modified.
+        combinations_constrained = []
+        for i, tc in combinations:
+            workflow_name = f'workflow_{main_component.fragment}_{i}'
+            workflow = tb.term(workflow_name)
+            temporal_graph.add((workflow, RDF.type, tb.Workflow))
+            
+            triples_to_add = []
+            triples_to_add.append((workflow, tb.hasComponent, main_component, temporal_graph))
+
+            for component in tc:
+                triples_to_add.append((workflow, tb.hasComponent, component, temporal_graph))  
+            
+            temporal_graph.addN(triples_to_add)
+
+            if satisfies_shape(temporal_graph, shape_graph, shape=ab.WorkflowConstraint, focus=workflow):
+                combinations_constrained.append(tc)
+        return list(enumerate(combinations_constrained))
+
     
 
 
@@ -953,12 +975,12 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
 
     for train_component in [*transformations, main_component]:
-        tqdm.write("components")
-        tqdm.write(train_component)
+        #tqdm.write("components")
+        #tqdm.write(train_component)
     
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
-        if not test_component is None:
-            tqdm.write(test_component)
+        #if not test_component is None:
+        #    tqdm.write(test_component)
         same = train_component == test_component
         train_component_implementation = get_component_implementation(ontology, train_component)
 
@@ -972,27 +994,27 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             singular_input_data_index = identify_data_io(ontology, singular_input_specs, return_index=True)
             singular_transformation_inputs = None
 
-            tqdm.write("Sepecs singular input:")
-            tqdm.write(str(singular_input_specs))
+            #tqdm.write("Sepecs singular input:")
+            #tqdm.write(str(singular_input_specs))
 
             if singular_input_data_index is not None:
                 singular_transformation_inputs = [ab[f'{singular_step_name}-input_{i}'] for i in range(len(singular_input_specs))]
                 singular_transformation_inputs[singular_input_data_index] = previous_node
-                tqdm.write(str(singular_transformation_inputs))
+                #tqdm.write(str(singular_transformation_inputs))
                 annotate_ios_with_specs(ontology, workflow_graph, singular_transformation_inputs,
                                         singular_input_specs)
             
-            tqdm.write("Singular output:")
+            #tqdm.write("Singular output:")
             singular_output_specs = get_implementation_output_specs(ontology, singular_component_implementation)
             singular_transformation_outputs = [ab[f'{singular_step_name}-output_{i}'] for i in range(len(singular_output_specs))]
             annotate_ios_with_specs(ontology, workflow_graph, singular_transformation_outputs,
                                 singular_output_specs)
             
-            tqdm.write("Sepecs singular output:")
-            tqdm.write(str(singular_output_specs))
-            tqdm.write(str(singular_transformation_outputs))
+            #tqdm.write("Sepecs singular output:")
+            #tqdm.write(str(singular_output_specs))
+            #tqdm.write(str(singular_transformation_outputs))
 
-            tqdm.write("parameters:")
+            #tqdm.write("parameters:")
             
             singular_parameters = get_component_parameters(ontology, singular_component)
 
@@ -1047,9 +1069,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             annotate_ios_with_specs(ontology, workflow_graph, train_transformation_inputs,
                                     train_input_specs)
 
-            tqdm.write("Sepecs train input:")
-            tqdm.write(str(train_transformation_inputs))
-            tqdm.write(str(train_input_specs))
+            #tqdm.write("Sepecs train input:")
+            #tqdm.write(str(train_transformation_inputs))
+            #tqdm.write(str(train_input_specs))
             train_output_specs = get_implementation_output_specs(ontology, train_component_implementation)
             train_output_model_index = identify_model_io(ontology, train_output_specs, return_index=True)
             train_output_data_index = identify_data_io(ontology, train_output_specs, return_index=True)
@@ -1057,11 +1079,11 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             annotate_ios_with_specs(ontology, workflow_graph, train_transformation_outputs,
                                     train_output_specs)
             
-            tqdm.write("Sepecs train output:")
-            tqdm.write(str(train_transformation_outputs))
-            tqdm.write(str(train_output_specs))
+            #tqdm.write("Sepecs train output:")
+            #tqdm.write(str(train_transformation_outputs))
+            #tqdm.write(str(train_output_specs))
 
-            tqdm.write("parameters:")
+            #tqdm.write("parameters:")
 
             train_parameters = get_component_parameters(ontology, train_component)
             train_parameters = perform_param_substitution(graph=workflow_graph, implementation=train_component_implementation,
@@ -1095,7 +1117,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
             if test_dataset_node is not None:
 
-                tqdm.write("test dataset node")
+                #tqdm.write("test dataset node")
 
                 test_step_name = get_step_name(workflow_name, task_order, test_component)
 
@@ -1110,9 +1132,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 annotate_ios_with_specs(ontology, workflow_graph, test_transformation_inputs,
                                         test_input_specs)
                 
-                tqdm.write("Sepecs test input:")
-                tqdm.write(str(test_transformation_inputs))
-                tqdm.write(str(test_input_specs))
+                #tqdm.write("Sepecs test input:")
+                #tqdm.write(str(test_transformation_inputs))
+                #tqdm.write(str(test_input_specs))
                 
                 test_implementation = get_component_implementation(ontology, test_component)
                 test_output_specs = get_implementation_output_specs(ontology, test_implementation)
@@ -1121,11 +1143,11 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 annotate_ios_with_specs(ontology, workflow_graph, test_transformation_outputs,
                                         test_output_specs)
                 
-                tqdm.write("Sepecs test output:")
-                tqdm.write(str(test_transformation_outputs))
-                tqdm.write(str(test_output_specs))
+                #tqdm.write("Sepecs test output:")
+                #tqdm.write(str(test_transformation_outputs))
+                #tqdm.write(str(test_output_specs))
 
-                tqdm.write("parameters:")
+                #tqdm.write("parameters:")
 
                 previous_test_steps = [previous_test_step, train_step] if not same else [previous_test_step]
                 test_parameters = get_component_parameters(ontology, test_component)
@@ -1157,7 +1179,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             
     
     if test_dataset_node is not None:
-        tqdm.write("saver state")
+        #tqdm.write("saver state")
         saver_component = cb.term('component-csv_local_writer')
         saver_step_name = get_step_name(workflow_name, task_order, saver_component)
         saver_parameters = get_component_parameters(ontology, saver_component)
@@ -1291,17 +1313,18 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
 
         transformation_combinations = list(
             enumerate(itertools.product(*available_transformations.values())))
-            
-        # TODO - check if the combination is valid and whether further transformations are needed
+
+        transformation_combinations_constrained = prune_workflow_combinations(ontology, g, transformation_combinations,component)
+        #ontology.serialize('./tmp.ttl',format="turtle")
 
         if log:
-            tqdm.write(f'\tTotal combinations: {len(transformation_combinations)}')
+            tqdm.write(f'\tTotal combinations: {len(transformation_combinations_constrained)}')
 
-        for i, transformation_combination in tqdm(transformation_combinations, desc='Transformations', position=0,
+        for i, transformation_combination in tqdm(transformation_combinations_constrained, desc='Transformations', position=0,
                                                   leave=False):
             if log:
                 tqdm.write(
-                    f'\t\tCombination {i + 1} / {len(transformation_combinations)}: {[x.fragment for x in transformation_combination]}')
+                    f'\t\tCombination {i + 1} / {len(transformation_combinations_constrained)}: {[x.fragment for x in transformation_combination]}')
 
             workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
             
