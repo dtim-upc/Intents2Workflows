@@ -71,28 +71,39 @@ def connect_algorithms(ontology, algos_list):
 
 
 
-def abstract_planner(ontology: Graph, intent: Graph) -> Tuple[
+def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tuple[
     Dict[Node, Dict[Node, List[Node]]], Dict[Node, List[Node]]]:
 
     dataset, task, algorithm, intent_iri = get_intent_info(intent)
 
-    algs = [algorithm] if algorithm is not None else get_algorithms_from_task(ontology, task)
+    algs = [algorithm] if algorithm is not None else get_algorithms_from_task_constrained(ontology, shape_graph, task)
 
-    impls = get_potential_implementations(ontology, task, algorithm)
+    print(algs)
+
+    impls = []
+    for al in algs:
+        print(get_potential_implementations_constrained(ontology, shape_graph, al))
+        impls.append(get_potential_implementations_constrained(ontology, shape_graph, al))
+    
+    print(impls)
 
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}
+    available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
     for impl in impls:
-        alg = next(ontology.objects(impl[0], tb.implements)), 
-        (impl[0], RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl[0], RDF.type))
+        if len(impl) > 0:
+            alg = next(ontology.objects(impl[0], tb.implements)), 
+            (impl[0], RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl[0], RDF.type))
 
-        algs_shapes[alg[0]] = impl[1::][0][0]
+            algs_shapes[alg[0]] = get_implementation_input_specs(ontology, impl[0])[0] #assuming data shapes is on input 0
 
-        alg_plans[alg[0]].append(impl)
+            alg_plans[alg[0]].extend(impl)
+
+            available_algs.append(alg[0])
     
     plans = {}
     #print(algs_shapes)
-    for alg in algs:
+    for alg in available_algs:
         if cb.TrainTabularDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms(ontology, [cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         else:
@@ -101,15 +112,23 @@ def abstract_planner(ontology: Graph, intent: Graph) -> Tuple[
     return plans, alg_plans
     
 
-def workflow_planner(ontology: Graph, implementations: List, intent: Graph):
+def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
     dataset, task, algorithm, intent_iri = get_intent_info(intent)
 
     component_threshold = next(intent.objects(intent_iri, tb.has_component_threshold), None)
+
+    print(implementations)
+
+    impls_with_shapes = [
+        (implementation, get_implementation_input_specs(ontology, implementation))
+        for implementation in implementations]
+
     components = [
         (c, impl, inputs)
-        for impl, inputs in implementations
-        for c in get_implementation_components(ontology, impl)
+        for impl, inputs in impls_with_shapes
+        for c in get_implementation_components_constrained(ontology, shape_graph, impl)
     ]
+
     workflow_order = 0
 
     workflows = []
@@ -122,9 +141,9 @@ def workflow_planner(ontology: Graph, implementations: List, intent: Graph):
                               not satisfies_shape(ontology, ontology, shape, dataset)]
 
         available_transformations = {
-            shape: get_implementation_components(ontology,imp)
+            shape: get_implementation_components_constrained(ontology, shape_graph, imp)
             for shape in unsatisfied_shapes
-            for imp in find_implementations_to_satisfy_shape(ontology, shape, exclude_appliers=True)
+            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True)
         }
 
         for transformation, methods in available_transformations.items():
@@ -135,9 +154,11 @@ def workflow_planner(ontology: Graph, implementations: List, intent: Graph):
 
         transformation_combinations = list(
             enumerate(itertools.product(*available_transformations.values())))
-        # TODO - check if the combination is valid and whether further transformations are needed
+        
 
-        for i, transformation_combination in tqdm(transformation_combinations, desc='Transformations', position=0,
+        transformation_combinations_constrained = prune_workflow_combinations(ontology, shape_graph, transformation_combinations,component)
+
+        for i, transformation_combination in tqdm(transformation_combinations_constrained, desc='Transformations', position=0,
                                                   leave=False):
             workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
             wg, w = build_general_workflow(workflow_name, ontology, dataset, component,

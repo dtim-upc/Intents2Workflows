@@ -60,6 +60,8 @@ def run_abstract_planner():
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
     percentage = data.get('preprocessing_percentage', 100) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
+    #shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
     intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
@@ -77,7 +79,7 @@ def run_abstract_planner():
 
     intent = intent_graph
 
-    abstract_plans, algorithm_implementations = abstract_planner(ontology, intent)
+    abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
         "algorithm_implementations": algorithm_implementations}
@@ -98,6 +100,8 @@ def run_logical_planner():
     intent_json = request.json.get('intent_graph', '')
     algorithm_implementations = request.json.get('algorithm_implementations', '')
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
+    #shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 
     # The algorithms come from the frontend in String format. We need to change them back to URIRefs
     algorithm_implementations_uris = convert_strings_to_uris(algorithm_implementations)
@@ -107,8 +111,9 @@ def run_logical_planner():
     impls = [impl
              for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
              for impl in impls]
+    print(algorithm_implementations_uris)
 
-    workflow_plans = workflow_planner(ontology, impls, intent)
+    workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
 
     ########### ORIGINAL CODE
     # logical_plans = logical_planner(ontology, workflow_plans)

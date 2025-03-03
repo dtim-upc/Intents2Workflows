@@ -1200,7 +1200,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
 
 
-def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: str, log: bool = False) -> None:
+def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destination_folder: str, log: bool = False) -> None:
     
     dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
 
@@ -1242,17 +1242,14 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
 
         intent_graph.add((intent_iri, tb.specifiesValue, Literal(param_val)))
         intent_graph.add((Literal(param_val), tb.forParameter, exp_param['exp_param']))
-    
-    g = Graph()
-    #g.parse('./shapeGraph.ttl')
 
-    algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,g,task)
+    algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,shape_graph,task)
     tqdm.write(str(algs))
 
     
     pot_impls = []
     for al in algs:
-        pot_impls.extend(get_potential_implementations_constrained(ontology, g, al))
+        pot_impls.extend(get_potential_implementations_constrained(ontology, shape_graph, al))
     
     tqdm.write(str(pot_impls))
 
@@ -1263,7 +1260,7 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
     components = [
         (c, impl, inputs)
         for impl, inputs in impls_with_shapes
-        for c in get_implementation_components_constrained(ontology, g, impl)
+        for c in get_implementation_components_constrained(ontology, shape_graph, impl)
     ]
 
 
@@ -1290,9 +1287,9 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
         print(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
 
         available_transformations = {
-            shape: get_implementation_components_constrained(ontology,g,imp)
+            shape: get_implementation_components_constrained(ontology,shape_graph,imp)
             for shape in unsatisfied_shapes
-            for imp in find_implementations_to_satisfy_shape_constrained(ontology, g, shape, exclude_appliers=True)
+            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True)
 
         }
         print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
@@ -1314,7 +1311,7 @@ def build_workflows(ontology: Graph, intent_graph: Graph, destination_folder: st
         transformation_combinations = list(
             enumerate(itertools.product(*available_transformations.values())))
 
-        transformation_combinations_constrained = prune_workflow_combinations(ontology, g, transformation_combinations,component)
+        transformation_combinations_constrained = prune_workflow_combinations(ontology, shape_graph, transformation_combinations,component)
         #ontology.serialize('./tmp.ttl',format="turtle")
 
         if log:
@@ -1372,8 +1369,9 @@ def interactive():
         tqdm.write('Directory does not exist, creating it')
         os.makedirs(folder)
 
+    shape_graph = Graph()
     t = time.time()
-    build_workflows(ontology, intent_graph, folder, log=True)
+    build_workflows(ontology, shape_graph, intent_graph, folder, log=True)
     t = time.time() - t
 
     print(f'Workflows built in {t} seconds')
