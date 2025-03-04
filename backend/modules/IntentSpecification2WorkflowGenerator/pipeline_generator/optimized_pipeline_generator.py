@@ -128,82 +128,77 @@ def get_intent_info(intent_graph: Graph, intent_iri: Optional[URIRef] = None) ->
 def get_implementation_input_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
     input_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?shape
+        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
             {implementation.n3()} tb:specifiesInput ?spec .
             ?spec a tb:DataSpec ;
-                tb:hasDatatag ?shape ;
+                tb:hasSpecTag ?sptg ;
                 tb:has_position ?position .
-            ?shape a tb:DataTag .
+            ?sptg tb:hasDatatag ?shape . 
         }}
+		GROUP BY ?spec
         ORDER BY ?position
-    """
+    """ #TODO check shap type datatag
+
     results = ontology.query(input_spec_query).bindings
-    shapes = [flatten_shape(ontology, result['shape']) for result in results]
+
+    if results == [{}]:
+        return []
+    shapes = [unpack_shapes(result['shapes']) for result in results]
     return shapes
 
 
 def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
     output_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?shape
+        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
             {implementation.n3()} tb:specifiesOutput ?spec .
             ?spec a tb:DataSpec ;
-                tb:hasDatatag ?shape ;
+                tb:hasSpecTag ?sptg ;
                 tb:has_position ?position .
-            ?shape a tb:DataTag .
+            ?sptg tb:hasDatatag ?shape . 
         }}
+		GROUP BY ?spec
         ORDER BY ?position
-    """
+    """ #TODO check shap type datatagER BY ?position
+
     results = ontology.query(output_spec_query).bindings
-    shapes = [flatten_shape(ontology, result['shape']) for result in results]
+    if results == [{}]:
+        return []
+    shapes = [unpack_shapes(result['shapes']) for result in results]
     return shapes
 
-
-def flatten_shape(graph: Graph, shape: URIRef) -> List[URIRef]:
-    if (shape, SH['and'], None) in graph:
-        subshapes_query = f"""
-            PREFIX sh: <{SH}>
-            PREFIX rdf: <{RDF}>
-
-            SELECT ?subshape
-            WHERE {{
-                {shape.n3()} sh:and ?andNode .
-                ?andNode rdf:rest*/rdf:first ?subshape .
-            }}
-        """
-        subshapes = graph.query(subshapes_query).bindings
-
-        return [x for subshape in subshapes for x in flatten_shape(graph, subshape['subshape'])]
-    else:
-        return [shape]
+def unpack_shapes(shapes:str) -> List[URIRef]:
+    spec_shapes = shapes.split(',')
+    spec_shapes_uris = [URIRef(s) for s in spec_shapes]
+    return spec_shapes_uris
 
 
-def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm: URIRef = None) -> \
-        List[Tuple[URIRef, List[URIRef]]]:
-    main_implementation_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT DISTINCT ?implementation
-    WHERE {{
-        ?implementation a tb:Implementation ;
-            tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
-        ?algorithm a tb:Algorithm ;
-            tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
-        ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
-    }}
-"""
-    results = ontology.query(main_implementation_query).bindings
-    implementations = [result['implementation'] for result in results]
+# def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm: URIRef = None) -> \
+#         List[Tuple[URIRef, List[URIRef]]]:
+#     main_implementation_query = f"""
+#     PREFIX tb: <{tb}>
+#     SELECT DISTINCT ?implementation
+#     WHERE {{
+#         ?implementation a tb:Implementation ;
+#             tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
+#         ?algorithm a tb:Algorithm ;
+#             tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
+#         ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
+#     }}
+# """
+#     results = ontology.query(main_implementation_query).bindings
+#     implementations = [result['implementation'] for result in results]
 
-    implementations_with_shapes = [
-        (implementation, get_implementation_input_specs(ontology, implementation))
-        for implementation in implementations]
+#     implementations_with_shapes = [
+#         (implementation, get_implementation_input_specs(ontology, implementation))
+#         for implementation in implementations]
 
-    return implementations_with_shapes
+#     return implementations_with_shapes
 
 
-def get_potential_implementations(ontology: Graph, algorithm: URIRef) -> \
+def get_potential_implementations(ontology: Graph, algorithm: URIRef, exclude_appliers=True) -> \
         List[URIRef]:
     main_implementation_query = f"""
     PREFIX tb: <{tb}>
@@ -211,10 +206,8 @@ def get_potential_implementations(ontology: Graph, algorithm: URIRef) -> \
     WHERE {{
         ?implementation a tb:Implementation ;
             tb:implements {algorithm.n3()} .
-        ?algorithm a tb:Algorithm ;
-        FILTER NOT EXISTS{{
-            ?implementation a tb:ApplierImplementation.
-        }}
+        {algorithm.n3()} a tb:Algorithm ;
+        { "FILTER NOT EXISTS {?implementation a tb:ApplierImplementation . }" if exclude_appliers else ''}
     }}
 """
     results = ontology.query(main_implementation_query).bindings
@@ -223,9 +216,9 @@ def get_potential_implementations(ontology: Graph, algorithm: URIRef) -> \
     return implementations
 
 
-def get_potential_implementations_constrained(ontology:Graph, shape_graph:Graph, algorithm: URIRef) -> \
-        List[Tuple[URIRef, List[URIRef]]]:
-    pot_impl_unconstr = get_potential_implementations(ontology, algorithm)
+def get_potential_implementations_constrained(ontology:Graph, shape_graph:Graph, algorithm: URIRef, exclude_appliers=True) -> \
+        List[URIRef]:
+    pot_impl_unconstr = get_potential_implementations(ontology, algorithm, exclude_appliers)
     return reinforce_constraint(ontology, shape_graph, ab.ImplementationConstraint, pot_impl_unconstr)
 
 
@@ -271,7 +264,8 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
                 ?implementation a tb:{'Applier' if exclude_appliers else ''}Implementation .
                                 # tb:specifiesOutput ?spec .
             }}
-            ?spec tb:hasDatatag {shape.n3()} .
+            ?spec tb:hasSpecTag ?sptg .
+            ?sptg tb:hasDatatag {shape.n3()} .
         }}
     """
     result = ontology.query(implementation_query).bindings

@@ -127,7 +127,7 @@ tb:hasConstraint a owl:ObjectProperty ;
     rdfs:range tb:Constraint .
 
 tb:hasDatatag a owl:ObjectProperty ;
-    rdfs:domain tb:DataSpec ;
+    rdfs:domain tb:DataSpecTag ;
     rdfs:range tb:DataTag .
 
 tb:hasEvaluation a owl:ObjectProperty ;
@@ -145,6 +145,10 @@ tb:hasFeedback a owl:ObjectProperty ;
 tb:hasImplementation a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
     rdfs:range tb:Implementation .
+
+tb:hasImportanceLevel a owl:ObjectProperty ;
+    rdfs:domain tb:DataSpecTag ;
+    rdfs:range xsd:unsignedInt .
 
 tb:hasInput a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
@@ -173,6 +177,10 @@ tb:hasRequirement a owl:ObjectProperty ;
 tb:hasRule a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
     rdfs:range tb:Rule .
+
+tb:hasSpecTag a owl:ObjectProperty ;
+    rdfs:domain tb:DataSpec ;
+    rdfs:range tb:DataSpecTag .
 
 tb:hasStep a owl:ObjectProperty ;
     rdfs:domain tb:Workflow ;
@@ -334,6 +342,8 @@ tb:VisualizerImplementation a owl:Class ;
         tb:LearnerImplementation .
 
 tb:Constraint a owl:Class .
+
+tb:DataSpecTag a owl:Class .
 
 tb:EvaluationRequirement a owl:Class .
 

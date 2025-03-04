@@ -26,6 +26,8 @@ def add_problems(cbox):
         cb.DataCleaning,
         cb.DataManagement,
         cb.DataVisualization,
+        cb.DataImport,
+        cb.DataExport,
 
         cb.Classification,
         cb.Clustering,
@@ -93,6 +95,12 @@ def add_algorithms(cbox):
         (cb.LinePlot, cb.DataVisualization),
         (cb.Histogram, cb.DataVisualization),
         (cb.HeatMap, cb.DataVisualization),
+
+        # Data Import
+        (cb.DataLoading, cb.DataImport),
+
+        # Data Export
+        (cb.DataStoring, cb.DataExport),
         
         
     ]

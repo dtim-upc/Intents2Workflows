@@ -43,10 +43,24 @@ class Implementation:
             parameter.uri_ref = self.namespace[f'{self.url_name}-{parameter.url_name}']
 
     def add_to_graph(self, g: Graph):
+
         # Base triples
         g.add((self.uri_ref, RDF.type, self.implementation_type))
         g.add((self.uri_ref, RDFS.label, Literal(self.name)))
         g.add((self.uri_ref, tb.implements, self.algorithm))
+
+
+        def add_dataspectag_node(shape, dataspec_node):
+            dataspectag_node = BNode()
+            g.add((dataspectag_node, RDF.type, tb.DataSpecTag))
+            if isinstance(shape, tuple) and len(shape) >= 2: #user defined input shape importance level
+                g.add((dataspectag_node, tb.hasDatatag,shape[0]))
+                g.add((dataspectag_node, tb.hasImportanceLevel, Literal(shape[1]))) 
+            else: #default importance level (critical)
+                g.add((dataspectag_node, tb.hasDatatag, shape))
+                g.add((dataspectag_node, tb.hasImportanceLevel, Literal(0)))
+            g.add((dataspec_node, tb.hasSpecTag, dataspectag_node))
+
 
         # Input triples
         for i, input_tag in enumerate(self.input):
@@ -54,27 +68,21 @@ class Implementation:
             g.add((input_node, RDF.type, tb.DataSpec)) 
             g.add((self.uri_ref, tb.specifiesInput, input_node))
             g.add((input_node, tb.has_position, Literal(i)))
+
             if isinstance(input_tag, list):
-                if len(input_tag) > 1:
-                    input_collection = BNode()
-                    input_shape = self.namespace.term(f'Shape_{uuid.uuid4()}')
-                    Collection(g, input_collection, input_tag)
-                    g.add((input_shape, RDF.type, tb.DataTag))
-                    g.add((input_shape, RDF.type, SH.NodeShape))
-                    g.add((input_shape, SH['and'], input_collection))
-                    g.add((input_node, tb.hasDatatag, input_shape))
-                else:
-                    g.add((input_node, tb.hasDatatag, input_tag[0]))
+                for input in input_tag:
+                    add_dataspectag_node(input, input_node)
             else:
-                g.add((input_node, tb.hasDatatag, input_tag))
+                print(input_tag)
+                add_dataspectag_node(input_tag, input_node)               
 
         # Output triples
         for i, output_tag in enumerate(self.output):
             output_node = BNode()
             g.add((output_node, RDF.type, tb.DataSpec)) 
             g.add((self.uri_ref, tb.specifiesOutput, output_node))
-            g.add((output_node, tb.hasDatatag, output_tag))
             g.add((output_node, tb.has_position, Literal(i)))
+            add_dataspectag_node(output_tag,output_node)
 
         # Parameter triples
         for i, parameter in enumerate(self.parameters.values()):

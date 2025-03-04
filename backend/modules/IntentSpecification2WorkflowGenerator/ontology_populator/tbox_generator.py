@@ -97,6 +97,7 @@ def add_classes(ontology: Graph):
         tb.Data,
         tb.DataCharacteristics,
         tb.DataSpec,
+        tb.DataSpecTag,
         tb.Rule
     ]
     add_class(ontology, classes)
@@ -196,7 +197,10 @@ def add_properties(ontology: Graph):
         # Data Characteristics
         (tb.hasValue, tb.DataCharacteristics, XSD.string),
         # DataSpec
-        (tb.hasDatatag, tb.DataSpec, tb.DataTag),
+        (tb.hasSpecTag, tb.DataSpec, tb.DataSpecTag),
+        # DataSpecTag
+        (tb.hasDatatag, tb.DataSpecTag, tb.DataTag),
+        (tb.hasImportanceLevel, tb.DataSpecTag, XSD.unsignedInt),
         # Rule
         (tb.relatedtoTask, tb.Rule, tb.Task),
         (tb.relatedtoDatatag, tb.Rule, tb.Datatag),

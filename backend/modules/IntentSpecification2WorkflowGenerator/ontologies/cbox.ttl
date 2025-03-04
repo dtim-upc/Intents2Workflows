@@ -489,6 +489,18 @@ cb:BarChartVisualizationShape a sh:NodeShape,
         tb:DataSpec ;
     sh:targetClass cb:BarChartVisualization .
 
+cb:DataExport a tb:Task .
+
+cb:DataImport a tb:Task .
+
+cb:DataLoading a tb:Algorithm ;
+    rdfs:label "DataLoading" ;
+    tb:solves cb:DataImport .
+
+cb:DataStoring a tb:Algorithm ;
+    rdfs:label "DataStoring" ;
+    tb:solves cb:DataExport .
+
 cb:DuplicationRemoval a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
@@ -588,30 +600,6 @@ cb:ScatterPlotVisualizationShape a sh:NodeShape,
         tb:DataSpec ;
     sh:targetClass cb:ScatterPlotVisualization .
 
-cb:Shape_1abb20cc-68d4-4e19-bc2a-6c97cc789cc2 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:NonNullTabularDatasetShape cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
-
-cb:Shape_29f89c53-9c95-41ed-bcd4-146046bbb44e a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
-
-cb:Shape_52ef214f-b43f-4350-a6f0-397551b257a0 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:LabeledTabularDatasetShape cb:TrainTabularDatasetShape ) .
-
-cb:Shape_56a2304c-7d27-4854-bcaf-577763a35153 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:LabeledTabularDatasetShape cb:TrainTabularDatasetShape cb:NonNullTabularDatasetShape cb:NormalizedTabularDatasetShape ) .
-
-cb:Shape_ce9bec26-7f92-48a8-8f4f-36d2799ef095 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:NormalizedTabularDatasetShape cb:TabularDataset ) .
-
-cb:Shape_fa8594a6-0d5c-4544-b65b-684d5fd5c731 a sh:NodeShape,
-        tb:DataTag ;
-    sh:and ( cb:TestTabularDatasetShape cb:NormalizedTabularDatasetShape cb:NonNullTabularDatasetShape ) .
-
 cb:component-decimal_scaling a tb:LearnerComponent ;
     rdfs:label "Decimal Scaling" ;
     tb:hasApplier cb:component-normalizer_applier ;
@@ -621,13 +609,13 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -695,12 +683,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -875,16 +863,16 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 3 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 3 ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -2214,7 +2202,9 @@ cb:implementation-csv_reader a tb:Implementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "CSV Reader" ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-csv_reader-append_path_column_internals a tb:Parameter ;
@@ -2914,7 +2904,9 @@ cb:implementation-csv_writer a tb:Implementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "CSV Writer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-csv_writer-add_custom_text_to_comment a tb:Parameter ;
@@ -3536,13 +3528,25 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_1abb20cc-68d4-4e19-bc2a-6c97cc789cc2 ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:HeatMapVisualizationShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:HeatMapVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-heatmap_visualizer-allowed_page_sizes_0 a tb:Parameter ;
@@ -5652,14 +5656,23 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Line Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_29f89c53-9c95-41ed-bcd4-146046bbb44e ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
-            tb:has_position 1 ],
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LinePlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:LinePlotVisualizationShape ;
-            tb:has_position 0 ] .
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-line_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -6582,13 +6595,19 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ],
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:MissingValueModel ;
-            tb:has_position 0 ] ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:NonNullTabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-normalizer_\(pmml\)-columns_to_normalize a tb:Parameter ;
@@ -7757,13 +7776,22 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Scatter Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_ce9bec26-7f92-48a8-8f4f-36d2799ef095 ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:ScatterPlotVisualizationShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
 cb:implementation-scatter_plot_visualizer-always_show_origin a tb:Parameter ;
@@ -8945,10 +8973,17 @@ cb:implementation-decision_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Decision Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_52ef214f-b43f-4350-a6f0-397551b257a0 ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:DecisionTreeModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:DecisionTreeModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-decision_tree_learner-dt_class_column a tb:Parameter ;
@@ -8982,13 +9017,19 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:DecisionTreeModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:DecisionTreeModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-heatmap_visualizer-heatmap_included_x_columns a tb:Parameter ;
@@ -9053,13 +9094,19 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Missing Value" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:MissingValueModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:NonNullTabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-normalizer_\(pmml\)-new_maximum a tb:Parameter ;
@@ -9098,16 +9145,24 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:NormalizerModel ;
-            tb:has_position 0 ],
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ] ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:NormalizerModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
 cb:implementation-scatter_plot_visualizer-scatterplot_x_axis_column a tb:Parameter ;
@@ -9150,13 +9205,25 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "SVM Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:SVMModel ;
-            tb:has_position 0 ],
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_fa8594a6-0d5c-4544-b65b-684d5fd5c731 ;
-            tb:has_position 1 ] ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 dmop:hasDataPrimitiveTypeColumn rdfs:subPropertyOf dmop:ColumnInfoProperty .
@@ -9416,10 +9483,14 @@ cb:implementation-bar_chart_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Bar Chart Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:BarChartVisualizationShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:BarChartVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-data_partitioning-count_\(absolute_size\) a tb:Parameter ;
@@ -9602,10 +9673,14 @@ cb:implementation-histogram_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Histogram Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:HistogramVisualizationShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:HistogramVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-pie_donut_chart a tb:VisualizerImplementation ;
@@ -9730,10 +9805,14 @@ cb:implementation-pie_donut_chart a tb:VisualizerImplementation ;
     tb:knime-node-feature-version "4.7.0.v202211091556" ;
     tb:knime-node-name "Pie_Donut Chart" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:PieChartVisualizationShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:PieChartVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:Description a tb:Task .
@@ -9783,14 +9862,20 @@ cb:implementation-data_partitioning a tb:Implementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Data Partitioning" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TestTabularDatasetShape ;
-            tb:has_position 1 ],
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:TrainTabularDatasetShape ;
-            tb:has_position 0 ] .
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-histogram_visualizer-histogram_category a tb:Parameter ;
     rdfs:label "Histogram Category" ;
@@ -9832,13 +9917,19 @@ cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Normalizer (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:TabularDataset ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
-            tb:hasDatatag cb:NormalizerModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
 cb:implementation-pie_donut_chart-frequency a tb:Parameter ;
@@ -9886,10 +9977,23 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasDatatag cb:Shape_56a2304c-7d27-4854-bcaf-577763a35153 ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasDatatag cb:SVMModel ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
 cb:implementation-svm_learner-svm_class_column a tb:Parameter ;

@@ -38,9 +38,9 @@ def get_intent_name(plan_graph:Graph) -> str:
     intent_iri = get_intent_iri(plan_graph)
     return intent_iri.fragment
 
-def connect_algorithms(ontology, algos_list):
+def connect_algorithms(ontology, shape_graph, algos_list):
     impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
-                   for algo in algos_list for (imp, _) in get_all_implementations(ontology, None, algo)}
+                   for algo in algos_list for imp in get_potential_implementations_constrained(ontology, shape_graph, algo,exclude_appliers=False)}
     print(impls_algos)
 
     linked_impls = {}
@@ -105,9 +105,9 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     #print(algs_shapes)
     for alg in available_algs:
         if cb.TrainTabularDatasetShape in algs_shapes[alg]:
-            plans[alg] = connect_algorithms(ontology, [cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
+            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         else:
-            plans[alg] = connect_algorithms(ontology, [cb.DataLoading, alg])
+            plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
     #print(plans)
     return plans, alg_plans
     
