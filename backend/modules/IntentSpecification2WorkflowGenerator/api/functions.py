@@ -166,6 +166,7 @@ def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List,
 
             wg.add((w, tb.generatedFor, intent_iri))
             wg.add((intent_iri, RDF.type, tb.Intent))
+            wg += shape_graph
 
             workflows.append(wg)
             workflow_order += 1
