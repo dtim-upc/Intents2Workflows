@@ -6,6 +6,7 @@ from rdflib.term import Node
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from pipeline_generator.optimized_pipeline_generator import *
+from pipeline_generator.graph_queries import *
 
 def get_custom_ontology(path):
     graph = get_graph_xp()
@@ -33,10 +34,6 @@ def get_custom_ontology_only_problems():
 
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph
-
-def get_intent_name(plan_graph:Graph) -> str:
-    intent_iri = get_intent_iri(plan_graph)
-    return intent_iri.fragment
 
 def connect_algorithms(ontology, shape_graph, algos_list):
     impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo

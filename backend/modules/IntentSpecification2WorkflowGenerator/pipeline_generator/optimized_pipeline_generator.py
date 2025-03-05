@@ -1,10 +1,8 @@
 import itertools
 import os
 import sys
-import time
 import uuid
-from datetime import datetime
-from typing import Tuple, Any, List, Dict, Optional, Union, Set, Type
+from typing import Tuple, Any, List, Dict, Optional, Union
 import random
 import math
 import ast
@@ -14,69 +12,13 @@ from tqdm import tqdm
 from urllib.parse import quote
 
 sys.path.append(os.path.join(os.path.abspath(os.path.join('..'))))
+
 from common import *
-from ontology_populator.implementations.core import *
-from ontology_populator.implementations.knime.knime_implementation import KnimeParameter
+import pipeline_generator.graph_queries as graph_queries
 
-def get_intent_iri(intent_graph: Graph) -> URIRef:
-    intent_iri_query = f"""
-PREFIX tb: <{tb}>
-SELECT ?iri
-WHERE {{
-    ?iri a tb:Intent .
-}}
-"""
-    result = intent_graph.query(intent_iri_query).bindings
-    assert len(result) == 1
-    return result[0]['iri']
-
-
-def get_intent_dataset_task(intent_graph: Graph, intent_iri: URIRef) -> Tuple[URIRef, URIRef, URIRef]:
-    dataset_task_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT ?dataset ?task ?algorithm
-    WHERE {{
-        {intent_iri.n3()} a tb:Intent .
-        {intent_iri.n3()} tb:overData ?dataset .
-        ?task tb:tackles {intent_iri.n3()} .
-        OPTIONAL {{{intent_iri.n3()} tb:specifies ?algorithm}}
-    }}
-"""
-    result = intent_graph.query(dataset_task_query).bindings[0]
-    return result['dataset'], result['task'], result.get('algorithm', None)
-
-
-def get_intent_parameters(intent_graph: Graph):
-    intent_parameters_query = f"""
-    PREFIX tb:<{tb}>
-    SELECT ?exp_param ?param_val
-    WHERE{{
-        ?param_val tb:forParameter ?exp_param .
-    }}
-"""
-    result = intent_graph.query(intent_parameters_query).bindings
-    return {param['exp_param']:param['param_val'] for param in result}
-
-
-def get_algorithms_from_task(ontology: Graph, task: URIRef) -> URIRef:
-
-    algorithm_task_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT ?algorithm
-    WHERE{{
-        ?algorithm a tb:Algorithm ;
-                   tb:solves {task.n3()} .
-        ?impl tb:implements ?algorithm .
-        FILTER NOT EXISTS{{
-            ?algorithm a tb:Algorithm ;
-                   tb:solves {task.n3()} .
-            ?impl a tb:ApplierImplementation.
-        }}
-    }}
-"""
-    result = ontology.query(algorithm_task_query).bindings
-    algos = [algo['algorithm'] for algo in result]
-    return algos
+def get_intent_name(plan_graph:Graph) -> str:
+    intent_iri = graph_queries.get_intent_iri(plan_graph)
+    return intent_iri.fragment
 
 def reinforce_constraint(ontology:Graph, shape_graph:Graph, node_shape:URIRef, unconstrained_nodes:List[URIRef]):
     constrained_nodes = []
@@ -88,295 +30,41 @@ def reinforce_constraint(ontology:Graph, shape_graph:Graph, node_shape:URIRef, u
     return constrained_nodes
 
 def get_algorithms_from_task_constrained(ontology:Graph, shape_graph:Graph, task: URIRef) -> URIRef:
-    algs_unconstr = get_algorithms_from_task(ontology, task)
+    algs_unconstr = graph_queries.get_algorithms_from_task(ontology, task)
     return reinforce_constraint(ontology, shape_graph, ab.AlgorithmConstraint, algs_unconstr)
 
 
-def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
-
-    expparams_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT DISTINCT ?exp_param ?label ?value ?condition
-    WHERE {{
-        {task.n3()} a tb:Task .
-        {{
-            {"BIND(" + algorithm.n3() + " AS ?algorithm) ." if algorithm else f"?algorithm tb:solves {task.n3()} ."}
-        }}
-        # {'?algorithm' if algorithm is None else algorithm.n3()} tb:solves {task.n3()} .
-        ?imp tb:implements ?algorithm .
-        ?com tb:hasImplementation ?imp ;
-            tb:exposesParameter ?exp_param .
-        ?exp_param tb:has_defaultvalue ?value;
-                tb:has_condition ?condition ;
-                rdfs:label ?label .
-    }}
-    """
-    
-    result = ontology.query(expparams_query).bindings
-    return result 
 
 
 def get_intent_info(intent_graph: Graph, intent_iri: Optional[URIRef] = None) -> \
         Tuple[URIRef, URIRef, List[Dict[str, Any]], URIRef]:
     if not intent_iri:
-        intent_iri = get_intent_iri(intent_graph)
+        intent_iri = graph_queries.get_intent_iri(intent_graph)
 
-    dataset, task, algorithm = get_intent_dataset_task(intent_graph, intent_iri) 
+    dataset, task, algorithm = graph_queries.get_intent_dataset_task(intent_graph, intent_iri) 
 
     return dataset, task, algorithm, intent_iri 
 
-def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxImportanceLevel: int = 3) -> List[List[URIRef]]:
-    input_spec_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
-        WHERE {{
-            {implementation.n3()} tb:specifiesInput ?spec .
-            ?spec a tb:DataSpec ;
-                tb:hasSpecTag ?sptg ;
-                tb:has_position ?position .
-            ?sptg 
-                tb:hasImportanceLevel ?imp ;
-                tb:hasDatatag ?shape . 
-            FILTER(?imp <= {int(maxImportanceLevel)}) .
-
-        }}
-		GROUP BY ?spec
-        ORDER BY ?position
-    """ #TODO check shape type datatag
-    results = ontology.query(input_spec_query).bindings
-
-    if results == [{}]:
-        return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
-    return shapes
-
-
-def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
-    output_spec_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
-        WHERE {{
-            {implementation.n3()} tb:specifiesOutput ?spec .
-            ?spec a tb:DataSpec ;
-                tb:hasSpecTag ?sptg ;
-                tb:has_position ?position .
-            ?sptg tb:hasDatatag ?shape . 
-        }}
-		GROUP BY ?spec
-        ORDER BY ?position
-    """ #TODO check shap type datatagER BY ?position
-
-    results = ontology.query(output_spec_query).bindings
-    if results == [{}]:
-        return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
-    return shapes
-
-def unpack_shapes(shapes:str) -> List[URIRef]:
-    spec_shapes = shapes.split(',')
-    spec_shapes_uris = [URIRef(s) for s in spec_shapes]
-    return spec_shapes_uris
-
-
-# def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm: URIRef = None) -> \
-#         List[Tuple[URIRef, List[URIRef]]]:
-#     main_implementation_query = f"""
-#     PREFIX tb: <{tb}>
-#     SELECT DISTINCT ?implementation
-#     WHERE {{
-#         ?implementation a tb:Implementation ;
-#             tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
-#         ?algorithm a tb:Algorithm ;
-#             tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
-#         ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
-#     }}
-# """
-#     results = ontology.query(main_implementation_query).bindings
-#     implementations = [result['implementation'] for result in results]
-
-#     implementations_with_shapes = [
-#         (implementation, get_implementation_input_specs(ontology, implementation))
-#         for implementation in implementations]
-
-#     return implementations_with_shapes
-
-
-def get_potential_implementations(ontology: Graph, algorithm: URIRef, exclude_appliers=True) -> \
-        List[URIRef]:
-    main_implementation_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT DISTINCT ?implementation
-    WHERE {{
-        ?implementation a tb:Implementation ;
-            tb:implements {algorithm.n3()} .
-        {algorithm.n3()} a tb:Algorithm ;
-        { "FILTER NOT EXISTS {?implementation a tb:ApplierImplementation . }" if exclude_appliers else ''}
-    }}
-"""
-    results = ontology.query(main_implementation_query).bindings
-    implementations = [result['implementation'] for result in results]
-
-    return implementations
 
 
 def get_potential_implementations_constrained(ontology:Graph, shape_graph:Graph, algorithm: URIRef, exclude_appliers=True) -> \
         List[URIRef]:
-    pot_impl_unconstr = get_potential_implementations(ontology, algorithm, exclude_appliers)
+    pot_impl_unconstr = graph_queries.get_potential_implementations(ontology, algorithm, exclude_appliers)
     return reinforce_constraint(ontology, shape_graph, ab.ImplementationConstraint, pot_impl_unconstr)
 
 
-def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
-    implementation_query = f"""
-        PREFIX tb: <{tb}>
-        PREFIX cb: <{cb}>
-        SELECT ?implementation
-        WHERE {{
-            {component.n3()} tb:hasImplementation ?implementation .
-        }}
-    """
-    result = ontology.query(implementation_query).bindings
-    assert len(result) == 1
-    return result[0]['implementation']
-
-def get_implementation_components(ontology: Graph, implementation: URIRef) -> List[URIRef]:
-    components_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?component
-        WHERE {{
-            ?component tb:hasImplementation {implementation.n3()} .
-        }}
-    """
-    results = ontology.query(components_query).bindings
-    return [result['component'] for result in results]
 
 def get_implementation_components_constrained(ontology: Graph, shape_graph: Graph, implementation: URIRef) -> List[URIRef]:
-    pot_comp_unconstr = get_implementation_components(ontology, implementation)
+    pot_comp_unconstr = graph_queries.get_implementation_components(ontology, implementation)
     return reinforce_constraint(ontology, shape_graph, ab.ComponentConstraint, pot_comp_unconstr)
 
 
-def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
-    implementation_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?implementation
-        WHERE {{
-            {{
-                ?implementation a tb:Implementation;
-                                tb:specifiesOutput ?spec .
-            }}
-            FILTER NOT EXISTS {{
-                ?implementation a tb:{'Applier' if exclude_appliers else ''}Implementation .
-                                # tb:specifiesOutput ?spec .
-            }}
-            ?spec tb:hasSpecTag ?sptg .
-            ?sptg tb:hasDatatag {shape.n3()} .
-        }}
-    """
-    result = ontology.query(implementation_query).bindings
-    implementations = [x['implementation'] for x in result]
-
-    return implementations
 
 def find_implementations_to_satisfy_shape_constrained(ontology: Graph, shape_graph:Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
-    pot_impl_unconstr = find_implementations_to_satisfy_shape(ontology,shape,exclude_appliers)
+    pot_impl_unconstr = graph_queries.find_implementations_to_satisfy_shape(ontology,shape,exclude_appliers)
     return reinforce_constraint(ontology,shape_graph,ab.ImplementationConstraint,pot_impl_unconstr)
 
-def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
-        for io_shape in io_shapes:
-            if ((io_shape, SH.targetClass, dmop.TabularDataset) in ontology 
-                or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
-                or io_shape.fragment == "TabularDatasetShape"):
 
-                if test:
-                    test_query = f'''
-                    PREFIX sh: <{SH}>
-                    PREFIX rdfs: <{RDFS}>
-                    PREFIX cb: <{cb}>
-                    PREFIX dmop: <{dmop}>
-
-                    ASK {{
-                        {{
-                        {io_shape.n3()} a sh:NodeShape ;
-                                        sh:targetClass dmop:TabularDataset ;
-                                        sh:property [
-                                            sh:path dmop:isTestDataset ;
-                                            sh:hasValue true
-                                        ] .
-                        }}
-                    }}
-                    '''
-                    result = ontology.query(test_query).askAnswer
-                    if result:
-                        return i if return_index else io_shapes
-                    
-                if train:
-                    train_query = f'''
-                    PREFIX sh: <{SH}>
-                    PREFIX rdfs: <{RDFS}>
-                    PREFIX cb: <{cb}>
-                    PREFIX dmop: <{dmop}>
-
-                    ASK {{
-                        {{
-                        {io_shape.n3()} a sh:NodeShape ;
-                                        sh:targetClass dmop:TabularDataset ;
-                                        sh:property [
-                                            sh:path dmop:isTrainDataset ;
-                                            sh:hasValue true
-                                        ] .
-                        }}
-                    }}
-                    '''
-                    result = ontology.query(train_query).askAnswer
-                    if result:
-                        return i if return_index else io_shapes
-                
-                if not train and not test:
-                    return i if return_index else io_shapes
-            
-def identify_model_io(ontology: Graph, ios: List[List[URIRef]], return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
-        for io_shape in io_shapes:
-            query = f'''
-    PREFIX sh: <{SH}>
-    PREFIX rdfs: <{RDFS}>
-    PREFIX cb: <{cb}>
-
-    ASK {{
-      {{
-        {io_shape.n3()} sh:targetClass ?targetClass .
-        ?targetClass rdfs:subClassOf* cb:Model .
-      }}
-      UNION
-      {{
-        {io_shape.n3()} rdfs:subClassOf* cb:Model .
-      }}
-    }}
-'''
-            if ontology.query(query).askAnswer:
-                return i if return_index else io_shapes
-
-def identify_visual_io(ontology: Graph, ios: List[List[URIRef]], return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
-        for io_shape in io_shapes:
-            query = f'''
-    PREFIX sh: <{SH}>
-    PREFIX rdfs: <{RDFS}>
-    PREFIX cb: <{cb}>
-
-    ASK {{
-      {{
-        {io_shape.n3()} sh:targetClass ?targetClass .
-        ?targetClass rdfs:subClassOf* cb:Visualization .
-      }}
-      UNION
-      {{
-        {io_shape.n3()} rdfs:subClassOf* cb:Visualization .
-      }}
-    }}
-'''
-            if ontology.query(query).askAnswer:
-                return i if return_index else io_shapes
 
 def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus: URIRef) -> bool:
     conforms, g, report = validate(data_graph, shacl_graph=shacl_graph, validate_shapes=[shape], focus=focus)
@@ -386,57 +74,9 @@ def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus:
 
     return conforms
 
-def get_shape_target_class(ontology: Graph, shape: URIRef) -> URIRef:
-    return ontology.query(f"""
-        PREFIX sh: <{SH}>
-        SELECT ?targetClass
-        WHERE {{
-            <{shape}> sh:targetClass ?targetClass .
-        }}
-    """).bindings[0]['targetClass']
-
-
-def get_implementation_parameters(ontology: Graph, implementation: URIRef) -> Dict[
-    URIRef, Tuple[Literal, Literal, Literal]]:
-    parameters_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?parameter ?value ?order ?condition
-        WHERE {{
-            <{implementation}> tb:hasParameter ?parameter .
-            ?parameter tb:has_defaultvalue ?value ;
-                       tb:has_condition ?condition ;
-                       tb:has_position ?order .
-        }}
-        ORDER BY ?order
-    """
-    results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['value'], param['order'], param['condition']) for param in results}
-
-
-def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -> Dict[
-    URIRef, Tuple[Literal, Literal, Literal]]:
-    parameters_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?parameter ?parameterValue ?position ?condition
-        WHERE {{
-            {component.n3()} tb:hasImplementation ?implementation .
-            ?implementation tb:hasParameter ?parameter .
-            ?parameter tb:has_defaultvalue ?parameterValue ;
-                       tb:has_position ?position ;
-                       tb:has_condition ?condition .
-            FILTER NOT EXISTS {{
-                ?parameter tb:specifiedBy ?parameterSpecification .
-            }}
-        }}
-        ORDER BY ?position
-    """
-    results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['parameterValue'], param['position'], param['condition']) for param in results}
-
-
 
 def get_component_parameters(ontology: Graph, component: URIRef) -> Dict[URIRef, Tuple[Literal, Literal, Literal]]:
-    component_params = get_component_non_overriden_parameters(ontology, component)
+    component_params = graph_queries.get_component_non_overriden_parameters(ontology, component)
     return component_params
 
 
@@ -471,7 +111,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
                                inputs: List[URIRef], intent_graph: Graph = None) -> Dict[URIRef, Tuple[Literal, Literal, Literal]]:
     
     parameter_keys = list(parameters.keys())
-    intent_parameters = get_intent_parameters(intent_graph) if intent_graph is not None else {}
+    intent_parameters = graph_queries.get_intent_parameters(intent_graph) if intent_graph is not None else {}
     intent_parameter_keys = list(intent_parameters.keys())
 
     #tqdm.write("intentParams")
@@ -493,7 +133,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
     for param in parameter_keys:
         value, order, condition = parameters[param]
         if condition.value is not None and condition.value != '':
-            feature_types = get_inputs_feature_types(graph, inputs)
+            feature_types = graph_queries.get_inputs_feature_types(graph, inputs)
             if condition.value == '$$INTEGER_COLUMN$$' and int not in feature_types:
                 parameters.pop(param)
                 continue
@@ -504,13 +144,13 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
                 parameters.pop(param)
                 continue
         if isinstance(value.value, str) and '$$LABEL$$' in value.value:
-            new_value = value.replace('$$LABEL$$', f'{get_inputs_label_name(graph, inputs)}')
+            new_value = value.replace('$$LABEL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$LABEL_CATEGORICAL$$' in value.value: #this allows target column to be defined withou exposed parameters
-            new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{get_inputs_label_name(graph, inputs)}')
+            new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$NUMERIC_COLUMNS$$' in value.value:
-            new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{get_inputs_numeric_columns(graph, inputs)}')
+            new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{graph_queries.get_inputs_numeric_columns(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$CSV_PATH$$' in value.value:
             new_value = value.replace('$$CSV_PATH$$', f'{get_csv_path(graph, inputs)}')
@@ -520,23 +160,23 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and value.value != '':
             if condition.value == '$$BAR_EXCLUDED$$':
-                possible_cols = get_inputs_numeric_columns(graph, inputs)
+                possible_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
             elif condition.value == '$$HISTOGRAM_EXCLUDED$$':
-                possible_cols = get_inputs_numeric_columns(graph, inputs)
+                possible_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
                 cat_col = [str(parameters[param][0]) for param in intent_parameters.keys() if 'histogram_category' in str(param)][0]
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(cat_col) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
             elif condition.value == '$$HEATMAP_EXCLUDED$$':
-                possible_cols = get_inputs_numeric_columns(graph, inputs)
+                possible_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
             elif condition.value == '$$LINEPLOT_EXCLUDED$$':
-                possible_cols = get_inputs_all_columns(graph, inputs) + ['<RowID>']
+                possible_cols = graph_queries.get_inputs_all_columns(graph, inputs) + ['<RowID>']
                 com_col = [str(parameters[param][0]) for param in intent_parameters.keys() if 'lineplot_x' in str(param)]
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(com_col) - set(included_cols))
@@ -603,152 +243,12 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
     return step
 
 
-def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
-    transformation_query = f'''
-        PREFIX tb: <{tb}>
-        SELECT ?transformation
-        WHERE {{
-            <{component}> tb:hasTransformation ?transformation_list .
-            ?transformation_list rdf:rest*/rdf:first ?transformation .
-        }}
-    '''
-    transformations = ontology.query(transformation_query).bindings
-    return [x['transformation'] for x in transformations]
-
-
-def get_inputs_all_columns(graph: Graph, inputs: List[URIRef]) -> List:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-    columns_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isFeature true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type ;
-                    dmop:hasColumnName ?label .
-        }}
-    """
-    columns = graph.query(columns_query).bindings
-    return [x['label'].value for x in columns]
-
-
-def get_inputs_label_name(graph: Graph, inputs: List[URIRef]) -> str:
-    
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-
-    label_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isLabel true ;
-                    dmop:hasColumnName ?label .
-
-        }}
-    """
-    
-    results = graph.query(label_query).bindings
-    
-    if results is not None and len(results) > 0:
-        return results[0]['label']
-    
-
-def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> str:
-    
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-
-    column_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:hasColumnName ?label .
-            FILTER(?label = "{column_name}")
-        }}
-    """
-    
-    results = graph.query(column_query).bindings
-    
-    if results is not None and len(results) > 0:
-        return results[0]['label']
-
-
-def get_inputs_numeric_columns(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-    columns_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isFeature true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type ;
-                    dmop:hasColumnName ?label .
-            FILTER(?type IN (dmop:Float, dmop:Int, dmop:Number, dmop:Double, dmop:Long, dmop:Short, dmop:Integer))
-        }}
-    """
-    columns = graph.query(columns_query).bindings
- 
-    return [x['label'].value for x in columns]
-
-
-def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-
-    categ_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isCategorical true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type ;
-                    dmop:hasColumnName ?label .
-        }}
-    """
-    columns = graph.query(categ_query).bindings
-
-    return [x['label'].value for x in columns]
 
 
 def get_csv_path(graph: Graph, inputs: List[URIRef]) -> str:
     data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
     path = next(graph.objects(data_input, dmop.path), True)
     return path.value
-
-
-def get_inputs_feature_types(graph: Graph, inputs: List[URIRef]) -> Set[Type]:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-    columns_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?type
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isFeature true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type .
-        }}
-    """
-    columns = graph.query(columns_query).bindings
-    mapping = {
-        dmop.Float: float,
-        dmop.Int: int,
-        dmop.Integer: int,
-        dmop.Number: float,
-        dmop.Double: float,
-        dmop.String: str,
-        dmop.Boolean: bool,
-    }
-    return set([mapping[x['type']] for x in columns])
 
 
 def copy_subgraph(source_graph: Graph, source_node: URIRef, destination_graph: Graph, destination_node: URIRef,
@@ -809,7 +309,7 @@ def run_copy_transformation(ontology: Graph, workflow_graph: Graph, transformati
 def run_component_transformation(ontology: Graph, workflow_graph: Graph, component: URIRef, inputs: List[URIRef],
                                  outputs: List[URIRef],
                                  parameters_specs: Dict[URIRef, Tuple[URIRef, Literal, Literal]]) -> None:
-    transformations = get_component_transformations(ontology, component)
+    transformations = graph_queries.get_component_transformations(ontology, component)
     #tqdm.write("run_component_transformation")
     
     for transformation in transformations:
@@ -847,26 +347,6 @@ PREFIX dmop: <{dmop}>
             #tqdm.write(str(query))
             workflow_graph.update(query)
 
-            
-
-
-def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
-    preference_query = f"""
-        PREFIX rdfs: <{RDFS}>
-
-        SELECT ?datatag ?weight ?component_rank
-        WHERE {{
-            {component.n3()} tb:hasRule ?rule .
-            ?rule tb:relatedtoDatatag ?datatag ;
-                  tb:relatedtoTask {task.n3()} ;
-                  tb:has_rank ?component_rank .
-            ?datatag tb:has_weight ?weight .
-        }}
-    """
-    results = graph.query(preference_query).bindings
-
-    return {result['datatag']: (float(result['weight']), int(result['component_rank'])) for result in results}
-
 
 def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], dataset: URIRef, percentage: float = None):
 
@@ -874,7 +354,7 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
     sorted_components = {}
     for component in components:
         
-        component_rules = retreive_component_rules(graph, task, component)
+        component_rules = graph_queries.retreive_component_rules(graph, task, component)
         score = 0
 
         preferred_components[component] = score
@@ -955,7 +435,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     workflow_graph.add((workflow, RDF.type, tb.Workflow))
     task_order = 0
 
-    intent_iri = get_intent_iri(intent_graph)
+    intent_iri = graph_queries.get_intent_iri(intent_graph)
     max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
 
     dataset_node = ab.term(f'{workflow_name}-original_dataset')
@@ -982,16 +462,16 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         #if not test_component is None:
         #    tqdm.write(test_component)
         same = train_component == test_component
-        train_component_implementation = get_component_implementation(ontology, train_component)
+        train_component_implementation = graph_queries.get_component_implementation(ontology, train_component)
 
 
         if not test_component:
             
             singular_component = train_component
             singular_step_name = get_step_name(workflow_name, task_order, singular_component)
-            singular_component_implementation = get_component_implementation(ontology, singular_component)
-            singular_input_specs = get_implementation_input_specs(ontology, singular_component_implementation,max_imp_level)
-            singular_input_data_index = identify_data_io(ontology, singular_input_specs, return_index=True)
+            singular_component_implementation = graph_queries.get_component_implementation(ontology, singular_component)
+            singular_input_specs = graph_queries.get_implementation_input_specs(ontology, singular_component_implementation,max_imp_level)
+            singular_input_data_index = graph_queries.identify_data_io(ontology, singular_input_specs, return_index=True)
             singular_transformation_inputs = None
 
             #tqdm.write("Sepecs singular input:")
@@ -1005,7 +485,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                                         singular_input_specs)
             
             #tqdm.write("Singular output:")
-            singular_output_specs = get_implementation_output_specs(ontology, singular_component_implementation)
+            singular_output_specs = graph_queries.get_implementation_output_specs(ontology, singular_component_implementation)
             singular_transformation_outputs = [ab[f'{singular_step_name}-output_{i}'] for i in range(len(singular_output_specs))]
             annotate_ios_with_specs(ontology, workflow_graph, singular_transformation_outputs,
                                 singular_output_specs)
@@ -1041,9 +521,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                                             [previous_node], singular_transformation_outputs, singular_param_specs)
 
 
-            train_dataset_index = identify_data_io(ontology, singular_output_specs, train=True, return_index=True)
+            train_dataset_index = graph_queries.identify_data_io(ontology, singular_output_specs, train=True, return_index=True)
             
-            test_dataset_index = identify_data_io(ontology, singular_output_specs, test=True, return_index=True)
+            test_dataset_index = graph_queries.identify_data_io(ontology, singular_output_specs, test=True, return_index=True)
 
             if train_dataset_index is not None:
                 train_dataset_node =  singular_transformation_outputs[train_dataset_index]
@@ -1060,10 +540,10 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
             train_step_name = get_step_name(workflow_name, task_order, train_component)
 
-            train_component_implementation = get_component_implementation(ontology, train_component)
+            train_component_implementation = graph_queries.get_component_implementation(ontology, train_component)
 
-            train_input_specs = get_implementation_input_specs(ontology, train_component_implementation,max_imp_level)
-            train_input_data_index = identify_data_io(ontology, train_input_specs, return_index=True)
+            train_input_specs = graph_queries.get_implementation_input_specs(ontology, train_component_implementation,max_imp_level)
+            train_input_data_index = graph_queries.identify_data_io(ontology, train_input_specs, return_index=True)
             train_transformation_inputs = [ab[f'{train_step_name}-input_{i}'] for i in range(len(train_input_specs))]
             train_transformation_inputs[train_input_data_index] = train_dataset_node 
             annotate_ios_with_specs(ontology, workflow_graph, train_transformation_inputs,
@@ -1072,9 +552,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             #tqdm.write("Sepecs train input:")
             #tqdm.write(str(train_transformation_inputs))
             #tqdm.write(str(train_input_specs))
-            train_output_specs = get_implementation_output_specs(ontology, train_component_implementation)
-            train_output_model_index = identify_model_io(ontology, train_output_specs, return_index=True)
-            train_output_data_index = identify_data_io(ontology, train_output_specs, return_index=True)
+            train_output_specs = graph_queries.get_implementation_output_specs(ontology, train_component_implementation)
+            train_output_model_index = graph_queries.identify_model_io(ontology, train_output_specs, return_index=True)
+            train_output_data_index = graph_queries.identify_data_io(ontology, train_output_specs, return_index=True)
             train_transformation_outputs = [ab[f'{train_step_name}-output_{i}'] for i in range(len(train_output_specs))]
             annotate_ios_with_specs(ontology, workflow_graph, train_transformation_outputs,
                                     train_output_specs)
@@ -1121,10 +601,10 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
                 test_step_name = get_step_name(workflow_name, task_order, test_component)
 
-                test_input_specs = get_implementation_input_specs(ontology,
-                                                                get_component_implementation(ontology, test_component),max_imp_level)
-                test_input_data_index = identify_data_io(ontology, test_input_specs, test=True, return_index=True)
-                test_input_model_index = identify_model_io(ontology, test_input_specs, return_index=True)
+                test_input_specs = graph_queries.get_implementation_input_specs(ontology,
+                                                                graph_queries.get_component_implementation(ontology, test_component),max_imp_level)
+                test_input_data_index = graph_queries.identify_data_io(ontology, test_input_specs, test=True, return_index=True)
+                test_input_model_index = graph_queries.identify_model_io(ontology, test_input_specs, return_index=True)
                 test_transformation_inputs = [ab[f'{test_step_name}-input_{i}'] for i in range(len(test_input_specs))]
                 test_transformation_inputs[test_input_data_index] = test_dataset_node
                 if train_output_model_index is not None:
@@ -1136,9 +616,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 #tqdm.write(str(test_transformation_inputs))
                 #tqdm.write(str(test_input_specs))
                 
-                test_implementation = get_component_implementation(ontology, test_component)
-                test_output_specs = get_implementation_output_specs(ontology, test_implementation)
-                test_output_data_index = identify_data_io(ontology, test_output_specs, return_index=True)
+                test_implementation = graph_queries.get_component_implementation(ontology, test_component)
+                test_output_specs = graph_queries.get_implementation_output_specs(ontology, test_implementation)
+                test_output_data_index = graph_queries.identify_data_io(ontology, test_output_specs, return_index=True)
                 test_transformation_outputs = [ab[f'{test_step_name}-output_{i}'] for i in range(len(test_output_specs))]
                 annotate_ios_with_specs(ontology, workflow_graph, test_transformation_outputs,
                                         test_output_specs)
@@ -1151,7 +631,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
                 previous_test_steps = [previous_test_step, train_step] if not same else [previous_test_step]
                 test_parameters = get_component_parameters(ontology, test_component)
-                test_component_implementation = get_component_implementation(ontology, test_component) if test_component else None
+                test_component_implementation = graph_queries.get_component_implementation(ontology, test_component) if test_component else None
                 test_parameters = perform_param_substitution(workflow_graph,
                                                              test_component_implementation,
                                                              test_parameters,
@@ -1183,7 +663,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         saver_component = cb.term('component-csv_local_writer')
         saver_step_name = get_step_name(workflow_name, task_order, saver_component)
         saver_parameters = get_component_parameters(ontology, saver_component)
-        saver_implementation = get_component_implementation(ontology, saver_component)
+        saver_implementation = graph_queries.get_component_implementation(ontology, saver_component)
         saver_parameters = perform_param_substitution(workflow_graph, saver_implementation, saver_parameters, [test_dataset_node])
         saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component)
         saver_param_specs = assign_to_parameter_specs(workflow_graph, saver_parameters)
@@ -1211,16 +691,16 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
         tqdm.write(f'Intent: {intent_iri.fragment}')
         tqdm.write(f'Dataset: {dataset.fragment}')
         tqdm.write(f'Task: {task.fragment}')
-        tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task(ontology, task)]}')
+        tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in graph_queries.get_algorithms_from_task(ontology, task)]}')
         tqdm.write(f'Preprocessing Component Percentage Threshold: {component_threshold*100}%')
         tqdm.write(f'Maximum complexity level: {max_imp_level}')
         tqdm.write('-------------------------------------------------')
 
-    all_cols = get_inputs_all_columns(ontology, [dataset])
-    cat_cols = get_inputs_categorical_columns(ontology, [dataset])
-    num_cols = get_inputs_numeric_columns(ontology, [dataset])
+    all_cols = graph_queries.get_inputs_all_columns(ontology, [dataset])
+    cat_cols = graph_queries.get_inputs_categorical_columns(ontology, [dataset])
+    num_cols = graph_queries.get_inputs_numeric_columns(ontology, [dataset])
     
-    exp_params = get_exposed_parameters(ontology, task, algorithm)
+    exp_params = graph_queries.get_exposed_parameters(ontology, task, algorithm)
 
     for exp_param in exp_params:
         option_columns = []
@@ -1256,7 +736,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
     tqdm.write(str(pot_impls))
 
     impls_with_shapes = [
-        (implementation, get_implementation_input_specs(ontology, implementation,max_imp_level))
+        (implementation, graph_queries.get_implementation_input_specs(ontology, implementation,max_imp_level))
         for implementation in pot_impls]
     
     components = [
@@ -1279,7 +759,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
     for component, implementation, inputs in tqdm(components, desc='Components', position=1):
         if log:
             tqdm.write(f'Component: {component.fragment} ({implementation.fragment})')
-        shapes_to_satisfy = identify_data_io(ontology, inputs)
+        shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
         assert shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0
         if log:
             tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
@@ -1337,49 +817,3 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
                 tqdm.write(f'\t\tWorkflow {workflow_order}: {w.fragment}')
             wg.serialize(os.path.join(destination_folder, f'{workflow_name}.ttl'), format='turtle')
             workflow_order += 1
-
-
-def interactive():
-    intent_graph = get_graph_xp()
-    intent = input('Introduce the intent name [ClassificationIntent]: ') or 'VisualizationIntent' #or 'ClassificationIntent'
-    data = input('Introduce the dataset name [titanic.csv]: ') or 'titanic.csv'
-    task = input('Introduce the task name [Classification]: ') or 'Classification'
-
-
-    intent_graph.add((ab.term(intent), RDF.type, tb.Intent))
-    intent_graph.add((ab.term(intent), tb.overData, ab.term(data)))
-    intent_graph.add((cb.term(task), tb.tackles, ab.term(intent)))
-
-
-    ontology = get_ontology_graph()
-
-    if task == 'DataVisualization':
-        algos = [alg.fragment for alg in get_algorithms_from_task(ontology, cb.term(task))]
-        vis_algorithm = str(input(f'Choose a visualization algorithm from the following (case-sensitive):{algos}'))
-        if vis_algorithm is not None:
-            intent_graph.add((ab.term(intent), tb.specifies, cb.term(vis_algorithm)))
-
-    component_percentage = float(input('Choose a threshold component percentage (for the preprocessing components) [100, 75, 50, 25] (%): ') or 100)/100.0
-    complexity = int(input("Choose the complexity of the generated workflows [0,1,2]: ") or 2)
-
-    intent_graph.add((ab.term(intent), tb.has_component_threshold, Literal(component_percentage)))
-    intent_graph.add((ab.term(intent), tb.has_complexity, Literal(complexity)))
-
-    folder = input('Introduce the folder to save the workflows: ')
-    if folder == '':
-        folder = f'./workflows/{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}/'
-        tqdm.write(f'No folder introduced, using default ({folder})')
-    if not os.path.exists(folder):
-        tqdm.write('Directory does not exist, creating it')
-        os.makedirs(folder)
-
-    shape_graph = Graph()
-    t = time.time()
-    build_workflows(ontology, shape_graph, intent_graph, folder, log=True)
-    t = time.time() - t
-
-    print(f'Workflows built in {t} seconds')
-    print(f'Workflows saved in {folder}')
-
-
-#interactive()

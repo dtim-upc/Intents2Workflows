@@ -59,7 +59,7 @@ def run_abstract_planner():
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
     percentage = data.get('preprocessing_percentage', 100) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
-    complexity = data.get('workflow_complexity', 0) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
+    complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
