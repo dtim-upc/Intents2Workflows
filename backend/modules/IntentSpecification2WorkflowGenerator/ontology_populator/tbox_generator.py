@@ -131,6 +131,7 @@ def add_properties(ontology: Graph):
         (tb.hasConstraint, tb.Intent, tb.Constraint),
         (tb.hasRequirement, tb.Intent, tb.Requirement),
         (tb.has_component_threshold, tb.Intent, XSD.double),
+        (tb.has_complexity, tb.Intent, XSD.unsignedInt),
         # ParameterValue
         (tb.forParameter, tb.ParameterValue, tb.Parameter),
         # Requirement

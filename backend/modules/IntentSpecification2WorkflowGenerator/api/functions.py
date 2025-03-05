@@ -116,11 +116,12 @@ def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List,
     dataset, task, algorithm, intent_iri = get_intent_info(intent)
 
     component_threshold = next(intent.objects(intent_iri, tb.has_component_threshold), None)
+    max_imp_level = next(intent.objects(intent_iri, tb.has_complexity), None)
 
     print(implementations)
 
     impls_with_shapes = [
-        (implementation, get_implementation_input_specs(ontology, implementation))
+        (implementation, get_implementation_input_specs(ontology, implementation, max_imp_level))
         for implementation in implementations]
 
     components = [

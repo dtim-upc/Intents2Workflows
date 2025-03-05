@@ -207,6 +207,10 @@ tb:hasVisualizer a owl:ObjectProperty ;
     rdfs:range tb:VisualizerComponent,
         tb:VisualizerImplementation .
 
+tb:has_complexity a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range xsd:unsignedInt .
+
 tb:has_component_threshold a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
     rdfs:range xsd:double .
@@ -383,9 +387,9 @@ tb:Implementation a owl:Class .
 
 tb:Step a owl:Class .
 
-tb:Intent a owl:Class .
-
 tb:Parameter a owl:Class .
 
 tb:Component a owl:Class .
+
+tb:Intent a owl:Class .
 

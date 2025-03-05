@@ -59,6 +59,9 @@ def run_abstract_planner():
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
     percentage = data.get('preprocessing_percentage', 100) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
+    complexity = data.get('workflow_complexity', 0) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
+    # TODO: make complexity tunable in the frontend
+    
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
@@ -76,6 +79,7 @@ def run_abstract_planner():
         intent_graph.add((Literal(param_val), tb.forParameter, URIRef(param)))
 
     intent_graph.add((ab.term(intent_name), tb.has_component_threshold, Literal(percentage)))
+    intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
     intent = intent_graph
 

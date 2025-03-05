@@ -125,7 +125,7 @@ def get_intent_info(intent_graph: Graph, intent_iri: Optional[URIRef] = None) ->
 
     return dataset, task, algorithm, intent_iri 
 
-def get_implementation_input_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
+def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxImportanceLevel: int = 3) -> List[List[URIRef]]:
     input_spec_query = f"""
         PREFIX tb: <{tb}>
         SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
@@ -134,12 +134,15 @@ def get_implementation_input_specs(ontology: Graph, implementation: URIRef) -> L
             ?spec a tb:DataSpec ;
                 tb:hasSpecTag ?sptg ;
                 tb:has_position ?position .
-            ?sptg tb:hasDatatag ?shape . 
+            ?sptg 
+                tb:hasImportanceLevel ?imp ;
+                tb:hasDatatag ?shape . 
+            FILTER(?imp <= {int(maxImportanceLevel)}) .
+
         }}
 		GROUP BY ?spec
         ORDER BY ?position
-    """ #TODO check shap type datatag
-
+    """ #TODO check shape type datatag
     results = ontology.query(input_spec_query).bindings
 
     if results == [{}]:
@@ -952,6 +955,9 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     workflow_graph.add((workflow, RDF.type, tb.Workflow))
     task_order = 0
 
+    intent_iri = get_intent_iri(intent_graph)
+    max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
+
     dataset_node = ab.term(f'{workflow_name}-original_dataset')
 
     copy_subgraph(ontology, dataset, workflow_graph, dataset_node)
@@ -984,7 +990,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             singular_component = train_component
             singular_step_name = get_step_name(workflow_name, task_order, singular_component)
             singular_component_implementation = get_component_implementation(ontology, singular_component)
-            singular_input_specs = get_implementation_input_specs(ontology, singular_component_implementation)
+            singular_input_specs = get_implementation_input_specs(ontology, singular_component_implementation,max_imp_level)
             singular_input_data_index = identify_data_io(ontology, singular_input_specs, return_index=True)
             singular_transformation_inputs = None
 
@@ -1056,7 +1062,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
             train_component_implementation = get_component_implementation(ontology, train_component)
 
-            train_input_specs = get_implementation_input_specs(ontology, train_component_implementation)
+            train_input_specs = get_implementation_input_specs(ontology, train_component_implementation,max_imp_level)
             train_input_data_index = identify_data_io(ontology, train_input_specs, return_index=True)
             train_transformation_inputs = [ab[f'{train_step_name}-input_{i}'] for i in range(len(train_input_specs))]
             train_transformation_inputs[train_input_data_index] = train_dataset_node 
@@ -1116,7 +1122,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 test_step_name = get_step_name(workflow_name, task_order, test_component)
 
                 test_input_specs = get_implementation_input_specs(ontology,
-                                                                get_component_implementation(ontology, test_component))
+                                                                get_component_implementation(ontology, test_component),max_imp_level)
                 test_input_data_index = identify_data_io(ontology, test_input_specs, test=True, return_index=True)
                 test_input_model_index = identify_model_io(ontology, test_input_specs, return_index=True)
                 test_transformation_inputs = [ab[f'{test_step_name}-input_{i}'] for i in range(len(test_input_specs))]
@@ -1199,6 +1205,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
     dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
 
     component_threshold = float(next(intent_graph.objects(intent_iri, tb.has_component_threshold), None))
+    max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
 
     if log:
         tqdm.write(f'Intent: {intent_iri.fragment}')
@@ -1206,6 +1213,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
         tqdm.write(f'Task: {task.fragment}')
         tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task(ontology, task)]}')
         tqdm.write(f'Preprocessing Component Percentage Threshold: {component_threshold*100}%')
+        tqdm.write(f'Maximum complexity level: {max_imp_level}')
         tqdm.write('-------------------------------------------------')
 
     all_cols = get_inputs_all_columns(ontology, [dataset])
@@ -1248,7 +1256,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
     tqdm.write(str(pot_impls))
 
     impls_with_shapes = [
-        (implementation, get_implementation_input_specs(ontology, implementation))
+        (implementation, get_implementation_input_specs(ontology, implementation,max_imp_level))
         for implementation in pot_impls]
     
     components = [
@@ -1352,8 +1360,10 @@ def interactive():
             intent_graph.add((ab.term(intent), tb.specifies, cb.term(vis_algorithm)))
 
     component_percentage = float(input('Choose a threshold component percentage (for the preprocessing components) [100, 75, 50, 25] (%): ') or 100)/100.0
+    complexity = int(input("Choose the complexity of the generated workflows [0,1,2]: ") or 2)
 
     intent_graph.add((ab.term(intent), tb.has_component_threshold, Literal(component_percentage)))
+    intent_graph.add((ab.term(intent), tb.has_complexity, Literal(complexity)))
 
     folder = input('Introduce the folder to save the workflows: ')
     if folder == '':
