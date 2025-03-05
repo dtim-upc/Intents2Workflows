@@ -11,6 +11,7 @@ from .histogram import *
 from .scatter_plot import *
 from .line_plot import *
 from .heatmap import *
+from .xgboost import *
 
 implementations = [
     partitioning_implementation,
@@ -30,6 +31,8 @@ implementations = [
     scatterplot_visualizer_implementation,
     lineplot_visualizer_implementation,
     heatmap_visualizer_implementation,
+    xgboost_learner_implementation,
+    xgboost_predictor_implementation,
 ]
 
 components = [
@@ -64,4 +67,6 @@ components = [
     scatterplot_visualizer_component,
     lineplot_visualizer_component,
     heatmap_visualizer_component,
+    xgboost_learner_component,
+    xgboost_predictor_component
 ]

@@ -63,6 +63,7 @@ def add_algorithms(cbox):
         (cb.NaiveBayes, cb.Classification),
         (cb.SVM, cb.Classification),
         (cb.KNN, cb.Classification),
+        (cb.XGBoost, cb.Classification),
 
         # Anomaly Detection
         (cb.OneClassSVM, cb.AnomalyDetection),
@@ -133,6 +134,7 @@ def add_models(cbox):
         'DecisionTreeModel',
         'NormalizerModel',
         'MissingValueModel',
+        'XGBoostModel',
     ]
 
     cbox.add((cb.Model, RDFS.subClassOf, tb.Data))

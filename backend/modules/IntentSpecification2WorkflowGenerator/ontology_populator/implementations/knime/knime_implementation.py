@@ -75,6 +75,8 @@ KnimeDynamicBundle = KnimeBundle('D3 Samples for KNIME Dynamic JavaScript Node G
 KnimeJSBundle = KnimeBundle('KNIME JavaScript Base Views', 'org.knime.js.views', 'KNIME AG, Zurich, Switzerland',
                             '4.7.0.v202211091556') 
 
+KnimeXGBoostBundle = KnimeBundle('XGBoost Linear Model Learner', 'org.knime.xgboost', 'KNIME AG, Zurich, Switzerland',
+                                 '5.4.0.v202411131247')
 
 class KnimeFeature:
     def __init__(self, name: str, symbolic_name: str, vendor: str, version: str) -> None:
@@ -87,3 +89,5 @@ class KnimeFeature:
 KnimeDefaultFeature = KnimeFeature('', '', '', '0.0.0')
 KnimeJSViewsFeature = KnimeFeature('KNIME JavaScript Views', 'org.knime.features.js.views.feature.group',
                                    'KNIME AG, Zurich, Switzerland', '4.7.0.v202211091556')
+KnimeXGBoostFeature = KnimeFeature("KNIME XGBoost Integration", "org.knime.features.xgboost.feature.group",
+                                   "KNIME AG, Zurich, Switzerland", "5.4.0.v202411131247")

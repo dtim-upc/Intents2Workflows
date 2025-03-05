@@ -17,7 +17,7 @@
 
 1. Choose one engine from [`ontology_populator/implementations/`](../ontology_populator/implementations/) or [implement a new one](./addNewEngine.md)
 2. Create a new file on: `ontology_populator/implementations/<chosen enigne>/algorithm_name.py`.
-3. In that file create, at least, one implementation and one component. You must use the component and implementation definitions specific to the engine being used. Use an existing script as a template. NOTE: Split shapes must be the first one defined among all preprocessing shapes.
+3. In that file create, at least, one implementation and one component. You must use the component and implementation definitions specific to the engine being used. Use an existing script as a template. NOTE: Split shapes must be the first one defined among all preprocessing shapes. NOTE2: all the learner implementations should have the word Learner in the name field
     * When specifying input requirements, it is possible to add the importance level of each shape. The importance levels are:
         * Level 0 (**CRITICAL**): If the requirement is not met, the algorithm cannot be executed.
         * Level 1 (**MAJOR**): If the requriement is not met, the algorithm can be executed without problems, but the quality of the results produced is **severely** affected.
