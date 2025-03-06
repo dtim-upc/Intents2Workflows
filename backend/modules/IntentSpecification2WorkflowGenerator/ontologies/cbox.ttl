@@ -138,6 +138,11 @@ cb:NormalizerModelShape a sh:NodeShape,
         tb:DataSpec ;
     sh:targetClass cb:NormalizerModel .
 
+cb:NumericTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:node cb:NumericColumnShape ;
+            sh:path dmop:hasColumn ] ;
+    sh:targetClass dmop:TabularDataset .
+
 cb:OneClassSVM a tb:Algorithm ;
     rdfs:label "OneClassSVM" ;
     tb:solves cb:AnomalyDetection .
@@ -741,13 +746,13 @@ cb:component-mean_imputation a tb:LearnerComponent ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -774,17 +779,17 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -859,9 +864,9 @@ INSERT DATA{
 
 cb:component-xgboost_learner a tb:LearnerComponent ;
     rdfs:label "XGBoost Learner" ;
-    tb:exposesParameter cb:implementation-xgboost_learner-target_column ;
+    tb:exposesParameter cb:implementation-xgboost_linear_learner-target_column ;
     tb:hasApplier cb:component-xgboost_predictor ;
-    tb:hasImplementation cb:implementation-xgboost_learner ;
+    tb:hasImplementation cb:implementation-xgboost_linear_learner ;
     tb:hasTransformation ( [ a tb:Transformation ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
@@ -906,13 +911,13 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 3 ;
-            tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 3 ;
+            tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -3568,13 +3573,13 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -6635,14 +6640,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:MissingValueModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -8686,7 +8691,17 @@ cb:implementation-svm_predictor-svm_prediction_column_name a tb:Parameter ;
     tb:knime_key "prediction column name" ;
     tb:knime_path "model" .
 
-cb:implementation-xgboost_learner-basescore a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-alpha a tb:Parameter ;
+    rdfs:label "Alpha" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double,
+        "http://www.w3.org/2001/XMLSchema#double" ;
+    tb:has_defaultvalue 3e-01 ;
+    tb:has_position 14 ;
+    tb:knime_key "alpha" ;
+    tb:knime_path "model/booster" .
+
+cb:implementation-xgboost_linear_learner-basescore a tb:Parameter ;
     rdfs:label "BaseScore" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:double,
@@ -8696,7 +8711,7 @@ cb:implementation-xgboost_learner-basescore a tb:Parameter ;
     tb:knime_key "baseScore" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-boosting_rounds a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-boosting_rounds a tb:Parameter ;
     rdfs:label "Boosting rounds" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:int,
@@ -8706,17 +8721,27 @@ cb:implementation-xgboost_learner-boosting_rounds a tb:Parameter ;
     tb:knime_key "boostingRounds" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-enforce_option a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-enforce_option a tb:Parameter ;
     rdfs:label "Enforce option" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string,
         "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:has_defaultvalue "EnforceExclusion" ;
+    tb:has_defaultvalue "EnforceInclusion" ;
     tb:has_position 10 ;
     tb:knime_key "enforce_option" ;
     tb:knime_path "model/options/featureFilter" .
 
-cb:implementation-xgboost_learner-filter_type a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-feature_selector a tb:Parameter ;
+    rdfs:label "Feature selector" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string,
+        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_defaultvalue "Greedy" ;
+    tb:has_position 16 ;
+    tb:knime_key "featureSelector" ;
+    tb:knime_path "model/booster" .
+
+cb:implementation-xgboost_linear_learner-filter_type a tb:Parameter ;
     rdfs:label "Filter type" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string,
@@ -8726,7 +8751,17 @@ cb:implementation-xgboost_learner-filter_type a tb:Parameter ;
     tb:knime_key "filter-type" ;
     tb:knime_path "model/options/featureFilter" .
 
-cb:implementation-xgboost_learner-manual_number_of_threads a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-lambda a tb:Parameter ;
+    rdfs:label "Lambda" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double,
+        "http://www.w3.org/2001/XMLSchema#double" ;
+    tb:has_defaultvalue 3e-01 ;
+    tb:has_position 13 ;
+    tb:knime_key "lambda" ;
+    tb:knime_path "model/booster" .
+
+cb:implementation-xgboost_linear_learner-manual_number_of_threads a tb:Parameter ;
     rdfs:label "Manual number of threads" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:boolean,
@@ -8736,7 +8771,7 @@ cb:implementation-xgboost_learner-manual_number_of_threads a tb:Parameter ;
     tb:knime_key "manualNumThreads" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-number_of_threads a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-number_of_threads a tb:Parameter ;
     rdfs:label "Number of threads" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:int,
@@ -8746,7 +8781,17 @@ cb:implementation-xgboost_learner-number_of_threads a tb:Parameter ;
     tb:knime_key "numThreads" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-objective a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-numeric_columns a tb:Parameter ;
+    rdfs:label "Numeric columns" ;
+    tb:has_condition "" ;
+    tb:has_datatype rdf:List,
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#List" ;
+    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
+    tb:has_position 11 ;
+    tb:knime_key "included_names" ;
+    tb:knime_path "model/options/featureFilter" .
+
+cb:implementation-xgboost_linear_learner-objective a tb:Parameter ;
     rdfs:label "Objective" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string,
@@ -8756,7 +8801,17 @@ cb:implementation-xgboost_learner-objective a tb:Parameter ;
     tb:knime_key "identifier" ;
     tb:knime_path "model/options/objective" .
 
-cb:implementation-xgboost_learner-overlapping_penalty a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-other_columns a tb:Parameter ;
+    rdfs:label "Other columns" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string,
+        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_defaultvalue "None" ;
+    tb:has_position 12 ;
+    tb:knime_key "$$SKIP$$" ;
+    tb:knime_path "model/options/featureFilter/excluded_names" .
+
+cb:implementation-xgboost_linear_learner-overlapping_penalty a tb:Parameter ;
     rdfs:label "Overlapping Penalty" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string,
@@ -8766,7 +8821,7 @@ cb:implementation-xgboost_learner-overlapping_penalty a tb:Parameter ;
     tb:knime_key "weightColumn" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-static_seed a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-static_seed a tb:Parameter ;
     rdfs:label "Static seed" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:int,
@@ -8776,7 +8831,27 @@ cb:implementation-xgboost_learner-static_seed a tb:Parameter ;
     tb:knime_key "staticSeed" ;
     tb:knime_path "model/options" .
 
-cb:implementation-xgboost_learner-use_static_seed a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-top_k a tb:Parameter ;
+    rdfs:label "Top K" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int,
+        "http://www.w3.org/2001/XMLSchema#int" ;
+    tb:has_defaultvalue 0 ;
+    tb:has_position 17 ;
+    tb:knime_key "topK" ;
+    tb:knime_path "model/booster" .
+
+cb:implementation-xgboost_linear_learner-updater a tb:Parameter ;
+    rdfs:label "Updater" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string,
+        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_defaultvalue "CoordDescent" ;
+    tb:has_position 15 ;
+    tb:knime_key "updater" ;
+    tb:knime_path "model/booster" .
+
+cb:implementation-xgboost_linear_learner-use_static_seed a tb:Parameter ;
     rdfs:label "Use static seed" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:boolean,
@@ -8978,11 +9053,6 @@ cb:NotNormalDistributionDatasetShape a sh:NodeShape,
 
 cb:NumericColumnProperty sh:in ( dmop:Integer dmop:Float ) ;
     sh:path dmop:hasDataPrimitiveTypeColumn .
-
-cb:NumericTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:node cb:NumericColumnShape ;
-            sh:path dmop:hasColumn ] ;
-    sh:targetClass dmop:TabularDataset .
 
 cb:OutlieredDatasetShape a sh:NodeShape,
         tb:DataTag ;
@@ -9218,14 +9288,14 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:DecisionTreeModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -9300,14 +9370,14 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-normalizer_\(pmml\)-new_maximum a tb:Parameter ;
     rdfs:label "New maximum" ;
@@ -9346,14 +9416,14 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
@@ -9426,21 +9496,28 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
-cb:implementation-xgboost_learner a tb:LearnerImplementation ;
-    rdfs:label "XGBoost Learner" ;
+cb:implementation-xgboost_linear_learner a tb:LearnerImplementation ;
+    rdfs:label "XGBoost Linear Learner" ;
     tb:engine "KNIME" ;
     tb:hasApplier cb:implementation-xgboost_predictor ;
-    tb:hasParameter cb:implementation-xgboost_learner-basescore,
-        cb:implementation-xgboost_learner-boosting_rounds,
-        cb:implementation-xgboost_learner-enforce_option,
-        cb:implementation-xgboost_learner-filter_type,
-        cb:implementation-xgboost_learner-manual_number_of_threads,
-        cb:implementation-xgboost_learner-number_of_threads,
-        cb:implementation-xgboost_learner-objective,
-        cb:implementation-xgboost_learner-overlapping_penalty,
-        cb:implementation-xgboost_learner-static_seed,
-        cb:implementation-xgboost_learner-target_column,
-        cb:implementation-xgboost_learner-use_static_seed ;
+    tb:hasParameter cb:implementation-xgboost_linear_learner-alpha,
+        cb:implementation-xgboost_linear_learner-basescore,
+        cb:implementation-xgboost_linear_learner-boosting_rounds,
+        cb:implementation-xgboost_linear_learner-enforce_option,
+        cb:implementation-xgboost_linear_learner-feature_selector,
+        cb:implementation-xgboost_linear_learner-filter_type,
+        cb:implementation-xgboost_linear_learner-lambda,
+        cb:implementation-xgboost_linear_learner-manual_number_of_threads,
+        cb:implementation-xgboost_linear_learner-number_of_threads,
+        cb:implementation-xgboost_linear_learner-numeric_columns,
+        cb:implementation-xgboost_linear_learner-objective,
+        cb:implementation-xgboost_linear_learner-other_columns,
+        cb:implementation-xgboost_linear_learner-overlapping_penalty,
+        cb:implementation-xgboost_linear_learner-static_seed,
+        cb:implementation-xgboost_linear_learner-target_column,
+        cb:implementation-xgboost_linear_learner-top_k,
+        cb:implementation-xgboost_linear_learner-updater,
+        cb:implementation-xgboost_linear_learner-use_static_seed ;
     tb:implements cb:XGBoost ;
     tb:knime-factory "org.knime.xgboost.base.nodes.learner.classification.XGBLinearClassificationLearnerNodeFactory2" ;
     tb:knime-node-bundle-name "XGBoost Linear Model Learner" ;
@@ -9451,17 +9528,14 @@ cb:implementation-xgboost_learner a tb:LearnerImplementation ;
     tb:knime-node-feature-symbolic-name "org.knime.features.xgboost.feature.group" ;
     tb:knime-node-feature-vendor "KNIME AG, Zurich, Switzerland" ;
     tb:knime-node-feature-version "5.4.0.v202411131247" ;
-    tb:knime-node-name "XGBoost Learner" ;
+    tb:knime-node-name "XGBoost Linear Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 2 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -9472,7 +9546,7 @@ cb:implementation-xgboost_learner a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
-cb:implementation-xgboost_learner-target_column a tb:Parameter ;
+cb:implementation-xgboost_linear_learner-target_column a tb:Parameter ;
     rdfs:label "Target column" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string,
@@ -9485,7 +9559,7 @@ cb:implementation-xgboost_learner-target_column a tb:Parameter ;
 cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     rdfs:label "XGBoost Predictor" ;
     tb:engine "KNIME" ;
-    tb:hasLearner cb:implementation-xgboost_learner ;
+    tb:hasLearner cb:implementation-xgboost_linear_learner ;
     tb:hasParameter cb:implementation-xgboost_predictor-add_probabilities,
         cb:implementation-xgboost_predictor-batch_size,
         cb:implementation-xgboost_predictor-change_prediction,
@@ -9505,9 +9579,6 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "XGBoost Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
@@ -10285,16 +10356,16 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;

@@ -308,7 +308,7 @@ export const useIntentsStore = defineStore('intents', {
       this.allAlgorithms = response.data.algorithms
       this.allPreprocessingAlgorithms= response.data.preprocessing_algorithms
 
-      this.allAlgorithms = ["DecisionTree", "NN", "SVM"]
+      this.allAlgorithms = ["DecisionTree", "XGBoost", "SVM"]
     },
   }
 })

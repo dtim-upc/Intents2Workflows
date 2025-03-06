@@ -2,8 +2,8 @@ from common import *
 from .knime_implementation import KnimeImplementation, KnimeXGBoostBundle, KnimeParameter, KnimeXGBoostFeature
 from ..core import *
 
-xgboost_learner_implementation = KnimeImplementation(
-    name='XGBoost Learner',
+xgboost_linear_learner_implementation = KnimeImplementation(
+    name='XGBoost Linear Learner',
     algorithm=cb.XGBoost,
     parameters=[
         KnimeParameter("Target column", XSD.string, "$$LABEL_CATEGORICAL$$", 'targetColumn',path='model/options'),
@@ -16,10 +16,17 @@ xgboost_learner_implementation = KnimeImplementation(
         KnimeParameter("BaseScore", XSD.double, 0.5, 'baseScore', path='model/options'),
         KnimeParameter("Objective", XSD.string, "multi:softprob", "identifier", path='model/options/objective' ),
         KnimeParameter("Filter type", XSD.string, "STANDARD", "filter-type", path='model/options/featureFilter'),
-        KnimeParameter("Enforce option", XSD.string, "EnforceExclusion", "enforce_option", path='model/options/featureFilter'),
+        KnimeParameter("Enforce option", XSD.string, "EnforceInclusion", "enforce_option", path='model/options/featureFilter'),
+        KnimeParameter('Numeric columns', RDF.List, '$$NUMERIC_COLUMNS$$', 'included_names', path='model/options/featureFilter'),
+        KnimeParameter('Other columns', XSD.string, None, '$$SKIP$$', path='model/options/featureFilter/excluded_names'),
+        KnimeParameter("Lambda", XSD.double, 0.3, "lambda", path='model/booster'),
+        KnimeParameter("Alpha", XSD.double, 0.3, "alpha", path='model/booster'),
+        KnimeParameter("Updater", XSD.string, "CoordDescent", "updater", path='model/booster'),
+        KnimeParameter("Feature selector", XSD.string, "Greedy", "featureSelector", path='model/booster'),
+        KnimeParameter("Top K", XSD.int, 0, "topK", path='model/booster')
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NumericTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)],
     ],
     output=[
         cb.XGBoostModel,
@@ -30,13 +37,13 @@ xgboost_learner_implementation = KnimeImplementation(
     knime_feature=KnimeXGBoostFeature
 )
 
-xgboost_learner_component = Component(
+xgboost_linear_learner_component = Component(
     name='XGBoost Learner',
-    implementation=xgboost_learner_implementation,
+    implementation=xgboost_linear_learner_implementation,
     overriden_parameters=[
     ],
     exposed_parameters=[
-        next((param for param in xgboost_learner_implementation.parameters.keys() if param.knime_key == 'targetColumn'), None),
+        next((param for param in xgboost_linear_learner_implementation.parameters.keys() if param.knime_key == 'targetColumn'), None),
     ],
     transformations=[
         Transformation(
@@ -68,13 +75,13 @@ xgboost_predictor_implementation = KnimeImplementation(
     ],
     input=[
         cb.XGBoostModel,
-        [cb.TestTabularDatasetShape, cb.NumericTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)]
+        [cb.TestTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)]
     ],
     output=[
         cb.TabularDatasetShape,
     ],
     implementation_type=tb.ApplierImplementation,
-    counterpart=xgboost_learner_implementation,
+    counterpart=xgboost_linear_learner_implementation,
     knime_node_factory='org.knime.xgboost.base.nodes.predictor.XGBClassificationPredictorNodeFactory',
     knime_bundle=KnimeXGBoostBundle,
     knime_feature=KnimeXGBoostFeature,
@@ -100,7 +107,7 @@ WHERE {
         ),
     ],
     counterpart=[
-        xgboost_learner_component,
+        xgboost_linear_learner_component,
     ],
 )
 
