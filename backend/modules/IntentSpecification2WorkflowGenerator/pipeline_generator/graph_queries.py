@@ -1,6 +1,5 @@
 from typing import Dict, List, Set, Tuple, Type, Union
 from rdflib import Graph, URIRef
-from tqdm import tqdm
 
 
 from common import *
@@ -50,7 +49,7 @@ def get_algorithms_from_task(ontology: Graph, task: URIRef) -> URIRef:
 
     algorithm_task_query = f"""
     PREFIX tb: <{tb}>
-    SELECT ?algorithm
+    SELECT DISTINCT ?algorithm
     WHERE{{
         ?algorithm a tb:Algorithm ;
                    tb:solves {task.n3()} .
@@ -140,6 +139,15 @@ def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> 
 def unpack_shapes(shapes:str) -> List[URIRef]:
     spec_shapes = shapes.split(',')
     spec_shapes_uris = [URIRef(s) for s in spec_shapes]
+
+    # Logical planner is only executed correctly if traintabular shape goes first. TODO Change this behaviour
+    if cb.TrainTabularDatasetShape in spec_shapes_uris:
+        spec_shapes_uris.remove(cb.TrainTabularDatasetShape)
+        spec_shapes_uris.insert(0,cb.TrainTabularDatasetShape)
+
+    if cb.TestTabularDatasetShape in spec_shapes_uris:
+        spec_shapes_uris.remove(cb.TestTabularDatasetShape)
+        spec_shapes_uris.insert(0,cb.TestTabularDatasetShape)
     return spec_shapes_uris
 
 

@@ -82,7 +82,6 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         print(get_potential_implementations_constrained(ontology, shape_graph, al))
         impls.append(get_potential_implementations_constrained(ontology, shape_graph, al))
     
-    print(impls)
 
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}
@@ -115,8 +114,6 @@ def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List,
     component_threshold = next(intent.objects(intent_iri, tb.has_component_threshold), None)
     max_imp_level = next(intent.objects(intent_iri, tb.has_complexity), None)
 
-    print(implementations)
-
     impls_with_shapes = [
         (implementation, get_implementation_input_specs(ontology, implementation, max_imp_level))
         for implementation in implementations]
@@ -144,13 +141,11 @@ def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List,
         for shape in unsatisfied_shapes:
             for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
                 available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
- 
 
         for transformation, methods in available_transformations.items():
             best_components = get_best_components(ontology, task, methods, dataset, float(component_threshold)/100.0)
 
             available_transformations[transformation] = list(best_components.keys())
-
 
         transformation_combinations = list(
             enumerate(itertools.product(*available_transformations.values())))

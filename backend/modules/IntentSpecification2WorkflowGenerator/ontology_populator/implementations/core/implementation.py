@@ -36,7 +36,12 @@ class Implementation:
         self.counterpart = counterpart
         if self.counterpart is not None:
             assert implementation_type in {tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
-            if self.counterpart.counterpart is None:
+            if isinstance(self.counterpart, list):
+                for c in self.counterpart:
+                    print(c)
+                    if c.counterpart is None:
+                        c.counterpart = self
+            elif self.counterpart.counterpart is None:
                 self.counterpart.counterpart = self
 
         for parameter in self.parameters.values():
@@ -102,19 +107,21 @@ class Implementation:
     def add_counterpart_relationship(self, g: Graph):
         if self.counterpart is None:
             return
-        counterpart_query = f'''
-        PREFIX tb: <{tb}>
-        SELECT ?self ?counterpart
-        WHERE {{
-            ?self a <{self.implementation_type}> ;
-                rdfs:label "{self.name}" .
-            ?counterpart a <{self.counterpart.implementation_type}> ;
-                rdfs:label "{self.counterpart.name}" .
-        }}
-        '''
-        result = g.query(counterpart_query).bindings
-        assert len(result) == 1
-        self_node = result[0][Variable('self')]
-        relationship = tb.hasApplier if self.implementation_type == tb.LearnerImplementation else tb.hasLearner
-        counterpart_node = result[0][Variable('counterpart')]
-        g.add((self_node, relationship, counterpart_node))
+        counters = self.counterpart if isinstance(self.counterpart, list) else [self.counterpart]
+        for c in counters:
+            counterpart_query = f'''
+            PREFIX tb: <{tb}>
+            SELECT ?self ?counterpart
+            WHERE {{
+                ?self a <{self.implementation_type}> ;
+                    rdfs:label "{self.name}" .
+                ?counterpart a <{c.implementation_type}> ;
+                    rdfs:label "{c.name}" .
+            }}
+            '''
+            result = g.query(counterpart_query).bindings
+            assert len(result) == 1
+            self_node = result[0][Variable('self')]
+            relationship = tb.hasApplier if self.implementation_type == tb.LearnerImplementation else tb.hasLearner
+            counterpart_node = result[0][Variable('counterpart')]
+            g.add((self_node, relationship, counterpart_node))

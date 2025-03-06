@@ -32,6 +32,7 @@ implementations = [
     lineplot_visualizer_implementation,
     heatmap_visualizer_implementation,
     xgboost_linear_learner_implementation,
+    xgboost_tree_learner_implementation,
     xgboost_predictor_implementation,
 ]
 
@@ -68,5 +69,6 @@ components = [
     lineplot_visualizer_component,
     heatmap_visualizer_component,
     xgboost_linear_learner_component,
-    xgboost_predictor_component
+    xgboost_tree_learner_component,
+    xgboost_predictor_component,
 ]
