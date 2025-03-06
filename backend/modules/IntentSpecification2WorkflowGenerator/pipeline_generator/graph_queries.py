@@ -1,5 +1,6 @@
 from typing import Dict, List, Set, Tuple, Type, Union
 from rdflib import Graph, URIRef
+from tqdm import tqdm
 
 
 from common import *
@@ -92,7 +93,7 @@ def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
 def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxImportanceLevel: int = 3) -> List[List[URIRef]]:
     input_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
+        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
             {implementation.n3()} tb:specifiesInput ?spec .
             ?spec a tb:DataSpec ;
@@ -104,7 +105,7 @@ def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxI
             FILTER(?imp <= {int(maxImportanceLevel)}) .
 
         }}
-		GROUP BY ?spec
+		GROUP BY ?position
         ORDER BY ?position
     """ #TODO check shape type datatag
     results = ontology.query(input_spec_query).bindings
