@@ -768,12 +768,13 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
                               not satisfies_shape(ontology, ontology, shape, dataset)]
         print(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
 
-        available_transformations = {
-            shape: get_implementation_components_constrained(ontology,shape_graph,imp)
-            for shape in unsatisfied_shapes
-            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True)
+        available_transformations = { shape: []
+                                     for shape in unsatisfied_shapes}
 
-        }
+        for shape in unsatisfied_shapes:
+            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
+                available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
+ 
         print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
         for tr, methods in available_transformations.items():
 

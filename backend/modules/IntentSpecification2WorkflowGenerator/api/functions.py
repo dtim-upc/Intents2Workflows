@@ -138,11 +138,13 @@ def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List,
         unsatisfied_shapes = [shape for shape in shapes_to_satisfy if
                               not satisfies_shape(ontology, ontology, shape, dataset)]
 
-        available_transformations = {
-            shape: get_implementation_components_constrained(ontology, shape_graph, imp)
-            for shape in unsatisfied_shapes
-            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True)
-        }
+        available_transformations = { shape: []
+                                     for shape in unsatisfied_shapes}
+
+        for shape in unsatisfied_shapes:
+            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
+                available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
+ 
 
         for transformation, methods in available_transformations.items():
             best_components = get_best_components(ontology, task, methods, dataset, float(component_threshold)/100.0)
