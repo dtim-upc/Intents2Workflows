@@ -691,7 +691,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
         tqdm.write(f'Intent: {intent_iri.fragment}')
         tqdm.write(f'Dataset: {dataset.fragment}')
         tqdm.write(f'Task: {task.fragment}')
-        tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in graph_queries.get_algorithms_from_task(ontology, task)]}')
+        tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task_constrained(ontology, shape_graph,task)]}')
         tqdm.write(f'Preprocessing Component Percentage Threshold: {component_threshold*100}%')
         tqdm.write(f'Maximum complexity level: {max_imp_level}')
         tqdm.write('-------------------------------------------------')
@@ -796,7 +796,6 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
 
         transformation_combinations_constrained = prune_workflow_combinations(ontology, shape_graph, transformation_combinations,component)
         #ontology.serialize('./tmp.ttl',format="turtle")
-
         if log:
             tqdm.write(f'\tTotal combinations: {len(transformation_combinations_constrained)}')
 
