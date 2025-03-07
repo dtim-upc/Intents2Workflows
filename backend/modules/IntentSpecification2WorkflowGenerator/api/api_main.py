@@ -58,7 +58,7 @@ def run_abstract_planner():
     task = data.get('problem', '')
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
-    percentage = data.get('preprocessing_percentage', 100) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
+    percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
     complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
@@ -115,7 +115,6 @@ def run_logical_planner():
     impls = [impl
              for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
              for impl in impls]
-    print(algorithm_implementations_uris)
 
     workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
 

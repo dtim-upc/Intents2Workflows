@@ -678,62 +678,34 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
     return workflow_graph, workflow
 
-
-
-def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destination_folder: str, log: bool = False) -> None:
-    
+def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_graph, intent_graph: Graph,log: bool = False):
     dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
-
-    component_threshold = float(next(intent_graph.objects(intent_iri, tb.has_component_threshold), None))
-    max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
 
     if log:
         tqdm.write(f'Intent: {intent_iri.fragment}')
         tqdm.write(f'Dataset: {dataset.fragment}')
         tqdm.write(f'Task: {task.fragment}')
         tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task_constrained(ontology, shape_graph,task)]}')
-        tqdm.write(f'Preprocessing Component Percentage Threshold: {component_threshold*100}%')
-        tqdm.write(f'Maximum complexity level: {max_imp_level}')
         tqdm.write('-------------------------------------------------')
 
-    all_cols = graph_queries.get_inputs_all_columns(ontology, [dataset])
-    cat_cols = graph_queries.get_inputs_categorical_columns(ontology, [dataset])
-    num_cols = graph_queries.get_inputs_numeric_columns(ontology, [dataset])
-    
-    exp_params = graph_queries.get_exposed_parameters(ontology, task, algorithm)
-
-    for exp_param in exp_params:
-        option_columns = []
-        if 'CATEGORICAL' in exp_param['value']:
-            option_columns = cat_cols
-        elif 'NUMERICAL' in exp_param['value']:
-            option_columns = num_cols
-        else:
-            option_columns = all_cols
-
-        if 'COMPLETE' in exp_param['value']:
-            option_columns.append('<RowID>')
-
-        if 'INCLUDED' in exp_param['condition']:
-            param_val = []
-            col_num = int(input(f"How many columns do you want to enter for {exp_param['label']} parameter?"))
-            for i in range(col_num):
-                param_val.append(input(f"Enter a value for {exp_param['label']} from the following: {option_columns}"))
-        else:
-            param_val = input(f"Enter a value for {exp_param['label']} from the following: {option_columns}")
-
-        intent_graph.add((intent_iri, tb.specifiesValue, Literal(param_val)))
-        intent_graph.add((Literal(param_val), tb.forParameter, exp_param['exp_param']))
-
     algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,shape_graph,task)
-    tqdm.write(str(algs))
-
     
     pot_impls = []
     for al in algs:
         pot_impls.extend(get_potential_implementations_constrained(ontology, shape_graph, al))
     
-    tqdm.write(str(pot_impls))
+    return algs, pot_impls
+
+def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, pot_impls, log: bool = False) -> List[Graph]:
+
+    dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
+    component_threshold = float(next(intent_graph.objects(intent_iri, tb.has_component_threshold), None))
+    max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
+
+    if log:
+        tqdm.write(f'Preprocessing Component Percentage Threshold: {component_threshold*100}%')
+        tqdm.write(f'Maximum complexity level: {max_imp_level}')
+        tqdm.write('-------------------------------------------------')
 
     impls_with_shapes = [
         (implementation, graph_queries.get_implementation_input_specs(ontology, implementation,max_imp_level))
@@ -754,6 +726,7 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
         tqdm.write('-------------------------------------------------')
 
     workflow_order = 0
+    workflows = []
 
 
     for component, implementation, inputs in tqdm(components, desc='Components', position=1):
@@ -777,6 +750,8 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
  
         print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
         for tr, methods in available_transformations.items():
+            tqdm.write(f'METHOD: {str(tr)}, {str(methods)}')
+            tqdm.write(f'COMPONENT THRESHOLD: {str(component_threshold)}')
 
             best_components = get_best_components(ontology, task, methods, dataset, component_threshold)
 
@@ -815,5 +790,8 @@ def build_workflows(ontology: Graph, shape_graph, intent_graph: Graph, destinati
 
             if log:
                 tqdm.write(f'\t\tWorkflow {workflow_order}: {w.fragment}')
-            wg.serialize(os.path.join(destination_folder, f'{workflow_name}.ttl'), format='turtle')
+
+            workflows.append(wg)
             workflow_order += 1
+    return workflows
+    
