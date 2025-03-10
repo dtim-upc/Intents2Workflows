@@ -118,7 +118,7 @@ def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxI
 def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
     output_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
+        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
             {implementation.n3()} tb:specifiesOutput ?spec .
             ?spec a tb:DataSpec ;
@@ -126,9 +126,9 @@ def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> 
                 tb:has_position ?position .
             ?sptg tb:hasDatatag ?shape . 
         }}
-		GROUP BY ?spec
+		GROUP BY ?position
         ORDER BY ?position
-    """ #TODO check shap type datatagER BY ?position
+    """ #TODO check shape type datatag
 
     results = ontology.query(output_spec_query).bindings
     if results == [{}]:
@@ -539,3 +539,5 @@ def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
     results = graph.query(preference_query).bindings
 
     return {result['datatag']: (float(result['weight']), int(result['component_rank'])) for result in results}
+
+
