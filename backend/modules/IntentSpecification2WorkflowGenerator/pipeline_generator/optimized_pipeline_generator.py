@@ -424,6 +424,76 @@ def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, da
     return add_step(workflow_graph, workflow, loader_step_name, loader_component, loader_param_specs, 0, None, None,
                     [dataset_node])
 
+def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, workflow: URIRef, workflow_name: str, 
+                  max_imp_level: int, component:URIRef, task_order: int, previous_step: URIRef, input_data: URIRef, input_model: URIRef):
+
+    step_name = get_step_name(workflow_name, task_order, component)
+    component_implementation = graph_queries.get_component_implementation(ontology, component)
+    input_specs = graph_queries.get_implementation_input_specs(ontology,component_implementation,max_imp_level)
+    input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
+    input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
+
+    transformation_inputs = [ab[f'{step_name}-input_{i}'] for i in range(len(input_specs))]
+
+    if input_data_index is not None:
+        transformation_inputs[input_data_index] = input_data
+    
+    if input_model_index is not None:
+        transformation_inputs[input_model_index] = input_model
+
+    
+    annotate_ios_with_specs(ontology, workflow_graph, transformation_inputs,
+                            input_specs)
+    
+    output_specs = graph_queries.get_implementation_output_specs(ontology,component_implementation)
+    transformation_outputs = [ab[f'{step_name}-output_{i}'] for i in range(len(output_specs))]
+    annotate_ios_with_specs(ontology, workflow_graph, transformation_outputs,output_specs)
+    
+    parameters = get_component_parameters(ontology, component)
+
+    overridden_parameters = get_component_overridden_paramspecs(ontology, workflow_graph, component)
+    parameters = perform_param_substitution(graph=workflow_graph, parameters=parameters,
+                                                        implementation=component_implementation,
+                                                        inputs=transformation_inputs,
+                                                        intent_graph=intent_graph)
+    
+    param_specs = assign_to_parameter_specs(workflow_graph, parameters)
+    param_specs.update(overridden_parameters)
+
+
+    step = add_step(workflow_graph, workflow,
+                        step_name,
+                        component,
+                        param_specs,
+                        task_order, previous_step,
+                        transformation_inputs,
+                        transformation_outputs)
+    run_component_transformation(ontology, workflow_graph, component,
+                                    transformation_inputs, transformation_outputs, param_specs)
+    
+
+    train_dataset_index = graph_queries.identify_data_io(ontology, output_specs, train=True, return_index=True)
+    test_dataset_index = graph_queries.identify_data_io(ontology, output_specs, test=True, return_index=True)
+    model_index = graph_queries.identify_model_io(ontology, output_specs, return_index=True)
+
+    train_dataset_node = None
+    test_dataset_node = None
+    model_node = None
+
+    if train_dataset_index is not None:
+        train_dataset_node =  transformation_outputs[train_dataset_index]
+    if test_dataset_index is not None:
+        test_dataset_node = transformation_outputs[test_dataset_index]
+    if model_index is not None:
+        model_node = transformation_outputs[model_index]
+    if train_dataset_index is None and test_dataset_index is None:
+        output_data_index = graph_queries.identify_data_io(ontology, output_specs, return_index=True)
+        if not output_data_index is None:
+            train_dataset_node = transformation_outputs[output_data_index]
+    
+    return step, train_dataset_node, test_dataset_node, model_node
+
+
 
 def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef, main_component: URIRef,
                            transformations: List[URIRef], intent_graph:Graph) -> Tuple[Graph, URIRef]:
@@ -445,221 +515,41 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node)
     task_order += 1
 
-    previous_step = loader_step
     previous_train_step = loader_step
     previous_test_step = None
 
-    previous_node = dataset_node
-    train_dataset_node = dataset_node
+    dataset_node = dataset_node
     test_dataset_node = None
 
-
     for train_component in [*transformations, main_component]:
-        #tqdm.write("components")
-        #tqdm.write(train_component)
-    
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
-        #if not test_component is None:
-        #    tqdm.write(test_component)
         same = train_component == test_component
-        train_component_implementation = graph_queries.get_component_implementation(ontology, train_component)
 
+        step, dataset_node, output_test_dataset_node, model_node = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, train_component, 
+                             task_order, previous_train_step, dataset_node, None)
+        previous_train_step = step
+        if not output_test_dataset_node is None:
+            test_dataset_node = output_test_dataset_node
 
-        if not test_component:
-            
-            singular_component = train_component
-            singular_step_name = get_step_name(workflow_name, task_order, singular_component)
-            singular_component_implementation = graph_queries.get_component_implementation(ontology, singular_component)
-            singular_input_specs = graph_queries.get_implementation_input_specs(ontology, singular_component_implementation,max_imp_level)
-            singular_input_data_index = graph_queries.identify_data_io(ontology, singular_input_specs, return_index=True)
-            singular_transformation_inputs = None
+        task_order += 1
+        print(train_component, dataset_node, test_dataset_node, model_node)
+         
 
-            #tqdm.write("Sepecs singular input:")
-            #tqdm.write(str(singular_input_specs))
+        if test_component:
+            print("same = ",same)
+            previous_test_steps = [previous_test_step, step] if not same else [previous_test_step]
+            print(test_component, previous_test_steps, test_dataset_node, model_node)
 
-            if singular_input_data_index is not None:
-                singular_transformation_inputs = [ab[f'{singular_step_name}-input_{i}'] for i in range(len(singular_input_specs))]
-                singular_transformation_inputs[singular_input_data_index] = previous_node
-                #tqdm.write(str(singular_transformation_inputs))
-                annotate_ios_with_specs(ontology, workflow_graph, singular_transformation_inputs,
-                                        singular_input_specs)
-            
-            #tqdm.write("Singular output:")
-            singular_output_specs = graph_queries.get_implementation_output_specs(ontology, singular_component_implementation)
-            singular_transformation_outputs = [ab[f'{singular_step_name}-output_{i}'] for i in range(len(singular_output_specs))]
-            annotate_ios_with_specs(ontology, workflow_graph, singular_transformation_outputs,
-                                singular_output_specs)
-            
-            #tqdm.write("Sepecs singular output:")
-            #tqdm.write(str(singular_output_specs))
-            #tqdm.write(str(singular_transformation_outputs))
+            test_step, test_dataset_node, _, _  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
+                            task_order, previous_test_steps, test_dataset_node, model_node)
+            previous_test_step = test_step
 
-            #tqdm.write("parameters:")
-            
-            singular_parameters = get_component_parameters(ontology, singular_component)
-
-            singular_overridden_parameters = get_component_overridden_paramspecs(ontology, workflow_graph, singular_component)
-            singular_parameters = perform_param_substitution(graph=workflow_graph, parameters=singular_parameters,
-                                                                implementation=singular_component_implementation,
-                                                                inputs=singular_transformation_inputs,
-                                                                intent_graph=intent_graph)
-            
-            singular_param_specs = assign_to_parameter_specs(workflow_graph, singular_parameters)
-            singular_param_specs.update(singular_overridden_parameters)
-            #tqdm.write(str(singular_param_specs))
-
-            
-
-            singular_step = add_step(workflow_graph, workflow,
-                                singular_step_name,
-                                singular_component,
-                                singular_param_specs,
-                                task_order, previous_step,
-                                [previous_node],
-                                singular_transformation_outputs)
-            run_component_transformation(ontology, workflow_graph, singular_component,
-                                            [previous_node], singular_transformation_outputs, singular_param_specs)
-
-
-            train_dataset_index = graph_queries.identify_data_io(ontology, singular_output_specs, train=True, return_index=True)
-            
-            test_dataset_index = graph_queries.identify_data_io(ontology, singular_output_specs, test=True, return_index=True)
-
-            if train_dataset_index is not None:
-                train_dataset_node =  singular_transformation_outputs[train_dataset_index]
-            if test_dataset_index is not None:
-                test_dataset_node = singular_transformation_outputs[test_dataset_index]
-                
-            previous_step = singular_step
-            previous_train_step = singular_step
-            previous_test_step = singular_step
-            
             task_order += 1
-
+            print(test_component, test_dataset_node)
         else:
-
-            train_step_name = get_step_name(workflow_name, task_order, train_component)
-
-            train_component_implementation = graph_queries.get_component_implementation(ontology, train_component)
-
-            train_input_specs = graph_queries.get_implementation_input_specs(ontology, train_component_implementation,max_imp_level)
-            train_input_data_index = graph_queries.identify_data_io(ontology, train_input_specs, return_index=True)
-            train_transformation_inputs = [ab[f'{train_step_name}-input_{i}'] for i in range(len(train_input_specs))]
-            train_transformation_inputs[train_input_data_index] = train_dataset_node 
-            annotate_ios_with_specs(ontology, workflow_graph, train_transformation_inputs,
-                                    train_input_specs)
-
-            #tqdm.write("Sepecs train input:")
-            #tqdm.write(str(train_transformation_inputs))
-            #tqdm.write(str(train_input_specs))
-            train_output_specs = graph_queries.get_implementation_output_specs(ontology, train_component_implementation)
-            train_output_model_index = graph_queries.identify_model_io(ontology, train_output_specs, return_index=True)
-            train_output_data_index = graph_queries.identify_data_io(ontology, train_output_specs, return_index=True)
-            train_transformation_outputs = [ab[f'{train_step_name}-output_{i}'] for i in range(len(train_output_specs))]
-            annotate_ios_with_specs(ontology, workflow_graph, train_transformation_outputs,
-                                    train_output_specs)
-            
-            #tqdm.write("Sepecs train output:")
-            #tqdm.write(str(train_transformation_outputs))
-            #tqdm.write(str(train_output_specs))
-
-            #tqdm.write("parameters:")
-
-            train_parameters = get_component_parameters(ontology, train_component)
-            train_parameters = perform_param_substitution(graph=workflow_graph, implementation=train_component_implementation,
-                                                            parameters=train_parameters,
-                                                            intent_graph=intent_graph,
-                                                            inputs=train_transformation_inputs)
-            train_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, train_component)
-            train_param_specs = assign_to_parameter_specs(workflow_graph, train_parameters)
-            train_param_specs.update(train_overridden_paramspecs)
-            #tqdm.write(str(train_param_specs))
-            train_step = add_step(workflow_graph, workflow,
-                                train_step_name,
-                                train_component,
-                                train_param_specs,
-                                task_order, previous_train_step,
-                                train_transformation_inputs,
-                                train_transformation_outputs)
-
-            previous_train_step = train_step 
-
-            run_component_transformation(ontology, workflow_graph, train_component, train_transformation_inputs,
-                                        train_transformation_outputs, train_param_specs)
-
-            if train_output_data_index is not None:
-                train_dataset_node = train_transformation_outputs[train_output_data_index]
-
-            previous_step = train_step
-            previous_node = train_dataset_node
-
-            task_order += 1
-
-            if test_dataset_node is not None:
-
-                #tqdm.write("test dataset node")
-
-                test_step_name = get_step_name(workflow_name, task_order, test_component)
-
-                test_input_specs = graph_queries.get_implementation_input_specs(ontology,
-                                                                graph_queries.get_component_implementation(ontology, test_component),max_imp_level)
-                test_input_data_index = graph_queries.identify_data_io(ontology, test_input_specs, test=True, return_index=True)
-                test_input_model_index = graph_queries.identify_model_io(ontology, test_input_specs, return_index=True)
-                test_transformation_inputs = [ab[f'{test_step_name}-input_{i}'] for i in range(len(test_input_specs))]
-                test_transformation_inputs[test_input_data_index] = test_dataset_node
-                if train_output_model_index is not None:
-                    test_transformation_inputs[test_input_model_index] = train_transformation_outputs[train_output_model_index]
-                annotate_ios_with_specs(ontology, workflow_graph, test_transformation_inputs,
-                                        test_input_specs)
-                
-                #tqdm.write("Sepecs test input:")
-                #tqdm.write(str(test_transformation_inputs))
-                #tqdm.write(str(test_input_specs))
-                
-                test_implementation = graph_queries.get_component_implementation(ontology, test_component)
-                test_output_specs = graph_queries.get_implementation_output_specs(ontology, test_implementation)
-                test_output_data_index = graph_queries.identify_data_io(ontology, test_output_specs, return_index=True)
-                test_transformation_outputs = [ab[f'{test_step_name}-output_{i}'] for i in range(len(test_output_specs))]
-                annotate_ios_with_specs(ontology, workflow_graph, test_transformation_outputs,
-                                        test_output_specs)
-                
-                #tqdm.write("Sepecs test output:")
-                #tqdm.write(str(test_transformation_outputs))
-                #tqdm.write(str(test_output_specs))
-
-                #tqdm.write("parameters:")
-
-                previous_test_steps = [previous_test_step, train_step] if not same else [previous_test_step]
-                test_parameters = get_component_parameters(ontology, test_component)
-                test_component_implementation = graph_queries.get_component_implementation(ontology, test_component) if test_component else None
-                test_parameters = perform_param_substitution(workflow_graph,
-                                                             test_component_implementation,
-                                                             test_parameters,
-                                                             test_transformation_inputs,
-                                                             intent_graph=intent_graph)
-                test_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, train_component)
-                test_param_specs = assign_to_parameter_specs(workflow_graph, test_parameters)
-                test_param_specs.update(test_overridden_paramspecs)
-                #tqdm.write(str(test_param_specs))
-
-                test_step = add_step(workflow_graph, workflow,
-                                    test_step_name,
-                                    test_component,
-                                    test_param_specs,
-                                    task_order, previous_test_steps,
-                                    test_transformation_inputs,
-                                    test_transformation_outputs)
-
-                run_component_transformation(ontology, workflow_graph, test_component, test_transformation_inputs,
-                                            test_transformation_outputs, test_param_specs)
-                
-                test_dataset_node = test_transformation_outputs[test_output_data_index]
-                previous_test_step = test_step
-                task_order += 1
-            
+            previous_test_step = step
     
     if test_dataset_node is not None:
-        #tqdm.write("saver state")
         saver_component = cb.term('component-csv_local_writer')
         saver_step_name = get_step_name(workflow_name, task_order, saver_component)
         saver_parameters = get_component_parameters(ontology, saver_component)
@@ -675,7 +565,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 saver_param_specs,
                 task_order,
                 previous_test_step, [test_dataset_node], [])
-
+                
     return workflow_graph, workflow
 
 def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_graph, intent_graph: Graph,log: bool = False):
