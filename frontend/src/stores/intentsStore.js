@@ -119,7 +119,7 @@ export const useIntentsStore = defineStore('intents', {
         this.abstractPlans = Object.entries(response.data.abstract_plans).map(([plan, value]) => ({
           name: plan.split('#').at(-1),
           id: plan,
-          selected: false,
+          selected: true,
           plan: value
         }));
         this.logicalPlans = [];
@@ -143,7 +143,7 @@ export const useIntentsStore = defineStore('intents', {
           let found = false
           const plan = {
             id: key,
-            selected: false,
+            selected: true,
             plan: response.data[key].logical_plan,
             graph:  response.data[key].graph,
           }
@@ -156,10 +156,11 @@ export const useIntentsStore = defineStore('intents', {
           if (!found) {
             this.logicalPlans.push({
               id: this.removeLastPart(key),
-              selected: false,
+              selected: true,
               plans: [plan]
             })
           }
+          this.countSelectedPlans++
         }
         this.selectedPlans = []
         successCallback();

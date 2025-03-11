@@ -35,10 +35,10 @@
               <q-select label="Metric to optimize" outlined v-model="selectedMetric" :options=intentsStore.allMetrics class="q-mb-sm"
                     :rules="[ val => val && val.length > 0 || 'Select a metric']"/>
             </div> -->
-            <div class="col-3" style="padding: 10px;">
+           <!-- <div class="col-3" style="padding: 10px;">
               <q-select label="Algorithm" outlined v-model="selectedAlgorithm" :options=intentsStore.allAlgorithms class="q-mb-sm"
               :rules="[ val => val && val.length > 0 || 'Select an algorithm']"/>
-            </div>
+            </div> -->
             <!-- <div class="col-3" style="padding: 10px;">
               <q-select label="Is preprocessing needed?" outlined v-model="selectedPreprocessing" :options="['Yes', 'No']" class="q-mb-sm"
               :rules="[ val => val && val.length > 0 || 'Select an option']"/>

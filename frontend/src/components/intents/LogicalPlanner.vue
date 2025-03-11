@@ -10,7 +10,7 @@
       </div>
       <div v-else class="col-6 text-left">
         <q-list bordered separator>
-          <q-item v-for="(absPlan) in intentsStore.abstractPlans.filter(plan => plan.name === intentsStore.selectedAlgorithm)" 
+          <q-item v-for="(absPlan) in intentsStore.abstractPlans"
                   :key="absPlan.id" class="q-my-sm">
             <q-item-section avatar>
               <q-checkbox v-model="absPlan.selected"/>
