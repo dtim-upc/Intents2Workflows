@@ -158,43 +158,31 @@ def logical_planner_extremexp(ontology: Graph, workflow_plans: List[Graph]):
         counter[main_component] += 1
         logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")}
 
-    tasks = list(dict.fromkeys(tasks))  # remove duplicates
+    tasks = list(extremexp_workflow['task_implementations'].keys())  # remove duplicates
 
     return logical_plans, extremexp_workflows, tasks
 
-def generate_extremexp_workflow(ontology, logical_plan, tasks, workflow_name):
+def generate_extremexp_workflow(ontology: Graph, logical_plan, tasks, workflow_name):
     workflow = {}
     workflow["workflow_name"] = workflow_name
     task_implementations = {}
     query_template = """ PREFIX tb: <https://extremexp.eu/ontology/tbox#>
-                                SELECT ?implementation ?implements
+                                SELECT ?implementation ?implements 
                                 WHERE {{
                                     <{key}> tb:hasImplementation ?implementation .
                                     ?implementation tb:implements ?implements .
                                 }} """
 
-    if len(tasks) == 0: # Build task array
-        for key in logical_plan.keys():
-            query_execute = query_template.format(key=key)
-            results = ontology.query(query_execute)
-            for row in results:
-                if "learner" in row.implementation:
-                    tasks.append("ModelTrain")
-                elif "predictor" in row.implementation:
-                    tasks.append("ModelPredict")
-                else:
-                    tasks.append(row.implements[row.implements.find('#') + 1:])
-
     for key in logical_plan.keys():
         query_execute = query_template.format(key=key)
         results = ontology.query(query_execute)
         for row in results:
-            if "applier" not in key:
-                task = row.implements[row.implements.find('#') + 1:]
-                if "learner" in row.implementation:
-                    task = "ModelTrain"
-                elif "predictor" in row.implementation:
-                    task = "ModelPredict"
+            task = URIRef(row.implements).fragment
+            in_specs = get_implementation_input_specs(ontology, row.implementation)
+            if any(cb.TrainTabularDatasetShape in spec for spec in in_specs):
+                task_implementations["ModelTrain"] = "tasks/intent_name/" + key[key.find('-') + 1:] + ".py"
+                task_implementations["ModelPredict"] = "tasks/intent_name/" + key[key.find('-') + 1:] + "Predictor" + ".py"
+            elif tb.ApplierImplementation not in ontology.objects(row.implementation, RDF.type):
                 task_implementations[task] = "tasks/intent_name/" + key[key.find('-') + 1:] + ".py"
             # print(f"Key: {key}, implementation: {row.implementation}, implements: {row.implements}")
 
