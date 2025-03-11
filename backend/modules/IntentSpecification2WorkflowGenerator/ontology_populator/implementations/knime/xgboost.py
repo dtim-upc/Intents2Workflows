@@ -116,7 +116,7 @@ xgboost_tree_learner_implementation = KnimeImplementation(
 )
 
 xgboost_tree_learner_component = Component(
-    name='XGBoost Treee Learner',
+    name='XGBoost Tree Learner',
     implementation=xgboost_tree_learner_implementation,
     overriden_parameters=[
     ],
