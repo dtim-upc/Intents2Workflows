@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 #TODO cahnge import names to the adecuate files
 from api.functions import *
-from pipeline_translator.general_pipeline_translator import translate_graph_folder, translate_graph
+from backend.modules.IntentSpecification2WorkflowGenerator.pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
 from dataset_annotator.knime_annotator import annotate_dataset
 
 import requests
