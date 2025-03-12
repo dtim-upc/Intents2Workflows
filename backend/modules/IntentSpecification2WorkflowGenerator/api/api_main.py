@@ -10,7 +10,8 @@ from flask_cors import CORS
 
 #TODO cahnge import names to the adecuate files
 from api.functions import *
-from backend.modules.IntentSpecification2WorkflowGenerator.pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
+from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
+from pipeline_translator.dsl.dsl_pipeline_traslator import tranlate_graph_to_dsl
 from dataset_annotator.knime_annotator import annotate_dataset
 
 import requests
@@ -117,43 +118,8 @@ def run_logical_planner():
              for impl in impls]
 
     workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
-
-    ########### ORIGINAL CODE
-    # logical_plans = logical_planner(ontology, workflow_plans)
-    # return logical_plans
-
-    ########### EXTREMEXP CODE
-    logical_plans, extremexp_workflows, tasks = logical_planner_extremexp(ontology, workflow_plans)
-    # Retrieving the intent name
-    query_template = """ 
-                        PREFIX ab: <https://extremexp.eu/ontology/abox#>
-                        PREFIX tb: <https://extremexp.eu/ontology/tbox#>
-                        SELECT ?subject
-                        WHERE {
-                          ?subject a tb:Intent .
-                        } """
-    results = intent.query(query_template)
-    intent_name = ""
-    for row in results:
-        intent_name = str(row["subject"][row["subject"].find('#') + 1:])
-
-    for workflow in extremexp_workflows:
-        task_implementations = workflow.get('task_implementations', {})
-        for key, value in task_implementations.items():
-            updated_value = value.replace("intent_name", intent_name)
-            task_implementations[key] = updated_value
-        workflow['task_implementations'] = task_implementations
-
-    json_data = {
-        "intent_name": intent_name,
-        "tasks": tasks,
-        "workflows": extremexp_workflows
-    }
-
-    # Write data to JSON file
-    with open(os.path.join(temporary_folder, "intent_to_dsl.json"), 'w') as json_file:
-        json.dump(json_data, json_file, indent=4)
-
+    logical_plans = logical_planner(ontology, workflow_plans)
+    
     return logical_plans
 
 
@@ -162,6 +128,8 @@ def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+
+    tranlate_graph_to_dsl(ontology, plan_graph)
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)

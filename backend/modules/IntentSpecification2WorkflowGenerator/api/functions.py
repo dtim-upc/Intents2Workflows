@@ -99,11 +99,10 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
     return build_workflows(ontology, shape_graph, intent, implementations, log=True)
 
-
 def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
     logical_plans = {}
-    mapper = {}
     counter = {}
+
     for workflow_plan in workflow_plans:
         steps = list(workflow_plan.subjects(RDF.type, tb.Step))
         step_components = {step: next(workflow_plan.objects(step, tb.runs)) for step in steps}
@@ -111,43 +110,10 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         logical_plan = {
             step_components[step]: [step_components[s] for s in nexts] for step, nexts in step_next.items()
         }
+
         main_component = next((comp for comp in logical_plan.keys() 
-                      if logical_plan[comp] == [cb.term('component-csv_local_writer')] 
-                      or logical_plan[comp] == []), None)
-        if (main_component, RDF.type, tb.ApplierImplementation) in ontology:
-            options = list(ontology.objects(main_component, tb.hasLearner))
-            main_component = next(o for o in options if (None, None, o) in workflow_plan)
-        if main_component not in counter:
-            counter[main_component] = 0
-        plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
-                   f'{counter[main_component]}')
-        counter[main_component] += 1
-        logical_plans[plan_id] = logical_plan
-        mapper[plan_id] = workflow_plan
-
-    return logical_plans, mapper
-
-def logical_planner_extremexp(ontology: Graph, workflow_plans: List[Graph]):
-    logical_plans = {}
-    counter = {}
-    tasks = []
-    extremexp_workflows = []
-    workflow_counter = 0
-    for workflow_plan in workflow_plans:
-        steps = list(workflow_plan.subjects(RDF.type, tb.Step))
-        step_components = {step: next(workflow_plan.objects(step, tb.runs)) for step in steps}
-        step_next = {step: list(workflow_plan.objects(step, tb.followedBy)) for step in steps}
-        logical_plan = {
-            step_components[step]: [step_components[s] for s in nexts] for step, nexts in step_next.items()
-        }
-
-        workflow_name = "Workflow_" + str(workflow_counter)
-        workflow_counter += 1
-        extremexp_workflow = generate_extremexp_workflow(ontology, logical_plan, tasks, workflow_name)
-        extremexp_workflows.append(extremexp_workflow)
-
-        main_component = next(
-            comp for comp in logical_plan.keys() if logical_plan[comp] == [cb.term('component-csv_local_writer')])
+                if logical_plan[comp] == [cb.term('component-csv_local_writer')] 
+                or logical_plan[comp] == []), None)
         if (main_component, RDF.type, tb.ApplierImplementation) in ontology:
             options = list(ontology.objects(main_component, tb.hasLearner))
             main_component = next(o for o in options if (None, None, o) in workflow_plan)
@@ -158,38 +124,7 @@ def logical_planner_extremexp(ontology: Graph, workflow_plans: List[Graph]):
         counter[main_component] += 1
         logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")}
 
-    tasks = list(extremexp_workflow['task_implementations'].keys())  # remove duplicates
-
-    return logical_plans, extremexp_workflows, tasks
-
-def generate_extremexp_workflow(ontology: Graph, logical_plan, tasks, workflow_name):
-    workflow = {}
-    workflow["workflow_name"] = workflow_name
-    task_implementations = {}
-    query_template = """ PREFIX tb: <https://extremexp.eu/ontology/tbox#>
-                                SELECT ?implementation ?implements 
-                                WHERE {{
-                                    <{key}> tb:hasImplementation ?implementation .
-                                    ?implementation tb:implements ?implements .
-                                }} """
-
-    for key in logical_plan.keys():
-        query_execute = query_template.format(key=key)
-        results = ontology.query(query_execute)
-        for row in results:
-            task = URIRef(row.implements).fragment
-            in_specs = get_implementation_input_specs(ontology, row.implementation)
-            if any(cb.TrainTabularDatasetShape in spec for spec in in_specs):
-                task_implementations["ModelTrain"] = "tasks/intent_name/" + key[key.find('-') + 1:] + ".py"
-                task_implementations["ModelPredict"] = "tasks/intent_name/" + key[key.find('-') + 1:] + "Predictor" + ".py"
-            elif tb.ApplierImplementation not in ontology.objects(row.implementation, RDF.type):
-                task_implementations[task] = "tasks/intent_name/" + key[key.find('-') + 1:] + ".py"
-            # print(f"Key: {key}, implementation: {row.implementation}, implements: {row.implements}")
-
-    workflow["task_implementations"] = task_implementations
-    workflow["experiment_space_name"] = "S_" + workflow_name
-    workflow["experiment_space"] = []
-    return workflow
+    return logical_plans
 
 def compress(folder: str, destination: str) -> None:
     with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as zipf:

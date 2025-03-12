@@ -9,6 +9,9 @@ rdflib-jsonld
 pandas
 scipy
 
+# dsl translator
+Jinja2
+
 # Experiments
 natsort
 
