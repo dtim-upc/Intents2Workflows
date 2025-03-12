@@ -119,7 +119,13 @@ def run_logical_planner():
 
     workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
     logical_plans = logical_planner(ontology, workflow_plans)
-    
+
+    dsl = tranlate_graph_to_dsl(ontology, workflow_plans[0])
+
+    # Write data to JSON file
+    with open(os.path.join(temporary_folder, "intent_to_dsl.xxp"), 'w') as file:
+        file.write(dsl)
+
     return logical_plans
 
 
@@ -171,7 +177,7 @@ def download_all_knime():
 @app.post('/intent-to-dsl')
 def download_file():
     # Define the path where the file is stored
-    file_path = os.path.join(temporary_folder, "intent_to_dsl.json")
+    file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
 
     # Check if the file exists
     if not os.path.exists(file_path):

@@ -28,7 +28,7 @@ def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[Lis
     
     return tasks, task_implementations
 
-def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph):
+def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph) -> str:
     tasks, task_implementations = get_task_implementations(ontology, workflow_graph)
     intent_name = get_workflow_intent_name(workflow_graph)
     workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
@@ -42,4 +42,6 @@ def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph):
 
     with open('test.txt', mode='w') as f:
         f.write(translation)
+
+    return translation
 

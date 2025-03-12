@@ -109,8 +109,7 @@ const storeWorkflow = async () => {
 const downloadFile = async () => {
   try {
     const response = await intentsApi.post('/intent-to-dsl', {responseType: 'blob'})
-    const jsonString = JSON.stringify(response.data, null, 2);
-    FileSaver.saveAs(new Blob([jsonString]), `intent-to-dsl.json`);
+    FileSaver.saveAs(new Blob([response.data]), `intent-to-dsl.xxp`);
   }
   catch (error) {
     console.error("Error:", error);
