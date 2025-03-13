@@ -73,7 +73,6 @@ def translate_graphs_to_dsl(ontology:Graph, workflow_graphs:List[Graph]) -> str:
     for w in workflow_graphs:
         trans.append(tranlate_graph_to_dsl(ontology, w, header))
         header = False
-        break
     
     return "\n".join(trans)
 
