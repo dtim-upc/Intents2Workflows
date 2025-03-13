@@ -99,6 +99,9 @@ def get_step_outputs(workflow_graph:Graph, step:URIRef):
     result = workflow_graph.query(query).bindings
     return [ inp['data'] for inp in result ]
 
+def get_data_path(workflow_graph:Graph, data:URIRef):
+    return next(workflow_graph.objects(data,dmop.path,True),None)
+
 
 def get_workflow_intent_name(workflow_graph: Graph) -> str:
     return next(workflow_graph.subjects(RDF.type, tb.Intent, True)).fragment

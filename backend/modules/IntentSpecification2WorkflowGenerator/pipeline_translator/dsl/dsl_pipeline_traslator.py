@@ -49,7 +49,8 @@ def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph, header=True) ->
     intent_name = get_workflow_intent_name(workflow_graph)
     workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
     inputs, outputs = get_steps_io(ontology, workflow_graph)
-    print(inputs, outputs)
+    print(outputs[tasks[0]][0])
+    or_dataset_path = get_data_path(workflow_graph, outputs[tasks[0]][0])
 
     workflow_template = environment.get_template("workflow.py.jinja")
     translation = workflow_template.render(intent_name = intent_name, 
@@ -58,7 +59,8 @@ def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph, header=True) ->
                                            task_implementations = task_implementations,
                                            header = header,
                                            inputs = inputs,
-                                           outputs = outputs)
+                                           outputs = outputs,
+                                           path = or_dataset_path)
 
     with open('test.txt', mode='w') as f:
         f.write(translation)

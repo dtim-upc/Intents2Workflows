@@ -14,4 +14,20 @@ workflow {{ workflow_name }} {
         implementation "{{ intent_name }}.{{ task_implementations[task].split('-')[1] }}";
     }
     {% endfor %}
+
+    {% for input in inputs[tasks[0]] %}
+    define input data {{ input }};
+
+    configure data {{ input }} {
+        path "/**";
+    }
+    {% else %}
+    define input data InputData;
+
+    configure data InputData {
+        path "./{{ path.split('\\')[-1] }}"
+    }
+    {% endfor %}
+
+    
 }
