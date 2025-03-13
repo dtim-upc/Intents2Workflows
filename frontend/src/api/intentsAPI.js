@@ -37,6 +37,9 @@ export default {
   downloadAllKNIME(data) {
     return intentsApi.post(`/workflow_plans/knime/all`, data, {responseType: 'blob'})
   },
+  downloadAllDSL(data) {
+    return intentsApi.post('/intent-to-dsl', data, {responseType: 'blob'})
+  },
   downloadProactive(data) {
     return intentsApi.post('/workflow_plans/proactive', data, {responseType: 'blob'})
   },

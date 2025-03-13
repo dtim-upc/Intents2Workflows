@@ -11,7 +11,7 @@ from flask_cors import CORS
 #TODO cahnge import names to the adecuate files
 from api.functions import *
 from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
-from pipeline_translator.dsl.dsl_pipeline_traslator import tranlate_graph_to_dsl
+from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
 from dataset_annotator.knime_annotator import annotate_dataset
 
 import requests
@@ -120,12 +120,6 @@ def run_logical_planner():
     workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
     logical_plans = logical_planner(ontology, workflow_plans)
 
-    dsl = tranlate_graph_to_dsl(ontology, workflow_plans[0])
-
-    # Write data to JSON file
-    with open(os.path.join(temporary_folder, "intent_to_dsl.xxp"), 'w') as file:
-        file.write(dsl)
-
     return logical_plans
 
 
@@ -134,8 +128,6 @@ def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
     ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-
-    tranlate_graph_to_dsl(ontology, plan_graph)
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)
@@ -176,8 +168,21 @@ def download_all_knime():
 
 @app.post('/intent-to-dsl')
 def download_file():
+    raw_graphs = request.json.get("graphs", "")
+    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+
+
+    workflow_graphs = []
+    for graph_id, graph_content in raw_graphs.items():
+        workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
+
+    translation = translate_graphs_to_dsl(ontology, workflow_graphs)
+
     # Define the path where the file is stored
     file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
+
+    with open(file_path, mode="w") as file:
+        file.write(translation)
 
     # Check if the file exists
     if not os.path.exists(file_path):

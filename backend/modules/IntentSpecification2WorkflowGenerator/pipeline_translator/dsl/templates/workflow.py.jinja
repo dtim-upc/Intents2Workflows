@@ -1,6 +1,6 @@
-package {{ intent_name }};
+{% if header == True %}package {{ intent_name }};
 
-
+{% endif %}
 workflow {{ workflow_name }} {
 
     {% for task in tasks %} 
@@ -14,7 +14,4 @@ workflow {{ workflow_name }} {
         implementation "{{ intent_name }}.{{ task_implementations[task].split('-')[1] }}";
     }
     {% endfor %}
-
-
-
 }

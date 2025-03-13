@@ -12,11 +12,12 @@ def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[Lis
     task_implementations = {}
 
     steps = get_workflow_steps(workflow_graph)
+
     for step in steps:
         component, implementation = get_step_component_implementation(ontology,workflow_graph,step)
         task = get_implementation_task(ontology, implementation).fragment
-        in_specs = get_implementation_input_specs(ontology, implementation)
-        print(in_specs)
+        in_specs = get_input_specs(ontology, implementation)
+
         if any(cb.TrainTabularDatasetShape in spec for spec in in_specs):
             tasks.append("ModelTrain")
             task_implementations["ModelTrain"] = component.fragment
@@ -28,20 +29,49 @@ def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[Lis
     
     return tasks, task_implementations
 
-def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph) -> str:
+def get_steps_io(ontology:Graph, workflow_graph:Graph)->Tuple[List[List[URIRef]], List[List[URIRef]]]:
+    steps = get_workflow_steps(workflow_graph)
+    inputs = {}
+    outputs = {}
+
+    for step in steps:
+        component, implementation = get_step_component_implementation(ontology,workflow_graph,step)
+        task = get_implementation_task(ontology, implementation).fragment
+        step_inputs = get_step_inputs(workflow_graph, step)
+        step_outputs = get_step_outputs(workflow_graph, step)
+        inputs[task] = step_inputs
+        outputs[task] = step_outputs
+    
+    return inputs,outputs
+
+def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph, header=True) -> str:
     tasks, task_implementations = get_task_implementations(ontology, workflow_graph)
     intent_name = get_workflow_intent_name(workflow_graph)
     workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
-
+    inputs, outputs = get_steps_io(ontology, workflow_graph)
+    print(inputs, outputs)
 
     workflow_template = environment.get_template("workflow.py.jinja")
     translation = workflow_template.render(intent_name = intent_name, 
                                            workflow_name = workflow_name,
                                            tasks = tasks,
-                                           task_implementations = task_implementations)
+                                           task_implementations = task_implementations,
+                                           header = header,
+                                           inputs = inputs,
+                                           outputs = outputs)
 
     with open('test.txt', mode='w') as f:
         f.write(translation)
 
     return translation
+
+def translate_graphs_to_dsl(ontology:Graph, workflow_graphs:List[Graph]) -> str:
+    trans = []
+    header = True
+    for w in workflow_graphs:
+        trans.append(tranlate_graph_to_dsl(ontology, w, header))
+        header = False
+        break
+    
+    return "\n".join(trans)
 

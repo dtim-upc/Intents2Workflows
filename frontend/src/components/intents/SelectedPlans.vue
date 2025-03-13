@@ -44,7 +44,7 @@
             <div class="col-12">
               <q-btn label="Download all RDF representations" @click="intentsStore.downloadAllRDF()"/>
               <q-btn label="Download all KNIME representations" @click="intentsStore.downloadAllKNIME()" class="q-ml-sm"/>
-              <q-btn label="Download Intent to DSL" color="purple" class="q-ml-sm"@click="downloadFile"/>
+              <q-btn label="Download Intent to DSL" color="purple" class="q-ml-sm"@click="intentsStore.downloadAllDSL()"/>
             </div>
         </div>
     </q-page>
@@ -104,16 +104,6 @@ const storeWorkflow = async () => {
   const intentID = intentsStore.intentID
 
   workflowsStore.postWorkflow(intentID, data)
-}
-
-const downloadFile = async () => {
-  try {
-    const response = await intentsApi.post('/intent-to-dsl', {responseType: 'blob'})
-    FileSaver.saveAs(new Blob([response.data]), `intent-to-dsl.xxp`);
-  }
-  catch (error) {
-    console.error("Error:", error);
-  }
 }
 
 </script>

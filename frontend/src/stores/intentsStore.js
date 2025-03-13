@@ -252,7 +252,19 @@ export const useIntentsStore = defineStore('intents', {
         FileSaver.saveAs(new Blob([response.data]), `knime.zip`);
         notify.positive(`All RDF files downloaded`);
       } catch (error) {
-        notify.negative("Error downloading all the KNIMW files");
+        notify.negative("Error downloading all the KNIME files");
+        console.error("Error:", error);
+      }
+    },
+
+    async downloadAllDSL() {
+      const data = {"graphs": this.getSelectedGraphs(), "ontology": this.ontology}
+      try {
+        const response = await intentsAPI.downloadAllDSL(data);
+        FileSaver.saveAs(new Blob([response.data]), `intent_to_dsl.xxp`);
+        notify.positive(`XXP file downloaded`);
+      } catch (error) {
+        notify.negative("Error downloading the XXP files");
         console.error("Error:", error);
       }
     },

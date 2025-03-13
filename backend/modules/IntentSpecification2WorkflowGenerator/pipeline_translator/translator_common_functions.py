@@ -7,6 +7,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import *
 from pipeline_generator.graph_queries import get_implementation_input_specs
 
+def get_input_specs(ontology, implementation):
+    return get_implementation_input_specs(ontology, implementation)
+
 
 def get_implementation_task(ontology: Graph, implementation: URIRef):
     query = f""" PREFIX tb: <https://extremexp.eu/ontology/tbox#>
@@ -69,6 +72,32 @@ def get_step_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef) ->
     types = [next(ontology.objects(p, tb.has_datatype, True)) for p in parameters]
     # print(f'TYPES: {types}')
     return list(zip(keys, param_values, paths, types))
+
+def get_step_inputs(workflow_graph:Graph, step:URIRef):
+    query = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
+                SELECT ?pos ?data 
+                WHERE {{ 
+                    {step.n3()} tb:hasInput ?inp .
+                    ?inp 
+                        tb:has_data ?data ;
+                        tb:has_position ?pos .      
+                }} 
+                ORDER BY ?pos"""
+    result = workflow_graph.query(query).bindings
+    return [ inp['data'] for inp in result ]
+
+def get_step_outputs(workflow_graph:Graph, step:URIRef):
+    query = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
+                SELECT ?pos ?data 
+                WHERE {{ 
+                    {step.n3()} tb:hasOutput ?inp .
+                    ?inp 
+                        tb:has_data ?data ;
+                        tb:has_position ?pos .      
+                }} 
+                ORDER BY ?pos"""
+    result = workflow_graph.query(query).bindings
+    return [ inp['data'] for inp in result ]
 
 
 def get_workflow_intent_name(workflow_graph: Graph) -> str:
