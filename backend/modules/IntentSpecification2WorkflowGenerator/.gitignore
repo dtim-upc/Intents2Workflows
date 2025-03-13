@@ -1,2 +1,2 @@
-/pipeline_generator/**/*.ttl
+/pipeline_generator/workflows/**/*.ttl
 /dataset_annotator/annotated_datasets
