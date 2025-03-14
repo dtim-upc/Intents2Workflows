@@ -54,18 +54,6 @@ export default {
   addDataset(data) { // Add dataset to graphDB
     return intentToGraphDBAPI.post('/add_dataset', data)
   },
-  getMetric(email, dataset, problem) {
-    return intentToGraphDBAPI.get('/get_metric?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
-  },
-  getAlgorithm(email, dataset, problem) {
-    return intentToGraphDBAPI.get('/get_algorithm?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
-  },
-  getPreprocessing(email, dataset, problem) {
-    return intentToGraphDBAPI.get('/get_preprocessing?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
-  },
-  getPreprocessingAlgorithm(email, dataset, problem) {
-    return intentToGraphDBAPI.get('/get_preprocessing_algorithm?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
-  },
   getRecommendation(email, dataset, problem) {
     return intentToGraphDBAPI.get('/get_recommendations?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
   },

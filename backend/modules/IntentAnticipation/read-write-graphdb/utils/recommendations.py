@@ -20,6 +20,21 @@ import torch
 
 
 def annotate_tsv(user,intent,dataset):
+    '''
+    The KG structure that we follow is:
+
+    ns = https://extremexp.eu/ontology#
+
+    User ns:specifies Experiment
+    Experiment ns:hasDataset Dataset
+    Experiment ns:hasAlgorithm Algorithm
+    Experiment ns:hasIntent Intent
+    Experiment ns:hasFeedback Feedback (Good, Neutral, Bad)
+    Experiment ns:hasMetric BlankMetric
+    BlankMetric ns:onMetric Metric
+    BlankMetric ns:hasValue MetricValue
+    '''
+
     #TODO : HOW ARE USER,INTENT,DATASET PASSED HERE
     current_dir = os.path.dirname(os.path.abspath(__file__))
     new_path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "new_triples.tsv")
@@ -29,7 +44,7 @@ def annotate_tsv(user,intent,dataset):
     experiment = user+intent+dataset + str(time.time()).split('.')[0]
 
     #TODO ADDAPT TO THE ONTOLOGY: Change name space and relation names
-    name_space = 'http://localhost/7200/intentOntology#'
+    name_space = 'https://extremexp.eu/ontology#'
     triples = [
     (name_space+user, name_space+ 'specifies', name_space+experiment), 
     (name_space+experiment, name_space + 'hasIntent', name_space+intent),
@@ -208,16 +223,13 @@ def recommendations(experiment,user,intent,dataset):
     # Check if the user has used the dataset with a specific algorithm constraint
     query = f"""
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX ml: <http://localhost/8080/intentOntology#>
+    PREFIX ml: <https://extremexp.eu/ontology#>
 
     SELECT ?algorithm (COUNT(?algorithm) AS ?count)
     WHERE {{
-        ml:{user} ml:runs ?workflow.
+        ml:{user} ml:specifies ?workflow.
         ?workflow ml:hasInput ml:{dataset}.
-        ?workflow ml:achieves ?task.
-        ?task ml:hasConstraint ?constraint.
-        ?constraint rdf:type ml:ConstraintAlgorithm.
-        ?constraint ml:on ?algorithm 
+        ?workflow ml:hasAlgorithm ?algorithm
     }}
     GROUP BY ?algorithm
     ORDER BY DESC(?count)
@@ -235,15 +247,12 @@ def recommendations(experiment,user,intent,dataset):
     if not found:
         query = f"""
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX ml: <http://localhost/8080/intentOntology#>
+        PREFIX ml: <https://extremexp.eu/ontology#>
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ?workflow ml:hasInput ml:{dataset}.
-            ?workflow ml:achieves ?task.
-            ?task ml:hasConstraint ?constraint.
-            ?constraint rdf:type ml:ConstraintAlgorithm.
-            ?constraint ml:on ?algorithm 
+            ?workflow ml:hasDataset ml:{dataset}.
+            ?workflow ml:hasAlgorithm ?algorithm 
         }}
         GROUP BY ?algorithm
         ORDER BY DESC(?count)
@@ -261,16 +270,14 @@ def recommendations(experiment,user,intent,dataset):
     if not found:
         query = f"""
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX ml: <http://localhost/8080/intentOntology#>
+        PREFIX ml: <https://extremexp.eu/ontology#>
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ml:{user} ml:runs ?workflow.
-            ?workflow ml:achieves ?task.
-            ?task ml:hasIntent ml:{intent}.
-            ?task ml:hasConstraint ?constraint.
-            ?constraint rdf:type ml:ConstraintAlgorithm.
-            ?constraint ml:on ?algorithm 
+            ml:{user} ml:specifies ?workflow.
+            ?workflow ml:hasIntent ml:{intent}.
+            ?workflow ml:hasAlgorithm ?algorithm.
+
         }}
         GROUP BY ?algorithm
         ORDER BY DESC(?count)
@@ -288,14 +295,12 @@ def recommendations(experiment,user,intent,dataset):
     if not found:
         query = f"""
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX ml: <http://localhost/8080/intentOntology#>
+        PREFIX ml: <https://extremexp.eu/ontology#>
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ?task ml:hasIntent ml:{intent}.
-            ?task ml:hasConstraint ?constraint.
-            ?constraint rdf:type ml:ConstraintAlgorithm.
-            ?constraint ml:on ?algorithm 
+            ?workflow ml:hasIntent ml:{intent}.
+            ?workflow ml:hasAlgorithm ?algorithm 
         }}
         GROUP BY ?algorithm
         ORDER BY DESC(?count)
@@ -318,16 +323,16 @@ def recommendations(experiment,user,intent,dataset):
 
 
     algorithm_kge = None
-    algorithm_kge_explanation = 'Similar '+intent + ' experiments have used this algoroithm.'
+    algorithm_kge_explanation = 'Similar '+ intent + ' experiments have used this algorithm.'
 
     #TODO: Replace with a query to get the algorithms complying the intent
 
-    candidate_algorithms = ['http://localhost/8080/intentOntology#sklearn-RandomForestClassifier','http://localhost/8080/intentOntology#sklearn-RandomForestClassifier']
+    candidate_algorithms = ['https://extremexp.eu/ontology#sklearn-RandomForestClassifier','https://extremexp.eu/ontology#sklearn-KNeighborsClassifier']
 
 
     #TODO Adapt to what we want to predict. Name space to ontology
-    name_space = 'http://localhost/7200/intentOntology#'
-    relation = name_space + 'achieves'
+    name_space = 'https://extremexp.eu/ontology#'
+    relation = name_space + 'hasAlgorithm'
     head = name_space + experiment
 
     head_idx = new_ent_to_id[head]
