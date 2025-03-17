@@ -282,20 +282,6 @@ export const useIntentsStore = defineStore('intents', {
       }
     },
 
-    async addUser() {
-      let data = {
-        "email": "test@user.com"
-      }
-      await intentsAPI.addUser(data);
-    },
-
-    async addDataset() {
-      let data = {
-        "dataset": this.selectedDataProdutName
-      }
-      await intentsAPI.addDataset(data);
-    },
-
     async predictParameters() {
       const user = "testuser"
       const dataset = this.selectedDataProdutName 

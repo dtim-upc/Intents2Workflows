@@ -23,6 +23,7 @@ api/dbFiles
 frontend/package-lock.json
 backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
 backend/api/datasets
+backend/api/ontology/new_triples.tsv
 
 !orm.xml
 !persistence.xml

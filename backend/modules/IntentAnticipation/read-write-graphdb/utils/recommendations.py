@@ -96,10 +96,9 @@ def execute_sparql_query(graph, query):
 This file will provide the recommendations with explanations, combining SPARQL with KGE
 '''
 
-def recommendations(experiment,user,intent,dataset):
+def recommendations(input_experiment,input_user,input_intent,input_dataset):
 
-    graph = load_graph()
-    suggestions = {}
+   
     ################################################################################
     ################################## UPDATE KGE ##################################
     ################################################################################
@@ -119,7 +118,6 @@ def recommendations(experiment,user,intent,dataset):
     triples_path = os.path.normpath(path)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
     # LOAD ALL DICTIONARIES AND EMBEDDINGS
 
@@ -143,10 +141,36 @@ def recommendations(experiment,user,intent,dataset):
     with open(norm_path_re, "rb") as f:
         old_rel_emb = pickle.load(f).to(device)
 
+    path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "algorithms_set.pkl")
+    norm_path_as = os.path.normpath(path)
+    with open(norm_path_as, "rb") as f:
+        algorithms_set = pickle.load(f)
+
+    path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "datasets_set.pkl")
+    norm_path_ds = os.path.normpath(path)
+    with open(norm_path_ds, "rb") as f:
+        datasets_set = pickle.load(f)
+
+    path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "users_set.pkl")
+    norm_path_us = os.path.normpath(path)
+    with open(norm_path_us, "rb") as f:
+        users_set = pickle.load(f)
+
+    path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "experiments_set.pkl")
+    norm_path_es = os.path.normpath(path)
+    with open(norm_path_es, "rb") as f:
+        experiments_set = pickle.load(f)
+
+
     df1 = pd.read_csv(triples_path, sep="\t", header= None)
     df2 = pd.read_csv(new_triples_path, sep="\t", header=None)
+
+    values_to_remove = {"https://extremexp.eu/ontology#hasMetric", "https://extremexp.eu/ontology#onMetric", "https://extremexp.eu/ontology#hasValue"} 
+    df1= df1[~df1[1].isin(values_to_remove)]
+    df2= df2[~df2[1].isin(values_to_remove)]
+
     combined_df = pd.concat([df1, df2], ignore_index=True)
-    combined_df.to_csv(triples_path, sep="\t", index=False)
+    combined_df.to_csv(triples_path, sep="\t", index=False, header=False)
 
     training_triples_factory = TriplesFactory.from_path(triples_path)
 
@@ -169,7 +193,6 @@ def recommendations(experiment,user,intent,dataset):
 
             old_vector = old_ent_emb[old_idx].to(device)
             new_ent_emb[new_idx] = old_vector
-
         for j in old_rel_to_id:
             old_idx = old_rel_to_id[j]
             new_idx = training_triples_factory.relation_to_id[j]
@@ -179,12 +202,83 @@ def recommendations(experiment,user,intent,dataset):
 
         model.entity_representations[0]._embeddings.weight.copy_(new_ent_emb)
         model.relation_representations[0]._embeddings.weight.copy_(new_rel_emb)
+
+   # Initialization
+
+    centroid_exp = torch.zeros([1,embedding_dimension]).to(device)
+    centroid_data = torch.zeros([1,embedding_dimension]).to(device)
+    centroid_user = torch.zeros([1,embedding_dimension]).to(device)
+    centroid_algorithm = torch.zeros([1,embedding_dimension]).to(device)
+
+
+    for exp in experiments_set:
+        idx = old_ent_to_id[exp]
+        centroid_exp += old_ent_emb[idx]
+    centroid_exp /= len(experiments_set)
+
+
+    for user in users_set:
+        idx = old_ent_to_id[user]
+        centroid_user += old_ent_emb[idx]
+    centroid_user /= len(users_set)
+
+    for dataset in datasets_set:
+        idx = old_ent_to_id[dataset]
+        centroid_data += old_ent_emb[idx]
+    centroid_data /= len(datasets_set)
+
+    for algorithm in algorithms_set:
+        idx = old_ent_to_id[algorithm]
+        centroid_algorithm += old_ent_emb[idx]
+    centroid_algorithm /= len(algorithms_set)
+
+
+    # Initialize experiments:
+
+    for experiment in df2[df2[1]=='https://extremexp.eu/ontology#specifies'][2].values:
+        if experiment not in experiments_set:
+            idx = new_ent_to_id[experiment]
+            new_ent_emb[idx] = centroid_exp
+            experiments_set.add(experiment)
+
+    for user in df2[df2[1]=='https://extremexp.eu/ontology#specifies'][0].values:
+        if user not in users_set:
+            idx = new_ent_to_id[user]
+            new_ent_emb[idx] = centroid_user
+            users_set.add(user)
+
+    for algorithm in df2[df2[1]=='https://extremexp.eu/ontology#hasAlgorithm'][2].values:
+        if algorithm not in algorithms_set:
+            idx = new_ent_to_id[algorithm]
+            new_ent_emb[idx] = centroid_algorithm
+            algorithms_set.add(algorithm)
+
+    for dataset in df2[df2[1]=='https://extremexp.eu/ontology#hasDataset'][2].values:
+        if dataset not in datasets_set:
+            idx = new_ent_to_id[dataset]
+            new_ent_emb[idx] = centroid_data
+            datasets_set.add(dataset)
     
-    #TODO Initialization
+
+    with open(norm_path_as, "wb") as f:
+        pickle.dump(algorithms_set, f)
+
+    with open(norm_path_us, "wb") as f:
+        pickle.dump(users_set, f)
+
+    with open(norm_path_es, "wb") as f:
+        pickle.dump(datasets_set, f)
+
+    with open(norm_path_es, "wb") as f:
+        pickle.dump(experiments_set, f)
+
 
     model = model.to(device)
 
-    training_triples = TriplesFactory.from_path(new_triples_path, entity_to_id=new_ent_to_id, relation_to_id=new_rel_to_id)
+    df = pd.read_csv(new_triples_path, sep='\t', header=None) 
+    df_filtered = df[~df[1].isin(values_to_remove)]
+    triples_array = df_filtered.to_numpy()
+    training_triples = TriplesFactory.from_labeled_triples(triples_array, entity_to_id=new_ent_to_id, relation_to_id=new_rel_to_id)
 
     optimizer = Adam(params=model.get_grad_params(),lr=learning_rate_fine_tune)
 
@@ -196,8 +290,6 @@ def recommendations(experiment,user,intent,dataset):
     tl = training_loop.train(triples_factory=training_triples,
                             num_epochs=num_finetune_epochs)
     
-
-
     with open(norm_path_ee, "wb") as f:
         pickle.dump(model.entity_representations[0](indices= None).clone().detach(), f)
 
@@ -210,12 +302,19 @@ def recommendations(experiment,user,intent,dataset):
     with open(norm_path_r2i, "wb") as f:
         pickle.dump(new_rel_to_id, f)
 
+    ################################################################################
+    ############################## START SUGGESTIONS ##############################
+    ################################################################################
 
-    
+    graph = load_graph()
+    suggestions = {}
+
     ################################################################################
     ################################## ALGORITHM ###################################
     ################################################################################
     
+
+
     found = False
     algorithm_sparql = None
     algorithm_sparql_explanation = ''
@@ -227,22 +326,24 @@ def recommendations(experiment,user,intent,dataset):
 
     SELECT ?algorithm (COUNT(?algorithm) AS ?count)
     WHERE {{
-        ml:{user} ml:specifies ?workflow.
-        ?workflow ml:hasInput ml:{dataset}.
+        ml:{input_user} ml:specifies ?workflow.
+        ?workflow ml:hasDataset ml:{input_dataset}.
         ?workflow ml:hasAlgorithm ?algorithm
     }}
     GROUP BY ?algorithm
     ORDER BY DESC(?count)
     LIMIT 1
     """
-    
+
     results = execute_sparql_query(graph, query)
+
     if results:
         for row in results:
             algorithm_sparql = row.algorithm
             found = True
             algorithm_sparql_explanation = 'This is your most frequently used algorithm for this dataset.'
     
+
     # If not found, look for other users' usage of the dataset
     if not found:
         query = f"""
@@ -251,7 +352,7 @@ def recommendations(experiment,user,intent,dataset):
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ?workflow ml:hasDataset ml:{dataset}.
+            ?workflow ml:hasDataset ml:{input_dataset}.
             ?workflow ml:hasAlgorithm ?algorithm 
         }}
         GROUP BY ?algorithm
@@ -265,7 +366,7 @@ def recommendations(experiment,user,intent,dataset):
                 algorithm_sparql = row.algorithm
                 found = True
                 algorithm_sparql_explanation = 'This is the most frequently used algorithm for this dataset.'
-    
+
     # If still not found, look for the user's usage of the same intent
     if not found:
         query = f"""
@@ -274,8 +375,8 @@ def recommendations(experiment,user,intent,dataset):
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ml:{user} ml:specifies ?workflow.
-            ?workflow ml:hasIntent ml:{intent}.
+            ml:{input_user} ml:specifies ?workflow.
+            ?workflow ml:hasIntent ml:{input_intent}.
             ?workflow ml:hasAlgorithm ?algorithm.
 
         }}
@@ -289,8 +390,8 @@ def recommendations(experiment,user,intent,dataset):
             for row in results:
                 algorithm_sparql = row.algorithm
                 found = True
-                algorithm_sparql_explanation = 'This is your most frequently used algorithm for '+intent+' experiments.'
-    
+                algorithm_sparql_explanation = 'This is your most frequently used algorithm for '+input_intent+' experiments.'
+
     # If still not found, get the most used algorithm for the intent overall
     if not found:
         query = f"""
@@ -299,7 +400,7 @@ def recommendations(experiment,user,intent,dataset):
 
         SELECT ?algorithm (COUNT(?algorithm) AS ?count)
         WHERE {{
-            ?workflow ml:hasIntent ml:{intent}.
+            ?workflow ml:hasIntent ml:{input_intent}.
             ?workflow ml:hasAlgorithm ?algorithm 
         }}
         GROUP BY ?algorithm
@@ -312,28 +413,22 @@ def recommendations(experiment,user,intent,dataset):
             for row in results:
                 algorithm_sparql = row.algorithm
                 found = True
-                algorithm_sparql_explanation = 'This is you most frequently used algorithm for '+intent+' experiments.'
+                algorithm_sparql_explanation = 'This is you most frequently used algorithm for '+input_intent+' experiments.'
     
-    algorithm_sparql = algorithm_sparql.split("#")[-1] if algorithm_sparql else None
-
-
-
-
-
+    if algorithm_sparql:
+        algorithm_sparql = algorithm_sparql.split("#")[-1] if algorithm_sparql else None
 
 
     algorithm_kge = None
-    algorithm_kge_explanation = 'Similar '+ intent + ' experiments have used this algorithm.'
+    algorithm_kge_explanation = 'Similar '+ input_intent + ' experiments have used this algorithm.'
 
-    #TODO: Replace with a query to get the algorithms complying the intent
+    #TODO: Replace with a query to get the algorithms complying the intent THAT ARE in the ontology of experiments
 
     candidate_algorithms = ['https://extremexp.eu/ontology#sklearn-RandomForestClassifier','https://extremexp.eu/ontology#sklearn-KNeighborsClassifier']
 
-
-    #TODO Adapt to what we want to predict. Name space to ontology
     name_space = 'https://extremexp.eu/ontology#'
     relation = name_space + 'hasAlgorithm'
-    head = name_space + experiment
+    head = name_space + input_experiment
 
     head_idx = new_ent_to_id[head]
     relation_idx = new_rel_to_id[relation]
@@ -343,11 +438,8 @@ def recommendations(experiment,user,intent,dataset):
     batch_tensor = torch.tensor(batch, dtype=torch.long)
 
     scores = model.predict_hrt(batch_tensor)
-
     algorithm_scores = {candidate_algorithms[i]: scores[i].item() for i in range(len(candidate_algorithms))}
-
     algorithm_kge = max(algorithm_scores, key=algorithm_scores.get)
 
     suggestions['algorithm'] = {'SPARQL': [algorithm_sparql,algorithm_sparql_explanation], 'KGE': [algorithm_kge, algorithm_kge_explanation]}
-
     return suggestions

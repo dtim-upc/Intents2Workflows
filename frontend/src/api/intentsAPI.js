@@ -48,12 +48,6 @@ export default {
   predictIntentType(data) {
     return textToIntentAPI.post('/predictIntent', data)
   },
-  addUser(data) {
-    return intentToGraphDBAPI.post('/add_user', data)
-  },
-  addDataset(data) { // Add dataset to graphDB
-    return intentToGraphDBAPI.post('/add_dataset', data)
-  },
   getRecommendation(email, dataset, problem) {
     return intentToGraphDBAPI.get('/get_recommendations?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
   },

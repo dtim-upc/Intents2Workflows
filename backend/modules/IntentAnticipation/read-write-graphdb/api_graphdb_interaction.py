@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from utils.query_graphdb import get_users, add_new_user, find_user_by_email, add_new_dataset, get_all_metrics, get_all_algorithms, \
+from utils.query_graphdb import  get_all_metrics, get_all_algorithms, \
     get_all_preprocessing_algorithms
 from utils.recommendations import *
 
@@ -10,41 +10,6 @@ CORS(app)
 
 # Dictionary route information
 routes_info = {
-    "/get_users": {
-        "parameters": [],
-        "description": "Retrieve a list of users",
-        "response": {
-            "last_inserted_user": "string",
-            "users": "array",
-        },
-        "example_usage": "http://localhost:8002/get_users"
-    },
-    "/add_user": {
-        "parameters": ["email"],
-        "description": "Add a new user with the given email.",
-        "response": {
-            "status": "string",
-            "message": "string"
-        },
-        "example_usage": "curl -X POST http://localhost:8002/add_user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\"}'"
-    },
-    "/get_user_by_email": {
-        "parameters": ["email"],
-        "description": "Retrieve user by email",
-        "response": {
-            "user": "string",
-        },
-        "example_usage": "http://localhost:8002/get_user_by_email?email=user@example.com"
-    },
-    "/add_dataset": {
-        "parameters": ["dataset"],
-        "description": "Add a new dataset with the given name.",
-        "response": {
-            "status": "string",
-            "message": "string"
-        },
-        "example_usage": "curl -X POST http://localhost:8002/add_dataset -H \"Content-Type: application/json\" -d '{\"dataset\": \"new_dataset_name\"}'"
-    },
     "/add_workflow": {
     "parameters": ["data"],
     "description": "Adds a new workflow to the GraphDB repository using the provided data.",
@@ -69,62 +34,15 @@ def get_recommendations_route():
         return jsonify({"error": "Missing user, dataset, or intent parameter"}), 400
 
     try:
+        print('Start')
         experiment = annotate_tsv(user,intent,dataset)
+        print('Middle')
         results = recommendations(experiment,user,intent,dataset)
+        print('End')
         return jsonify(results), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500   
 
-
-@app.route('/get_users', methods=['GET'])
-def get_users_route():
-    try:
-        users = get_users()
-        return jsonify(users=users), 200
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-
-@app.route('/add_user', methods=['POST'])
-def add_user_route():
-    data = request.get_json()
-    email = data.get('email')
-
-    if not email:
-        return jsonify({"status": "error", "message": "Email is required"}), 400
-
-    new_user_id = add_new_user(email)
-
-    if new_user_id:
-        return jsonify({"status": "success", "message": f"Added new user: {new_user_id}"}), 201
-    else:
-        return jsonify({"status": "error", "message": "Failed to add new user"}), 500
-
-@app.route('/get_user_by_email', methods=['GET'])
-def get_user_by_email():
-    email = request.args.get('email')
-    if not email:
-        return jsonify({"error": "Email parameter is required."}), 400
-
-    user = find_user_by_email(email)
-    if user:
-        return jsonify({"user": user}), 200
-    else:
-        return jsonify({"message": "User not found."}), 404
-
-@app.route('/add_dataset', methods=['POST'])
-def add_dataset_route():
-    data = request.get_json()
-    dataset_name = data.get('dataset')
-
-    if not dataset_name:
-        return jsonify({"status": "error", "message": "Dataset is required"}), 400
-
-    new_dataset = add_new_dataset(dataset_name)
-
-    if new_dataset:
-        return jsonify({"status": "success", "message": f"Added new dataset: {new_dataset}"}), 201
-    else:
-        return jsonify({"status": "error", "message": f"Failed to add {new_dataset} dataset "}), 500
 
 @app.route('/get_all_info', methods=['GET'])
 def get_all_info_route():
