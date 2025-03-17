@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # Define the commands to run each Flask app on different ports
     commands = [
         "flask --app ./llm/api_llm_interaction.py run --host 0.0.0.0 --port 8001",
-        "flask --app ./read-write-graphdb/api_graphdb_interaction.py run --host 0.0.0.0 --port 8002"
+        "flask --app ./kge-recommendation/api_kge_recommendation.py run --host 0.0.0.0 --port 8002"
     ]
 
     # Start each command in a separate process
