@@ -6,11 +6,18 @@ import shutil
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from typing import Tuple, Dict, List
+import jinja2
 
 from tqdm import tqdm
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from translator_common_functions import *
+translator_dir = os.path.join(os.path.abspath(os.path.join('..')))
+sys.path.append(translator_dir)
+
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
+
+environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
+from pipeline_translator.core.translator_common_functions import *
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -19,29 +26,6 @@ try:
 except ImportError:
     easygui = None
 
-
-def get_base_node_config():
-    root = ET.Element('config', {'xmlns': 'http://www.knime.org/2008/09/XMLConfig',
-                                 'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                                 'xsi:schemaLocation': 'http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd',
-                                 'key': 'settings.xml',
-                                 })
-
-    ET.SubElement(root, 'entry', {'key': 'node_file', 'type': 'xstring', 'value': 'settings.xml'})
-    ET.SubElement(root, 'entry', {'key': 'customDescription', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    ET.SubElement(root, 'entry', {'key': 'state', 'type': 'xstring', 'value': 'CONFIGURED'})
-    ET.SubElement(root, 'entry', {'key': 'hasContent', 'type': 'xboolean', 'value': 'false'})
-    ET.SubElement(root, 'entry', {'key': 'isInactive', 'type': 'xboolean', 'value': 'false'})
-    # ET.SubElement(root, 'config', {'key': 'factory_settings'})
-    # ET.SubElement(root, 'entry', {'key': 'node-feature-name', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    # ET.SubElement(root, 'entry',
-    #               {'key': 'node-feature-symbolic-name', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    # ET.SubElement(root, 'entry', {'key': 'node-feature-vendor', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    # ET.SubElement(root, 'entry', {'key': 'node-feature-version', 'type': 'xstring', 'value': '0.0.0'})
-
-    ET.SubElement(root, 'config', {'key': 'flow_stack'})
-
-    return ET.ElementTree(root)
 
 
 def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, str]:
@@ -52,28 +36,24 @@ def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, s
             # print(f"THIS: {p.fragment[6:]} ---> {o.value}")
     return results
 
+def update_param_hierarchy(param_dict:Dict, path: List[str], element):
 
-def update_hierarchy(path_elements: Dict[str, ET.Element], path: str) -> Dict[str, ET.Element]:
-    if path in path_elements:
-        return path_elements
-    levels = path.split('/')
-    current_path = ''
-    previous = None
-    for level in levels:
-        current_path += level
-        if current_path not in path_elements:
-            # print(current_path, str(previous), level)
-            path_elements[current_path] = ET.SubElement(previous, 'config', {'key': level})
-        previous = path_elements[current_path]
-        current_path += '/'
+    if len(path) == 0:
+        if element[0] != "$$SKIP$$":
+            param_dict['elements'].append(element)
+    else:
+        level = path.pop(0)
+        if level not in param_dict['folders']:
+            param_dict['folders'][level] = {
+                'folders': {},
+                'elements': []
+            }
+        param_dict[level] = update_param_hierarchy(param_dict['folders'][level], path, element)
+    
+    return param_dict
 
 
-def get_step_model_config(ontology: Graph, workflow_graph: Graph, step: URIRef) -> ET.Element:
-    path_elements = {
-        'model': ET.Element('config', {'key': 'model'}),
-        'factory_settings': ET.Element('config', {'key': 'factory_settings'})
-    }
-
+def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
     types = {
         XSD.string: 'xstring',
         cb.term('char'): 'xchar',
@@ -83,71 +63,54 @@ def get_step_model_config(ontology: Graph, workflow_graph: Graph, step: URIRef) 
         XSD.float: 'xdouble',
         XSD.double: 'xdouble',
         XSD.boolean: 'xboolean',
+        RDF.List: ''
     }
 
     parameters = get_step_parameters(ontology, workflow_graph, step)
+    param_dict = {'folders': {},
+                  'elements': []}
+    
+
     for key, value, path, value_type in parameters:
-        update_hierarchy(path_elements, path)
-        base = path_elements[path]
         if value_type == RDF.List:
-            values = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
-            config = ET.SubElement(base, 'config', {'key': key})
-            ET.SubElement(config, 'entry', {'key': 'array-size', 'type': 'xint', 'value': str(len(values))})
-            for i, v in enumerate(values):
-                ET.SubElement(config, 'entry', {'key': str(i), 'type': 'xstring', 'value': v})
-        elif key.strip() == "$$SKIP$$":
-            continue
+            param_value = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
+            arrayPath = path+'/'+key
+            parameters.append( ("array-size", str(len(param_value)), arrayPath, XSD.int) )
+            for i,param in enumerate(param_value):
+                parameters.append((str(i),param,arrayPath,XSD.string))
         else:
             if value is None or (isinstance(value, str) and value.lower() == 'none'):
-                ET.SubElement(base, 'entry', {'key': key, 'type': types[value_type], 'value': '', 'isnull': 'true'})
+                param_value = None
             else:
-                ET.SubElement(base, 'entry', {'key': key, 'type': types[value_type], 'value': str(value)})
+                param_value = value
 
-    return {
-        'model': path_elements['model'],
-        'factory_settings': path_elements['factory_settings']
-    }
+            param_dict = update_param_hierarchy(param_dict, path.split('/'),(str(key),param_value,types[value_type]))
+    return param_dict
 
 
 def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folder, iterator: int) -> str:
-    tree = get_base_node_config()
-    root = tree.getroot()
 
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
     properties = get_knime_properties(ontology, implementation)
 
-    for key, value in properties.items():
-        ET.SubElement(root, 'entry', {'key': key, 'type': 'xstring', 'value': value})
+    
+    conf_params = get_config_parameters(ontology, workflow_graph, step)
+    num_ports = get_number_of_output_ports(ontology, workflow_graph, step)
 
+    step_template = environment.get_template("step.py.jinja")
+    step_file = step_template.render(properties = properties,
+                                     parameters = conf_params,
+                                     num_ports = num_ports)
+    
     path_name = properties["node-name"].replace('(', '_').replace(')', '_')
-
-    model = get_step_model_config(ontology, workflow_graph, step)['model']
-    root.append(model)
-
-    #reruns again the same function. It should be faster and cleaner to run the function once
-    factory_settings = get_step_model_config(ontology, workflow_graph, step)['factory_settings']
-    root.append(factory_settings)
-
-    filestores = ET.SubElement(root, 'config', {'key': 'filestores'})
-    ET.SubElement(filestores, 'entry', {'key': 'file_store_location', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    ET.SubElement(filestores, 'entry', {'key': 'file_store_id', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-
-    internal_node_subsettings = ET.SubElement(root, 'config', {'key': 'internal_node_subsettings'})
-    ET.SubElement(internal_node_subsettings, 'entry',
-                  {'key': 'memory_policy', 'type': 'xstring', 'value': 'CacheSmallInMemory'})
-
-    ports = ET.SubElement(root, 'config', {'key': 'ports'})
-    for i in range(get_number_of_output_ports(ontology, workflow_graph, step)):
-        port = ET.SubElement(ports, 'config', {'key': f'port_{i + 1}'})
-        ET.SubElement(port, 'entry', {'key': 'index', 'type': 'xint', 'value': str(i + 1)})
-        ET.SubElement(port, 'entry', {'key': 'port_dir_location', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-
+    
     subfolder_name = f'{path_name} (#{iterator})'
     subfolder = os.path.join(folder, subfolder_name)
     os.mkdir(subfolder)
 
-    ET.indent(tree, space='    ')
-    tree.write(os.path.join(subfolder, 'settings.xml'), encoding='UTF-8', xml_declaration=True)
+    with open(os.path.join(subfolder, 'settings.xml'), encoding='UTF-8', mode='w') as file:
+        file.write(step_file)
+
     return subfolder_name
 
 
@@ -159,21 +122,18 @@ def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
     description = f'This workflow was automatically created from the logical workflow {workflow_name}.'
     url = 'ExtremeXP https://extremexp.eu/'
     tags = 'model training, training, testing'
-    template = f'''<?xml version="1.0" encoding="UTF-8"?>
-<KNIMEMetaInfo nrOfElements="3">
-    <element form="text" read-only="false" name="Author">{author}</element>
-    <element form="date" name="Creation Date" read-only="false">{date}</element>
-    <element form="multiline" name="Comments" read-only="false">{title}&#13;
-&#13;
-{description}&#13;
-&#13;
-URL: {url}&#13;
-TAG: {tags}&#13;
-</element>
-</KNIMEMetaInfo>
-'''
+
+    metadata_template = environment.get_template("metadata.py.jinja")
+    workflow_metadata_file = metadata_template.render(author = author,
+                                                      date = date,
+                                                      workflow_name = workflow_name,
+                                                      title = title,
+                                                      description = description,
+                                                      url = url,
+                                                      tags = tags) 
+    
     with open(os.path.join(folder, 'workflowset.meta'), 'w') as f:
-        f.write(template)
+        f.write(workflow_metadata_file)
 
 
 def get_nodes_config(step_paths: List[str]) -> ET.Element:
@@ -349,14 +309,14 @@ def interactive():
 
     keep_folder = input('Keep workflows in folder format? [Y/n]: ').lower() not in ['n', 'no']
 
-    translate_graph_folder(get_ontology_graph(), source_folder, destination_folder, keep_folder=keep_folder)
+    translate_graph_folder(get_ontology(), source_folder, destination_folder, keep_folder=keep_folder)
 
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
-        translate_graph_folder(get_ontology_graph(), sys.argv[1], sys.argv[2])
+        translate_graph_folder(get_ontology(), sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:
-        translate_graph(get_ontology_graph(), sys.argv[2], sys.argv[3], keep_folder=True)
+        translate_graph(get_ontology(), sys.argv[2], sys.argv[3], keep_folder=True)
     else:
         print('Interactive usage.')
         print('For non-interactive usage, use:')

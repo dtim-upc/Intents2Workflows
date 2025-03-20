@@ -2,10 +2,19 @@ import os
 from typing import List, Tuple
 import sys
 
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import *
 from pipeline_generator.graph_queries import get_implementation_input_specs
+
+def get_ontology() -> Graph:
+    cwd = os.getcwd()
+    os.chdir('..')
+    ontology = common.get_ontology_graph()
+    os.chdir(cwd)
+    return ontology
+    
 
 def get_input_specs(ontology, implementation):
     return get_implementation_input_specs(ontology, implementation)

@@ -3,7 +3,7 @@ import os
 import jinja2
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from translator_common_functions import *
+from core.translator_common_functions import *
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/dsl/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
 
