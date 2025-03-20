@@ -108,6 +108,17 @@ def get_step_outputs(workflow_graph:Graph, step:URIRef):
     result = workflow_graph.query(query).bindings
     return [ inp['data'] for inp in result ]
 
+def is_applier_step(ontology: Graph, workflow_graph:Graph, step:URIRef):
+    component = next(workflow_graph.objects(step, tb.runs,True))
+
+    askquery = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
+                    ASK {{
+                        {component.n3()} a tb:ApplierComponent
+                    }}"""
+    result = ontology.query(askquery).askAnswer
+    
+    return result
+
 def get_data_path(workflow_graph:Graph, data:URIRef):
     return next(workflow_graph.objects(data,dmop.path,True),None)
 
@@ -118,3 +129,23 @@ def get_workflow_intent_name(workflow_graph: Graph) -> str:
 
 def get_workflow_intent_number(workflow_graph: Graph) -> int:
     return int(next(workflow_graph.subjects(RDF.type, tb.Workflow, True)).fragment.split('_')[1])
+
+def get_workflow_connections(workflow_graph: Graph) -> List[Tuple[URIRef, URIRef, URIRef, URIRef]]:
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?source ?destination ?sourcePort ?destinationPort
+    WHERE {{
+        ?source a tb:Step ;
+                tb:followedBy ?destination ;
+                tb:hasOutput ?output .
+        ?output tb:has_position ?sourcePort ;
+                tb:has_data ?link .
+        ?destination a tb:Step ;
+                    tb:hasInput ?input .
+        ?input tb:has_position ?destinationPort ;
+                tb:has_data ?link .
+    }}
+    '''
+    results = workflow_graph.query(query).bindings
+    # print(f'RESULTS: {results}')
+    return [(r['source'], r['destination'], r['sourcePort'], r['destinationPort']) for r in results]

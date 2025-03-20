@@ -135,108 +135,28 @@ def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
     with open(os.path.join(folder, 'workflowset.meta'), 'w') as f:
         f.write(workflow_metadata_file)
 
-
-def get_nodes_config(step_paths: List[str]) -> ET.Element:
-    root = ET.Element('config', {'key': 'nodes'})
-    for i, step in enumerate(step_paths):
-        node_cofig = ET.SubElement(root, 'config', {'key': f'node_{i}'})
-        ET.SubElement(node_cofig, 'entry', {'key': 'id', 'type': 'xint', 'value': str(i)})
-        ET.SubElement(node_cofig, 'entry', {'key': 'node_settings_file', 'type': 'xstring',
-                                            'value': f'{step}/settings.xml'})
-        ET.SubElement(node_cofig, 'entry', {'key': 'node_is_meta', 'type': 'xboolean', 'value': 'false'})
-        ET.SubElement(node_cofig, 'entry', {'key': 'node_type', 'type': 'xstring', 'value': 'NativeNode'})
-        ET.SubElement(node_cofig, 'entry', {'key': 'ui_classname', 'type': 'xstring',
-                                            'value': 'org.knime.core.node.workflow.NodeUIInformation'})
-        ui_settings = ET.SubElement(node_cofig, 'config', {'key': 'ui_settings'})
-        bounds = ET.SubElement(ui_settings, 'config', {'key': 'extrainfo.node.bounds'})
-
-        applier = any(x in step.lower() for x in ['appl', 'predictor'])
-        ET.SubElement(bounds, 'entry', {'key': 'array-size', 'type': 'xint', 'value': '4'})
-        ET.SubElement(bounds, 'entry', {'key': '0', 'type': 'xint', 'value': str((i + 1) * 150)})  # x
-        ET.SubElement(bounds, 'entry', {'key': '1', 'type': 'xint', 'value': '400' if applier else '200'})  # y
-        ET.SubElement(bounds, 'entry', {'key': '2', 'type': 'xint', 'value': '75'})  # width
-        ET.SubElement(bounds, 'entry', {'key': '3', 'type': 'xint', 'value': '80'})  # height
-
-    return root
-
-
-def get_workflow_connections(workflow_graph: Graph) -> List[Tuple[URIRef, URIRef, URIRef, URIRef]]:
-    query = f'''
-    PREFIX tb: <{tb}>
-    SELECT ?source ?destination ?sourcePort ?destinationPort
-    WHERE {{
-        ?source a tb:Step ;
-                tb:followedBy ?destination ;
-                tb:hasOutput ?output .
-        ?output tb:has_position ?sourcePort ;
-                tb:has_data ?link .
-        ?destination a tb:Step ;
-                    tb:hasInput ?input .
-        ?input tb:has_position ?destinationPort ;
-                tb:has_data ?link .
-    }}
-    '''
-    results = workflow_graph.query(query).bindings
-    # print(f'RESULTS: {results}')
-    return [(r['source'], r['destination'], r['sourcePort'], r['destinationPort']) for r in results]
-
-
-def get_connections_config(workflow_graph: Graph, steps: List[URIRef]) -> ET.Element:
-    root = ET.Element('config', {'key': 'connections'})
+def get_connections_config(workflow_graph: Graph, steps: List[URIRef]):
     connections = get_workflow_connections(workflow_graph)
-    for i, (source, destination, source_port, destination_port) in enumerate(connections):
-        connection_config = ET.SubElement(root, 'config', {'key': f'connection_{i}'})
-        ET.SubElement(connection_config, 'entry',
-                      {'key': 'sourceID', 'type': 'xint', 'value': str(steps.index(source))})
-        ET.SubElement(connection_config, 'entry', {'key': 'sourcePort', 'type': 'xint', 'value': str(source_port + 1)})
-        ET.SubElement(connection_config, 'entry',
-                      {'key': 'destID', 'type': 'xint', 'value': str(steps.index(destination))})
-        ET.SubElement(connection_config, 'entry',
-                      {'key': 'destPort', 'type': 'xint', 'value': str(destination_port + 1)})
-        ET.SubElement(connection_config, 'entry', {'key': 'ui_classname', 'type': 'xstring',
-                                                   'value': 'org.knime.core.node.workflow.ConnectionUIInformation'})
-        ui_settings = ET.SubElement(connection_config, 'config', {'key': 'ui_settings'})
-        ET.SubElement(ui_settings, 'entry', {'key': 'extrainfo.conn.bendpoints_size', 'type': 'xint', 'value': '0'})
-    return root
+    connections_ids = []
+    for source, destination, source_port, destination_port in connections:
+        connections_ids.append((steps.index(source), steps.index(destination), source_port+1, destination_port+1))
+    
+    return connections_ids
 
 
-def get_author_config() -> ET.Element:
-    root = ET.Element('config', {'key': 'authorInformation'})
-    ET.SubElement(root, 'entry', {'key': 'authored-by', 'type': 'xstring', 'value': 'ODIN'})
-    ET.SubElement(root, 'entry', {'key': 'authored-when', 'type': 'xstring',
-                                  'value': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')})
-    ET.SubElement(root, 'entry', {'key': 'lastEdited-by', 'type': 'xstring', 'value': 'ODIN'})
-    ET.SubElement(root, 'entry', {'key': 'lastEdited-when', 'type': 'xstring',
-                                  'value': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')})
-    return root
-
-
-def create_workflow_file(workflow_graph: Graph, steps: List[URIRef], step_paths: List[str],
+def create_workflow_file(ontology:Graph, workflow_graph: Graph, steps: List[URIRef], step_paths: List[str],
                          folder: str) -> None:
-    node_config = get_nodes_config(step_paths)
-    connections_config = get_connections_config(workflow_graph, steps)
-    author_config = get_author_config()
+    
+    is_applier = [ is_applier_step(ontology, workflow_graph, step) for step in steps]
+    connections = get_connections_config(workflow_graph, steps)
+    metadata_template = environment.get_template("workflow.py.jinja")
+    workflow_file = metadata_template.render(steps = zip(step_paths,is_applier),
+                                             connections = connections,
+                                             date = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z'),
+                                             author = "ODIN")
 
-    root = ET.Element('config', {'xmlns': 'http://www.knime.org/2008/09/XMLConfig',
-                                 'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                                 'xsi:schemaLocation': 'http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd',
-                                 'key': 'workflow.knime'})
-
-    ET.SubElement(root, 'entry', {'key': 'created_by', 'type': 'xstring', 'value': '4.7.3.v202305100921'})
-    ET.SubElement(root, 'entry', {'key': 'created_by_nightly', 'type': 'xboolean', 'value': 'false'})
-    ET.SubElement(root, 'entry', {'key': 'version', 'type': 'xstring', 'value': '4.1.0'})
-    ET.SubElement(root, 'entry', {'key': 'name', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    ET.SubElement(root, 'entry', {'key': 'customDescription', 'type': 'xstring', 'isnull': 'true', 'value': ''})
-    ET.SubElement(root, 'entry', {'key': 'state', 'type': 'xstring', 'value': 'CONFIGURED'})
-    ET.SubElement(root, 'config', {'key': 'workflow_credentials'})
-
-    root.append(node_config)
-    root.append(connections_config)
-    root.append(author_config)
-
-    tree = ET.ElementTree(root)
-    ET.indent(tree, space='    ')
-    tree.write(os.path.join(folder, 'workflow.knime'), encoding='UTF-8', xml_declaration=True)
+    with open(os.path.join(folder, 'workflow.knime'), encoding='UTF-8', mode='w') as f:
+        f.write(workflow_file)
 
 
 def package_workflow(folder: str, destination: str) -> None:
@@ -270,7 +190,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str, ke
         step_paths.append(create_step_file(ontology, graph, step, temp_folder, i))
 
     tqdm.write('\tCreating workflow file')
-    create_workflow_file(graph, steps, step_paths, temp_folder)
+    create_workflow_file(ontology, graph, steps, step_paths, temp_folder)
 
     tqdm.write('\tCreating zip file')
     package_workflow(temp_folder, destination_path)
