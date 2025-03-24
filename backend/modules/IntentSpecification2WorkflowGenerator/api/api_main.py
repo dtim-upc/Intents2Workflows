@@ -13,6 +13,7 @@ from api.functions import *
 from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
 from dataset_annotator.knime_annotator import annotate_dataset
+from dataset_annotator import dataLoaders
 
 import requests
 import json
@@ -30,16 +31,20 @@ def annotate_dataset_from_frontend():
     label = request.json.get('label', '')
     #print(path[path.rfind(os.path.sep) + 1:-4])
     #print(path.rfind(os.path.sep))
-    data_product_name = path[path.rfind(os.path.sep) + 1:-4]
 
+    data_path = Path(path)
+
+    data_product_name = data_path.with_suffix('').name
+
+    
     # new_path = path[0:path.rfind("\\") + 1] + data_product_name + "_annotated.ttl"
-    new_path = temporary_folder + "/" + data_product_name + "_annotated.ttl"
+    new_path = temporary_folder + "/" + str(data_product_name) + "_annotated.ttl"
     annotate_dataset(path, new_path, label)
 
     custom_ontology = get_custom_ontology(new_path)
     datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}
     return {"ontology": custom_ontology.serialize(format="turtle"),
-            "data_product_uri": datasets[data_product_name + ".csv"]}
+            "data_product_uri": datasets[data_path.name]}
 
 
 @app.get('/problems')
@@ -47,6 +52,16 @@ def get_problems():
     ontology_only_problems = get_custom_ontology_only_problems()
     problems = {n.fragment: n for n in ontology_only_problems.subjects(RDF.type, tb.Task)}
     return problems
+
+@app.post('/attributes')
+def get_attributes():
+    data= request.json
+    data_path = data.get('path','')
+    print(data_path)
+    df = dataLoaders.get_loader(data_path).getDataFrame()
+    return list(df.columns)
+
+
 
 @app.post('/abstract_planner')
 def run_abstract_planner():

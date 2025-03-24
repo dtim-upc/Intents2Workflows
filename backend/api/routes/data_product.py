@@ -23,9 +23,9 @@ def get_db():
 @router.post("/data-product")
 async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
-    if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
-
+    #if not file.filename.endswith(".csv"):
+        #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
+    
     file_path = os.path.abspath(os.path.join(UPLOAD_DIR, file.filename))  # Global path
 
     # Save file
@@ -35,10 +35,12 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_db
     file_size = os.path.getsize(file_path) / (1024 * 1024)  # Convert to MB
     upload_time = time.ctime(os.path.getctime(file_path))
 
-    # Extract CSV headers
-    with open(file_path, newline='', encoding='utf-8') as csvfile:
-        reader = csv.reader(csvfile)
-        attributes = next(reader, [])
+    if file.filename.endswith(".csv"):# Extract CSV headers
+        with open(file_path, newline='', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile)
+            attributes = next(reader, [])
+    else:
+        attributes = []
 
     # Save to database
     data_product = DataProduct(

@@ -24,7 +24,7 @@
                   <q-btn @click="predictIntentType()" label="Infer intent" color="pink" class="q-mb-sm" style="font-size: 10px;"/>
                 </div>
 
-                <q-select v-if="selectedDataProdutName && problem ==='Classification'" label="Target variable" outlined v-model="target" :options="getAttributes" class="q-mb-sm"
+                <q-select v-if="selectedDataProdutName && problem ==='Classification'" label="Target variable" outlined v-model="target" :options="attributes" class="q-mb-sm"
                     :rules="[ val => val && val.length > 0 || 'Select a target variable']"/>
                 
             </div>
@@ -38,11 +38,12 @@
 </template>
 
 <script setup>
-import {onMounted, computed} from 'vue'
+import {onMounted, computed, watch} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from 'quasar'
+import {intentsApi} from 'boot/axios';
 
 const router = useRouter()
 const route = useRoute()
@@ -99,17 +100,33 @@ const resetForm = () => {
   target.value = null
 }
 
-const getAttributes = computed(() => {
+let attributes = [];
+
+const getAttributes = async() => {
   const selectedDataProduct = dataProductsStore.dataProducts.find(dp => dp.name === selectedDataProdutName.value);
   if (selectedDataProduct) {
-    return selectedDataProduct.attributes.map(att => att)
+    let data = {
+      'path': selectedDataProduct.path,
+    }
+    const response = await intentsApi.post('/attributes',data)
+    console.log(response.data)
+    attributes = response.data//selectedDataProduct.attributes.map(att => att)
   }
-  return []
-})
+  else {
+    attributes = []
+  }
+}
 
 onMounted(async() => {
   await dataProductsStore.getDataProducts()
   intentsStore.getProblems()
+  getAttributes()
 })
+
+
+// Watch for changes to selectedDataProdutName and refetch attributes if needed
+watch(() => selectedDataProdutName.value, () => {
+  getAttributes();  // Re-fetch when the selected data product changes
+});
 
 </script>

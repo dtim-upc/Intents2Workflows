@@ -35,12 +35,12 @@ const handleFileUpload = (event) => {
   const file = event.target.files[0];
 
   //Special case when using firefox and windows, where a csv file is interpreted as excel file type
-  const csvFirefoxWindowsImport = file && file.type === 'application/vnd.ms-excel' && file.name.split('.').pop() === 'csv'
+  //const csvFirefoxWindowsImport = file && file.type === 'application/vnd.ms-excel' && file.name.split('.').pop() === 'csv'
 
-  if (file && (file.type === 'text/csv' || csvFirefoxWindowsImport) ) {
+  //if (file && (file.type === 'text/csv' || csvFirefoxWindowsImport) ) {
 
     sendFileToBackend(file);
-  }
+  //}
 };
 
 // Function to send the CSV file to the backend
