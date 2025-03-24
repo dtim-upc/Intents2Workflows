@@ -1,49 +1,31 @@
-import csv
 import os
 import sys
-from os import path
 
-import pandas as pd
 import scipy.stats as stats
 import numpy as np
 
 sys.path.append(os.path.abspath('..'))
 
+from dataset_annotator.dataLoaders import *
 from common import *
 
 
 def add_dataset_info(dataset_path, graph, label):
-    dataset_node = ab.term(path.basename(dataset_path))
+    dataset_node = ab.term(os.path.basename(dataset_path))
     graph.add((dataset_node, RDF.type, dmop.TabularDataset))
-    dataset = pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
-    add_csv_info(dataset_path, dataset, dataset_node, graph)
-    add_column_info(dataset_path, dataset, dataset_node, graph, label)
+    data_loader: DataLoader = get_loader(dataset_path)
+    #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
+    add_metadata_info(data_loader, dataset_node, graph)
+    add_dataframe_info(data_loader, dataset_node, graph, label)
 
 
-def add_csv_info(dataset_path, dataset, dataset_node, graph):
-    print('\tAdding CSV info ... ', end='')
-    csvfile = open(dataset_path, 'r')
-    encoding = csvfile.encoding
-    lines = [csvfile.readline() for _ in range(50)]
-    csvfile.close()
-    dialect = csv.Sniffer().sniff(''.join(lines))
-    headers = csv.Sniffer().has_header(''.join(lines))
+def add_metadata_info(dl: DataLoader, dataset_node, graph:Graph):
+    print('\tAdding info ... ', end='')
 
-    num_rows = len(dataset.index)
-    num_cols = len(dataset.columns)
+    metadata = dl.getFileMetadata()
 
-    graph.add((dataset_node, dmop.fileFormat, Literal('csv')))
-    graph.add((dataset_node, dmop.delimiter, Literal(dialect.delimiter)))
-    graph.add((dataset_node, dmop.doubleQuote, Literal(dialect.doublequote)))
-    graph.add((dataset_node, dmop.encoding, Literal(encoding)))
-    graph.add((dataset_node, dmop.hasHeader, Literal(headers)))
-    graph.add((dataset_node, dmop.lineDelimiter, Literal(dialect.lineterminator)))
-    graph.add((dataset_node, dmop.numberOfRows, Literal(num_rows)))
-    graph.add((dataset_node, dmop.numberOfColumns, Literal(num_cols)))
-    graph.add((dataset_node, dmop.path, Literal(path.abspath(dataset_path))))
-    graph.add((dataset_node, dmop.quoteChar, Literal(dialect.quotechar)))
-    graph.add((dataset_node, dmop.skipInitialSpace, Literal(dialect.skipinitialspace)))
-
+    for key,value in metadata.items():
+        graph.add((dataset_node,dmop[key],Literal(value)))
     print('Done!')
 
 
@@ -116,15 +98,26 @@ def get_percentage_of_missing_rows(dataset):
     return round(dataset.isna().any(axis=1).sum()/dataset.shape[0], 3)
 
 
-def add_column_info(dataset_path, dataset, dataset_node, graph, label):
+def add_dataframe_info(dl: DataLoader, dataset_node, graph: Graph, label):
+
+    dataset = dl.getDataFrame()
+
+    print('\tAdding dimension info:')
+    num_rows = len(dataset.index)
+    num_cols = len(dataset.columns)
+    graph.add((dataset_node, dmop.numberOfRows, Literal(num_rows)))
+    graph.add((dataset_node, dmop.numberOfColumns, Literal(num_cols)))
+
     print('\tAdding column info:')
     missing_percentage = get_percentage_of_missing_rows(dataset)
     if missing_percentage != 0.0:
         graph.add((dataset_node, dmop.missingvaluesPercentage, Literal(missing_percentage)))
     graph.add((dataset_node, dmop.containsOutliers, Literal(False)))
+
+    dataset_path = next(graph.objects(dataset_node,dmop.path,unique=True),"...")
     for col in dataset.columns:
         col_type = dataset[col].dtype.name
-        col_node = ab.term(f'{path.basename(dataset_path)}/{col}')
+        col_node = ab.term(f'{os.path.basename(dataset_path)}/{col}')
         graph.add((dataset_node, dmop.hasColumn, col_node))
         graph.add((col_node, RDF.type, dmop.Column))
         graph.add((col_node, dmop.hasColumnName, Literal(col)))
@@ -178,8 +171,8 @@ def annotate_dataset(source_path, output_path, label=""):
 
 def main():
     for file in os.listdir('./datasets'):
-        if file.endswith('.csv'):
-            annotate_dataset(f'./datasets/{file}', f'./annotated_datasets/{file[:-4]}_annotated.ttl')
+        #if file.endswith('.csv'):
+        annotate_dataset(f'./datasets/{file}', f'./annotated_datasets/{file[:-4]}_annotated.ttl')
 
 
 if __name__ == '__main__':

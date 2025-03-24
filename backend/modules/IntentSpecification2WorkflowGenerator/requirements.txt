@@ -8,6 +8,7 @@ rdflib-jsonld
 # Annotator
 pandas
 scipy
+fastparquet
 
 # dsl translator
 Jinja2
