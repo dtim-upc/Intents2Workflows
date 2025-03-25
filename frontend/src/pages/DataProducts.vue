@@ -3,17 +3,20 @@
     <TableDataProducts/>
 
     <!-- File Upload Button -->
-    <q-btn label="Upload CSV" @click="triggerFileInput" color="primary" style="margin-left: 20px;"/>
+    <q-btn label="Upload File" @click="triggerFileInput" color="primary" style="margin-left: 20px;"/>
+
+    <!-- Folder Upload Button -->
+    <q-btn label="Upload Folder" @click="triggerFolderInput" color="primary" style="margin-left: 20px;"/>
 
     <!-- File Input (Hidden, triggered by button) -->
-    <input ref="fileInput" type="file" accept=".csv" style="display: none;" @change="handleFileUpload" />
+    <input ref="fileInput" type="file" accept=".csv, .parquet" style="display: none;" @change="handleFileUpload" multiple/>
+    <input ref="folderInput" type="file" accept="*" style="display: none;" @change="handleFileUpload"  webkitdirectory = "true" directory/>
 
   </q-page>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
 import TableDataProducts from 'components/tables/TableDataProducts.vue';
 import { useDataProductsStore } from 'src/stores/dataProductsStore';
 import {odinApi} from 'boot/axios';
@@ -24,29 +27,37 @@ const notify = useNotify();
 
 // References
 const fileInput = ref(null);
+const folderInput = ref(null);
 
 // Trigger file input click when button is clicked
 const triggerFileInput = () => {
   fileInput.value.click();
 };
 
+// Trigger folder input click when button is clicked
+const triggerFolderInput = () => {
+  folderInput.value.click();
+};
+
 // Handle file selection and read the file
 const handleFileUpload = (event) => {
-  const file = event.target.files[0];
+  const file_list = event.target.files;
 
   //Special case when using firefox and windows, where a csv file is interpreted as excel file type
   //const csvFirefoxWindowsImport = file && file.type === 'application/vnd.ms-excel' && file.name.split('.').pop() === 'csv'
 
   //if (file && (file.type === 'text/csv' || csvFirefoxWindowsImport) ) {
 
-    sendFileToBackend(file);
+    sendFileToBackend(file_list);
   //}
 };
 
 // Function to send the CSV file to the backend
-const sendFileToBackend = async (file) => {
+const sendFileToBackend = async (file_list) => {
   const formData = new FormData();
-  formData.append('file', file);
+  for (let i = 0; i < file_list.length; i++) {
+        formData.append("files", file_list[i]);
+    }
 
   try {
     const response = await odinApi.post('/data-product', formData, {

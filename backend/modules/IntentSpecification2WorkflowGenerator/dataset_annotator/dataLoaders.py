@@ -83,7 +83,7 @@ class FolderLoader(DataLoader):
         
         metadata = {
             ** self.metadata,
-            "numFiles": str(len(self.data_loaders)),
+            "numFiles": len(self.data_loaders),
             ** child_metadata,
         }
 
@@ -97,6 +97,7 @@ class FolderLoader(DataLoader):
 loaders = {
     "csv": CSVLoader,
     "parquet": ParquetLoader,
+    "": FolderLoader,
 }
 
 

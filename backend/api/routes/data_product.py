@@ -1,7 +1,9 @@
+from typing import Tuple
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 import os
+from pathlib import Path
 import time
 import csv
 import shutil
@@ -20,43 +22,82 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/data-product")
-async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    """Uploads a CSV file and saves metadata to the database."""
-    #if not file.filename.endswith(".csv"):
-        #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
-    
-    file_path = os.path.abspath(os.path.join(UPLOAD_DIR, file.filename))  # Global path
 
+def process_file(file: UploadFile)->Tuple[str,int,float, str]:
+    file_path = Path(UPLOAD_DIR).joinpath(Path(file.filename))
+    print(file_path)
     # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    file_size = os.path.getsize(file_path) / (1024 * 1024)  # Convert to MB
-    upload_time = time.ctime(os.path.getctime(file_path))
+    size = file_path.stat().st_size / (1024 * 1024)  # Convert to MB
+    upload_file = file_path.stat().st_ctime
 
-    if file.filename.endswith(".csv"):# Extract CSV headers
-        with open(file_path, newline='', encoding='utf-8') as csvfile:
-            reader = csv.reader(csvfile)
-            attributes = next(reader, [])
-    else:
-        attributes = []
+    return file.filename, size, upload_file, file_path
 
-    # Save to database
+def create_data_product(db: Session, filename, size, upload_time, file_path:Path, attributes=[])-> DataProduct:
     data_product = DataProduct(
-        name=file.filename,
-        creation_date=upload_time,
-        size=round(file_size, 2),
-        path=file_path,
+        name=filename,
+        creation_date=time.ctime(upload_time),
+        size=round(size, 2),
+        path=file_path.resolve().as_posix(),
         attributes=",".join(attributes)  # Store as CSV string
     )
 
     db.add(data_product)
     db.commit()
 
+    return data_product
+
+
+
+
+
+@router.post("/data-product")
+async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
+    """Uploads a CSV file and saves metadata to the database."""
+    #if not file.filename.endswith(".csv"):
+        #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
+
+    if not files:
+        raise HTTPException(status_code=400, detail="No files uploaded")
+
+    folder = Path(files[0].filename).parent
+
+    print(folder, Path(UPLOAD_DIR))
+
+    dps = []
+
+    if folder != Path('.'): #folder import
+        folder_path = Path(UPLOAD_DIR).joinpath(Path(folder))
+        folder_path.mkdir()
+        folder_size = 0
+        for file in files:
+            _, size, _ , _ = process_file(file)
+            folder_size += size
+
+        upload_time = folder_path.stat().st_ctime
+
+        dp = create_data_product(db, folder.name, folder_size, upload_time, folder_path)
+        dps.append(dp)
+
+    else: #file import
+        for file in files:
+            name, size, upload_time, path = process_file(file)
+
+            if file.filename.endswith(".csv"):# Extract CSV headers
+                with open(path, newline='', encoding='utf-8') as csvfile:
+                    reader = csv.reader(csvfile)
+                    attributes = next(reader, [])
+            else:
+                attributes = []
+
+            dp = create_data_product(db, name, size, upload_time, path, attributes)
+            dps.append(dp)
+
     return JSONResponse(status_code=200, content={
         "message": "File uploaded successfully",
-        "data_product": data_product.to_dict()
+        "data_product": [data_product.to_dict() for data_product in dps]
     })
 
 @router.get("/data-products")
@@ -75,8 +116,10 @@ async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Data product not found")
 
     # Delete file from the file system
-    if os.path.exists(data_product.path):
-        os.remove(data_product.path)
+    if Path(data_product.path).is_dir():
+        shutil.rmtree(data_product.path)
+    else:
+        Path(data_product.path).unlink()
 
     # Delete data product from the database
     db.delete(data_product)
