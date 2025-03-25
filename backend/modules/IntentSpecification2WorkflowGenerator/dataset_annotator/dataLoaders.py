@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import csv
-import os
+from pathlib import Path
 from typing import Dict
 import pandas as pd
 
@@ -10,10 +10,10 @@ class DataLoader:
     fileFormat = "data file"
 
     def __init__(self,file):
-        self.file_path = file
+        self.file_path = Path(file).resolve().as_posix()
         self.metadata = {
             "fileFormat": self.fileFormat,
-            "path": os.path.abspath(self.file_path)
+            "path": self.file_path
         }
 
     @abstractmethod
@@ -59,6 +59,38 @@ class ParquetLoader(DataLoader):
         return pd.read_parquet(self.file_path)
     
 
+class FolderLoader(DataLoader):
+    fileFormat = "Folder"
+
+    def __init__(self,dir):
+        super().__init__(dir)
+        self.data_loaders: list[DataLoader] = [get_loader(file.as_posix()) for file in Path(dir).iterdir()]
+
+    def getDataFrame(self):
+        dfs: list[pd.DataFrame] = []
+        for dl in self.data_loaders:
+            dfs.append(dl.getDataFrame())
+        
+        return pd.concat(dfs)
+    
+    def getFileMetadata(self):
+
+        child_metadata = {}
+        for i,dl in enumerate(self.data_loaders):
+            dl_metadata = dl.getFileMetadata()
+            for key, value in dl_metadata.items():
+                child_metadata[f'file_{i}_{key}'] = value
+        
+        metadata = {
+            ** self.metadata,
+            "numFiles": str(len(self.data_loaders)),
+            ** child_metadata,
+        }
+
+        return metadata
+            
+
+
 
 ###################################################################
     
@@ -69,9 +101,13 @@ loaders = {
 
 
 def get_extension(file_path) -> str:
-    _, extension = os.path.splitext(file_path)
+    extension = Path(file_path).suffix
     return extension[1:]
 
-def get_loader(path) -> DataLoader:
+def get_loader(path:Path) -> DataLoader:
+
+    if Path(path).is_dir():
+        return FolderLoader(path)
+    
     extension = get_extension(path)
     return loaders[extension](path)
