@@ -14,6 +14,7 @@ from models import DataProduct
 
 router = APIRouter()
 
+MAX_FILENAME_LENGTH = 50
 UPLOAD_DIR = "datasets"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -35,12 +36,22 @@ def get_root_folder(folder_path:Path) -> Path:
         return folder_path
     else:
         return get_root_folder(folder_path.parent)
+    
+def format_path(raw_path:str) ->Path:
+    bound = int(MAX_FILENAME_LENGTH/2)
+    parts = Path(raw_path).parts
+    newparts = []
+    for part in parts:
+        qpart = quote(part)
+        if len(qpart) > MAX_FILENAME_LENGTH:
+            qpart = qpart[:bound] + "..." + qpart[-bound:]
+        newparts.append(qpart)
+    return Path(*newparts)
 
 def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
-    file_path = Path(UPLOAD_DIR).joinpath(Path(file.filename))
+    file_path = Path(UPLOAD_DIR).joinpath(format_path(file.filename))
     print(file_path)
-    print(file_path.parent)
-   
+
     # Save file
     create_folder_hierarchy(file_path.parent)
     with open(file_path, "wb") as buffer:

@@ -47,9 +47,13 @@ const handleFileUpload = (event) => {
   //const csvFirefoxWindowsImport = file && file.type === 'application/vnd.ms-excel' && file.name.split('.').pop() === 'csv'
 
   //if (file && (file.type === 'text/csv' || csvFirefoxWindowsImport) ) {
-
+    console.log(file_list)
+  if (file_list.length > 0) {
     sendFileToBackend(file_list);
-  //}
+  }
+  else {
+    notify.negative("No files selected (Maybe path too long?)")
+  }
 };
 
 // Function to send the CSV file to the backend
