@@ -17,6 +17,7 @@ from dataset_annotator import dataLoaders
 
 import requests
 import json
+from urllib.parse import quote
 
 app = Flask(__name__)
 CORS(app)
@@ -44,7 +45,7 @@ def annotate_dataset_from_frontend():
     custom_ontology = get_custom_ontology(new_path)
     datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}
     return {"ontology": custom_ontology.serialize(format="turtle"),
-            "data_product_uri": datasets[data_path.name]}
+            "data_product_uri": datasets[quote(data_path.name)]}
 
 
 @app.get('/problems')

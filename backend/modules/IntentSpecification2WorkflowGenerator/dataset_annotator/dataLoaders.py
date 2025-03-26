@@ -88,6 +88,20 @@ class FolderLoader(DataLoader):
         }
 
         return metadata
+
+class DummyLoader(DataLoader):
+    fileFormat = "Unsupported"
+    
+    def getDataFrame(self):
+        return pd.DataFrame()
+    
+    def getFileMetadata(self):
+        metadata = {
+            **self.metadata,
+            "ignored": True
+        }
+        return metadata
+
             
 
 
@@ -111,4 +125,5 @@ def get_loader(path:Path) -> DataLoader:
         return FolderLoader(path)
     
     extension = get_extension(path)
-    return loaders[extension](path)
+    print(loaders.get(extension,DummyLoader))
+    return loaders.get(extension,DummyLoader)(path)

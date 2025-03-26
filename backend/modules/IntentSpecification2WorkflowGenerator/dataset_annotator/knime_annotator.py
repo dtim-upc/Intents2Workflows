@@ -4,6 +4,7 @@ import sys
 import os
 import scipy.stats as stats
 import numpy as np
+from urllib.parse import quote
 sys.path.append(str(Path('..').resolve()))
 
 from dataset_annotator.dataLoaders import *
@@ -11,7 +12,7 @@ from common import *
 
 
 def add_dataset_info(dataset_path, graph, label):
-    dataset_node = ab.term(Path(dataset_path).name)
+    dataset_node = ab.term(quote(Path(dataset_path).name))
     graph.add((dataset_node, RDF.type, dmop.TabularDataset))
     data_loader: DataLoader = get_loader(dataset_path)
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
@@ -117,7 +118,7 @@ def add_dataframe_info(dl: DataLoader, dataset_node, graph: Graph, label):
     dataset_path = next(graph.objects(dataset_node,dmop.path,unique=True),"...")
     for col in dataset.columns:
         col_type = dataset[col].dtype.name
-        col_node = ab.term(f'{Path(dataset_path).name}/{col}')
+        col_node = ab.term(f'{quote(Path(dataset_path).name)}/{col}')
         graph.add((dataset_node, dmop.hasColumn, col_node))
         graph.add((col_node, RDF.type, dmop.Column))
         graph.add((col_node, dmop.hasColumnName, Literal(col)))
@@ -174,7 +175,7 @@ def main():
         #if file.endswith('.csv'):
         annotate_dataset(f'./datasets/{file}', f'./annotated_datasets/{file[:-4]}_annotated.ttl')
 
-    annotate_dataset('./multipart_datasets/', './annotated_datasets/multipart_annotated.ttl')
+    annotate_dataset('./T1003.001_ OS Credential Dumping_ LSASS Memory2024-09-07 2024-09-13', './annotated_datasets/hierarchy.ttl')
 
 
 if __name__ == '__main__':

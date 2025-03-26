@@ -7,6 +7,8 @@ from pathlib import Path
 import time
 import csv
 import shutil
+from urllib.parse import quote
+
 from database.database import SessionLocal, init_db
 from models import DataProduct
 
@@ -22,11 +24,25 @@ def get_db():
     finally:
         db.close()
 
+def create_folder_hierarchy(path:Path):
+    if path != Path(UPLOAD_DIR):
+        if path.parent != Path(UPLOAD_DIR):
+            create_folder_hierarchy(path.parent)
+        path.mkdir(exist_ok=True)
 
-def process_file(file: UploadFile)->Tuple[str,int,float, str]:
+def get_root_folder(folder_path:Path) -> Path:
+    if folder_path.parent == Path(UPLOAD_DIR):
+        return folder_path
+    else:
+        return get_root_folder(folder_path.parent)
+
+def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
     file_path = Path(UPLOAD_DIR).joinpath(Path(file.filename))
     print(file_path)
+    print(file_path.parent)
+   
     # Save file
+    create_folder_hierarchy(file_path.parent)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
@@ -37,7 +53,7 @@ def process_file(file: UploadFile)->Tuple[str,int,float, str]:
 
 def create_data_product(db: Session, filename, size, upload_time, file_path:Path, attributes=[])-> DataProduct:
     data_product = DataProduct(
-        name=filename,
+        name=quote(filename),
         creation_date=time.ctime(upload_time),
         size=round(size, 2),
         path=file_path.resolve().as_posix(),
@@ -48,9 +64,6 @@ def create_data_product(db: Session, filename, size, upload_time, file_path:Path
     db.commit()
 
     return data_product
-
-
-
 
 
 @router.post("/data-product")
@@ -69,16 +82,14 @@ async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends
     dps = []
 
     if folder != Path('.'): #folder import
-        folder_path = Path(UPLOAD_DIR).joinpath(Path(folder))
-        folder_path.mkdir()
         folder_size = 0
         for file in files:
-            _, size, _ , _ = process_file(file)
+            _, size, upload_time , file_path = process_file(file)
             folder_size += size
 
-        upload_time = folder_path.stat().st_ctime
+        folder_path = get_root_folder(file_path)
 
-        dp = create_data_product(db, folder.name, folder_size, upload_time, folder_path)
+        dp = create_data_product(db, folder_path.name, folder_size, upload_time, folder_path)
         dps.append(dp)
 
     else: #file import

@@ -49,7 +49,8 @@ export default {
     return textToIntentAPI.post('/predictIntent', data)
   },
   getRecommendation(email, dataset, problem) {
-    return intentToGraphDBAPI.get('/get_recommendations?user=' + email + "&dataset=" + dataset + "&intent=" + problem)
+    let datasetUri = encodeURIComponent(dataset);
+    return intentToGraphDBAPI.get('/get_recommendations?user=' + email + "&dataset=" + datasetUri + "&intent=" + problem)
   },
   getAllInfo() {
     return intentToGraphDBAPI.get('/get_all_info')
