@@ -1,8 +1,26 @@
 from abc import abstractmethod
 import csv
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Tuple
 import pandas as pd
+import zipfile
+import tempfile
+import shutil
+import atexit
+
+
+# Create a temporary directory
+temp_dir = tempfile.mkdtemp()
+
+# Register a cleanup function that will delete the directory upon exit
+def cleanup_temp_dir():
+    if Path(temp_dir).is_dir():
+        shutil.rmtree(temp_dir)
+        print(f"Temporary directory {temp_dir} cleaned up.")
+
+atexit.register(cleanup_temp_dir)
+
+print(f"Temporary directory created: {temp_dir}")
 
 
 class DataLoader:
@@ -27,27 +45,30 @@ class DataLoader:
 class CSVLoader(DataLoader):
     fileFormat = "CSV"
 
-    def getDataFrame(self) -> pd.DataFrame:
-        return pd.read_csv(self.file_path,encoding='utf-8')
-    
-    def getFileMetadata(self):
+    def __init__(self,file):
+        super().__init__(file)
 
         with open(self.file_path, 'r') as csvfile:
-            encoding = csvfile.encoding
+            self.encoding = csvfile.encoding
             lines = [csvfile.readline() for _ in range(50)]
+        
+        self.dialect = csv.Sniffer().sniff(''.join(lines))
+        self.hasHeader = csv.Sniffer().has_header(''.join(lines))
 
-        dialect = csv.Sniffer().sniff(''.join(lines))
-        header = csv.Sniffer().has_header(''.join(lines))
 
+    def getDataFrame(self) -> pd.DataFrame:
+        return pd.read_csv(self.file_path, encoding=self.encoding, delimiter=self.dialect.delimiter)
+    
+    def getFileMetadata(self):
         metadata = {
             **self.metadata,
-            "delimiter": dialect.delimiter,
-            "doubleQuote": dialect.doublequote,
-            "lineDelimiter": dialect.lineterminator,
-            "quoteChar": dialect.quotechar,
-            "skipInitialSpace": dialect.skipinitialspace,
-            "encoding": encoding,
-            "hasHeader": header,
+            "delimiter": self.dialect.delimiter,
+            "doubleQuote": self.dialect.doublequote,
+            "lineDelimiter": self.dialect.lineterminator,
+            "quoteChar": self.dialect.quotechar,
+            "skipInitialSpace": self.dialect.skipinitialspace,
+            "encoding": self.encoding,
+            "hasHeader": self.hasHeader,
         }
 
         return metadata
@@ -88,6 +109,17 @@ class FolderLoader(DataLoader):
         }
 
         return metadata
+    
+class ZipLoader(FolderLoader):
+    fileFormat = "ZIP"
+
+    def __init__(self,dir):
+        zfile = zipfile.ZipFile(dir, mode='r')
+        extraction_path = Path(temp_dir).joinpath(Path(dir).with_suffix('').name)
+        zfile.extractall(extraction_path)
+        super().__init__(extraction_path)
+        self.metadata['path'] = Path(dir).resolve().as_posix()
+
 
 class DummyLoader(DataLoader):
     fileFormat = "Unsupported"
@@ -111,6 +143,7 @@ class DummyLoader(DataLoader):
 loaders = {
     "csv": CSVLoader,
     "parquet": ParquetLoader,
+    "zip": ZipLoader,
     "": FolderLoader,
 }
 
