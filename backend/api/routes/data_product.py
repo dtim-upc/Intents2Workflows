@@ -131,8 +131,9 @@ async def list_uploaded_files(db: Session = Depends(get_db)):
 
 @router.delete("/data-product/{data_product}")
 async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
+    data_product_formatted = quote(data_product)
     """Deletes a data product by its name from the database and file system."""
-    data_product = db.query(DataProduct).filter(DataProduct.name == data_product).first()
+    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted).first()
 
     if data_product is None:
         raise HTTPException(status_code=404, detail="Data product not found")

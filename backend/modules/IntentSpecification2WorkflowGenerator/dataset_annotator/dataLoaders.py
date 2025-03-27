@@ -24,7 +24,6 @@ print(f"Temporary directory created: {temp_dir}")
 
 
 class DataLoader:
-
     fileFormat = "data file"
 
     def __init__(self,file):
