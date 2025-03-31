@@ -117,8 +117,9 @@ const showDialogEditIntent = ref(false)
 const showDialogEditWorkflow = ref(false)
 
 const rows = computed(() => {
+console.log(intentsStore.intents)
 return intentsStore.intents
-  .filter((intent) => intent.workflows && intent.workflows.length > 0) // We only display intents with workflows
+  .filter((intent) => intent.workflows && intent.workflows.length > 0 && intent.data_product) // We only display intents with workflows and data products
   .map((intent) => {
     return {
       ...intent,
