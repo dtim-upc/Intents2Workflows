@@ -418,6 +418,9 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     if algorithm_sparql:
         algorithm_sparql = algorithm_sparql.split("#")[-1] if algorithm_sparql else None
 
+    ################################################################################
+    ##################################### KGE ######################################
+    ################################################################################
 
     algorithm_kge = None
     algorithm_kge_explanation = 'Similar '+ input_intent + ' experiments have used this algorithm.'
@@ -441,5 +444,9 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     algorithm_scores = {candidate_algorithms[i]: scores[i].item() for i in range(len(candidate_algorithms))}
     algorithm_kge = max(algorithm_scores, key=algorithm_scores.get)
 
-    suggestions['algorithm'] = {'SPARQL': [algorithm_sparql,algorithm_sparql_explanation], 'KGE': [algorithm_kge, algorithm_kge_explanation]}
+    if algorithm_sparql != algorithm_kge:
+        suggestions['algorithm'] = {'SPARQL': [algorithm_sparql,algorithm_sparql_explanation], 'KGE': [algorithm_kge, algorithm_kge_explanation]}
+    else:
+        merged_explanation = algorithm_sparql_explanation + ' Moreover, ' + algorithm_kge_explanation.replace('Similar','similar')
+        suggestions['algorithm'] = {'BOTH': [algorithm_kge, merged_explanation]}
     return suggestions
