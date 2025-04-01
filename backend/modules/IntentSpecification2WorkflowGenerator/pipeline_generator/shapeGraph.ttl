@@ -17,6 +17,7 @@ ab:AlgorithmConstraint
 		sh:or (
 			[sh:hasValue "XGBoost"]
 			[sh:hasValue "SVM"]
+			[sh:hasValue "NN"]
 		);
 		
 	]

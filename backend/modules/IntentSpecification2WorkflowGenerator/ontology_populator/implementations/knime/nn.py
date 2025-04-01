@@ -1,5 +1,5 @@
 from common import *
-from .knime_implementation import KnimeImplementation, KnimeBaseBundle, KnimeParameter
+from .knime_implementation import KnimeImplementation, KnimeBaseBundle, KnimeParameter, KnimeDefaultFeature
 from ..core import *
 
 nn_learner_implementation = KnimeImplementation(
@@ -10,7 +10,7 @@ nn_learner_implementation = KnimeImplementation(
         KnimeParameter("NN type", XSD.string, None, 'nn_type'),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape],
     ],
     output=[
         cb.NNModel,
@@ -18,16 +18,17 @@ nn_learner_implementation = KnimeImplementation(
     implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.base.node.mine.svm.predictor2.SVMPredictorNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 feedforward_learner_component = Component(
     name='FeedForward NN Learner',
     implementation=nn_learner_implementation,
     overriden_parameters=[
-        ('NN type', 'FeedForward'),
+         ParameterSpecification(next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'nn_type'), None), 'FeedForward'),
     ],
     exposed_parameters=[
-        'Class column'
+        next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'classcol'),None)
     ],
     transformations=[
     ],
@@ -37,10 +38,10 @@ recurrent_learner_component = Component(
     name='Recurrent NN Learner',
     implementation=nn_learner_implementation,
     overriden_parameters=[
-        ('NN type', 'Recurrent'),
+        ParameterSpecification(next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'nn_type'), None), 'Recurrent'),
     ],
     exposed_parameters=[
-        'Class column'
+        next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'classcol'),None)
     ],
     transformations=[
     ],
@@ -50,10 +51,10 @@ convolutional_learner_component = Component(
     name='Convolutional NN Learner',
     implementation=nn_learner_implementation,
     overriden_parameters=[
-        ('NN type', 'Convolutional'),
+        ParameterSpecification(next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'nn_type'), None), 'Convolutional'),
     ],
     exposed_parameters=[
-        'Class column'
+        next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'classcol'),None)
     ],
     transformations=[
     ],
@@ -63,10 +64,10 @@ lstm_learner_component = Component(
     name='LSTM NN Learner',
     implementation=nn_learner_implementation,
     overriden_parameters=[
-        ('NN type', 'LSTM'),
+        ParameterSpecification(next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'nn_type'), None), 'LSTM'),
     ],
     exposed_parameters=[
-        'Class column'
+        next((param for param in nn_learner_implementation.parameters.keys() if param.knime_key == 'classcol'),None)
     ],
     transformations=[
     ],
@@ -83,15 +84,16 @@ nn_predictor_implementation = KnimeImplementation(
     ],
     input=[
         cb.NNModel,
-        [cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
+        [cb.TestTabularDatasetShape,cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
     ],
     output=[
-        cb.LabeledTabularDatasetShape,
+        cb.TabularDatasetShape,
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=nn_learner_implementation,
     knime_node_factory='org.knime.base.node.mine.svm.predictor2.SVMPredictorNodeFactory',
     knime_bundle=KnimeBaseBundle,
+    knime_feature=KnimeDefaultFeature
 )
 
 nn_predictor_component = Component(
