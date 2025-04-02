@@ -625,13 +625,13 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -699,12 +699,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2200,7 +2200,8 @@ cb:implementation-bar_chart_visualizer-tti_settingsmodelid a tb:Parameter ;
 
 cb:implementation-csv_reader a tb:Implementation ;
     rdfs:label "CSV Reader" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-csv_reader-append_path_column_internals,
         cb:implementation-csv_reader-autodetect_buffer_size,
         cb:implementation-csv_reader-charset,
@@ -2927,7 +2928,8 @@ cb:implementation-csv_reader-use_line_break_row_delimiter a tb:Parameter ;
 
 cb:implementation-csv_writer a tb:Implementation ;
     rdfs:label "CSV Writer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-csv_writer-add_custom_text_to_comment,
         cb:implementation-csv_writer-add_table_name_to_comment,
         cb:implementation-csv_writer-add_time_to_comment,
@@ -3523,7 +3525,8 @@ cb:implementation-decision_tree_predictor-use_gain_ratio a tb:Parameter ;
 
 cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Heatmap Visualizer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-heatmap_visualizer-allowed_page_sizes_0,
         cb:implementation-heatmap_visualizer-allowed_page_sizes_1,
         cb:implementation-heatmap_visualizer-allowed_page_sizes_2,
@@ -3608,22 +3611,22 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:HeatMapVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:HeatMapVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-heatmap_visualizer-allowed_page_sizes_0 a tb:Parameter ;
     rdfs:label "Allowed Page Sizes 0" ;
@@ -5634,7 +5637,8 @@ cb:implementation-histogram_visualizer-tti_settingsmodelid a tb:Parameter ;
 
 cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Line Plot Visualizer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-line_plot_visualizer-always_show_origin,
         cb:implementation-line_plot_visualizer-auto_range_axes,
         cb:implementation-line_plot_visualizer-background_color,
@@ -6658,7 +6662,8 @@ cb:implementation-missing_value-string_settings a tb:Parameter ;
 
 cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     rdfs:label "Missing Value (Applier)" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:implements cb:MissingValueRemoval ;
     tb:knime-factory "org.knime.base.node.preproc.pmml.missingval.apply.MissingValueApplyNodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
@@ -6672,14 +6677,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:MissingValueModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -6689,12 +6694,9 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
 cb:implementation-nn_learner-nn_type a tb:Parameter ;
     rdfs:label "NN type" ;
     tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_datatype xsd:string ;
     tb:has_defaultvalue "None" ;
     tb:has_position 1 ;
-    tb:knime_key "nn_type" ;
-    tb:knime_path "model" ;
     tb:specifiedBy ab:nn_type_convolutional_specification,
         ab:nn_type_feedforward_specification,
         ab:nn_type_lstm_specification,
@@ -6702,43 +6704,31 @@ cb:implementation-nn_learner-nn_type a tb:Parameter ;
 
 cb:implementation-nn_predictor-add_probabilities a tb:Parameter ;
     rdfs:label "Add probabilities" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:boolean,
-        "http://www.w3.org/2001/XMLSchema#boolean" ;
+    tb:has_condition "add probabilities" ;
+    tb:has_datatype xsd:boolean ;
     tb:has_defaultvalue false ;
-    tb:has_position 2 ;
-    tb:knime_key "add probabilities" ;
-    tb:knime_path "model" .
+    tb:has_position 2 .
 
 cb:implementation-nn_predictor-change_prediction a tb:Parameter ;
     rdfs:label "Change prediction" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:boolean,
-        "http://www.w3.org/2001/XMLSchema#boolean" ;
+    tb:has_condition "change prediction" ;
+    tb:has_datatype xsd:boolean ;
     tb:has_defaultvalue false ;
-    tb:has_position 1 ;
-    tb:knime_key "change prediction" ;
-    tb:knime_path "model" .
+    tb:has_position 1 .
 
 cb:implementation-nn_predictor-class_probability_suffix a tb:Parameter ;
     rdfs:label "Class probability suffix" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_condition "class probability suffix" ;
+    tb:has_datatype xsd:string ;
     tb:has_defaultvalue "" ;
-    tb:has_position 3 ;
-    tb:knime_key "class probability suffix" ;
-    tb:knime_path "model" .
+    tb:has_position 3 .
 
 cb:implementation-nn_predictor-prediction_column_name a tb:Parameter ;
     rdfs:label "Prediction column name" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_condition "prediction column name" ;
+    tb:has_datatype xsd:string ;
     tb:has_defaultvalue "Prediction ($$LABEL$$)" ;
-    tb:has_position 0 ;
-    tb:knime_key "prediction column name" ;
-    tb:knime_path "model" .
+    tb:has_position 0 .
 
 cb:implementation-normalizer_\(pmml\)-columns_to_normalize a tb:Parameter ;
     rdfs:label "Columns to normalize" ;
@@ -7818,7 +7808,8 @@ cb:implementation-pie_donut_chart-tpi_settingsmodelid a tb:Parameter ;
 
 cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Scatter Plot Visualizer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-scatter_plot_visualizer-always_show_origin,
         cb:implementation-scatter_plot_visualizer-auto_range_axes,
         cb:implementation-scatter_plot_visualizer-background_color,
@@ -9684,7 +9675,8 @@ cb:implementation-csv_writer-writer_file a tb:Parameter ;
 
 cb:implementation-decision_tree_learner a tb:LearnerImplementation ;
     rdfs:label "Decision Tree Learner" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasApplier cb:implementation-decision_tree_predictor ;
     tb:hasParameter cb:implementation-decision_tree_learner-average_split_point,
         cb:implementation-decision_tree_learner-binary_nominal_splits,
@@ -9739,7 +9731,8 @@ cb:implementation-decision_tree_learner-dt_class_column a tb:Parameter ;
 
 cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     rdfs:label "Decision Tree Predictor" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasLearner cb:implementation-decision_tree_learner ;
     tb:hasParameter cb:implementation-decision_tree_predictor-change_prediction,
         cb:implementation-decision_tree_predictor-class_probability_suffix,
@@ -9815,7 +9808,8 @@ cb:implementation-line_plot_visualizer-lineplot_x_axis_column a tb:Parameter ;
 
 cb:implementation-missing_value a tb:LearnerImplementation ;
     rdfs:label "Missing Value" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-missing_value-column_settings,
         cb:implementation-missing_value-float,
         cb:implementation-missing_value-float_settings,
@@ -9841,50 +9835,40 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-nn_predictor a tb:ApplierImplementation ;
     rdfs:label "NN Predictor" ;
-    tb:engine "KNIME" ;
+    tb:engine "Simple" ;
     tb:hasLearner cb:implementation-nn_learner ;
     tb:hasParameter cb:implementation-nn_predictor-add_probabilities,
         cb:implementation-nn_predictor-change_prediction,
         cb:implementation-nn_predictor-class_probability_suffix,
         cb:implementation-nn_predictor-prediction_column_name ;
     tb:implements cb:NN ;
-    tb:knime-factory "org.knime.base.node.mine.svm.predictor2.SVMPredictorNodeFactory" ;
-    tb:knime-node-bundle-name "KNIME Base Nodes" ;
-    tb:knime-node-bundle-symbolic-name "org.knime.base" ;
-    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
-    tb:knime-node-bundle-version "4.7.0.v202301251625" ;
-    tb:knime-node-feature-name "" ;
-    tb:knime-node-feature-symbolic-name "" ;
-    tb:knime-node-feature-vendor "" ;
-    tb:knime-node-feature-version "0.0.0" ;
-    tb:knime-node-name "NN Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -9913,7 +9897,8 @@ cb:implementation-normalizer_\(pmml\)-new_minimum a tb:Parameter ;
 
 cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     rdfs:label "Normalizer Apply (PMML)" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasLearner cb:implementation-normalizer_\(pmml\) ;
     tb:implements cb:Normalization ;
     tb:knime-factory "org.knime.base.node.preproc.pmml.normalize.NormalizerPMMLApplyNodeFactory" ;
@@ -9938,14 +9923,14 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizerModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-scatter_plot_visualizer-scatterplot_x_axis_column a tb:Parameter ;
     rdfs:label "Scatterplot X Axis Column" ;
@@ -9969,7 +9954,8 @@ cb:implementation-scatter_plot_visualizer-scatterplot_y_axis_column a tb:Paramet
 
 cb:implementation-svm_predictor a tb:ApplierImplementation ;
     rdfs:label "SVM Predictor" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasLearner cb:implementation-svm_learner ;
     tb:hasParameter cb:implementation-svm_predictor-add_probabilities,
         cb:implementation-svm_predictor-change_prediction,
@@ -9993,13 +9979,13 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -10010,7 +9996,8 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
 
 cb:implementation-xgboost_linear_learner a tb:LearnerImplementation ;
     rdfs:label "XGBoost Linear Learner" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasApplier cb:implementation-xgboost_predictor ;
     tb:hasParameter cb:implementation-xgboost_linear_learner-alpha,
         cb:implementation-xgboost_linear_learner-basescore,
@@ -10043,11 +10030,11 @@ cb:implementation-xgboost_linear_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Linear Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 2 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -10070,7 +10057,8 @@ cb:implementation-xgboost_linear_learner-target_column a tb:Parameter ;
 
 cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
     rdfs:label "XGBoost Tree Learner" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasApplier cb:implementation-xgboost_predictor ;
     tb:hasParameter cb:implementation-xgboost_tree_learner-alpha,
         cb:implementation-xgboost_tree_learner-basescore,
@@ -10121,14 +10109,14 @@ cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
+                    tb:hasImportanceLevel 2 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -10270,7 +10258,8 @@ WHERE {
 
 cb:implementation-bar_chart_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Bar Chart Visualizer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-bar_chart_visualizer-aggi_enabledstatus,
         cb:implementation-bar_chart_visualizer-aggi_settingsmodelid,
         cb:implementation-bar_chart_visualizer-bar_aggregation,
@@ -10446,7 +10435,8 @@ cb:implementation-data_partitioning-random_seed a tb:Parameter ;
 
 cb:implementation-histogram_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Histogram Visualizer" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-histogram_visualizer-aggi_enabledstatus,
         cb:implementation-histogram_visualizer-aggi_settingsmodelid,
         cb:implementation-histogram_visualizer-bei_enabledstatus,
@@ -10606,7 +10596,8 @@ cb:implementation-histogram_visualizer a tb:VisualizerImplementation ;
 
 cb:implementation-pie_donut_chart a tb:VisualizerImplementation ;
     rdfs:label "Pie_Donut Chart" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-pie_donut_chart-aggi_enabledstatus,
         cb:implementation-pie_donut_chart-aggi_settingsmodelid,
         cb:implementation-pie_donut_chart-cci_enabledstatus,
@@ -10738,7 +10729,8 @@ cb:implementation-pie_donut_chart a tb:VisualizerImplementation ;
 
 cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     rdfs:label "XGBoost Predictor" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasLearner cb:implementation-xgboost_linear_learner,
         cb:implementation-xgboost_tree_learner ;
     tb:hasParameter cb:implementation-xgboost_predictor-add_probabilities,
@@ -10814,7 +10806,8 @@ cb:implementation-bar_chart_visualizer-included_frequency_columns a tb:Parameter
 
 cb:implementation-data_partitioning a tb:Implementation ;
     rdfs:label "Data Partitioning" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasParameter cb:implementation-data_partitioning-class_columns,
         cb:implementation-data_partitioning-count_\(absolute_size\),
         cb:implementation-data_partitioning-fraction_\(relative_size\),
@@ -10839,14 +10832,14 @@ cb:implementation-data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-histogram_visualizer-histogram_category a tb:Parameter ;
     rdfs:label "Histogram Category" ;
@@ -10870,7 +10863,8 @@ cb:implementation-histogram_visualizer-included_frequency_columns a tb:Parameter
 
 cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
     rdfs:label "Normalizer (PMML)" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasApplier cb:implementation-normalizer_apply_\(pmml\) ;
     tb:hasParameter cb:implementation-normalizer_\(pmml\)-columns_to_normalize,
         cb:implementation-normalizer_\(pmml\)-new_maximum,
@@ -10894,14 +10888,14 @@ cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-pie_donut_chart-frequency a tb:Parameter ;
     rdfs:label "frequency" ;
@@ -10925,7 +10919,8 @@ cb:implementation-pie_donut_chart-pie_chart_category a tb:Parameter ;
 
 cb:implementation-svm_learner a tb:LearnerImplementation ;
     rdfs:label "SVM Learner" ;
-    tb:engine "KNIME" ;
+    tb:engine "KNIME",
+        "Simple" ;
     tb:hasApplier cb:implementation-svm_predictor ;
     tb:hasParameter cb:implementation-svm_learner-bias,
         cb:implementation-svm_learner-delta,
@@ -10949,11 +10944,11 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
@@ -10993,33 +10988,23 @@ cb:Normalization a tb:Task ;
 
 cb:implementation-nn_learner a tb:LearnerImplementation ;
     rdfs:label "NN Learner" ;
-    tb:engine "KNIME" ;
+    tb:engine "Simple" ;
     tb:hasApplier cb:implementation-nn_predictor ;
     tb:hasParameter cb:implementation-nn_learner-class_column,
         cb:implementation-nn_learner-nn_type ;
     tb:implements cb:NN ;
-    tb:knime-factory "org.knime.base.node.mine.svm.predictor2.SVMPredictorNodeFactory" ;
-    tb:knime-node-bundle-name "KNIME Base Nodes" ;
-    tb:knime-node-bundle-symbolic-name "org.knime.base" ;
-    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
-    tb:knime-node-bundle-version "4.7.0.v202301251625" ;
-    tb:knime-node-feature-name "" ;
-    tb:knime-node-feature-symbolic-name "" ;
-    tb:knime-node-feature-vendor "" ;
-    tb:knime-node-feature-version "0.0.0" ;
-    tb:knime-node-name "NN Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11031,12 +11016,9 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
 cb:implementation-nn_learner-class_column a tb:Parameter ;
     rdfs:label "Class column" ;
     tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_datatype xsd:string ;
     tb:has_defaultvalue "$$LABEL$$" ;
-    tb:has_position 0 ;
-    tb:knime_key "classcol" ;
-    tb:knime_path "model" .
+    tb:has_position 0 .
 
 cb:Model rdfs:subClassOf tb:Data .
 

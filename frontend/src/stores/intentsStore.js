@@ -146,6 +146,7 @@ export const useIntentsStore = defineStore('intents', {
             selected: true,
             plan: response.data[key].logical_plan,
             graph:  response.data[key].graph,
+            knimeCompatible: response.data[key].knimeCompatible
           }
           this.logicalPlans.map(logPlan => {
             if (logPlan.id === this.removeLastPart(key)) {

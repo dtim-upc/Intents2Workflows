@@ -429,6 +429,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
 
     step_name = get_step_name(workflow_name, task_order, component)
     component_implementation = graph_queries.get_component_implementation(ontology, component)
+    engine = graph_queries.get_engine(ontology, component_implementation)
     input_specs = graph_queries.get_implementation_input_specs(ontology,component_implementation,max_imp_level)
     input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
     input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
@@ -491,7 +492,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
         if not output_data_index is None:
             train_dataset_node = transformation_outputs[output_data_index]
     
-    return step, train_dataset_node, test_dataset_node, model_node
+    return step, train_dataset_node, test_dataset_node, model_node, engine
 
 
 
@@ -521,15 +522,19 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     dataset_node = dataset_node
     test_dataset_node = None
 
+    knime_compatible = True
+
     for train_component in [*transformations, main_component]:
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
         same = train_component == test_component
 
-        step, dataset_node, output_test_dataset_node, model_node = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, train_component, 
+        step, dataset_node, output_test_dataset_node, model_node, engine = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, train_component, 
                              task_order, previous_train_step, dataset_node, None)
         previous_train_step = step
         if not output_test_dataset_node is None:
             test_dataset_node = output_test_dataset_node
+
+        knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
         task_order += 1
         print(train_component, dataset_node, test_dataset_node, model_node)
@@ -540,9 +545,11 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             previous_test_steps = [previous_test_step, step] if not same else [previous_test_step]
             print(test_component, previous_test_steps, test_dataset_node, model_node)
 
-            test_step, test_dataset_node, _, _  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
+            test_step, test_dataset_node, _, _,engine  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
                             task_order, previous_test_steps, test_dataset_node, model_node)
             previous_test_step = test_step
+
+            knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
             task_order += 1
             print(test_component, test_dataset_node)
@@ -565,6 +572,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                 saver_param_specs,
                 task_order,
                 previous_test_step, [test_dataset_node], [])
+        
+    workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
                 
     return workflow_graph, workflow
 

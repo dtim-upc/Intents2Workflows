@@ -6,7 +6,11 @@ from rdflib.collection import Collection
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from common import *
-from ontology_populator.implementations.knime import implementations, components
+from ontology_populator.implementations.knime import implementations as implementations_k, components as components_k
+from ontology_populator.implementations.simple import implementations as implementations_s, components as components_s
+
+implementations = implementations_k + implementations_s
+components = components_k + components_s
 
 
 def init_cbox() -> Graph:
@@ -119,7 +123,7 @@ def add_implementations(cbox):
         implementation.add_to_graph(cbox)
 
     for implementation in implementations:
-        implementation.add_counterpart_relationship(cbox)
+         implementation.add_counterpart_relationship(cbox)
 
     for component in components:
         print(f'Adding component {component.name}')

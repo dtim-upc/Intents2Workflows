@@ -99,6 +99,12 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
     return build_workflows(ontology, shape_graph, intent, implementations, log=True)
 
+def getKnimeCompatibility(workflow_graph: Graph):
+    workflow_id = next(workflow_graph.subjects(RDF.type, tb.Workflow, unique=True),None)
+    compatible = next(workflow_graph.objects(workflow_id,tb.knimeCompatible),False).value #Incompatible by default
+    return compatible
+
+
 def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
     logical_plans = {}
     counter = {}
@@ -122,7 +128,7 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
                    f'{counter[main_component]}')
         counter[main_component] += 1
-        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")}
+        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle"), "knimeCompatible": getKnimeCompatibility(workflow_plan)}
 
     return logical_plans
 

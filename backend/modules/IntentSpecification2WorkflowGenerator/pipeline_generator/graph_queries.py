@@ -541,3 +541,5 @@ def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
     return {result['datatag']: (float(result['weight']), int(result['component_rank'])) for result in results}
 
 
+def get_engine(graph: Graph, implementation:URIRef):
+    return next(graph.objects(implementation, tb.engine, unique=True),None)

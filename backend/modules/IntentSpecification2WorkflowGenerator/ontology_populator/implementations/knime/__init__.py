@@ -12,7 +12,6 @@ from .scatter_plot import *
 from .line_plot import *
 from .heatmap import *
 from .xgboost import *
-from .nn import *
 
 implementations = [
     partitioning_implementation,
@@ -35,8 +34,6 @@ implementations = [
     xgboost_linear_learner_implementation,
     xgboost_tree_learner_implementation,
     xgboost_predictor_implementation,
-    nn_learner_implementation,
-    nn_predictor_implementation,
 ]
 
 components = [
@@ -74,9 +71,4 @@ components = [
     xgboost_linear_learner_component,
     xgboost_tree_learner_component,
     xgboost_predictor_component,
-    feedforward_learner_component,
-    recurrent_learner_component,
-    convolutional_learner_component,
-    lstm_learner_component,
-    nn_predictor_component,
 ]

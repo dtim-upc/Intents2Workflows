@@ -28,7 +28,7 @@
                             <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadRDF(plan)" label="RDF" style="font-size: 14px;"/>
                           </q-item-section>
                           <q-item-section avatar>
-                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadKNIME(plan)" label="KNIME" style="font-size: 14px;" />
+                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadKNIME(plan)" label="KNIME" style="font-size: 14px;" :disabled="!plan.knimeCompatible"/>
                           </q-item-section>
                           <q-item-section avatar>
                             <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadProactive(plan)" label="Proactive" style="font-size: 14px;" />
@@ -91,6 +91,7 @@ const openDialog = (plan) => {
 }
 
 const storeWorkflowDialog = (plan) => {
+  console.log(intentsStore.selectedPlans)
   selectedPlan.value = plan
   storeWorkflowDialogBoolean.value = true
 }
