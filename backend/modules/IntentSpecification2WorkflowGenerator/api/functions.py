@@ -118,7 +118,8 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         }
 
         main_component = next((comp for comp in logical_plan.keys() 
-                if logical_plan[comp] == [cb.term('component-csv_local_writer')] 
+                if logical_plan[comp] == [cb.term('component-csv_local_writer')]
+                or logical_plan[comp] == [cb.term('component-data_writer_component')] #TODO main component transparent to specific component names
                 or logical_plan[comp] == []), None)
         if (main_component, RDF.type, tb.ApplierImplementation) in ontology:
             options = list(ontology.objects(main_component, tb.hasLearner))

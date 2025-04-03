@@ -413,8 +413,8 @@ def get_step_name(workflow_name: str, task_order: int, implementation: URIRef) -
     return f'{workflow_name}-step_{task_order}_{implementation.fragment.replace("-", "_")}'
 
 
-def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, dataset_node: URIRef) -> URIRef:
-    loader_component = cb.term('component-csv_local_reader')
+def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, dataset_node: URIRef, loader_component:URIRef) -> URIRef:
+    #loader_component = cb.term('component-csv_local_reader')
     loader_step_name = get_step_name(workflow.fragment, 0, loader_component)
     loader_parameters = get_component_parameters(ontology, loader_component)
     loader_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, loader_component)
@@ -423,6 +423,18 @@ def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, da
     loader_param_specs.update(loader_overridden_paramspecs)
     return add_step(workflow_graph, workflow, loader_step_name, loader_component, loader_param_specs, 0, None, None,
                     [dataset_node])
+
+def add_saver_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, test_dataset_node: URIRef, previous_test_step:URIRef, 
+                   task_order, saver_component:URIRef) -> URIRef:
+    #saver_component = cb.term('component-csv_local_writer')
+    saver_step_name = get_step_name(workflow.fragment, task_order, saver_component)
+    saver_parameters = get_component_parameters(ontology, saver_component)
+    saver_implementation = graph_queries.get_component_implementation(ontology, saver_component)
+    saver_parameters = perform_param_substitution(workflow_graph, saver_implementation, saver_parameters, [test_dataset_node])
+    saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component)
+    saver_param_specs = assign_to_parameter_specs(workflow_graph, saver_parameters)
+    saver_param_specs.update(saver_overridden_paramspecs)
+    return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [])
 
 def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, workflow: URIRef, workflow_name: str, 
                   max_imp_level: int, component:URIRef, task_order: int, previous_step: URIRef, input_data: URIRef, input_model: URIRef):
@@ -513,7 +525,19 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
     copy_subgraph(ontology, dataset, workflow_graph, dataset_node)
 
-    loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node)
+    format = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
+
+    knime_compatible = True
+
+    if format == "CSV":
+        loader_component = cb.term('component-csv_local_reader')
+        saver_component = cb.term('component-csv_local_writer')
+    else:
+        loader_component = cb.term('component-data_reader_component')
+        saver_component = cb.term('component-data_writer_component')
+        knime_compatible = False
+
+    loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node,loader_component)
     task_order += 1
 
     previous_train_step = loader_step
@@ -522,7 +546,6 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     dataset_node = dataset_node
     test_dataset_node = None
 
-    knime_compatible = True
 
     for train_component in [*transformations, main_component]:
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
@@ -557,21 +580,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             previous_test_step = step
     
     if test_dataset_node is not None:
-        saver_component = cb.term('component-csv_local_writer')
-        saver_step_name = get_step_name(workflow_name, task_order, saver_component)
-        saver_parameters = get_component_parameters(ontology, saver_component)
-        saver_implementation = graph_queries.get_component_implementation(ontology, saver_component)
-        saver_parameters = perform_param_substitution(workflow_graph, saver_implementation, saver_parameters, [test_dataset_node])
-        saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component)
-        saver_param_specs = assign_to_parameter_specs(workflow_graph, saver_parameters)
-        saver_param_specs.update(saver_overridden_paramspecs)
-        add_step(workflow_graph,
-                workflow,
-                saver_step_name,
-                saver_component,
-                saver_param_specs,
-                task_order,
-                previous_test_step, [test_dataset_node], [])
+        add_saver_step(ontology, workflow_graph, workflow, test_dataset_node, previous_test_step, task_order, saver_component)
+        
         
     workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
                 

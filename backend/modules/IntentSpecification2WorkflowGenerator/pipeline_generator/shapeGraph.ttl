@@ -50,8 +50,8 @@ ab:WorkflowConstraint
 	sh:property [
 		sh:path tb:hasComponent ;
 		sh:qualifiedValueShape [
-			sh:path rdfs:label ;
-			sh:hasValue "Top K Absolute Train-Test Split";
+		 	sh:path rdfs:label ;
+		# 	sh:hasValue "Top K Absolute Train-Test Split";
 		] ;
 		sh:qualifiedMinCount 1 ;
 	] .
