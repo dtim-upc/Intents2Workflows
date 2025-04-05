@@ -7,10 +7,10 @@ import axios from 'axios'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const odinApi = axios.create({baseURL: process.env.API});
-const intentsApi = axios.create({baseURL: "http://localhost:8000/"});
-const textToIntentAPI = axios.create({baseURL: "http://localhost:8001/"});
-const intentToGraphDBAPI = axios.create({baseURL: "http://localhost:8002/"});
+const odinApi = axios.create({baseURL: "http://localhost:9001/"});
+const intentsApi = axios.create({baseURL: "http://localhost:9002/"});
+const textToIntentAPI = axios.create({baseURL: "http://localhost:9003/"});
+const intentToGraphDBAPI = axios.create({baseURL: "http://localhost:9004/"});
 
 export default boot(({app}) => {
    app.config.globalProperties.$axios = axios
