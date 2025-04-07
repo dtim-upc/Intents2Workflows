@@ -1,7 +1,6 @@
 flask
 flask-cors
-openai
-llamaapi
+ollama
 python-dotenv
 rdflib
 pandas

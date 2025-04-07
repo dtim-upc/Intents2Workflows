@@ -5,7 +5,7 @@ from utils.llm_text_to_intent import get_prediction
 app = Flask(__name__)
 CORS(app)
 
-MODEL = "mistral-7b-instruct"  # Specify the model you want to use
+MODEL = "phi4"  # Specify the model you want to use
 
 routes_info = {
         "/predictIntent": {
