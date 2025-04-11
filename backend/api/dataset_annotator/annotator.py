@@ -23,7 +23,7 @@ def add_metadata_info(metadata, dataset_node, graph:Graph):
         graph.add((dataset_node,dmop[key],Literal(value)))
     print('Done!')
 
-def annotate_dataset(source_path, output_path, label="") -> str:
+def annotate_dataset(source_path, label="") -> str:
     print(f'Annotating {source_path}')
 
     dataset_graph = get_annotator_base_graph()
@@ -35,7 +35,7 @@ def annotate_dataset(source_path, output_path, label="") -> str:
 def main():
     for file in Path('./datasets').iterdir():
         #if file.endswith('.csv'):
-        d = annotate_dataset(file, f'./annotated_datasets/{file.name}_annotated.ttl')
+        d = annotate_dataset(file)
         with open(f'./annotated_datasets/{file.name}_annotated.ttl', mode='w') as f:
             f.write(d)
 

@@ -55,7 +55,8 @@ class DataProduct(Base):
     creation_date = Column(String, nullable=False)
     size = Column(Float, nullable=False)
     path = Column(String, nullable=False)
-    attributes = Column(Text, nullable=False)  # Stored as comma-separated values
+    #attributes = Column(Text, nullable=False)  # Stored as comma-separated values
+    annotation_path = Column(String, nullable=False)
 
     def to_dict(self):
         return {
@@ -63,5 +64,6 @@ class DataProduct(Base):
             "creation_date": self.creation_date,
             "size": self.size,
             "path": self.path,
-            "attributes": self.attributes.split(",")  # Convert back to list
+            #"attributes": self.attributes.split(",")  # Convert back to list
+            "annotation_path": self.annotation_path,
         }

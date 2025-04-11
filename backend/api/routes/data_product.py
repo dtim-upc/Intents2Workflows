@@ -10,13 +10,16 @@ import shutil
 from urllib.parse import quote
 
 from database.database import SessionLocal, init_db
+from dataset_annotator import annotator
 from models import DataProduct
 
 router = APIRouter()
 
 MAX_FILENAME_LENGTH = 50
 UPLOAD_DIR = "datasets"
+ANNOTATOR_DIR = "annotated_datasets"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(ANNOTATOR_DIR, exist_ok=True)
 
 def get_db():
     db = SessionLocal()
@@ -62,13 +65,25 @@ def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
 
     return file.filename, size, upload_file, file_path
 
-def create_data_product(db: Session, filename, size, upload_time, file_path:Path, attributes=[])-> DataProduct:
+
+def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:
+
+    annotations = annotator.annotate_dataset(file_path)
+    annotation_name = file_path.with_suffix('.ttl').name
+    save_path = Path(ANNOTATOR_DIR).joinpath(annotation_name)
+
+    with open(save_path, mode='w') as annotations_file:
+        annotations_file.write(annotations)
+
+
+
     data_product = DataProduct(
         name=quote(filename),
         creation_date=time.ctime(upload_time),
         size=round(size, 2),
         path=file_path.resolve().as_posix(),
-        attributes=",".join(attributes)  # Store as CSV string
+        annotation_path=save_path.resolve().as_posix(),
+        #attributes=",".join(attributes)  # Store as CSV string
     )
 
     db.add(data_product)
@@ -114,7 +129,7 @@ async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends
             else:
                 attributes = []
 
-            dp = create_data_product(db, name, size, upload_time, path, attributes)
+            dp = create_data_product(db, name, size, upload_time, path)
             dps.append(dp)
 
     return JSONResponse(status_code=200, content={
