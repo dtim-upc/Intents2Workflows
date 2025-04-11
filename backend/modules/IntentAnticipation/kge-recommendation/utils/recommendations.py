@@ -43,7 +43,6 @@ def annotate_tsv(user,intent,dataset):
 
     experiment = user+intent+dataset + str(time.time()).split('.')[0]
 
-    #TODO ADDAPT TO THE ONTOLOGY: Change name space and relation names
     name_space = 'https://extremexp.eu/ontology#'
     triples = [
     (name_space+user, name_space+ 'specifies', name_space+experiment), 
@@ -54,7 +53,7 @@ def annotate_tsv(user,intent,dataset):
         writer = csv.writer(file, delimiter="\t")
         writer.writerows(triples)
     
-    return experiment # Is just experiment what we want?
+    return experiment
 
 
 def load_graph(format = 'tsv'):
@@ -109,6 +108,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     num_finetune_epochs = 5
     num_negs_per_pos = 20
 
+    # Load new and already embedded triples
     current_dir = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(current_dir, "..", "..","..", "..", "api", "ontology", "new_triples.tsv")
     new_triples_path = os.path.normpath(path)
@@ -119,7 +119,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # LOAD ALL DICTIONARIES AND EMBEDDINGS
+    # Load dictionaries with mappings and embeddings
 
     path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "entity_to_id.pkl")
     norm_path_e2i = os.path.normpath(path)
@@ -140,6 +140,9 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     norm_path_re = os.path.normpath(path)
     with open(norm_path_re, "rb") as f:
         old_rel_emb = pickle.load(f).to(device)
+
+
+    # Load the entities grouped by they class
 
     path = os.path.join(current_dir, "..", "..","..", "..", "api", "kge_model", "algorithms_set.pkl")
     norm_path_as = os.path.normpath(path)
@@ -165,16 +168,18 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     df1 = pd.read_csv(triples_path, sep="\t", header= None)
     df2 = pd.read_csv(new_triples_path, sep="\t", header=None)
 
+    # Remove the triples that are not embedded, as they do not bring information to the project
     values_to_remove = {"https://extremexp.eu/ontology#hasMetric", "https://extremexp.eu/ontology#onMetric", "https://extremexp.eu/ontology#hasValue"} 
     df1= df1[~df1[1].isin(values_to_remove)]
     df2= df2[~df2[1].isin(values_to_remove)]
 
+    #Combine new and old triples
     combined_df = pd.concat([df1, df2], ignore_index=True)
     combined_df.to_csv(triples_path, sep="\t", index=False, header=False)
 
     training_triples_factory = TriplesFactory.from_path(triples_path)
 
-    # Initialize the model with all the entities/relations
+    # Initialize the model with all the triples (hence already containing bigger embeddings)
     model = TransE(triples_factory=training_triples_factory, embedding_dim=embedding_dimension, random_seed = seed).to(device)
 
     new_ent_emb = model.entity_representations[0](indices= None).clone().detach().to(device)
@@ -210,7 +215,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     centroid_user = torch.zeros([1,embedding_dimension]).to(device)
     centroid_algorithm = torch.zeros([1,embedding_dimension]).to(device)
 
-
+    # Compute centroids
     for exp in experiments_set:
         idx = old_ent_to_id[exp]
         centroid_exp += old_ent_emb[idx]
@@ -233,7 +238,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     centroid_algorithm /= len(algorithms_set)
 
 
-    # Initialize experiments:
+    # Initialize new entities and update sets
 
     for experiment in df2[df2[1]=='https://extremexp.eu/ontology#specifies'][2].values:
         if experiment not in experiments_set:
@@ -275,6 +280,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
 
     model = model.to(device)
 
+    # Train model (fine-tune) with the new triples
     df = pd.read_csv(new_triples_path, sep='\t', header=None) 
     df_filtered = df[~df[1].isin(values_to_remove)]
     triples_array = df_filtered.to_numpy()
@@ -415,8 +421,6 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
                 found = True
                 algorithm_sparql_explanation = 'This is you most frequently used algorithm for '+input_intent+' experiments.'
     
-    if algorithm_sparql:
-        algorithm_sparql = algorithm_sparql.split("#")[-1] if algorithm_sparql else None
 
     ################################################################################
     ##################################### KGE ######################################
@@ -427,7 +431,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
 
     #TODO: Replace with a query to get the algorithms complying the intent THAT ARE in the ontology of experiments
 
-    candidate_algorithms = ['https://extremexp.eu/ontology#sklearn-RandomForestClassifier','https://extremexp.eu/ontology#sklearn-KNeighborsClassifier']
+    candidate_algorithms = ['https://extremexp.eu/ontology#sklearn-XGBoost','https://extremexp.eu/ontology#sklearn-DecisionTree']
 
     name_space = 'https://extremexp.eu/ontology#'
     relation = name_space + 'hasAlgorithm'
@@ -444,9 +448,19 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     algorithm_scores = {candidate_algorithms[i]: scores[i].item() for i in range(len(candidate_algorithms))}
     algorithm_kge = max(algorithm_scores, key=algorithm_scores.get)
 
-    if algorithm_sparql != algorithm_kge:
-        suggestions['algorithm'] = {'SPARQL': [algorithm_sparql,algorithm_sparql_explanation], 'KGE': [algorithm_kge, algorithm_kge_explanation]}
-    else:
-        merged_explanation = algorithm_sparql_explanation + ' Moreover, ' + algorithm_kge_explanation.replace('Similar','similar')
-        suggestions['algorithm'] = {'BOTH': [algorithm_kge, merged_explanation]}
+    algorithm_sparql = algorithm_sparql.strip() if algorithm_sparql else None
+    
+    # Output the suggestions
+    considered_algorithms = ['https://extremexp.eu/ontology#sklearn-DecisionTree','https://extremexp.eu/ontology#sklearn-XGBoost','https://extremexp.eu/ontology#sklearn-SVM'] #TODO this should be the same as candidate algorithms
+    suggestions['algorithm'] = []
+    for considered_algorithm in considered_algorithms:
+        if considered_algorithm == algorithm_sparql and considered_algorithm == algorithm_kge:
+            suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],algorithm_sparql_explanation + ' Moreover, ' + algorithm_kge_explanation.replace('Similar','similar')])
+        elif considered_algorithm == algorithm_sparql and considered_algorithm != algorithm_kge:
+            suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],algorithm_sparql_explanation])
+        elif considered_algorithm != algorithm_sparql and considered_algorithm == algorithm_kge:
+            suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],algorithm_kge_explanation])
+        else:
+            suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],''])
+        
     return suggestions

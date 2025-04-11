@@ -34,11 +34,8 @@ def get_recommendations_route():
         return jsonify({"error": "Missing user, dataset, or intent parameter"}), 400
 
     try:
-        print('Start')
         experiment = annotate_tsv(user,intent,dataset)
-        print('Middle')
         results = recommendations(experiment,user,intent,dataset)
-        print('End')
         return jsonify(results), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500   

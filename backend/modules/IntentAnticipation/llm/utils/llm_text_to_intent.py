@@ -1,8 +1,5 @@
 import requests
 import ollama
-from openai import OpenAI
-from llamaapi import LlamaAPI
-from dotenv import load_dotenv
 import os
 
 
