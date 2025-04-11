@@ -1,6 +1,7 @@
 from typing import Tuple
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from rdflib import Graph, URIRef
 from sqlalchemy.orm import Session
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ import shutil
 from urllib.parse import quote
 
 from database.database import SessionLocal, init_db
-from dataset_annotator import annotator
+from dataset_annotator import annotator, namespaces
 from models import DataProduct
 
 router = APIRouter()
@@ -65,17 +66,18 @@ def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
 
     return file.filename, size, upload_file, file_path
 
+def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
+    pot_targets = annotated_dataset.objects(dataset_node,namespaces.dmop.hasColumn,unique=False)
+    return [target.fragment.split('/')[-1] for target in pot_targets]
 
 def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:
 
-    annotations = annotator.annotate_dataset(file_path)
+    dataset_node, annotations = annotator.annotate_dataset(file_path)
     annotation_name = file_path.with_suffix('.ttl').name
     save_path = Path(ANNOTATOR_DIR).joinpath(annotation_name)
+    pot_targets = get_potential_targets(dataset_node,annotations)
 
-    with open(save_path, mode='w') as annotations_file:
-        annotations_file.write(annotations)
-
-
+    annotations.serialize(save_path,format="turtle")
 
     data_product = DataProduct(
         name=quote(filename),
@@ -83,7 +85,7 @@ def create_data_product(db: Session, filename, size, upload_time, file_path:Path
         size=round(size, 2),
         path=file_path.resolve().as_posix(),
         annotation_path=save_path.resolve().as_posix(),
-        #attributes=",".join(attributes)  # Store as CSV string
+        targets=",".join(pot_targets)  # Store as CSV string
     )
 
     db.add(data_product)
@@ -121,13 +123,6 @@ async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends
     else: #file import
         for file in files:
             name, size, upload_time, path = process_file(file)
-
-            if file.filename.endswith(".csv"):# Extract CSV headers
-                with open(path, newline='', encoding='utf-8') as csvfile:
-                    reader = csv.reader(csvfile)
-                    attributes = next(reader, [])
-            else:
-                attributes = []
 
             dp = create_data_product(db, name, size, upload_time, path)
             dps.append(dp)

@@ -1,5 +1,6 @@
 
 from pathlib import Path
+from typing import Tuple
 from urllib.parse import quote
 #sys.path.append(str(Path('..').resolve()))
 
@@ -14,6 +15,7 @@ def add_dataset_info(dataset_path, graph, label):
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
     add_metadata_info(data_loader.getFileMetadata(), dataset_node, graph)
     add_dataframe_info(data_loader.getDataFrame(), dataset_node, graph, label)
+    return dataset_node
 
 
 def add_metadata_info(metadata, dataset_node, graph:Graph):
@@ -23,13 +25,13 @@ def add_metadata_info(metadata, dataset_node, graph:Graph):
         graph.add((dataset_node,dmop[key],Literal(value)))
     print('Done!')
 
-def annotate_dataset(source_path, label="") -> str:
+def annotate_dataset(source_path, label="") -> Tuple[URIRef,Graph]:
     print(f'Annotating {source_path}')
 
     dataset_graph = get_annotator_base_graph()
-    add_dataset_info(source_path, dataset_graph, label)
+    dataset_node = add_dataset_info(source_path, dataset_graph, label)
 
-    return dataset_graph.serialize()
+    return dataset_node, dataset_graph
 
 
 def main():

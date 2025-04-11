@@ -21,9 +21,11 @@ import TableDataProducts from 'components/tables/TableDataProducts.vue';
 import { useDataProductsStore } from 'src/stores/dataProductsStore';
 import {odinApi} from 'boot/axios';
 import { useNotify } from 'src/use/useNotify.js';
+import {useQuasar} from 'quasar'
 
 const dataProductsStore = useDataProductsStore()
 const notify = useNotify();
+const $q = useQuasar()
 
 // References
 const fileInput = ref(null);
@@ -64,11 +66,13 @@ const sendFileToBackend = async (file_list) => {
     }
 
   try {
+    $q.loading.show({message: 'Creating data product...'})
     const response = await odinApi.post('/data-product', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+    $q.loading.hide()
 
     if (response.status === 200) {
       notify.positive("Data product stored successfully");
@@ -78,6 +82,7 @@ const sendFileToBackend = async (file_list) => {
   } catch (error) {
     notify.negative("Error storing the data product");
   }
+  
   dataProductsStore.getDataProducts()
 };
 </script>

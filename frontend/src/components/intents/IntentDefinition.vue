@@ -43,7 +43,6 @@ import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from 'quasar'
-import {intentsApi} from 'boot/axios';
 
 const router = useRouter()
 const route = useRoute()
@@ -105,12 +104,7 @@ let attributes = [];
 const getAttributes = async() => {
   const selectedDataProduct = dataProductsStore.dataProducts.find(dp => dp.name === selectedDataProdutName.value);
   if (selectedDataProduct) {
-    let data = {
-      'path': selectedDataProduct.path,
-    }
-    const response = await intentsApi.post('/attributes',data)
-    console.log(response.data)
-    attributes = response.data//selectedDataProduct.attributes.map(att => att)
+    attributes = selectedDataProduct.targets.map(att => att)
   }
   else {
     attributes = []
