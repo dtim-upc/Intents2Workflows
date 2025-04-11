@@ -31,23 +31,38 @@
             <div class="col-12" style="padding-left: 12px;">
                 <div class="text-body1 text-left"> Configuration </div>
             </div>
-            <!-- <div class="col-3" style="padding: 10px;">
-              <q-select label="Metric to optimize" outlined v-model="selectedMetric" :options=intentsStore.allMetrics class="q-mb-sm"
-                    :rules="[ val => val && val.length > 0 || 'Select a metric']"/>
-            </div> -->
-           <!-- <div class="col-3" style="padding: 10px;">
-              <q-select label="Algorithm" outlined v-model="selectedAlgorithm" :options=intentsStore.allAlgorithms class="q-mb-sm"
-              :rules="[ val => val && val.length > 0 || 'Select an algorithm']"/>
-            </div> -->
-            <!-- <div class="col-3" style="padding: 10px;">
-              <q-select label="Is preprocessing needed?" outlined v-model="selectedPreprocessing" :options="['Yes', 'No']" class="q-mb-sm"
-              :rules="[ val => val && val.length > 0 || 'Select an option']"/>
+
+            <div class="col-3" style="padding: 10px; display: flex; align-items: center;">
+              <q-select
+                label="Restrict Algorithm"
+                outlined
+                v-model="selectedAlgorithm"
+                :options="algorithmOptions"
+                option-label="label"
+                class="q-mb-sm"
+                style="flex: 1;"
+                :rules="[ val => val && val.label && val.label.length > 0 || 'Select an algorithm']"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ scope.opt.label }}
+                        <span v-if="scope.opt.recommendation">💡</span>
+                      </q-item-label>
+                      <div
+                        v-if="scope.opt.recommendation"
+                        style="white-space: normal; line-height: 1.3; font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-top: 2px;"
+                      >
+                        {{ scope.opt.recommendation }}
+                      </div>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
             </div>
-            <div class="col-3" style="padding: 10px;">
-              <q-select label="Preprocessing algorithm" outlined v-model="selectedPreprocessingAlgorithm" :options=intentsStore.allPreprocessingAlgorithms class="q-mb-sm"
-              :rules="[ val => val && val.length > 0 || 'Select an algorithm']"
-              v-if="selectedPreprocessing ==='Yes'"/>
-            </div> -->
+
+          
 
             <div class="col-12">
                 <q-btn label="Run Abstract Planner" color="primary" type="submit"/>
@@ -77,22 +92,37 @@ const selectedDataProdutName = computed({ get: () => intentsStore.selectedDataPr
 const problem = computed({ get: () => intentsStore.selectedProblem})
 const target = computed({ get: () => intentsStore.target})
 
-const selectedMetric = computed({
-  get: () => intentsStore.selectedMetric,
-  set: (value) => intentsStore.selectedMetric = value
-})
+
 const selectedAlgorithm = computed({
-  get: () => intentsStore.selectedAlgorithm,
-  set: (value) => intentsStore.selectedAlgorithm = value
-})
-const selectedPreprocessing = computed({
-  get: () => intentsStore.selectedPreprocessing,
-  set: (value) => intentsStore.selectedPreprocessing = value
-})
-const selectedPreprocessingAlgorithm = computed({
-  get: () => intentsStore.selectedPreprocessingAlgorithm,
-  set: (value) => intentsStore.selectedPreprocessingAlgorithm = value
-})
+  get: () => {
+    // Set default to 'No Restriction' (value: null)
+    const selected = intentsStore.selectedAlgorithm;
+    return algorithmOptions.value.find(opt => opt.value === selected) || algorithmOptions.value[0]; // default to 'No Restriction'
+  },
+  set: (obj) => {
+    // Set value of selected algorithm
+    intentsStore.selectedAlgorithm = obj?.value || null; // Set 'No Restriction' if null
+  }
+});
+
+
+
+const algorithmOptions = computed(() => {
+  return [
+    { label: 'No Restriction', value: null, recommendation: '' }, // Default option
+    ...intentsStore.algorithmRecommendations.map(([alg, explanation]) => ({
+      label: alg,
+      value: alg,
+      recommendation: explanation
+    }))
+  ];
+});
+
+
+const getRecommendation = (algName) => {
+  const match = algorithmOptions.value.find(opt => opt.value === algName);
+  return match?.recommendation || '';
+};
 
 const handleSubmit = async() => {
   const selectedDataProduct = dataProductsStore.dataProducts.find(dp => dp.name === selectedDataProdutName.value);

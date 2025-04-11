@@ -25,6 +25,7 @@ export const useIntentsStore = defineStore('intents', {
     selectedPreprocessing: "",
     selectedPreprocessingAlgorithm: "",
     allPreprocessingAlgorithms: [],
+    algorithmRecommendations: [],
     selectedAlgorithm: "",
     allAlgorithms: [],
 
@@ -289,9 +290,9 @@ export const useIntentsStore = defineStore('intents', {
       const intent = this.selectedProblem 
 
       let response = await intentsAPI.getRecommendation(user, dataset, intent);
-      this.selectedAlgorithm = response.data.algorithm //TODO display these recommendations with explanation
+      this.algorithmRecommendations = response.data.algorithm; //TODO display these recommendations with explanation
 
-      this.selectedAlgorithm = "DecisionTree"
+      this.selectedAlgorithm = ""
     },
 
     async getAllInfo() {
