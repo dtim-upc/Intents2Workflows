@@ -16,7 +16,6 @@ from dataset_annotator.knime_annotator import annotate_dataset
 from dataset_annotator import dataLoaders
 
 import requests
-import json
 from urllib.parse import quote
 
 app = Flask(__name__)
@@ -46,6 +45,13 @@ def annotate_dataset_from_frontend():
     datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}
     return {"ontology": custom_ontology.serialize(format="turtle"),
             "data_product_uri": datasets[quote(data_path.with_suffix('').name)]}
+
+@app.post('/ontology')
+def get_ontology():
+    path = request.json.get('annotated_dataset_path', '')
+    custom_ontology = get_custom_ontology(path)
+    return {"ontology": custom_ontology.serialize(format="turtle"),
+            "data_product_uri": Literal("patata")}
 
 
 @app.get('/problems')

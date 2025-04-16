@@ -139,12 +139,19 @@ const handleSubmit = async() => {
   //$q.loading.show({message: 'Materializing data product...'}) // Then, create the csv file from the dataProduct
   //await dataProductsStore.materializeDataProduct(projectID, selectedDataProduct.id)
 
-  $q.loading.show({message: 'Annotating query...'}) // Then, annotate the dataset and define the new ontology
+  /*$q.loading.show({message: 'Annotating query...'}) // Then, annotate the dataset and define the new ontology
   data = {
     'path': selectedDataProduct.path,
     'label': target.value,
   }
-  await intentsStore.annotateDataset(data)
+  await intentsStore.annotateDataset(data)*/
+
+  $q.loading.show({message: 'Getting annotations...'})
+  data = {
+    'annotated_dataset_path': selectedDataProduct.annotation_path
+  }
+
+  await intentsStore.getOntololgy(data)
 
   $q.loading.show({message: 'Running abstract planner...'}) // Finally, run the planner
   data = {

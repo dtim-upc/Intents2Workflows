@@ -19,8 +19,8 @@ export default {
   putIntent(intentID, projectID, data) {
     return odinApi.put('/project/' + projectID + '/intent/' + intentID, data)
   },
-  annotateDataset(data) {
-    return intentsApi.post('/annotate_dataset', data)
+  getOntology(data) {
+    return intentsApi.post('/ontology', data)
   },
   getProblems() {
     return intentsApi.get('/problems')

@@ -26,7 +26,7 @@ xgboost_linear_learner_implementation = KnimeImplementation(
         KnimeParameter("Top K", XSD.int, 0, "topK", path='model/booster')
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape],
     ],
     output=[
         cb.XGBoostModel,
@@ -81,10 +81,10 @@ xgboost_tree_learner_implementation = KnimeImplementation(
         KnimeParameter('Other columns', XSD.string, None, '$$SKIP$$', path='model/options/featureFilter/excluded_names'),
         KnimeParameter('Booster', XSD.string, "Tree", 'booster', path='model/booster'),
         KnimeParameter("Eta", XSD.double, 0.3, "eta", path='model/booster'),
-        KnimeParameter("Gamma", XSD.double, 0.0, "gamma", path='model/booster'),
+        KnimeParameter("Gamma", XSD.double, 0, "gamma", path='model/booster'),
         KnimeParameter("Max Depth", XSD.int, 6, "maxDepth", path='model/booster'),
         KnimeParameter("Min child weight", XSD.double, 1.0, "minChildWeight", path='model/booster'),
-        KnimeParameter("Max delta step", XSD.double, 0.0, "maxDeltaStep", path='model/booster'),
+        KnimeParameter("Max delta step", XSD.double, 0, "maxDeltaStep", path='model/booster'),
         KnimeParameter("Subsample", XSD.double, 1.0, "subsample", path='model/booster'),
         KnimeParameter("Col sample by tree", XSD.double, 1.0, "colSampleByTree", path='model/booster'),
         KnimeParameter("Col sample by level", XSD.double, 1.0, "colSampleByLevel", path='model/booster'),
@@ -99,9 +99,9 @@ xgboost_tree_learner_implementation = KnimeImplementation(
         KnimeParameter("Max Bin", XSD.int, 256, "maxBin", path='model/booster'),
         KnimeParameter('Sample type', XSD.string, "Uniform", 'sampleType', path='model/booster'),
         KnimeParameter('Normalize type', XSD.string, "Tree", 'normalizeType', path='model/booster'),
-        KnimeParameter("Rate drop", XSD.double, 0.0, "rateDrop", path='model/booster'),
+        KnimeParameter("Rate drop", XSD.double, 0, "rateDrop", path='model/booster'),
         KnimeParameter("One drop", XSD.boolean, False, "oneDrop", path='model/booster'),
-        KnimeParameter("Skip drop", XSD.double, 0.0, "skipDrop", path='model/booster'),
+        KnimeParameter("Skip drop", XSD.double, 0, "skipDrop", path='model/booster'),
     ],
     input=[
         [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)],
