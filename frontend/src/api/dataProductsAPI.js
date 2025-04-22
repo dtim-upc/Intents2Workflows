@@ -22,4 +22,7 @@ export default {
   downloadDataProduct(fileName) {
     return odinApi.get('/data-product/' +  fileName)
   },
+  getDataProductAnnotations(fileName,data) {
+    return odinApi.post('/data-product/' +  fileName + '/annotations',data)
+  },
 }

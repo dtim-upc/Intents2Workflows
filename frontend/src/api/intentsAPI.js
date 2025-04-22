@@ -19,9 +19,6 @@ export default {
   putIntent(intentID, projectID, data) {
     return odinApi.put('/project/' + projectID + '/intent/' + intentID, data)
   },
-  getOntology(data) {
-    return intentsApi.post('/ontology', data)
-  },
   getProblems() {
     return intentsApi.get('/problems')
   },

@@ -98,7 +98,7 @@ def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
     dataset_name = quote(Path(dataset_path).with_suffix('').name)
     for col in dataset.columns:
         col_type = dataset[col].dtype.name
-        col_node = ab.term(f'{dataset_name}/{col}')
+        col_node = ab.term(f'{col}')
         graph.add((dataset_node, dmop.hasColumn, col_node))
         graph.add((col_node, RDF.type, dmop.Column))
         graph.add((col_node, dmop.hasColumnName, Literal(col)))

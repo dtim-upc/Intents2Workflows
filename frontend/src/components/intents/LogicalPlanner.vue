@@ -41,6 +41,7 @@
 <script setup>
 import {ref} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
+import {useDataProductsStore} from 'stores/dataProductsStore';
 import DialogWithVisualizedPlan from "../../components/intents/visualize_plan/DialogWithVisualizedPlan.vue";
 import {useRoute, useRouter} from "vue-router";
 import { useQuasar } from 'quasar'
@@ -48,6 +49,7 @@ import { useQuasar } from 'quasar'
 const router = useRouter()
 const route = useRoute()
 const intentsStore = useIntentsStore()
+const dataProductsStore = useDataProductsStore()
 const $q = useQuasar()
 
 const dialog = ref(false)
@@ -61,13 +63,15 @@ const handleSubmit = async() => {
     router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/workflow-planner" })
   }
 
+  //await dataProductsStore.getDataProductAnnotations(intentsStore.selectedDataProdutName)
+
   let plan_ids = []
   intentsStore.abstractPlans.map(absPlan => {
     if (absPlan.selected) {
       plan_ids.push(absPlan.id)
     }
   })
-  const data = {"plan_ids": plan_ids, "intent_graph":intentsStore.intent_graph, 'ontology': intentsStore.ontology,
+  const data = {"plan_ids": plan_ids, "intent_graph":intentsStore.intent_graph, 'dataset':dataProductsStore.selectedDataProductAnnotations,
                 "algorithm_implementations": intentsStore.algorithmImplementations}
 
   await intentsStore.setLogicalPlans(data, successCallback)

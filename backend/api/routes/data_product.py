@@ -1,12 +1,11 @@
 from typing import Tuple
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from rdflib import Graph, URIRef
+from rdflib import RDF, Graph, Namespace, URIRef
 from sqlalchemy.orm import Session
 import os
 from pathlib import Path
 import time
-import csv
 import shutil
 from urllib.parse import quote
 
@@ -21,6 +20,9 @@ UPLOAD_DIR = "datasets"
 ANNOTATOR_DIR = "annotated_datasets"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(ANNOTATOR_DIR, exist_ok=True)
+
+dmop = Namespace('http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#')
+ab = Namespace('https://extremexp.eu/ontology/abox#')
 
 def get_db():
     db = SessionLocal()
@@ -68,7 +70,7 @@ def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
 
 def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
     pot_targets = annotated_dataset.objects(dataset_node,namespaces.dmop.hasColumn,unique=False)
-    return [target.fragment.split('/')[-1] for target in pot_targets]
+    return [target.fragment for target in pot_targets]
 
 def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:
 
@@ -92,6 +94,55 @@ def create_data_product(db: Session, filename, size, upload_time, file_path:Path
     db.commit()
 
     return data_product
+
+def get_annotation_path(db: Session,dp: DataProduct) -> str:
+    data_product_formatted = quote(dp)
+    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted).first()
+
+    return data_product.annotation_path
+    
+
+def load_graph(path:str)->Graph:
+
+    g = Graph()
+    g.bind('dmop', dmop)
+    g.parse(path, format="turtle")
+    return g
+
+def label_query(label, reset):
+    query = f""" 
+    PREFIX dmop: <{dmop}>
+
+    DELETE {{
+	    ?column dmop:isFeature ?c .
+        ?column dmop:isLabel ?d .   
+    }}
+    INSERT {{
+        ?column dmop:isFeature {'True' if reset else 'False'} .
+        ?column dmop:isLabel {'False' if reset else 'True'} .
+    }}
+    WHERE {{
+        ?column a dmop:Column .
+        ?column dmop:isFeature ?c .
+        ?column dmop:isLabel ?d .   
+        FILTER(?column {'!=' if reset else '='} ab:{label})
+    }}
+    """
+
+    return query
+
+
+def add_label(graph:Graph, label:str) -> Graph:
+    reset_query = label_query(label, reset=True)
+    add_label_query = label_query(label, reset=False)
+    graph.serialize('0.ttl', format='turtle')
+    graph.update(reset_query)
+    graph.serialize('a.ttl', format='turtle')
+    graph.update(add_label_query)
+    graph.serialize('b.ttl', format='turtle')
+
+    return graph
+
 
 
 @router.post("/data-product")
@@ -138,11 +189,31 @@ async def list_uploaded_files(db: Session = Depends(get_db)):
     data_products = db.query(DataProduct).all()
     return JSONResponse(status_code=200, content={"files": [dp.to_dict() for dp in data_products]})
 
+@router.post("/data-product/{data_product}/annotations")
+async def get_annotations(data_product:str, label: str = Form(...), db: Session = Depends(get_db)):
+    """Get dataset annotations and add labels"""
+
+    annotation_path = get_annotation_path(db,data_product)
+    annotation_graph = load_graph(annotation_path)
+    datasetURI = next(annotation_graph.subjects(RDF.type, dmop.TabularDataset, unique=True), "")
+
+    if label != "":
+        updated_graph = add_label(annotation_graph,label)
+    else:
+        updated_graph = annotation_graph
+    
+
+    return JSONResponse(status_code=200, content={"annotations": updated_graph.serialize(), "datasetURI": datasetURI})
+
+
+
+
 
 @router.delete("/data-product/{data_product}")
 async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
-    data_product_formatted = quote(data_product)
     """Deletes a data product by its name from the database and file system."""
+
+    data_product_formatted = quote(data_product)
     data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted).first()
 
     if data_product is None:
@@ -153,6 +224,9 @@ async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
         shutil.rmtree(data_product.path)
     else:
         Path(data_product.path).unlink()
+    
+    # Delete annotation file from the file system
+    Path(data_product.annotation_path).unlink()
 
     # Delete data product from the database
     db.delete(data_product)

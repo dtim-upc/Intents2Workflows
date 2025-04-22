@@ -85,7 +85,7 @@ def run_abstract_planner():
     complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 
@@ -126,7 +126,10 @@ def run_logical_planner():
     plan_ids = request.json.get('plan_ids', '')
     intent_json = request.json.get('intent_graph', '')
     algorithm_implementations = request.json.get('algorithm_implementations', '')
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    dataset = request.json.get('dataset', '')
+
+    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    ontology = ontology.parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 

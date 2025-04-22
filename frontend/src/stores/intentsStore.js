@@ -97,17 +97,6 @@ export const useIntentsStore = defineStore('intents', {
         console.error("Error:", error);
       }
     },
-
-    async getOntololgy(data) {
-      try {
-        const response = await intentsAPI.getOntology(data);
-        this.ontology = response.data.ontology;
-        this.dataProductURI = response.data.data_product_uri;
-      } catch(error) {
-        notify.negative("Error in annotating the dataset.")
-        console.error("Error:", error);
-      }
-    },
     
     /*async annotateDataset(data) {
       this.labelColumn = data["label"] // SHOULD BE REMOVED EVENTUALLY

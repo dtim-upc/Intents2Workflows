@@ -147,18 +147,17 @@ const handleSubmit = async() => {
   await intentsStore.annotateDataset(data)*/
 
   $q.loading.show({message: 'Getting annotations...'})
-  data = {
-    'annotated_dataset_path': selectedDataProduct.annotation_path
-  }
+  let label_data = new FormData();
+  label_data.append('label', intentsStore.target)
 
-  await intentsStore.getOntololgy(data)
+  await dataProductsStore.getDataProductAnnotations(selectedDataProduct.name,label_data)
+  //await dataProductsStore.getDataProductAnnotations(selectedDataProduct.name)
 
   $q.loading.show({message: 'Running abstract planner...'}) // Finally, run the planner
   data = {
     'intent_name': intentName.value,
-    'dataset': intentsStore.dataProductURI,
+    'dataset': dataProductsStore.selectedDataProductURI,
     'problem': intentsStore.problems[problem.value],
-    'ontology': intentsStore.ontology,
   }
 
   const successCallback = () => {

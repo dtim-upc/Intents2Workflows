@@ -9,6 +9,8 @@ export const useDataProductsStore = defineStore('dataProducts', {
   state: () => ({
     dataProducts: [],
     selectedDataProductPath: "",
+    selectedDataProductAnnotations: "",
+    selectedDataProductURI: "",
   }),
 
   actions: {
@@ -88,6 +90,18 @@ export const useDataProductsStore = defineStore('dataProducts', {
         notify.negative("Error downloading the data");
         console.error("Error:", error);
       }
-    }
+    },
+
+    async getDataProductAnnotations(fileName,data) { //Get the annotated dataset
+      try {
+        const response = await dataProductAPI.getDataProductAnnotations(fileName,data);
+        this.selectedDataProductAnnotations = response.data.annotations;
+        this.selectedDataProductURI = response.data.datasetURI 
+      }catch (error) {
+        notify.negative("Error retrieving annotations");
+        console.error("Error:", error);
+      }
+
+    },
   }
 });
