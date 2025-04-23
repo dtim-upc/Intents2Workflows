@@ -81,6 +81,7 @@ def get_percentage_of_missing_rows(dataset):
 
 
 def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
+    graph.add((dataset_node, RDF.type, dmop.TabularDataset))
 
     print('\tAdding dimension info:')
     num_rows = len(dataset.index)

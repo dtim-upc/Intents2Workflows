@@ -69,7 +69,13 @@ def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
     return file.filename, size, upload_file, file_path
 
 def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
-    pot_targets = annotated_dataset.objects(dataset_node,namespaces.dmop.hasColumn,unique=False)
+    dataset_type = next(annotated_dataset.objects(dataset_node, RDF.type, unique=True))
+    if dataset_type == dmop.TensorDataset:
+        pot_targets = annotated_dataset.objects(dataset_node,namespaces.dmop.hasArray,unique=False)
+    elif dataset_type == dmop.TabularDataset:
+        pot_targets = annotated_dataset.objects(dataset_node,namespaces.dmop.hasColumn,unique=False)
+    else:
+        return []
     return [target.fragment for target in pot_targets]
 
 def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:

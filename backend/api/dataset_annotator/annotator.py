@@ -7,14 +7,18 @@ from urllib.parse import quote
 from utils import dataLoaders
 from .namespaces import *
 from .tabular_annotator import add_dataframe_info
+from .tensor_annotator import add_tensor_info
 
 def add_dataset_info(dataset_path, graph, label):
     dataset_node = ab.term(quote(Path(dataset_path).with_suffix('').name))
-    graph.add((dataset_node, RDF.type, dmop.TabularDataset))
     data_loader: dataLoaders.DataLoader = dataLoaders.get_loader(dataset_path)
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
     add_metadata_info(data_loader.getFileMetadata(), dataset_node, graph)
-    add_dataframe_info(data_loader.getDataFrame(), dataset_node, graph, label)
+
+    if data_loader.fileFormat == "NumpyZip":
+        add_tensor_info(data_loader.getDataFrame(), dataset_node, graph)
+    else:
+        add_dataframe_info(data_loader.getDataFrame(), dataset_node, graph, label)
     return dataset_node
 
 

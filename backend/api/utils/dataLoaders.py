@@ -3,6 +3,7 @@ import csv
 from pathlib import Path
 from typing import Dict
 import pandas as pd
+import numpy as np
 import zipfile
 import tempfile
 import shutil
@@ -77,6 +78,17 @@ class ParquetLoader(DataLoader):
 
     def getDataFrame(self):
         return pd.read_parquet(self.file_path)
+
+class NumpyZipLoader(DataLoader):
+    fileFormat = "NumpyZip"
+
+    def getDataFrame(self):
+        npz_data = np.load(self.file_path, allow_pickle=False)
+        files = npz_data.files
+        assert len(files) == 2
+        assert npz_data[files[0]].shape[0] == npz_data[files[1]].shape[0]
+        return npz_data
+        
     
 
 class FolderLoader(DataLoader):
@@ -143,6 +155,7 @@ loaders = {
     "csv": CSVLoader,
     "parquet": ParquetLoader,
     "zip": ZipLoader,
+    "npz": NumpyZipLoader,
     "": FolderLoader,
 }
 
