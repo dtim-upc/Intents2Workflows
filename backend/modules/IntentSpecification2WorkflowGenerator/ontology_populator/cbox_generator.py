@@ -290,6 +290,25 @@ def add_shapes(cbox):
 
     cbox.add((labeled_dataset_shape, SH.property, bnode_column))
 
+    #Labeled tensor shape
+ 
+    labeled_tensor_shape = cb.LabeledTensorDatasetShape
+    cbox.add((labeled_tensor_shape, RDF.type, SH.NodeShape))
+    cbox.add((labeled_tensor_shape, SH.targetClass, dmop.TensorDataset))
+
+    bnode_qualified = BNode()
+    cbox.add((bnode_qualified, SH.path, dmop.isLabel))
+    cbox.add((bnode_qualified, SH.hasValue, Literal(True)))
+
+    bnode_column_2 = BNode()
+    cbox.add((bnode_column_2, SH.path, dmop.hasArray))
+    cbox.add((bnode_column_2, SH.qualifiedValueShape, bnode_qualified))
+    cbox.add((bnode_column_2, SH.qualifiedMinCount, Literal(1)))
+    cbox.add((bnode_column_2, SH.minCount, Literal(1)))
+
+    cbox.add((labeled_tensor_shape, SH.property, bnode_column_2))
+
+
     non_null_column_shape = cb.NonNullColumnShape
     cbox.add((non_null_column_shape, RDF.type, SH.NodeShape))
     cbox.add((non_null_column_shape, SH.targetClass, dmop.Column))

@@ -149,6 +149,12 @@ def add_label(graph:Graph, label:str) -> Graph:
 
     return graph
 
+def get_dataset_uri(annotation_graph:Graph):
+    uri = next(annotation_graph.subjects(RDF.type, dmop.TabularDataset, unique=True), "")
+    if uri == "":
+        uri = next(annotation_graph.subjects(RDF.type, dmop.TensorDataset, unique=True), "")
+    return uri
+
 
 
 @router.post("/data-product")
@@ -201,7 +207,7 @@ async def get_annotations(data_product:str, label: str = Form(...), db: Session 
 
     annotation_path = get_annotation_path(db,data_product)
     annotation_graph = load_graph(annotation_path)
-    datasetURI = next(annotation_graph.subjects(RDF.type, dmop.TabularDataset, unique=True), "")
+    datasetURI = get_dataset_uri(annotation_graph)
 
     if label != "":
         updated_graph = add_label(annotation_graph,label)

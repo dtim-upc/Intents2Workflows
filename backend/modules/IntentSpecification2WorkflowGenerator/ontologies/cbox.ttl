@@ -549,6 +549,14 @@ cb:LabelColumnProperty sh:datatype xsd:boolean ;
     sh:hasValue true ;
     sh:path dmop:isLabel .
 
+cb:LabeledTensorDatasetShape a sh:NodeShape ;
+    sh:property [ sh:minCount 1 ;
+            sh:path dmop:hasArray ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:hasValue true ;
+                    sh:path dmop:isLabel ] ] ;
+    sh:targetClass dmop:TensorDataset .
+
 cb:LinePlot a tb:Algorithm ;
     rdfs:label "LinePlot" ;
     tb:solves cb:DataVisualization .
@@ -621,21 +629,29 @@ cb:component-convolutional_nn_learner a tb:LearnerComponent ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter ab:nn_type_convolutional_specification .
 
+cb:component-convolutional_nn_multidimensional_learner a tb:LearnerComponent ;
+    rdfs:label "Convolutional NN Multidimensional Learner" ;
+    tb:exposesParameter cb:implementation-nn_multidimensional_learner-label_array ;
+    tb:hasApplier cb:component-nn_multidimensional_predictor ;
+    tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
+    tb:hasTransformation [ rdf:rest () ] ;
+    tb:overridesParameter ab:nn_type_convolutional_specification .
+
 cb:component-decimal_scaling a tb:LearnerComponent ;
     rdfs:label "Decimal Scaling" ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -704,12 +720,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -752,6 +768,14 @@ cb:component-feedforward_nn_learner a tb:LearnerComponent ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter ab:nn_type_feedforward_specification .
 
+cb:component-feedforward_nn_multidimensional_learner a tb:LearnerComponent ;
+    rdfs:label "FeedForward NN Multidimensional Learner" ;
+    tb:exposesParameter cb:implementation-nn_multidimensional_learner-label_array ;
+    tb:hasApplier cb:component-nn_multidimensional_predictor ;
+    tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
+    tb:hasTransformation [ rdf:rest () ] ;
+    tb:overridesParameter ab:nn_type_feedforward_specification .
+
 cb:component-hypertangent_svm_learner a tb:LearnerComponent ;
     rdfs:label "HyperTangent SVM Learner" ;
     tb:exposesParameter cb:implementation-svm_learner-svm_class_column ;
@@ -774,18 +798,26 @@ cb:component-lstm_nn_learner a tb:LearnerComponent ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter ab:nn_type_lstm_specification .
 
+cb:component-lstm_nn_multidimensional_learner a tb:LearnerComponent ;
+    rdfs:label "LSTM NN Multidimensional Learner" ;
+    tb:exposesParameter cb:implementation-nn_multidimensional_learner-label_array ;
+    tb:hasApplier cb:component-nn_multidimensional_predictor ;
+    tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
+    tb:hasTransformation [ rdf:rest () ] ;
+    tb:overridesParameter ab:nn_type_lstm_specification .
+
 cb:component-mean_imputation a tb:LearnerComponent ;
     rdfs:label "Mean Imputation" ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -813,11 +845,11 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
@@ -900,6 +932,14 @@ cb:component-recurrent_nn_learner a tb:LearnerComponent ;
     tb:exposesParameter cb:implementation-nn_learner-class_column ;
     tb:hasApplier cb:component-nn_predictor ;
     tb:hasImplementation cb:implementation-nn_learner ;
+    tb:hasTransformation [ rdf:rest () ] ;
+    tb:overridesParameter ab:nn_type_recurrent_specification .
+
+cb:component-recurrent_nn_multidimensional_learner a tb:LearnerComponent ;
+    rdfs:label "Recurrent NN Multidimensional Learner" ;
+    tb:exposesParameter cb:implementation-nn_multidimensional_learner-label_array ;
+    tb:hasApplier cb:component-nn_multidimensional_predictor ;
+    tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter ab:nn_type_recurrent_specification .
 
@@ -3642,25 +3682,25 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:HeatMapVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:HeatMapVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-heatmap_visualizer-allowed_page_sizes_0 a tb:Parameter ;
     rdfs:label "Allowed Page Sizes 0" ;
@@ -6736,6 +6776,45 @@ cb:implementation-nn_learner-nn_type a tb:Parameter ;
         ab:nn_type_lstm_specification,
         ab:nn_type_recurrent_specification .
 
+cb:implementation-nn_multidimensional_learner-nn_type a tb:Parameter ;
+    rdfs:label "NN type" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "None" ;
+    tb:has_position 1 ;
+    tb:specifiedBy ab:nn_type_convolutional_specification,
+        ab:nn_type_feedforward_specification,
+        ab:nn_type_lstm_specification,
+        ab:nn_type_recurrent_specification .
+
+cb:implementation-nn_multidimensional_predictor-add_probabilities a tb:Parameter ;
+    rdfs:label "Add probabilities" ;
+    tb:has_condition "add probabilities" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_defaultvalue false ;
+    tb:has_position 2 .
+
+cb:implementation-nn_multidimensional_predictor-change_prediction a tb:Parameter ;
+    rdfs:label "Change prediction" ;
+    tb:has_condition "change prediction" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_defaultvalue false ;
+    tb:has_position 1 .
+
+cb:implementation-nn_multidimensional_predictor-class_probability_suffix a tb:Parameter ;
+    rdfs:label "Class probability suffix" ;
+    tb:has_condition "class probability suffix" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "" ;
+    tb:has_position 3 .
+
+cb:implementation-nn_multidimensional_predictor-prediction_array_name a tb:Parameter ;
+    rdfs:label "Prediction array name" ;
+    tb:has_condition "prediction array name" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "Prediction ($$LABEL$$)" ;
+    tb:has_position 0 .
+
 cb:implementation-nn_predictor-add_probabilities a tb:Parameter ;
     rdfs:label "Add probabilities" ;
     tb:has_condition "add probabilities" ;
@@ -7932,22 +8011,22 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Scatter Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-scatter_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -9415,8 +9494,6 @@ cb:missingValueConstraint a sh:PropertyShape ;
     sh:maxInclusive 5e-02 ;
     sh:path dmop:missingvaluesPercentage .
 
-dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
-
 ab:bar_aggregation_average_specification a tb:ParameterSpecification ;
     tb:hasValue "Average" .
 
@@ -9455,18 +9532,6 @@ ab:kernel_type_polynomial_specification a tb:ParameterSpecification ;
 
 ab:kernel_type_rbf_specification a tb:ParameterSpecification ;
     tb:hasValue "RBF" .
-
-ab:nn_type_convolutional_specification a tb:ParameterSpecification ;
-    tb:hasValue "Convolutional" .
-
-ab:nn_type_feedforward_specification a tb:ParameterSpecification ;
-    tb:hasValue "FeedForward" .
-
-ab:nn_type_lstm_specification a tb:ParameterSpecification ;
-    tb:hasValue "LSTM" .
-
-ab:nn_type_recurrent_specification a tb:ParameterSpecification ;
-    tb:hasValue "Recurrent" .
 
 ab:normalization_mode_1_specification a tb:ParameterSpecification ;
     tb:hasValue 1 .
@@ -9521,10 +9586,6 @@ cb:DecisionTree a tb:Algorithm ;
 cb:MissingValueRemoval a tb:Algorithm ;
     rdfs:label "MissingValueRemoval" ;
     tb:solves cb:MissingValueManagement .
-
-cb:NN a tb:Algorithm ;
-    rdfs:label "NN" ;
-    tb:solves cb:Classification .
 
 cb:NonNullColumnProperty sh:datatype xsd:boolean ;
     sh:hasValue false ;
@@ -9893,6 +9954,37 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
+cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
+    rdfs:label "NN Multidimensional Predictor" ;
+    tb:engine "Simple" ;
+    tb:hasLearner cb:implementation-nn_multidimensional_learner ;
+    tb:hasParameter cb:implementation-nn_multidimensional_predictor-add_probabilities,
+        cb:implementation-nn_multidimensional_predictor-change_prediction,
+        cb:implementation-nn_multidimensional_predictor-class_probability_suffix,
+        cb:implementation-nn_multidimensional_predictor-prediction_array_name ;
+    tb:implements cb:NN ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
 cb:implementation-nn_predictor a tb:ApplierImplementation ;
     rdfs:label "NN Predictor" ;
     tb:engine "Simple" ;
@@ -9904,13 +9996,13 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
@@ -10023,20 +10115,20 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "SVM Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:SVMModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10079,10 +10171,10 @@ cb:implementation-xgboost_linear_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Linear Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -10158,10 +10250,10 @@ cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 2 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -10181,6 +10273,8 @@ cb:implementation-xgboost_tree_learner-target_column a tb:Parameter ;
     tb:knime_path "model/options" .
 
 dmop:hasDataPrimitiveTypeColumn rdfs:subPropertyOf dmop:ColumnInfoProperty .
+
+dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
 ab:sampling_method_first_specification a tb:ParameterSpecification ;
     tb:hasValue "First" .
@@ -10205,8 +10299,6 @@ cb:DataCleaning a tb:Task .
 cb:DecisionTreeModel rdfs:subClassOf cb:Model .
 
 cb:MissingValueModel rdfs:subClassOf cb:Model .
-
-cb:NNModel rdfs:subClassOf cb:Model .
 
 cb:SVMModel rdfs:subClassOf cb:Model .
 
@@ -10798,11 +10890,11 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "XGBoost Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ] ;
+                    tb:hasImportanceLevel 2 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -10815,11 +10907,36 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
+ab:nn_type_convolutional_specification a tb:ParameterSpecification ;
+    tb:hasValue "Convolutional" .
+
+ab:nn_type_feedforward_specification a tb:ParameterSpecification ;
+    tb:hasValue "FeedForward" .
+
+ab:nn_type_lstm_specification a tb:ParameterSpecification ;
+    tb:hasValue "LSTM" .
+
+ab:nn_type_recurrent_specification a tb:ParameterSpecification ;
+    tb:hasValue "Recurrent" .
+
 cb:Description a tb:Task .
+
+cb:NN a tb:Algorithm ;
+    rdfs:label "NN" ;
+    tb:solves cb:Classification .
 
 cb:NormalizerModel rdfs:subClassOf cb:Model .
 
 cb:XGBoostModel rdfs:subClassOf cb:Model .
+
+cb:component-nn_multidimensional_predictor a tb:ApplierComponent ;
+    rdfs:label "NN Multidimensional Predictor" ;
+    tb:hasImplementation cb:implementation-nn_multidimensional_predictor ;
+    tb:hasLearner cb:component-convolutional_nn_multidimensional_learner,
+        cb:component-feedforward_nn_multidimensional_learner,
+        cb:component-lstm_nn_multidimensional_learner,
+        cb:component-recurrent_nn_multidimensional_learner ;
+    tb:hasTransformation [ rdf:rest () ] .
 
 cb:component-nn_predictor a tb:ApplierComponent ;
     rdfs:label "NN Predictor" ;
@@ -10878,14 +10995,14 @@ cb:implementation-data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-histogram_visualizer-histogram_category a tb:Parameter ;
     rdfs:label "Histogram Category" ;
@@ -10934,14 +11051,14 @@ cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizerModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-pie_donut_chart-frequency a tb:Parameter ;
     rdfs:label "frequency" ;
@@ -10990,17 +11107,17 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -11029,6 +11146,8 @@ cb:LabeledTabularDatasetShape a sh:NodeShape ;
 cb:MissingValueManagement a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
+cb:NNModel rdfs:subClassOf cb:Model .
+
 cb:Normalization a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
@@ -11041,16 +11160,16 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11066,14 +11185,42 @@ cb:implementation-nn_learner-class_column a tb:Parameter ;
     tb:has_defaultvalue "$$LABEL$$" ;
     tb:has_position 0 .
 
+cb:implementation-nn_multidimensional_learner a tb:LearnerImplementation ;
+    rdfs:label "NN Multidimensional Learner" ;
+    tb:engine "Simple" ;
+    tb:hasApplier cb:implementation-nn_multidimensional_predictor ;
+    tb:hasParameter cb:implementation-nn_multidimensional_learner-label_array,
+        cb:implementation-nn_multidimensional_learner-nn_type ;
+    tb:implements cb:NN ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
+cb:implementation-nn_multidimensional_learner-label_array a tb:Parameter ;
+    rdfs:label "Label array" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$LABEL$$" ;
+    tb:has_position 0 .
+
 cb:Model rdfs:subClassOf tb:Data .
+
+cb:Visualization rdfs:subClassOf tb:Data .
 
 cb:TrainTabularDatasetShape a sh:NodeShape,
         tb:DataTag ;
     sh:property cb:isTrainConstraint ;
     sh:targetClass dmop:TabularDataset .
-
-cb:Visualization rdfs:subClassOf tb:Data .
 
 cb:TestTabularDatasetShape a sh:NodeShape,
         tb:DataTag ;
