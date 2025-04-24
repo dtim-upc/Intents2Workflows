@@ -141,11 +141,8 @@ def label_query(label, reset):
 def add_label(graph:Graph, label:str) -> Graph:
     reset_query = label_query(label, reset=True)
     add_label_query = label_query(label, reset=False)
-    graph.serialize('0.ttl', format='turtle')
     graph.update(reset_query)
-    graph.serialize('a.ttl', format='turtle')
     graph.update(add_label_query)
-    graph.serialize('b.ttl', format='turtle')
 
     return graph
 

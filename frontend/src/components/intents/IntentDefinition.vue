@@ -75,7 +75,12 @@ const target = computed({
 const handleSubmit = async() => { // TODO: Remove this and make the code query over the Jena graph, not in graphDB
   $q.loading.show({message: 'Suggesting parameters...'})
   await intentsStore.getAllInfo()
-  //await intentsStore.predictParameters()
+
+  try {
+    await intentsStore.predictParameters()
+  } catch(error) {
+    console.error(error)
+  }
   router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/abstract-planner" })
   $q.loading.hide()
 }

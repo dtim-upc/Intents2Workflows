@@ -24,10 +24,8 @@ def get_implementation_task(ontology: Graph, implementation: URIRef):
     query = f""" PREFIX tb: <https://extremexp.eu/ontology/tbox#>
                 SELECT ?task
                 WHERE {{ {implementation.n3()} tb:implements ?task .}} """
-    print(query)
     
     results = ontology.query(query).bindings
-    print(results)
 
     assert len(results) == 1
 

@@ -9,7 +9,7 @@
     <q-btn label="Upload Folder" @click="triggerFolderInput" color="primary" style="margin-left: 20px;"/>
 
     <!-- File Input (Hidden, triggered by button) -->
-    <input ref="fileInput" type="file" accept=".csv, .parquet, .zip" style="display: none;" @change="handleFileUpload" multiple/>
+    <input ref="fileInput" type="file" accept=".csv, .parquet, .zip, .npz" style="display: none;" @change="handleFileUpload" multiple/>
     <input ref="folderInput" type="file" accept="*" style="display: none;" @change="handleFileUpload"  webkitdirectory = "true" directory/>
 
   </q-page>

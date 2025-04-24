@@ -12,8 +12,6 @@ from flask_cors import CORS
 from api.functions import *
 from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
-from dataset_annotator.knime_annotator import annotate_dataset
-from dataset_annotator import dataLoaders
 
 import requests
 from urllib.parse import quote
@@ -25,50 +23,11 @@ temporary_folder = os.path.abspath(r'./api/temp_files')
 if not os.path.exists(temporary_folder):
     os.makedirs(temporary_folder)
 
-@app.post('/annotate_dataset')
-def annotate_dataset_from_frontend():
-    path = request.json.get('path', '')
-    label = request.json.get('label', '')
-    #print(path[path.rfind(os.path.sep) + 1:-4])
-    #print(path.rfind(os.path.sep))
-
-    data_path = Path(path)
-
-    data_product_name = data_path.with_suffix('').name
-
-    
-    # new_path = path[0:path.rfind("\\") + 1] + data_product_name + "_annotated.ttl"
-    new_path = temporary_folder + "/" + str(data_product_name) + "_annotated.ttl"
-    annotate_dataset(path, new_path, label)
-
-    custom_ontology = get_custom_ontology(new_path)
-    datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}
-    return {"ontology": custom_ontology.serialize(format="turtle"),
-            "data_product_uri": datasets[quote(data_path.with_suffix('').name)]}
-
-@app.post('/ontology')
-def get_ontology():
-    path = request.json.get('annotated_dataset_path', '')
-    custom_ontology = get_custom_ontology(path)
-    return {"ontology": custom_ontology.serialize(format="turtle"),
-            "data_product_uri": Literal("patata")}
-
-
 @app.get('/problems')
 def get_problems():
     ontology_only_problems = get_custom_ontology_only_problems()
     problems = {n.fragment: n for n in ontology_only_problems.subjects(RDF.type, tb.Task)}
     return problems
-
-@app.post('/attributes')
-def get_attributes():
-    data= request.json
-    data_path = data.get('path','')
-    print(data_path)
-    df = dataLoaders.get_loader(data_path).getDataFrame()
-    return list(df.columns)
-
-
 
 @app.post('/abstract_planner')
 def run_abstract_planner():
@@ -152,7 +111,7 @@ def run_logical_planner():
 def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)
@@ -169,7 +128,7 @@ def download_knime():
 @app.post('/workflow_plans/knime/all')
 def download_all_knime():
     graphs = request.json.get("graphs", "")
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     knime_folder = os.path.join(temporary_folder, 'knime')
@@ -196,7 +155,7 @@ def download_all_knime():
 @app.post('/intent-to-dsl')
 def download_file():
     raw_graphs = request.json.get("graphs", "")
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
 
     workflow_graphs = []
@@ -250,7 +209,7 @@ def run_abstract_planner_zenoh():
         print(f"Reason: {response.reason}")
 
     new_path = temporary_folder + "/" + dataset_name + "_annotated.ttl"
-    annotate_dataset(original_dataset_path, new_path, label)
+    #annotate_dataset(original_dataset_path, new_path, label)
 
     custom_ontology = get_custom_ontology(new_path)
     datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}

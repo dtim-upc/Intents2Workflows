@@ -31,7 +31,6 @@ export const useIntentsStore = defineStore('intents', {
 
     dataProductURI: "", // URI of the selected data product. This is required given that when working with graphs we need URIs
     intent_graph: {}, // Graph definition of the current intent
-    ontology: "", // Ontology of the system (graph)
     algorithmImplementations: [], // List of algorithms defined in the ontology
     labelColumn: "", // Column over which a classification model will operate. ONLY FOR INTEGRATION WITH PROACTIVE. SHOULD BE REMOVED WHEN INTEGRATION DEPENDS ON THE GRAPH
     
@@ -97,19 +96,6 @@ export const useIntentsStore = defineStore('intents', {
         console.error("Error:", error);
       }
     },
-    
-    /*async annotateDataset(data) {
-      this.labelColumn = data["label"] // SHOULD BE REMOVED EVENTUALLY
-      try {
-        const response = await intentsAPI.annotateDataset(data);
-        notify.positive(`Dataset annotated`)
-        this.ontology = response.data.ontology
-        this.dataProductURI = response.data.data_product_uri;
-      } catch (error) {
-        notify.negative("Error in annotating the dataset.")
-        console.error("Error:", error);
-      }
-    },*/
     
     async setAbstractPlans(data, successCallback) {
       try {
@@ -194,7 +180,7 @@ export const useIntentsStore = defineStore('intents', {
     },
     
     async downloadKNIME(plan) {
-      const data = {"graph": plan.graph, "ontology": this.ontology, "plan_id": plan.id}
+      const data = {"graph": plan.graph, "plan_id": plan.id}
       try {
         const response = await intentsAPI.downloadKNIME(data);
         FileSaver.saveAs(new Blob([response.data]), `${plan.id}.knwf`);
@@ -206,10 +192,12 @@ export const useIntentsStore = defineStore('intents', {
     },
 
     async downloadProactive(plan) {
-      const currentIntent = this.intents.find(intent => intent.intentID === String(this.intentID)) // SHOULD BE REMOVED EVENTUALLY
-      const dataProductName = currentIntent.dataProduct.datasetName // SHOULD BE REMOVED EVENTUALLY
+      console.log(this.intents)
+      console.log(this.intentName)
+      //const currentIntent = this.intents.find(intent => intent.name === String(this.intentName)) // SHOULD BE REMOVED EVENTUALLY
+      const dataProductName = this.selectedDataProdutName//currentIntent.dataProduct.datasetName // SHOULD BE REMOVED EVENTUALLY
       // At some point, the translation to the Proactive ontology should be done, and the API should only require the graph to make it
-      const data = {"graph": plan.graph, "ontology": this.ontology, "layout": plan.plan, "label_column": this.labelColumn, "data_product_name": dataProductName}
+      const data = {"graph": plan.graph, "layout": plan.plan, "label_column": this.labelColumn, "data_product_name": dataProductName}
       try {
         const response = await intentsAPI.downloadProactive(data);
         FileSaver.saveAs(new Blob([response.data]), `${plan.id}.xml`);
@@ -248,7 +236,7 @@ export const useIntentsStore = defineStore('intents', {
     },
     
     async downloadAllKNIME() {
-      const data = {"graphs": this.getSelectedGraphs(), "ontology": this.ontology}
+      const data = {"graphs": this.getSelectedGraphs()}
       try {
         const response = await intentsAPI.downloadAllKNIME(data);
         FileSaver.saveAs(new Blob([response.data]), `knime.zip`);
@@ -260,7 +248,7 @@ export const useIntentsStore = defineStore('intents', {
     },
 
     async downloadAllDSL() {
-      const data = {"graphs": this.getSelectedGraphs(), "ontology": this.ontology}
+      const data = {"graphs": this.getSelectedGraphs()}
       try {
         const response = await intentsAPI.downloadAllDSL(data);
         FileSaver.saveAs(new Blob([response.data]), `intent_to_dsl.xxp`);
