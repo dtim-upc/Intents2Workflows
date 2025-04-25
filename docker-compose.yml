@@ -1,30 +1,41 @@
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend          
-      dockerfile: backend.Dockerfile
-    ports:
-      - "9001:9001"
-      - "9002:9002"
-      - "9003:9003"
-      - "9004:9004"
-    # volumes:
-    #   - .:/app
-    networks:
-      - intents-network
-
   frontend:
     build:
-      context: ./frontend        
+      context: ./frontend         
       dockerfile: frontend.Dockerfile
     ports:
       - "9000:9000"
     networks:
       - intents-network
-    # depends_on:
-    #   - backend
+  backend_api:
+    build:
+      context: ./backend/api          
+      dockerfile: backend_api.Dockerfile
+    ports:
+      - "9001:9001"
+    networks:
+      - intents-network
+  intents:
+    build:
+      context: ./backend/Modules/IntentSpecification2WorkflowGenerator          
+      dockerfile: intents.Dockerfile
+    ports:
+      - "9002:9002"
+    networks:
+      - intents-network
+  anticipation:
+    build:
+      context: ./backend/Modules/IntentAnticipation          
+      dockerfile: anticipation.Dockerfile
+    ports:
+      - "9003:9003"
+      - "9004:9004"
+    networks:
+      - intents-network
+
+
 
 networks:
   intents-network:
