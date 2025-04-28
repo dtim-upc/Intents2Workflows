@@ -7,3 +7,6 @@ openai
 llamaapi
 python-dotenv
 python-multipart
+rdflib
+pandas
+scipy
