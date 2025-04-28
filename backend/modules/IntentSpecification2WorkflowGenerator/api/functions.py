@@ -35,34 +35,53 @@ def get_custom_ontology_only_problems():
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph
 
-def connect_algorithms(ontology, shape_graph, algos_list):
-    impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
-                   for algo in algos_list for imp in get_potential_implementations_constrained(ontology, shape_graph, algo,exclude_appliers=False)}
-    print(impls_algos)
+def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
+    #impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
+    #               for algo in algos_list for imp in get_potential_implementations_constrained(ontology, shape_graph, algo,exclude_appliers=False)}
 
     linked_impls = {}
 
-    impls_list = list(impls_algos.keys())
-    
-    for preceding_impl in impls_list:
-        following_impls = impls_list
+    #impls_list = list(impls_algos.keys())
+    #print(impls_list)
+    partition = False
 
-        out_specs = get_implementation_output_specs(ontology, preceding_impl)
-        out_spec_set = {out_sp for out_spec in out_specs for out_sp in out_spec}
-
-        preceding_impl_key = impls_algos[preceding_impl]
-        linked_impls.setdefault(preceding_impl_key, [])
+    for i in range(1,len(algos_list)):
+        connections = [algos_list[i]]
         
-        for following_impl in following_impls:
+        if partition:
+            connections.append(algos_list[i]+"-Train")
+            linked_impls[algos_list[i]+"-Train"] = [algos_list[i+1]]
+            partition = False
+        linked_impls[algos_list[i-1]] = connections
 
-            in_specs = get_implementation_input_specs(ontology, following_impl)
-            in_spec_set = {in_sp for in_spec in in_specs for in_sp in in_spec}
+        if algos_list[i] == cb.Partitioning:
+            partition = True
 
-            if out_spec_set & in_spec_set:
-                following_impl_key = impls_algos[following_impl]
+        
 
-                if following_impl_key not in linked_impls[preceding_impl_key]:
-                    linked_impls[preceding_impl_key].append(following_impl_key)
+    linked_impls[algos_list[-1]] = []
+
+
+
+    
+    #for preceding_impl in impls_list:
+
+        #out_specs = get_implementation_output_specs(ontology, preceding_impl)
+        #out_spec_set = {out_sp for out_spec in out_specs for out_sp in out_spec}
+
+        #preceding_impl_key = impls_algos[preceding_impl]
+        #linked_impls.setdefault(preceding_impl_key, [])
+        
+        #for following_impl in following_impls:
+
+            #in_specs = get_implementation_input_specs(ontology, following_impl)
+            #in_spec_set = {in_sp for in_spec in in_specs for in_sp in in_spec}
+
+            #if out_spec_set & in_spec_set:
+                #following_impl_key = impls_algos[following_impl]
+
+                #if following_impl_key not in linked_impls[preceding_impl_key]:
+                    #linked_impls[preceding_impl_key].append(following_impl_key)
 
     return linked_impls
 
@@ -86,13 +105,13 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         available_algs.append(alg[0])
     
     plans = {}
-    #print(algs_shapes)
+
     for alg in available_algs:
+        print(alg)
         if cb.TrainTabularDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
-    #print(plans)
     return plans, alg_plans
     
 

@@ -22,11 +22,14 @@ CORS(app)
 temporary_folder = os.path.abspath(r'./api/temp_files')
 if not os.path.exists(temporary_folder):
     os.makedirs(temporary_folder)
+ 
+print("Loading ontology...")
+ontology = get_custom_ontology_only_problems()
+print("Ontology loaded!")
 
 @app.get('/problems')
 def get_problems():
-    ontology_only_problems = get_custom_ontology_only_problems()
-    problems = {n.fragment: n for n in ontology_only_problems.subjects(RDF.type, tb.Task)}
+    problems = {n.fragment: n for n in ontology.subjects(RDF.type, tb.Task)}
     return problems
 
 @app.post('/abstract_planner')
@@ -34,7 +37,6 @@ def run_abstract_planner():
     intent_graph = get_graph_xp()
 
     data = request.json
-    print(data.keys())
     intent_name = data.get('intent_name', '')
     dataset = data.get('dataset', '')
     task = data.get('problem', '')
@@ -44,7 +46,7 @@ def run_abstract_planner():
     complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 
@@ -87,8 +89,8 @@ def run_logical_planner():
     algorithm_implementations = request.json.get('algorithm_implementations', '')
     dataset = request.json.get('dataset', '')
 
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    ontology = ontology.parse(data = dataset, format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    extended_ontology = ontology.parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
 
@@ -101,8 +103,8 @@ def run_logical_planner():
              for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
              for impl in impls]
 
-    workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
-    logical_plans = logical_planner(ontology, workflow_plans)
+    workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
+    logical_plans = logical_planner(extended_ontology, workflow_plans)
 
     return logical_plans
 
@@ -111,7 +113,7 @@ def run_logical_planner():
 def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)
@@ -128,7 +130,7 @@ def download_knime():
 @app.post('/workflow_plans/knime/all')
 def download_all_knime():
     graphs = request.json.get("graphs", "")
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     knime_folder = os.path.join(temporary_folder, 'knime')
@@ -155,7 +157,7 @@ def download_all_knime():
 @app.post('/intent-to-dsl')
 def download_file():
     raw_graphs = request.json.get("graphs", "")
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
 
     workflow_graphs = []
@@ -267,8 +269,8 @@ def store_rdf_zenoh():
 # TODO: Make the actual translation from the original RDF graph to the Proactive definition
 @app.post('/workflow_plans/proactive')
 def download_proactive():
-    graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
+    #ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     layout = request.json.get('layout', '')
     label_column = request.json.get('label_column', '')
     data_product_name = request.json.get('data_product_name', '')
