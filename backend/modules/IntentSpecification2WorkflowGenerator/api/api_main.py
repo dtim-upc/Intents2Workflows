@@ -70,7 +70,21 @@ def run_abstract_planner():
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
-        "algorithm_implementations": algorithm_implementations}
+        "algorithm_implementations": algorithm_implementations, "mdp_input":get_mdp_input(intent_graph)}
+
+def get_mdp_input(intent_graph: Graph):
+    intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True))
+    intent_task = next(intent_graph.subjects(tb.tackles,intent_name, unique=True))
+    intent_algorithm = next(intent_graph.objects(intent_name,tb.specifies,unique=True),None)
+    return {
+        'domain': "manufacturing",
+        'intent': None,
+        'algorithm': intent_algorithm.fragment if intent_algorithm is not None else None,
+        'method': intent_task.fragment if intent_task is not None else None,
+        "hard_constraints": [],
+        "soft_constraints": []
+    }
+
 
 def convert_strings_to_uris(obj):
     if isinstance(obj, list):  # If the object is a list
