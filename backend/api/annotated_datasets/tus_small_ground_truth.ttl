@@ -1,0 +1,67 @@
+@prefix ab: <https://extremexp.eu/ontology/abox#> .
+@prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ab:tus_small_ground_truth a dmop:TabularDataset ;
+    dmop:containsOutliers false ;
+    dmop:delimiter "," ;
+    dmop:doubleQuote false ;
+    dmop:encoding "UTF-8" ;
+    dmop:fileFormat "CSV" ;
+    dmop:hasColumn ab:candidate_attr,
+        ab:candidate_ds,
+        ab:target_attr,
+        ab:target_ds ;
+    dmop:hasHeader true ;
+    dmop:lineDelimiter """\r
+""" ;
+    dmop:numberOfColumns 4 ;
+    dmop:numberOfRows 9811 ;
+    dmop:path "/home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv" ;
+    dmop:quoteChar "\"" ;
+    dmop:skipInitialSpace false .
+
+ab:candidate_attr a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "candidate_attr" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+    dmop:hasOutliers false ;
+    dmop:hasPosition 3 ;
+    dmop:isCategorical true ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isUnique false .
+
+ab:candidate_ds a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "candidate_ds" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+    dmop:hasOutliers false ;
+    dmop:hasPosition 2 ;
+    dmop:isCategorical true ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isUnique false .
+
+ab:target_attr a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "target_attr" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+    dmop:hasOutliers false ;
+    dmop:hasPosition 1 ;
+    dmop:isCategorical true ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isUnique false .
+
+ab:target_ds a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "target_ds" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+    dmop:hasOutliers false ;
+    dmop:hasPosition 0 ;
+    dmop:isCategorical true ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isUnique false .
+

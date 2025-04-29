@@ -25,5 +25,8 @@ app.include_router(data_product.router)
 app.include_router(intent.router)
 app.include_router(workflow.router)
 
+root_app = FastAPI()
+root_app.mount("/intent2Workflow-backend", app)
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(root_app, host="0.0.0.0", port=9001)

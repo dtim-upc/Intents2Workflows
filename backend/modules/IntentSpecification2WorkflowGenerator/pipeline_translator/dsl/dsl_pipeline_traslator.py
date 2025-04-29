@@ -5,7 +5,14 @@ import jinja2
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from core.translator_common_functions import *
 
-environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/dsl/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
+template_base = os.path.dirname(os.path.abspath(__file__))
+template_paths = [
+    os.path.join(template_base, "pipeline_translator", "dsl", "templates"), #the double path ensures expected performance on terminal and api execution
+    os.path.join(template_base, "templates")
+]
+environment = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths))
+print("Template search paths:", environment.loader.searchpath)
+
 
 def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[List[URIRef],List[str]]:
     tasks = []

@@ -1,32 +1,33 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 import traceback
 
-from utils.query_graphdb import  get_all_metrics, get_all_algorithms, \
-    get_all_preprocessing_algorithms
+from utils.query_graphdb import get_all_metrics, get_all_algorithms, get_all_preprocessing_algorithms
 from utils.recommendations import *
 
 app = Flask(__name__)
 CORS(app)
 
+# Create a blueprint with a URL prefix
+intent_api = Blueprint('intent_api', __name__, url_prefix='/intent2Workflow-intentToGraphDB')
+
 # Dictionary route information
 routes_info = {
     "/add_workflow": {
-    "parameters": ["data"],
-    "description": "Adds a new workflow to the GraphDB repository using the provided data.",
-    "response": {
-        "workflow_name": "string"
-    },
-    "example_usage": "curl -X POST http://localhost:8002/add_workflow -H \"Content-Type: application/json\" -d '{\"data\": {\"user\": \"example_user\", \"dataset\": \"dataset_name\", \"intent\": \"intent_class\", \"algorithm_constraint\": \"ExampleAlgorithm\", \"hyperparam_constraints\": {\"param1\": \"value1\", \"param2\": \"value2\"}, \"time\":  \"time_value\", \"preprocessor_constraint\": \"ExamplePreprocessor\", \"max_time\": \"max_time_value\", \"pipeline\": {\"preprocs\": [\"ExamplePreprocessor()\"], \"learner\": \"ExampleLearner()\"}, \"metricName\": \"example_metric\", \"metric_value\": \"example metric_value\"}}'"
+        "parameters": ["data"],
+        "description": "Adds a new workflow to the GraphDB repository using the provided data.",
+        "response": {
+            "workflow_name": "string"
+        },
+        "example_usage": "curl -X POST http://localhost:8002/intent2Workflow-intentToGraphDB/add_workflow -H \"Content-Type: application/json\" -d '{\"data\": {\"user\": \"example_user\", \"dataset\": \"dataset_name\", \"intent\": \"intent_class\", \"algorithm_constraint\": \"ExampleAlgorithm\", \"hyperparam_constraints\": {\"param1\": \"value1\", \"param2\": \"value2\"}, \"time\":  \"time_value\", \"preprocessor_constraint\": \"ExamplePreprocessor\", \"max_time\": \"max_time_value\", \"pipeline\": {\"preprocs\": [\"ExamplePreprocessor()\"], \"learner\": \"ExampleLearner()\"}, \"metricName\": \"example_metric\", \"metric_value\": \"example metric_value\"}}'"
+    }
 }
 
-}
-
-@app.route('/', methods=['GET'])
+@intent_api.route('/', methods=['GET'])
 def base_route():
     return jsonify(routes_info), 200
 
-@app.route('/get_recommendations', methods=['GET'])
+@intent_api.route('/get_recommendations', methods=['GET'])
 def get_recommendations_route():
     user = request.args.get('user')
     dataset = request.args.get('dataset')
@@ -35,15 +36,14 @@ def get_recommendations_route():
         return jsonify({"error": "Missing user, dataset, or intent parameter"}), 400
 
     try:
-        experiment = annotate_tsv(user,intent,dataset)
-        results = recommendations(experiment,user,intent,dataset)
+        experiment = annotate_tsv(user, intent, dataset)
+        results = recommendations(experiment, user, intent, dataset)
         return jsonify(results), 200
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500   
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
-
-@app.route('/get_all_info', methods=['GET'])
+@intent_api.route('/get_all_info', methods=['GET'])
 def get_all_info_route():
     metrics = get_all_metrics()
     algorithms = get_all_algorithms()
@@ -54,5 +54,8 @@ def get_all_info_route():
         "preprocessing_algorithms": preprocessing_algorithms,
     }), 200
 
+# Register the blueprint with the app
+app.register_blueprint(intent_api)
+
 if __name__ == '__main__':
-    app.run(debug=True, port=8002)
+    app.run(debug=True, port=9004)

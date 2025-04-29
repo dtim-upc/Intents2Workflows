@@ -1,0 +1,1382 @@
+package tky;
+
+
+workflow Workflow_0 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.convolutional_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.convolutional_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_1 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.convolutional_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.convolutional_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_2 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.convolutional_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.convolutional_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_3 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.convolutional_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.convolutional_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_4 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.feedforward_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.feedforward_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_5 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.feedforward_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.feedforward_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_6 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.feedforward_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.feedforward_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_7 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.feedforward_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.feedforward_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_16 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.hypertangent_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.hypertangent_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_17 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.hypertangent_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.hypertangent_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_18 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.hypertangent_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.hypertangent_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_19 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.hypertangent_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.hypertangent_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_8 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.lstm_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.lstm_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_9 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.lstm_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.lstm_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_10 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.lstm_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.lstm_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_11 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.lstm_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.lstm_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_20 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.polynomial_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.polynomial_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_21 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.polynomial_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.polynomial_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_22 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.polynomial_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.polynomial_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_23 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.polynomial_svm_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.polynomial_svm_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_12 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.recurrent_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.recurrent_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_13 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.recurrent_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.recurrent_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_14 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.recurrent_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.recurrent_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_15 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task Normalization; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> Normalization -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task Normalization {
+        implementation "tky.min_max_scaling";
+    }
+    
+    task ModelTrain {
+        implementation "tky.recurrent_nn_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.recurrent_nn_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_24 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_absolute_train_test_split";
+    }
+    
+    task ModelTrain {
+        implementation "tky.xgboost_tree_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.xgboost_tree_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_25 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.top_k_relative_train_test_split";
+    }
+    
+    task ModelTrain {
+        implementation "tky.xgboost_tree_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.xgboost_tree_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_26 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_absolute_train_test_split";
+    }
+    
+    task ModelTrain {
+        implementation "tky.xgboost_tree_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.xgboost_tree_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}
+
+workflow Workflow_27 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task ModelTrain {
+        implementation "tky.xgboost_tree_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.xgboost_tree_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}

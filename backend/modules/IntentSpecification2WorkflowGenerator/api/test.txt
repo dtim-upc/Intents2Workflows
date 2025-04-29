@@ -1,0 +1,45 @@
+
+workflow Workflow_27 {
+
+     
+    define task DataLoading; 
+    define task Partitioning; 
+    define task ModelTrain; 
+    define task ModelPredict; 
+    define task DataStoring;
+
+
+    START -> DataLoading -> Partitioning -> ModelTrain -> ModelPredict -> DataStoring -> END;
+
+    
+    task DataLoading {
+        implementation "tky.csv_local_reader";
+    }
+    
+    task Partitioning {
+        implementation "tky.random_relative_train_test_split";
+    }
+    
+    task ModelTrain {
+        implementation "tky.xgboost_tree_learner";
+    }
+    
+    task ModelPredict {
+        implementation "tky.xgboost_tree_learner_predictor";
+    }
+    
+    task DataStoring {
+        implementation "tky.csv_local_writer";
+    }
+    
+
+    
+    define input data InputData;
+
+    configure data InputData {
+        path ".//home/marc.maynou/Intents2Workflows/backend/api/datasets/tus_small_ground_truth.csv"
+    }
+    
+
+    
+}

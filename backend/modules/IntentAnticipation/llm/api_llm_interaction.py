@@ -1,57 +1,54 @@
-from flask import Flask, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from flask_cors import CORS
 from utils.llm_text_to_intent import get_prediction
 
-app = Flask(__name__)
-CORS(app)
+# --- Configuration ---
+MODEL = "phi4"
+BASE_PATH = "/intent2Workflow-textToIntent"
 
-MODEL = "phi4"  # Specify the model you want to use
+# --- Blueprint Setup ---
+intent_api = Blueprint('intent_api', __name__, url_prefix=BASE_PATH)
 
 routes_info = {
-        "/predictIntent": {
-            "method": "POST",
-            "description": "Classify text and return the intent.",
-            "request_body": {
-                "text": "string"
-            },
-            "response": {
-                "intent": "string",
-                "model" : "string"
-            },
-            "example_usage": {
-                "curl": 'curl -X POST http://localhost:8001/predictIntent -H "Content-Type: application/json" -d \'{"text": "Your text to classify"}\''
-            }
+    f"{BASE_PATH}/predictIntent": {
+        "method": "POST",
+        "description": "Classify text and return the intent.",
+        "request_body": {
+            "text": "string"
+        },
+        "response": {
+            "intent": "string",
+            "model": "string"
+        },
+        "example_usage": {
+            "curl": f'curl -X POST http://localhost:8001{BASE_PATH}/predictIntent -H "Content-Type: application/json" -d \'{{"text": "Your text to classify"}}\''
         }
-    } 
+    }
+}
 
-@app.route('/', methods=['GET'])
+@intent_api.route('/', methods=['GET'])
 def base_route():
     return jsonify(routes_info), 200
 
-@app.route('/predictIntent', methods=['POST'])
+@intent_api.route('/predictIntent', methods=['POST'])
 def predict():
-    """
-    Endpoint to classify text.
-
-    Request body should contain:
-    {
-        "text": "Your text to classify"
-    }
-    """
     try:
         data = request.json
         text = data.get("text")
 
-        if not text or text == "":
+        if not text or text.strip() == "":
             return jsonify({"error": "Text parameter is required."}), 400
 
-        # Get prediction using the fixed model
-        prediction = get_prediction(text, f"{MODEL}")
-        
-        return jsonify({"intent": prediction, "model":f"{MODEL}"}), 200
+        prediction = get_prediction(text, MODEL)
+        return jsonify({"intent": prediction, "model": MODEL}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# --- App Setup ---
+app = Flask(__name__)
+CORS(app)
+app.register_blueprint(intent_api)
+
 if __name__ == '__main__':
-    app.run(debug=True, port=8001)
+    app.run(debug=True, port=9003)

@@ -1,3 +1,3 @@
-https://extremexp.eu/ontology#testuser	https://extremexp.eu/ontology#specifies	https://extremexp.eu/ontology#testuserClassificationiris.csv1745842360
-https://extremexp.eu/ontology#testuserClassificationiris.csv1745842360	https://extremexp.eu/ontology#hasIntent	https://extremexp.eu/ontology#Classification
-https://extremexp.eu/ontology#testuserClassificationiris.csv1745842360	https://extremexp.eu/ontology#hasDataset	https://extremexp.eu/ontology#iris.csv
+https://extremexp.eu/ontology#testuser	https://extremexp.eu/ontology#specifies	https://extremexp.eu/ontology#testuserClassificationtus_small_ground_truth.csv1745919597
+https://extremexp.eu/ontology#testuserClassificationtus_small_ground_truth.csv1745919597	https://extremexp.eu/ontology#hasIntent	https://extremexp.eu/ontology#Classification
+https://extremexp.eu/ontology#testuserClassificationtus_small_ground_truth.csv1745919597	https://extremexp.eu/ontology#hasDataset	https://extremexp.eu/ontology#tus_small_ground_truth.csv

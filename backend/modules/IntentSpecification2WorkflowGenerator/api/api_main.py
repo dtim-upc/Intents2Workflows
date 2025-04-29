@@ -2,13 +2,14 @@ import os
 import shutil
 from os import abort
 from pathlib import Path
+import uuid
 
 import proactive
 
-from flask import Flask, request, send_file
+from flask import Flask, Blueprint, request, send_file
 from flask_cors import CORS
 
-#TODO cahnge import names to the adecuate files
+# TODO: Change import names to the adequate files
 from api.functions import *
 from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
@@ -19,20 +20,22 @@ from urllib.parse import quote
 app = Flask(__name__)
 CORS(app)
 
+intent_api = Blueprint('intent_api', __name__)
+
 temporary_folder = os.path.abspath(r'./api/temp_files')
 if not os.path.exists(temporary_folder):
     os.makedirs(temporary_folder)
- 
+
 print("Loading ontology...")
 ontology = get_custom_ontology_only_problems()
 print("Ontology loaded!")
 
-@app.get('/problems')
+@intent_api.get('/problems')
 def get_problems():
     problems = {n.fragment: n for n in ontology.subjects(RDF.type, tb.Task)}
     return problems
 
-@app.post('/abstract_planner')
+@intent_api.post('/abstract_planner')
 def run_abstract_planner():
     intent_graph = get_graph_xp()
 
@@ -41,14 +44,11 @@ def run_abstract_planner():
     dataset = data.get('dataset', '')
     task = data.get('problem', '')
     algorithm = data.get('algorithm', '')
-    exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
-    percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
-    complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
-    # TODO: make complexity tunable in the frontend
-    
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
+    exposed_parameters = data.get('exposed_parameters', '')
+    percentage = data.get('preprocessing_percentage', 1.0)
+    complexity = data.get('workflow_complexity', 2)
+
+    shape_graph = Graph().parse('../pipeline_generator/shapeGraph.ttl')
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
     intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
@@ -66,118 +66,82 @@ def run_abstract_planner():
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
     intent = intent_graph
-
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
-        "algorithm_implementations": algorithm_implementations}
+            "algorithm_implementations": algorithm_implementations}
 
 def convert_strings_to_uris(obj):
-    if isinstance(obj, list):  # If the object is a list
-        return [convert_strings_to_uris(item) for item in obj]  # Recursively process each item in the list
-    elif isinstance(obj, dict):  # If the object is a dictionary (only the "first" level)
-        # Recursively process each value in the dictionary + transform key to URI
+    if isinstance(obj, list):
+        return [convert_strings_to_uris(item) for item in obj]
+    elif isinstance(obj, dict):
         return {URIRef(key): convert_strings_to_uris(value) for key, value in obj.items()}
     else:
-        return URIRef(obj)  # Convert non-list, non-dictionary values to URIs
+        return URIRef(obj)
 
-@app.post('/logical_planner')
+@intent_api.post('/logical_planner')
 def run_logical_planner():
-
     plan_ids = request.json.get('plan_ids', '')
     intent_json = request.json.get('intent_graph', '')
     algorithm_implementations = request.json.get('algorithm_implementations', '')
     dataset = request.json.get('dataset', '')
 
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    extended_ontology = ontology.parse(data = dataset, format='turtle')
-    shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
-
-    # The algorithms come from the frontend in String format. We need to change them back to URIRefs
+    extended_ontology = ontology.parse(data=dataset, format='turtle')
+    shape_graph = Graph().parse('../pipeline_generator/shapeGraph.ttl')
     algorithm_implementations_uris = convert_strings_to_uris(algorithm_implementations)
-
     intent = Graph().parse(data=intent_json, format='turtle')
 
-    impls = [impl
-             for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
-             for impl in impls]
-
+    impls = [impl for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids for impl in impls]
     workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
     logical_plans = logical_planner(extended_ontology, workflow_plans)
 
     return logical_plans
 
-
-@app.post('/workflow_plans/knime')
+@intent_api.post('/workflow_plans/knime')
 def download_knime():
-    print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)
-
     file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
     plan_graph.serialize(file_path, format='turtle')
 
     knime_file_path = file_path[:-4] + '.knwf'
     translate_graph(ontology, file_path, knime_file_path)
-
     return send_file(knime_file_path, as_attachment=True)
 
-
-@app.post('/workflow_plans/knime/all')
+@intent_api.post('/workflow_plans/knime/all')
 def download_all_knime():
     graphs = request.json.get("graphs", "")
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     knime_folder = os.path.join(temporary_folder, 'knime')
 
-    if os.path.exists(folder):
-        shutil.rmtree(folder)
-    if os.path.exists(knime_folder):
-        shutil.rmtree(knime_folder)
+    if os.path.exists(folder): shutil.rmtree(folder)
+    if os.path.exists(knime_folder): shutil.rmtree(knime_folder)
     os.mkdir(folder)
     os.mkdir(knime_folder)
 
     for graph_id, graph_content in graphs.items():
         graph = Graph().parse(data=graph_content, format='turtle')
         file_path = os.path.join(folder, f'{graph_id}.ttl')
-        compatible = getKnimeCompatibility(graph)
-        if compatible:
+        if getKnimeCompatibility(graph):
             graph.serialize(file_path, format='turtle')
 
     translate_graph_folder(ontology, folder, knime_folder, keep_folder=False)
-
     compress(knime_folder, knime_folder + '.zip')
     return send_file(knime_folder + '.zip', as_attachment=True)
 
-@app.post('/intent-to-dsl')
+@intent_api.post('/intent-to-dsl')
 def download_file():
     raw_graphs = request.json.get("graphs", "")
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-
-
-    workflow_graphs = []
-    for graph_id, graph_content in raw_graphs.items():
-        workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
-
+    workflow_graphs = [Graph().parse(data=graph_content, format='turtle') for _, graph_content in raw_graphs.items()]
     translation = translate_graphs_to_dsl(ontology, workflow_graphs)
 
-    # Define the path where the file is stored
     file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
-
-    with open(file_path, mode="w") as file:
-        file.write(translation)
-
-    # Check if the file exists
-    if not os.path.exists(file_path):
-        abort(404, description="File not found")
-
-    # Send the file for download
+    with open(file_path, mode="w") as file: file.write(translation)
+    if not os.path.exists(file_path): abort(404, description="File not found")
     return send_file(file_path, as_attachment=True)
+
+# Additional endpoints (Zenoh, ProActive, etc.) should also be wrapped with @intent_api.route
 
 ################################# INTEGRATION FUNCTIONS
 
@@ -211,7 +175,7 @@ def run_abstract_planner_zenoh():
         print(f"Reason: {response.reason}")
 
     new_path = temporary_folder + "/" + dataset_name + "_annotated.ttl"
-    #annotate_dataset(original_dataset_path, new_path, label)
+    annotate_dataset(original_dataset_path, new_path, label)
 
     custom_ontology = get_custom_ontology(new_path)
     datasets = {n.fragment: n for n in custom_ontology.subjects(RDF.type, dmop.TabularDataset)}
@@ -269,8 +233,8 @@ def store_rdf_zenoh():
 # TODO: Make the actual translation from the original RDF graph to the Proactive definition
 @app.post('/workflow_plans/proactive')
 def download_proactive():
-    #graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    #ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
+    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     layout = request.json.get('layout', '')
     label_column = request.json.get('label_column', '')
     data_product_name = request.json.get('data_product_name', '')
@@ -374,5 +338,7 @@ def download_proactive():
     return send_file(os.path.abspath(r'api/temp_files/extremexp_test_workflow.xml'), as_attachment=True)
 
 
+app.register_blueprint(intent_api, url_prefix='/intent2Workflow-intents')
+
 if __name__ == '__main__':
-    app.run(port=8000)
+    app.run(port=9002)
