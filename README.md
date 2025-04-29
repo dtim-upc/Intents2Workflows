@@ -87,19 +87,36 @@ The intent-generation functionalities are separated into two different modules, 
 
 ### Execution <a name="execution"></a>
 
+#### Option 1: Docker
+The simplest way to deploy the code is to employ Dockerized environments. To do so, you need Docker installed and the Docker daemon running. Then, execute the following command in the root folder of the repository:
+
+   ```bash
+   docker-compose up --build  
+   ```
+
+This line will both build the containers (which will take around 5 minutes) and the deploy the system. To access the functionalities, open a new browser window in _localhost:9000_.
+
+For subsequent deployments, you can execute the following line, which will simply deploy the containers (not build them):
+
+   ```bash
+   docker-compose up 
+   ```
+
+#### Option 2: Scripts
 We provide two script to easily deploy the system (*start_apis*, in the root folder): one for Windows (*.bat*) and another for Linux (*.sh*). Simply execute the corresponding file regarding your system and both the frontend and all the necessary APIs will be launched (please note the potential error that can be triggered with Quasar; see below).
 
+#### Option 3: Manual deplyment
 Alternatively, you can manually launch all the necessary processes.
 
 1. Go to `Intents2Workflows/backend/api`. Launch the main backend API with the following line:
 
    ```bash
-   uvicorn main:app --port=8080     
+   uvicorn main:app --port=9001    
    ```
 2. Go to `Intents2Workflows/modules/IntentSpecification2WorkflowGenerator`. Launch the intent to workflows API with the following line:
 
    ```bash
-   flask --app api\api_main.py run --port=8000
+   flask --app api\api_main.py run --port=9002
    ```
 3. Go to `Intents2Workflows/modules/IntentAnticipation`. Launch the intent capturing APIs (there are two) with the following line:
 
