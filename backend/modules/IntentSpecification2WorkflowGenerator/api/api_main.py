@@ -1,6 +1,6 @@
 import os
 import shutil
-from os import abort
+import os
 from pathlib import Path
 
 import proactive
@@ -48,7 +48,7 @@ def run_abstract_planner():
     
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
+    shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
     intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
@@ -106,7 +106,7 @@ def run_logical_planner():
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     extended_ontology = ontology.parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
+    shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     # The algorithms come from the frontend in String format. We need to change them back to URIRefs
     algorithm_implementations_uris = convert_strings_to_uris(algorithm_implementations)
