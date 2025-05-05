@@ -357,7 +357,7 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
         component_rules = graph_queries.retreive_component_rules(graph, task, component)
         score = 0
 
-        preferred_components[component] = score
+        preferred_components[component] = (score,1)
 
         for datatag, weight_rank in component_rules.items():
             rule_weight = weight_rank[0]
@@ -368,7 +368,7 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
                 score-=rule_weight
                 
             preferred_components[component] = (score, component_rank)
-        
+
     sorted_preferred = sorted(preferred_components.items(), key=lambda x: x[1][0], reverse=True)
 
     if len(sorted_preferred) > 0: ### there are multiple components to choose from
@@ -385,11 +385,12 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
     return sorted_components
 
 
-def prune_workflow_combinations(ontology:Graph, shape_graph:Graph, combinations: List[Tuple[int,URIRef]], main_component:URIRef) -> List[Tuple[int,URIRef]]:
+def prune_workflow_combinations(ontology:Graph, shape_graph:Graph, combinations: List[Tuple[int,URIRef]]) -> List[Tuple[int,URIRef]]:
         
         temporal_graph = ontology #WARNING: temporal_graph is just an alias. Ontology is modified.
         combinations_constrained = []
         for i, tc in combinations:
+            main_component:URIRef = tc[-1]
             workflow_name = f'workflow_{main_component.fragment}_{i}'
             workflow = tb.term(workflow_name)
             temporal_graph.add((workflow, RDF.type, tb.Workflow))
@@ -397,13 +398,17 @@ def prune_workflow_combinations(ontology:Graph, shape_graph:Graph, combinations:
             triples_to_add = []
             triples_to_add.append((workflow, tb.hasComponent, main_component, temporal_graph))
 
-            for component in tc:
+            for component in tc[:-1]:
                 triples_to_add.append((workflow, tb.hasComponent, component, temporal_graph))  
             
             temporal_graph.addN(triples_to_add)
 
             if satisfies_shape(temporal_graph, shape_graph, shape=ab.WorkflowConstraint, focus=workflow):
                 combinations_constrained.append(tc)
+            
+            temporal_graph.remove((workflow, RDF.type, tb.Workflow))
+            for triple in triples_to_add:
+                temporal_graph.remove(triple[:-1])
         return list(enumerate(combinations_constrained))
 
     
@@ -605,6 +610,64 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
     
     return algs, pot_impls
 
+def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset, implementation, max_imp_level, log: bool = False):
+
+    tqdm.write("Recursive: " + str(implementation))
+    
+    inputs = graph_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
+
+    shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
+    assert shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0
+    if log:
+        tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
+
+    unsatisfied_shapes = [shape for shape in shapes_to_satisfy if
+                            not satisfies_shape(ontology, ontology, shape, dataset)]
+    print(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
+
+    available_transformations = { shape: [] 
+                                    for shape in unsatisfied_shapes}
+
+    for shape in unsatisfied_shapes:
+        for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
+            #available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
+            transformations = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=True)
+            if transformations is None:
+                return None
+            available_transformations[shape].extend(transformations)
+
+    print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
+        
+    if log:
+        tqdm.write(f'\tUnsatisfied shapes: ')
+        for shape, transformations in available_transformations.items():
+            tqdm.write(f'\t\t{shape.fragment}: {[x for x in transformations]}')
+
+    if len(unsatisfied_shapes) > 0 and len(available_transformations) > 0:
+        transformation_combinations = list(
+            itertools.product(*available_transformations.values(),[implementation]))
+    elif len(unsatisfied_shapes) > 0:
+        return None
+    else:  
+        transformation_combinations = [implementation]
+    
+    tqdm.write("Trs_comb = " + str(transformation_combinations))
+    
+
+    transformation_combinations_constrained = transformation_combinations #prune_workflow_combinations(ontology, shape_graph, transformation_combinations,component)
+    #ontology.serialize('./tmp.ttl',format="turtle")
+    if log:
+        tqdm.write(f'\tTotal combinations: {len(transformation_combinations_constrained)}')
+
+    for i, transformation_combination in tqdm(enumerate(transformation_combinations_constrained), desc='Transformations', position=0,
+                                                leave=False):
+        if log:
+            tqdm.write(
+                f'\t\tCombination {i + 1} / {len(transformation_combinations_constrained)}: {[transformation_combination]}')
+    
+    return transformation_combinations_constrained
+    
+
 def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, pot_impls, log: bool = False) -> List[Graph]:
 
     dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
@@ -616,91 +679,57 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
         tqdm.write(f'Maximum complexity level: {max_imp_level}')
         tqdm.write('-------------------------------------------------')
 
-    impls_with_shapes = [
-        (implementation, graph_queries.get_implementation_input_specs(ontology, implementation,max_imp_level))
-        for implementation in pot_impls]
+    options = []
+    for imp in pot_impls:
+        result = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=True)
+        if not result is None and result != []:
+            options.append(result)
     
-    components = [
-        (c, impl, inputs)
-        for impl, inputs in impls_with_shapes
-        for c in get_implementation_components_constrained(ontology, shape_graph, impl)
-    ]
+    component_options = []
 
+    for option in options:
+        for plan in option:
+            option_element = []
+            for implementation in plan:
+                available_components = get_implementation_components_constrained(ontology, shape_graph, implementation)
+                best_components = get_best_components(ontology, task, available_components, dataset, component_threshold)
+                option_element.append(best_components)
+            component_options.append(option_element)
+    plans = []
 
-    if log:
-        for component, implementation, inputs in components:
-            tqdm.write(f'Component: {component.fragment} ({implementation.fragment})')
-            for im_input in inputs:
-                tqdm.write(f'\tInput: {[x.fragment for x in im_input]}')
-        tqdm.write('-------------------------------------------------')
+    for option in component_options:
+        plans.extend(itertools.product(*option))
 
+    transformation_combinations = list(enumerate(plans))
     workflow_order = 0
     workflows = []
 
+    transformation_combinations_constrained = prune_workflow_combinations(ontology, shape_graph, transformation_combinations)
+    #ontology.serialize('./tmp.ttl',format="turtle")
+    if log:
+        tqdm.write(f'\tTotal combinations: {len(transformation_combinations_constrained)}')
 
-    for component, implementation, inputs in tqdm(components, desc='Components', position=1):
+    for i, transformation_combination in tqdm(transformation_combinations_constrained, desc='Transformations', position=0,
+                                                leave=False):
         if log:
-            tqdm.write(f'Component: {component.fragment} ({implementation.fragment})')
-        shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
-        assert shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0
-        if log:
-            tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
+            tqdm.write(
+                f'\t\tCombination {i + 1} / {len(transformation_combinations_constrained)}: {[x.fragment for x in transformation_combination]}')
 
-        unsatisfied_shapes = [shape for shape in shapes_to_satisfy if
-                              not satisfies_shape(ontology, ontology, shape, dataset)]
-        print(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
+        workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
 
-        available_transformations = { shape: []
-                                     for shape in unsatisfied_shapes}
+        component = transformation_combination[-1]
+        print("COMPONENT: ",component)
+        
+        wg, w = build_general_workflow(workflow_name, ontology, dataset, component,
+                                        transformation_combination[:-1], intent_graph = intent_graph)
 
-        for shape in unsatisfied_shapes:
-            for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
-                available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
- 
-        print(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
-        for tr, methods in available_transformations.items():
-            tqdm.write(f'METHOD: {str(tr)}, {str(methods)}')
-            tqdm.write(f'COMPONENT THRESHOLD: {str(component_threshold)}')
-
-            best_components = get_best_components(ontology, task, methods, dataset, component_threshold)
-
-            available_transformations[tr] = list(best_components.keys())
-
-        print(f'REFINED TRANSFORMATIONS: {available_transformations}')
-                    
-
+        wg.add((w, tb.generatedFor, intent_iri))
+        wg.add((intent_iri, RDF.type, tb.Intent))
 
         if log:
-            tqdm.write(f'\tUnsatisfied shapes: ')
-            for shape, transformations in available_transformations.items():
-                tqdm.write(f'\t\t{shape.fragment}: {[x.fragment for x in transformations]}')
+            tqdm.write(f'\t\tWorkflow {workflow_order}: {w.fragment}')
 
-        transformation_combinations = list(
-            enumerate(itertools.product(*available_transformations.values())))
-
-        transformation_combinations_constrained = prune_workflow_combinations(ontology, shape_graph, transformation_combinations,component)
-        #ontology.serialize('./tmp.ttl',format="turtle")
-        if log:
-            tqdm.write(f'\tTotal combinations: {len(transformation_combinations_constrained)}')
-
-        for i, transformation_combination in tqdm(transformation_combinations_constrained, desc='Transformations', position=0,
-                                                  leave=False):
-            if log:
-                tqdm.write(
-                    f'\t\tCombination {i + 1} / {len(transformation_combinations_constrained)}: {[x.fragment for x in transformation_combination]}')
-
-            workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
-            
-            wg, w = build_general_workflow(workflow_name, ontology, dataset, component,
-                                           transformation_combination, intent_graph = intent_graph)
-
-            wg.add((w, tb.generatedFor, intent_iri))
-            wg.add((intent_iri, RDF.type, tb.Intent))
-
-            if log:
-                tqdm.write(f'\t\tWorkflow {workflow_order}: {w.fragment}')
-
-            workflows.append(wg)
-            workflow_order += 1
+        workflows.append(wg)
+        workflow_order += 1
     return workflows
     
