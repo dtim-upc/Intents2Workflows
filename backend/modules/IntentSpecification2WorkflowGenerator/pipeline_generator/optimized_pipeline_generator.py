@@ -16,6 +16,9 @@ sys.path.append(os.path.join(os.path.abspath(os.path.join('..'))))
 from common import *
 import pipeline_generator.graph_queries as graph_queries
 
+MAX_PLAN_LENGTH = 20
+
+
 def get_intent_name(plan_graph:Graph) -> str:
     intent_iri = graph_queries.get_intent_iri(plan_graph)
     return intent_iri.fragment
@@ -610,14 +613,17 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
     
     return algs, pot_impls
 
-def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset, implementation, max_imp_level, log: bool = False):
+def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset, implementation, max_imp_level, log: bool = False, depth = 0):
 
     tqdm.write("Recursive: " + str(implementation))
     
     inputs = graph_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
 
     shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
-    assert shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0
+    
+    if shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0:
+        return None
+    
     if log:
         tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
 
@@ -631,7 +637,9 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
     for shape in unsatisfied_shapes:
         for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
             #available_transformations[shape].extend(get_implementation_components_constrained(ontology,shape_graph,imp))
-            transformations = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=True)
+            if depth >= MAX_PLAN_LENGTH:
+                return None
+            transformations = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=True, depth=depth+1)
             if transformations is None:
                 return None
             available_transformations[shape].extend(transformations)
