@@ -12,6 +12,10 @@ dolce:hasQuality a owl:ObjectProperty ;
     rdfs:range tb:DataCharacteristics,
         tb:WorkflowCharacterisitics .
 
+dmop:TabularDataset rdfs:subClassOf tb:Dataset .
+
+dmop:TensorDataset rdfs:subClassOf tb:Dataset .
+
 dmop:containsNulls rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
 
 dmop:containsOutliers rdfs:subPropertyOf dmop:DatasetInfoProperty .
@@ -83,6 +87,10 @@ tb:PlotProperties a owl:Class .
 tb:PlotType a owl:Class .
 
 tb:WorkflowCharacteristics a owl:Class .
+
+tb:constraintType a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range xsd:string .
 
 tb:copy_input a owl:DatatypeProperty ;
     rdfs:domain tb:CopyTransformation ;
@@ -348,6 +356,8 @@ tb:CopyTransformation a owl:Class ;
 
 tb:DataCharacteristics a owl:Class .
 
+tb:Dataset a owl:Class .
+
 tb:Metric a owl:Class .
 
 tb:ParameterValue a owl:Class .
@@ -371,8 +381,6 @@ tb:DataSpecTag a owl:Class .
 
 tb:EvaluationRequirement a owl:Class .
 
-tb:ExperimentConstraint a owl:Class .
-
 tb:ModelEvaluation a owl:Class .
 
 tb:ParameterSpecification a owl:Class .
@@ -388,6 +396,8 @@ tb:ApplierImplementation a owl:Class ;
     rdfs:subClassOf tb:Implementation .
 
 tb:DataSpec a owl:Class .
+
+tb:ExperimentConstraint a owl:Class .
 
 tb:LearnerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;

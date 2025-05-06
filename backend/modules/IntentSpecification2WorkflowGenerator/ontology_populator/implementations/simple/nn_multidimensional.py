@@ -9,7 +9,7 @@ nn_multi_learner_implementation = Implementation(
         Parameter("NN type", XSD.string, None),
     ],
     input=[
-        [cb.LabeledTensorDatasetShape, cb.TrainTabularDatasetShape],
+        [cb.LabeledTensorDatasetShape, cb.TrainTensorDatasetShape],
     ],
     output=[
         cb.NNModel,
@@ -80,7 +80,7 @@ nn_multi_predictor_implementation = Implementation(
     ],
     input=[
         cb.NNModel,
-        [cb.TestTabularDatasetShape,cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
+        [cb.TestTensorDatasetShape]
     ],
     output=[
         cb.TabularDatasetShape,

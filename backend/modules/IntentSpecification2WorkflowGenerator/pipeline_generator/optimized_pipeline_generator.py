@@ -16,7 +16,7 @@ sys.path.append(os.path.join(os.path.abspath(os.path.join('..'))))
 from common import *
 import pipeline_generator.graph_queries as graph_queries
 
-MAX_PLAN_LENGTH = 20
+MAX_PLAN_LENGTH = 10
 
 
 def get_intent_name(plan_graph:Graph) -> str:
@@ -282,7 +282,7 @@ def copy_subgraph(source_graph: Graph, source_node: URIRef, destination_graph: G
 def annotate_io_with_spec(ontology: Graph, workflow_graph: Graph, io: URIRef, io_spec: List[URIRef]) -> None:
     
     for spec in io_spec:
-        
+
         io_spec_class = next(ontology.objects(spec, SH.targetClass, True), None)
 
         if io_spec_class is None or (io, RDF.type, io_spec_class) in workflow_graph:

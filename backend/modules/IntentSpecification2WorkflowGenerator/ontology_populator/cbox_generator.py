@@ -369,6 +369,11 @@ def add_shapes(cbox):
     cbox.add((cb.TrainTabularDatasetShape, SH.property, cb.isTrainConstraint))
     cbox.add((cb.TrainTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
 
+    cbox.add((cb.TrainTensorDatasetShape, RDF.type, SH.NodeShape))
+    cbox.add((cb.TrainTensorDatasetShape, RDF.type, tb.DataTag))
+    cbox.add((cb.TrainTensorDatasetShape, SH.property, cb.isTrainConstraint))
+    cbox.add((cb.TrainTensorDatasetShape, SH.targetClass, dmop.TensorDataset))
+
     # TestTabularDatasetShape
     cbox.add((cb.isTestConstraint, RDF.type, SH.PropertyConstraintComponent))
     cbox.add((cb.isTestConstraint, SH.path, dmop.isTestDataset))
@@ -379,6 +384,11 @@ def add_shapes(cbox):
     cbox.add((cb.TestTabularDatasetShape, RDF.type, tb.DataTag))
     cbox.add((cb.TestTabularDatasetShape, SH.property, cb.isTestConstraint))
     cbox.add((cb.TestTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
+
+    cbox.add((cb.TestTensorDatasetShape, RDF.type, SH.NodeShape))
+    cbox.add((cb.TestTensorDatasetShape, RDF.type, tb.DataTag))
+    cbox.add((cb.TestTensorDatasetShape, SH.property, cb.isTestConstraint))
+    cbox.add((cb.TestTensorDatasetShape, SH.targetClass, dmop.TensorDataset))
 
 
     ####################################################################################################################
