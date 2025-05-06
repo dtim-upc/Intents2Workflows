@@ -568,13 +568,10 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
         task_order += 1
-        print(train_component, dataset_node, test_dataset_node, model_node)
          
 
         if test_component:
-            print("same = ",same)
             previous_test_steps = [previous_test_step, step] if not same else [previous_test_step]
-            print(test_component, previous_test_steps, test_dataset_node, model_node)
 
             test_step, test_dataset_node, _, _,engine  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
                             task_order, previous_test_steps, test_dataset_node, model_node)
@@ -583,7 +580,6 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
             knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
             task_order += 1
-            print(test_component, test_dataset_node)
         else:
             previous_test_step = step
     

@@ -29,6 +29,9 @@ class Component:
         self.implementation = implementation
         self.transformations = transformations
         self.overriden_parameters = overriden_parameters if overriden_parameters is not None else []
+        for param in self.overriden_parameters:
+            param.uri_ref = namespace[f'{self.url_name}-{param.url_name}']
+
         self.exposed_parameters = exposed_parameters if exposed_parameters is not None else []
         self.rules = rules if rules else []
         self.component_type = {

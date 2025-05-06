@@ -22,8 +22,6 @@ tensor_partitioning_implementation = Implementation(
 
 )
 
-implementation_parameters = tensor_partitioning_implementation.parameters
-
 tensor_random_relative_train_test_split_component = Component(
     name='Random Relative Train-Test Split (Tensor)',
     implementation=tensor_partitioning_implementation,

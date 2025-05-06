@@ -1,4 +1,3 @@
-@prefix ab: <https://extremexp.eu/ontology/abox#> .
 @prefix cb: <https://extremexp.eu/ontology/cbox#> .
 @prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -179,7 +178,7 @@ cb:component-bar_chart_average_component a tb:VisualizerComponent ;
         cb:implementation-bar_chart_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-bar_chart_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:bar_aggregation_average_specification .
+    tb:overridesParameter cb:component-bar_chart_average_component-bar_aggregation_average_specification .
 
 cb:component-bar_chart_count_component a tb:VisualizerComponent ;
     rdfs:label "Bar Chart Count Component" ;
@@ -187,7 +186,7 @@ cb:component-bar_chart_count_component a tb:VisualizerComponent ;
         cb:implementation-bar_chart_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-bar_chart_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:bar_aggregation_occurence_count_specification .
+    tb:overridesParameter cb:component-bar_chart_count_component-bar_aggregation_occurence_count_specification .
 
 cb:component-bar_chart_sum_component a tb:VisualizerComponent ;
     rdfs:label "Bar Chart Sum Component" ;
@@ -195,7 +194,7 @@ cb:component-bar_chart_sum_component a tb:VisualizerComponent ;
         cb:implementation-bar_chart_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-bar_chart_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:bar_aggregation_sum_specification .
+    tb:overridesParameter cb:component-bar_chart_sum_component-bar_aggregation_sum_specification .
 
 cb:component-csv_local_reader a tb:Component ;
     rdfs:label "CSV Local reader" ;
@@ -204,8 +203,8 @@ cb:component-csv_local_reader a tb:Component ;
     tb:hasTransformation ( [ a tb:LoaderTransformation ;
                 tb:transformation_language "LOADER" ;
                 tb:transformation_query "Set dataset AS output " ] ) ;
-    tb:overridesParameter ab:reader_filesystem_local_specification,
-        ab:reader_location_flag_true_specification .
+    tb:overridesParameter cb:component-csv_local_reader-reader_filesystem_local_specification,
+        cb:component-csv_local_reader-reader_location_flag_true_specification .
 
 cb:component-csv_local_writer a tb:Component ;
     rdfs:label "CSV Local writer" ;
@@ -221,8 +220,8 @@ cb:component-csv_local_writer a tb:Component ;
         cb:implementation-csv_writer-writer_file ;
     tb:hasImplementation cb:implementation-csv_writer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:writer_filesystem_local_specification,
-        ab:writer_location_flag_true_specification .
+    tb:overridesParameter cb:component-csv_local_writer-writer_filesystem_local_specification,
+        cb:component-csv_local_writer-writer_location_flag_true_specification .
 
 cb:component-data_reader_component a tb:Component ;
     rdfs:label "Data Reader component" ;
@@ -263,7 +262,7 @@ cb:component-histogram_average_visualizer a tb:VisualizerComponent ;
         cb:implementation-histogram_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-histogram_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:histogram_aggregation_average_specification .
+    tb:overridesParameter cb:component-histogram_average_visualizer-histogram_aggregation_average_specification .
 
 cb:component-histogram_count_visualizer a tb:VisualizerComponent ;
     rdfs:label "Histogram Count Visualizer" ;
@@ -271,7 +270,7 @@ cb:component-histogram_count_visualizer a tb:VisualizerComponent ;
         cb:implementation-histogram_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-histogram_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:histogram_aggregation_occurence_count_specification .
+    tb:overridesParameter cb:component-histogram_count_visualizer-histogram_aggregation_occurence_count_specification .
 
 cb:component-histogram_sum_visualizer a tb:VisualizerComponent ;
     rdfs:label "Histogram Sum Visualizer" ;
@@ -279,7 +278,7 @@ cb:component-histogram_sum_visualizer a tb:VisualizerComponent ;
         cb:implementation-histogram_visualizer-included_frequency_columns ;
     tb:hasImplementation cb:implementation-histogram_visualizer ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:histogram_aggregation_sum_specification .
+    tb:overridesParameter cb:component-histogram_sum_visualizer-histogram_aggregation_sum_specification .
 
 cb:component-line_plot_visualizer a tb:VisualizerComponent ;
     rdfs:label "Line Plot Visualizer" ;
@@ -298,7 +297,7 @@ cb:component-pie_chart_average_visualizer a tb:VisualizerComponent ;
         cb:implementation-pie_donut_chart-pie_chart_category ;
     tb:hasImplementation cb:implementation-pie_donut_chart ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:pie_aggregation_average_specification .
+    tb:overridesParameter cb:component-pie_chart_average_visualizer-pie_aggregation_average_specification .
 
 cb:component-pie_chart_count_visualizer a tb:VisualizerComponent ;
     rdfs:label "Pie Chart Count Visualizer" ;
@@ -306,7 +305,7 @@ cb:component-pie_chart_count_visualizer a tb:VisualizerComponent ;
         cb:implementation-pie_donut_chart-pie_chart_category ;
     tb:hasImplementation cb:implementation-pie_donut_chart ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:pie_aggregation_occurence_count_specification .
+    tb:overridesParameter cb:component-pie_chart_count_visualizer-pie_aggregation_occurence_count_specification .
 
 cb:component-pie_chart_sum_visualizer a tb:VisualizerComponent ;
     rdfs:label "Pie Chart Sum Visualizer" ;
@@ -314,7 +313,7 @@ cb:component-pie_chart_sum_visualizer a tb:VisualizerComponent ;
         cb:implementation-pie_donut_chart-pie_chart_category ;
     tb:hasImplementation cb:implementation-pie_donut_chart ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:pie_aggregation_sum_specification .
+    tb:overridesParameter cb:component-pie_chart_sum_visualizer-pie_aggregation_sum_specification .
 
 cb:component-random_absolute_train_test_split a tb:Component ;
     rdfs:label "Random Absolute Train-Test Split" ;
@@ -352,8 +351,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:sampling_method_random_specification,
-        ab:size_of_first_partition_absolute_specification .
+    tb:overridesParameter cb:component-random_absolute_train_test_split-sampling_method_random_specification,
+        cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification .
 
 cb:component-random_absolute_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Random Absolute Train-Test Split (Tensor)" ;
@@ -391,8 +390,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:partition_method_absolute_specification,
-        ab:sampling_method_random_specification .
+    tb:overridesParameter cb:component-random_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
+        cb:component-random_absolute_train_test_split_\(tensor\)-sampling_method_random_specification .
 
 cb:component-random_relative_train_test_split a tb:Component ;
     rdfs:label "Random Relative Train-Test Split" ;
@@ -430,8 +429,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:sampling_method_random_specification,
-        ab:size_of_first_partition_relative_specification .
+    tb:overridesParameter cb:component-random_relative_train_test_split-sampling_method_random_specification,
+        cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification .
 
 cb:component-random_relative_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Random Relative Train-Test Split (Tensor)" ;
@@ -469,8 +468,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:partition_method_relative_specification,
-        ab:sampling_method_random_specification .
+    tb:overridesParameter cb:component-random_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
+        cb:component-random_relative_train_test_split_\(tensor\)-sampling_method_random_specification .
 
 cb:component-scatter_plot_visualizer a tb:VisualizerComponent ;
     rdfs:label "Scatter Plot Visualizer" ;
@@ -527,8 +526,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:sampling_method_first_specification,
-        ab:size_of_first_partition_absolute_specification .
+    tb:overridesParameter cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
+        cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification .
 
 cb:component-top_k_absolute_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Top K Absolute Train-Test Split (Tensor)" ;
@@ -565,8 +564,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:partition_method_absolute_specification,
-        ab:sampling_method_first_specification .
+    tb:overridesParameter cb:component-top_k_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
+        cb:component-top_k_absolute_train_test_split_\(tensor\)-sampling_method_first_specification .
 
 cb:component-top_k_relative_train_test_split a tb:Component ;
     rdfs:label "Top K Relative Train-Test Split" ;
@@ -603,8 +602,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:sampling_method_first_specification,
-        ab:size_of_first_partition_relative_specification .
+    tb:overridesParameter cb:component-top_k_relative_train_test_split-sampling_method_first_specification,
+        cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification .
 
 cb:component-top_k_relative_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Top K Relative Train-Test Split (Tensor)" ;
@@ -641,8 +640,8 @@ WHERE {
     BIND(?rows1 - ?newRows1 AS ?newRows2)
 }
 """ ] ) ;
-    tb:overridesParameter ab:partition_method_relative_specification,
-        ab:sampling_method_first_specification .
+    tb:overridesParameter cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
+        cb:component-top_k_relative_train_test_split_\(tensor\)-sampling_method_first_specification .
 
 cb:usingGPU a tb:ExperimentConstraint ;
     rdfs:label "GPU" ;
@@ -783,7 +782,7 @@ cb:component-convolutional_nn_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_predictor ;
     tb:hasImplementation cb:implementation-nn_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_convolutional_specification .
+    tb:overridesParameter cb:component-convolutional_nn_learner-nn_type_convolutional_specification .
 
 cb:component-convolutional_nn_multidimensional_learner a tb:LearnerComponent ;
     rdfs:label "Convolutional NN Multidimensional Learner" ;
@@ -791,7 +790,7 @@ cb:component-convolutional_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_multidimensional_predictor ;
     tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_convolutional_specification .
+    tb:overridesParameter cb:component-convolutional_nn_multidimensional_learner-nn_type_convolutional_specification .
 
 cb:component-decimal_scaling a tb:LearnerComponent ;
     rdfs:label "Decimal Scaling" ;
@@ -842,7 +841,7 @@ INSERT DATA {
     $output2 cb:normalizationMode "Decimal".
 }
             """ ] ) ;
-    tb:overridesParameter ab:normalization_mode_3_specification .
+    tb:overridesParameter cb:component-decimal_scaling-normalization_mode_3_specification .
 
 cb:component-decision_tree_learner a tb:LearnerComponent ;
     rdfs:label "Decision Tree Learner" ;
@@ -912,9 +911,9 @@ INSERT DATA {
     $output2 cb:removesProperty dmop:numberOfRows.
 }
 """ ] ) ;
-    tb:overridesParameter ab:float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
-        ab:integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
-        ab:string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification .
+    tb:overridesParameter cb:component-drop_rows_with_missing_values-float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
+        cb:component-drop_rows_with_missing_values-integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
+        cb:component-drop_rows_with_missing_values-string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification .
 
 cb:component-feedforward_nn_learner a tb:LearnerComponent ;
     rdfs:label "FeedForward NN Learner" ;
@@ -922,7 +921,7 @@ cb:component-feedforward_nn_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_predictor ;
     tb:hasImplementation cb:implementation-nn_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_feedforward_specification .
+    tb:overridesParameter cb:component-feedforward_nn_learner-nn_type_feedforward_specification .
 
 cb:component-feedforward_nn_multidimensional_learner a tb:LearnerComponent ;
     rdfs:label "FeedForward NN Multidimensional Learner" ;
@@ -930,7 +929,7 @@ cb:component-feedforward_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_multidimensional_predictor ;
     tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_feedforward_specification .
+    tb:overridesParameter cb:component-feedforward_nn_multidimensional_learner-nn_type_feedforward_specification .
 
 cb:component-hypertangent_svm_learner a tb:LearnerComponent ;
     rdfs:label "HyperTangent SVM Learner" ;
@@ -944,7 +943,7 @@ INSERT DATA{
     $output1 cb:setsClassColumnName $parameter1 .
 }
             """ ] ) ;
-    tb:overridesParameter ab:kernel_type_hypertangent_specification .
+    tb:overridesParameter cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification .
 
 cb:component-lstm_nn_learner a tb:LearnerComponent ;
     rdfs:label "LSTM NN Learner" ;
@@ -952,7 +951,7 @@ cb:component-lstm_nn_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_predictor ;
     tb:hasImplementation cb:implementation-nn_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_lstm_specification .
+    tb:overridesParameter cb:component-lstm_nn_learner-nn_type_lstm_specification .
 
 cb:component-lstm_nn_multidimensional_learner a tb:LearnerComponent ;
     rdfs:label "LSTM NN Multidimensional Learner" ;
@@ -960,7 +959,7 @@ cb:component-lstm_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_multidimensional_predictor ;
     tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_lstm_specification .
+    tb:overridesParameter cb:component-lstm_nn_multidimensional_learner-nn_type_lstm_specification .
 
 cb:component-mean_imputation a tb:LearnerComponent ;
     rdfs:label "Mean Imputation" ;
@@ -989,9 +988,9 @@ WHERE {
     ?column dmop:containsNulls true.
 }
 """ ] ) ;
-    tb:overridesParameter ab:float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
-        ab:integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
-        ab:string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification .
+    tb:overridesParameter cb:component-mean_imputation-float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
+        cb:component-mean_imputation-integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
+        cb:component-mean_imputation-string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification .
 
 cb:component-min_max_scaling a tb:LearnerComponent ;
     rdfs:label "Min-Max Scaling" ;
@@ -1000,13 +999,13 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
@@ -1048,7 +1047,7 @@ INSERT DATA {
              cb:newMax $parameter3.
 }
             """ ] ) ;
-    tb:overridesParameter ab:normalization_mode_1_specification .
+    tb:overridesParameter cb:component-min_max_scaling-normalization_mode_1_specification .
 
 cb:component-polynomial_svm_learner a tb:LearnerComponent ;
     rdfs:label "Polynomial SVM Learner" ;
@@ -1067,7 +1066,7 @@ WHERE {
             dmop:hasColumnName ?label .
 }
             """ ] ) ;
-    tb:overridesParameter ab:kernel_type_polynomial_specification .
+    tb:overridesParameter cb:component-polynomial_svm_learner-kernel_type_polynomial_specification .
 
 cb:component-rbf_svm_learner a tb:LearnerComponent ;
     rdfs:label "RBF SVM Learner" ;
@@ -1081,7 +1080,7 @@ INSERT DATA{
     $output1 cb:setsClassColumnName $parameter1 .
 }
             """ ] ) ;
-    tb:overridesParameter ab:kernel_type_rbf_specification .
+    tb:overridesParameter cb:component-rbf_svm_learner-kernel_type_rbf_specification .
 
 cb:component-recurrent_nn_learner a tb:LearnerComponent ;
     rdfs:label "Recurrent NN Learner" ;
@@ -1089,7 +1088,7 @@ cb:component-recurrent_nn_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_predictor ;
     tb:hasImplementation cb:implementation-nn_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_recurrent_specification .
+    tb:overridesParameter cb:component-recurrent_nn_learner-nn_type_recurrent_specification .
 
 cb:component-recurrent_nn_multidimensional_learner a tb:LearnerComponent ;
     rdfs:label "Recurrent NN Multidimensional Learner" ;
@@ -1097,7 +1096,7 @@ cb:component-recurrent_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasApplier cb:component-nn_multidimensional_predictor ;
     tb:hasImplementation cb:implementation-nn_multidimensional_learner ;
     tb:hasTransformation [ rdf:rest () ] ;
-    tb:overridesParameter ab:nn_type_recurrent_specification .
+    tb:overridesParameter cb:component-recurrent_nn_multidimensional_learner-nn_type_recurrent_specification .
 
 cb:component-xgboost_linear_learner a tb:LearnerComponent ;
     rdfs:label "XGBoost Linear Learner" ;
@@ -1144,13 +1143,13 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1186,7 +1185,7 @@ INSERT DATA {
     $output2 cb:normalizationMode "ZScore".
 }
             """ ] ) ;
-    tb:overridesParameter ab:normalization_mode_2_specification .
+    tb:overridesParameter cb:component-z_score_scaling-normalization_mode_2_specification .
 
 cb:floatTypeConstraint a sh:PropertyShape ;
     sh:hasValue dmop:Float ;
@@ -1231,9 +1230,9 @@ cb:implementation-bar_chart_visualizer-bar_aggregation a tb:Parameter ;
     tb:has_position 9 ;
     tb:knime_key "aggr" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:bar_aggregation_average_specification,
-        ab:bar_aggregation_occurence_count_specification,
-        ab:bar_aggregation_sum_specification .
+    tb:specifiedBy cb:component-bar_chart_average_component-bar_aggregation_average_specification,
+        cb:component-bar_chart_count_component-bar_aggregation_occurence_count_specification,
+        cb:component-bar_chart_sum_component-bar_aggregation_sum_specification .
 
 cb:implementation-bar_chart_visualizer-bar_chart_orientation a tb:Parameter ;
     rdfs:label "Bar Chart Orientation" ;
@@ -2984,7 +2983,7 @@ cb:implementation-csv_reader-reader_filesystem a tb:Parameter ;
     tb:has_position 2 ;
     tb:knime_key "file_system_type" ;
     tb:knime_path "model/settings/file_selection/path" ;
-    tb:specifiedBy ab:reader_filesystem_local_specification .
+    tb:specifiedBy cb:component-csv_local_reader-reader_filesystem_local_specification .
 
 cb:implementation-csv_reader-reader_location_flag a tb:Parameter ;
     rdfs:label "Reader Location flag" ;
@@ -2995,7 +2994,7 @@ cb:implementation-csv_reader-reader_location_flag a tb:Parameter ;
     tb:has_position 1 ;
     tb:knime_key "location_present" ;
     tb:knime_path "model/settings/file_selection/path" ;
-    tb:specifiedBy ab:reader_location_flag_true_specification .
+    tb:specifiedBy cb:component-csv_local_reader-reader_location_flag_true_specification .
 
 cb:implementation-csv_reader-relative_to a tb:Parameter ;
     rdfs:label "relative_to" ;
@@ -3477,7 +3476,7 @@ cb:implementation-csv_writer-writer_filesystem a tb:Parameter ;
     tb:has_position 2 ;
     tb:knime_key "file_system_type" ;
     tb:knime_path "model/settings/file_chooser_settings/path" ;
-    tb:specifiedBy ab:writer_filesystem_local_specification .
+    tb:specifiedBy cb:component-csv_local_writer-writer_filesystem_local_specification .
 
 cb:implementation-csv_writer-writer_location_flag a tb:Parameter ;
     rdfs:label "Writer Location flag" ;
@@ -3488,7 +3487,7 @@ cb:implementation-csv_writer-writer_location_flag a tb:Parameter ;
     tb:has_position 1 ;
     tb:knime_key "location_present" ;
     tb:knime_path "model/settings/file_chooser_settings/path" ;
-    tb:specifiedBy ab:writer_location_flag_true_specification .
+    tb:specifiedBy cb:component-csv_local_writer-writer_location_flag_true_specification .
 
 cb:implementation-data_partitioning-class_columns a tb:Parameter ;
     rdfs:label "Class columns" ;
@@ -3509,8 +3508,10 @@ cb:implementation-data_partitioning-sampling_method a tb:Parameter ;
     tb:has_position 1 ;
     tb:knime_key "samplingMethod" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:sampling_method_first_specification,
-        ab:sampling_method_random_specification .
+    tb:specifiedBy cb:component-random_absolute_train_test_split-sampling_method_random_specification,
+        cb:component-random_relative_train_test_split-sampling_method_random_specification,
+        cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
+        cb:component-top_k_relative_train_test_split-sampling_method_first_specification .
 
 cb:implementation-data_partitioning-size_of_first_partition a tb:Parameter ;
     rdfs:label "Size of First Partition" ;
@@ -3521,8 +3522,10 @@ cb:implementation-data_partitioning-size_of_first_partition a tb:Parameter ;
     tb:has_position 0 ;
     tb:knime_key "method" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:size_of_first_partition_absolute_specification,
-        ab:size_of_first_partition_relative_specification .
+    tb:specifiedBy cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification,
+        cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification,
+        cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification,
+        cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification .
 
 cb:implementation-data_reader a tb:Implementation ;
     rdfs:label "Data Reader" ;
@@ -3838,10 +3841,10 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -5261,9 +5264,9 @@ cb:implementation-histogram_visualizer-histogram_aggregation a tb:Parameter ;
     tb:has_position 6 ;
     tb:knime_key "aggr" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:histogram_aggregation_average_specification,
-        ab:histogram_aggregation_occurence_count_specification,
-        ab:histogram_aggregation_sum_specification .
+    tb:specifiedBy cb:component-histogram_average_visualizer-histogram_aggregation_average_specification,
+        cb:component-histogram_count_visualizer-histogram_aggregation_occurence_count_specification,
+        cb:component-histogram_sum_visualizer-histogram_aggregation_sum_specification .
 
 cb:implementation-histogram_visualizer-histogram_orientation a tb:Parameter ;
     rdfs:label "Histogram Orientation" ;
@@ -6833,8 +6836,8 @@ cb:implementation-missing_value-float a tb:Parameter ;
     tb:has_position 2 ;
     tb:knime_key "factoryID" ;
     tb:knime_path "model/dataTypeSettings/org.knime.core.data.def.DoubleCell" ;
-    tb:specifiedBy ab:float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
-        ab:float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification .
+    tb:specifiedBy cb:component-drop_rows_with_missing_values-float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
+        cb:component-mean_imputation-float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification .
 
 cb:implementation-missing_value-float_settings a tb:Parameter ;
     rdfs:label "Float settings" ;
@@ -6855,8 +6858,8 @@ cb:implementation-missing_value-integer a tb:Parameter ;
     tb:has_position 0 ;
     tb:knime_key "factoryID" ;
     tb:knime_path "model/dataTypeSettings/org.knime.core.data.def.IntCell" ;
-    tb:specifiedBy ab:integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification,
-        ab:integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification .
+    tb:specifiedBy cb:component-drop_rows_with_missing_values-integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
+        cb:component-mean_imputation-integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification .
 
 cb:implementation-missing_value-integer_settings a tb:Parameter ;
     rdfs:label "Integer settings" ;
@@ -6877,8 +6880,8 @@ cb:implementation-missing_value-string a tb:Parameter ;
     tb:has_position 1 ;
     tb:knime_key "factoryID" ;
     tb:knime_path "model/dataTypeSettings/org.knime.core.data.def.StringCell" ;
-    tb:specifiedBy ab:string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification,
-        ab:string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification .
+    tb:specifiedBy cb:component-drop_rows_with_missing_values-string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification,
+        cb:component-mean_imputation-string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification .
 
 cb:implementation-missing_value-string_settings a tb:Parameter ;
     rdfs:label "String settings" ;
@@ -6927,10 +6930,10 @@ cb:implementation-nn_learner-nn_type a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "None" ;
     tb:has_position 1 ;
-    tb:specifiedBy ab:nn_type_convolutional_specification,
-        ab:nn_type_feedforward_specification,
-        ab:nn_type_lstm_specification,
-        ab:nn_type_recurrent_specification .
+    tb:specifiedBy cb:component-convolutional_nn_learner-nn_type_convolutional_specification,
+        cb:component-feedforward_nn_learner-nn_type_feedforward_specification,
+        cb:component-lstm_nn_learner-nn_type_lstm_specification,
+        cb:component-recurrent_nn_learner-nn_type_recurrent_specification .
 
 cb:implementation-nn_multidimensional_learner-nn_type a tb:Parameter ;
     rdfs:label "NN type" ;
@@ -6938,10 +6941,10 @@ cb:implementation-nn_multidimensional_learner-nn_type a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "None" ;
     tb:has_position 1 ;
-    tb:specifiedBy ab:nn_type_convolutional_specification,
-        ab:nn_type_feedforward_specification,
-        ab:nn_type_lstm_specification,
-        ab:nn_type_recurrent_specification .
+    tb:specifiedBy cb:component-convolutional_nn_multidimensional_learner-nn_type_convolutional_specification,
+        cb:component-feedforward_nn_multidimensional_learner-nn_type_feedforward_specification,
+        cb:component-lstm_nn_multidimensional_learner-nn_type_lstm_specification,
+        cb:component-recurrent_nn_multidimensional_learner-nn_type_recurrent_specification .
 
 cb:implementation-nn_multidimensional_predictor-add_probabilities a tb:Parameter ;
     rdfs:label "Add probabilities" ;
@@ -7018,9 +7021,9 @@ cb:implementation-normalizer_\(pmml\)-normalization_mode a tb:Parameter ;
     tb:has_position 0 ;
     tb:knime_key "mode" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:normalization_mode_1_specification,
-        ab:normalization_mode_2_specification,
-        ab:normalization_mode_3_specification .
+    tb:specifiedBy cb:component-decimal_scaling-normalization_mode_3_specification,
+        cb:component-min_max_scaling-normalization_mode_1_specification,
+        cb:component-z_score_scaling-normalization_mode_2_specification .
 
 cb:implementation-pie_donut_chart-aggi_enabledstatus a tb:Parameter ;
     rdfs:label "AGGI EnabledStatus" ;
@@ -7741,9 +7744,9 @@ cb:implementation-pie_donut_chart-pie_aggregation a tb:Parameter ;
     tb:has_position 6 ;
     tb:knime_key "aggr" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:pie_aggregation_average_specification,
-        ab:pie_aggregation_occurence_count_specification,
-        ab:pie_aggregation_sum_specification .
+    tb:specifiedBy cb:component-pie_chart_average_visualizer-pie_aggregation_average_specification,
+        cb:component-pie_chart_count_visualizer-pie_aggregation_occurence_count_specification,
+        cb:component-pie_chart_sum_visualizer-pie_aggregation_sum_specification .
 
 cb:implementation-pie_donut_chart-pimi_enabledstatus a tb:Parameter ;
     rdfs:label "PIMI EnabledStatus" ;
@@ -8175,14 +8178,14 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-scatter_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -8963,9 +8966,9 @@ cb:implementation-svm_learner-kernel_type a tb:Parameter ;
     tb:has_position 8 ;
     tb:knime_key "kernel_type" ;
     tb:knime_path "model" ;
-    tb:specifiedBy ab:kernel_type_hypertangent_specification,
-        ab:kernel_type_polynomial_specification,
-        ab:kernel_type_rbf_specification .
+    tb:specifiedBy cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification,
+        cb:component-polynomial_svm_learner-kernel_type_polynomial_specification,
+        cb:component-rbf_svm_learner-kernel_type_rbf_specification .
 
 cb:implementation-svm_learner-overlapping_penalty a tb:Parameter ;
     rdfs:label "Overlapping Penalty" ;
@@ -9050,8 +9053,10 @@ cb:implementation-tensor_data_partitioning-partition_method a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "None" ;
     tb:has_position 0 ;
-    tb:specifiedBy ab:partition_method_absolute_specification,
-        ab:partition_method_relative_specification .
+    tb:specifiedBy cb:component-random_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
+        cb:component-random_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
+        cb:component-top_k_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
+        cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification .
 
 cb:implementation-tensor_data_partitioning-sampling_method a tb:Parameter ;
     rdfs:label "Sampling method" ;
@@ -9059,8 +9064,10 @@ cb:implementation-tensor_data_partitioning-sampling_method a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "None" ;
     tb:has_position 1 ;
-    tb:specifiedBy ab:sampling_method_first_specification,
-        ab:sampling_method_random_specification .
+    tb:specifiedBy cb:component-random_absolute_train_test_split_\(tensor\)-sampling_method_random_specification,
+        cb:component-random_relative_train_test_split_\(tensor\)-sampling_method_random_specification,
+        cb:component-top_k_absolute_train_test_split_\(tensor\)-sampling_method_first_specification,
+        cb:component-top_k_relative_train_test_split_\(tensor\)-sampling_method_first_specification .
 
 cb:implementation-xgboost_linear_learner-alpha a tb:Parameter ;
     rdfs:label "Alpha" ;
@@ -9665,81 +9672,6 @@ cb:missingValueConstraint a sh:PropertyShape ;
     sh:maxInclusive 5e-02 ;
     sh:path dmop:missingvaluesPercentage .
 
-ab:bar_aggregation_average_specification a tb:ParameterSpecification ;
-    tb:hasValue "Average" .
-
-ab:bar_aggregation_occurence_count_specification a tb:ParameterSpecification ;
-    tb:hasValue "Occurence Count" .
-
-ab:bar_aggregation_sum_specification a tb:ParameterSpecification ;
-    tb:hasValue "Sum" .
-
-ab:float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory" .
-
-ab:float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
-
-ab:histogram_aggregation_average_specification a tb:ParameterSpecification ;
-    tb:hasValue "Average" .
-
-ab:histogram_aggregation_occurence_count_specification a tb:ParameterSpecification ;
-    tb:hasValue "Occurence Count" .
-
-ab:histogram_aggregation_sum_specification a tb:ParameterSpecification ;
-    tb:hasValue "Sum" .
-
-ab:integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory" .
-
-ab:integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
-
-ab:kernel_type_hypertangent_specification a tb:ParameterSpecification ;
-    tb:hasValue "HyperTangent" .
-
-ab:kernel_type_polynomial_specification a tb:ParameterSpecification ;
-    tb:hasValue "Polynomial" .
-
-ab:kernel_type_rbf_specification a tb:ParameterSpecification ;
-    tb:hasValue "RBF" .
-
-ab:normalization_mode_1_specification a tb:ParameterSpecification ;
-    tb:hasValue 1 .
-
-ab:normalization_mode_2_specification a tb:ParameterSpecification ;
-    tb:hasValue 2 .
-
-ab:normalization_mode_3_specification a tb:ParameterSpecification ;
-    tb:hasValue 3 .
-
-ab:pie_aggregation_average_specification a tb:ParameterSpecification ;
-    tb:hasValue "Average" .
-
-ab:pie_aggregation_occurence_count_specification a tb:ParameterSpecification ;
-    tb:hasValue "Occurence Count" .
-
-ab:pie_aggregation_sum_specification a tb:ParameterSpecification ;
-    tb:hasValue "Sum" .
-
-ab:reader_filesystem_local_specification a tb:ParameterSpecification ;
-    tb:hasValue "LOCAL" .
-
-ab:reader_location_flag_true_specification a tb:ParameterSpecification ;
-    tb:hasValue true .
-
-ab:string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.MostFrequentValueMissingCellHandlerFactory" .
-
-ab:string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
-    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
-
-ab:writer_filesystem_local_specification a tb:ParameterSpecification ;
-    tb:hasValue "LOCAL" .
-
-ab:writer_location_flag_true_specification a tb:ParameterSpecification ;
-    tb:hasValue true .
-
 cb:DataLoading a tb:Algorithm ;
     rdfs:label "DataLoading" ;
     tb:solves cb:DataImport .
@@ -9795,6 +9727,81 @@ cb:TrainTensorDatasetShape a sh:NodeShape,
     sh:property cb:isTrainConstraint ;
     sh:targetClass dmop:TensorDataset .
 
+cb:component-bar_chart_average_component-bar_aggregation_average_specification a tb:ParameterSpecification ;
+    tb:hasValue "Average" .
+
+cb:component-bar_chart_count_component-bar_aggregation_occurence_count_specification a tb:ParameterSpecification ;
+    tb:hasValue "Occurence Count" .
+
+cb:component-bar_chart_sum_component-bar_aggregation_sum_specification a tb:ParameterSpecification ;
+    tb:hasValue "Sum" .
+
+cb:component-convolutional_nn_learner-nn_type_convolutional_specification a tb:ParameterSpecification ;
+    tb:hasValue "Convolutional" .
+
+cb:component-convolutional_nn_multidimensional_learner-nn_type_convolutional_specification a tb:ParameterSpecification ;
+    tb:hasValue "Convolutional" .
+
+cb:component-csv_local_reader-reader_filesystem_local_specification a tb:ParameterSpecification ;
+    tb:hasValue "LOCAL" .
+
+cb:component-csv_local_reader-reader_location_flag_true_specification a tb:ParameterSpecification ;
+    tb:hasValue true .
+
+cb:component-csv_local_writer-writer_filesystem_local_specification a tb:ParameterSpecification ;
+    tb:hasValue "LOCAL" .
+
+cb:component-csv_local_writer-writer_location_flag_true_specification a tb:ParameterSpecification ;
+    tb:hasValue true .
+
+cb:component-decimal_scaling-normalization_mode_3_specification a tb:ParameterSpecification ;
+    tb:hasValue 3 .
+
+cb:component-drop_rows_with_missing_values-float_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
+
+cb:component-drop_rows_with_missing_values-integer_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
+
+cb:component-drop_rows_with_missing_values-string_org.knime.base.node.preproc.pmml.missingval.pmml.removerowmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.pmml.RemoveRowMissingCellHandlerFactory" .
+
+cb:component-feedforward_nn_learner-nn_type_feedforward_specification a tb:ParameterSpecification ;
+    tb:hasValue "FeedForward" .
+
+cb:component-feedforward_nn_multidimensional_learner-nn_type_feedforward_specification a tb:ParameterSpecification ;
+    tb:hasValue "FeedForward" .
+
+cb:component-histogram_average_visualizer-histogram_aggregation_average_specification a tb:ParameterSpecification ;
+    tb:hasValue "Average" .
+
+cb:component-histogram_count_visualizer-histogram_aggregation_occurence_count_specification a tb:ParameterSpecification ;
+    tb:hasValue "Occurence Count" .
+
+cb:component-histogram_sum_visualizer-histogram_aggregation_sum_specification a tb:ParameterSpecification ;
+    tb:hasValue "Sum" .
+
+cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification a tb:ParameterSpecification ;
+    tb:hasValue "HyperTangent" .
+
+cb:component-lstm_nn_learner-nn_type_lstm_specification a tb:ParameterSpecification ;
+    tb:hasValue "LSTM" .
+
+cb:component-lstm_nn_multidimensional_learner-nn_type_lstm_specification a tb:ParameterSpecification ;
+    tb:hasValue "LSTM" .
+
+cb:component-mean_imputation-float_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory" .
+
+cb:component-mean_imputation-integer_org.knime.base.node.preproc.pmml.missingval.handlers.doublemeanmissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.DoubleMeanMissingCellHandlerFactory" .
+
+cb:component-mean_imputation-string_org.knime.base.node.preproc.pmml.missingval.handlers.mostfrequentvaluemissingcellhandlerfactory_specification a tb:ParameterSpecification ;
+    tb:hasValue "org.knime.base.node.preproc.pmml.missingval.handlers.MostFrequentValueMissingCellHandlerFactory" .
+
+cb:component-min_max_scaling-normalization_mode_1_specification a tb:ParameterSpecification ;
+    tb:hasValue 1 .
+
 cb:component-missing_value_management_applier a tb:ApplierComponent ;
     rdfs:label "Missing Value Management Applier" ;
     tb:hasImplementation cb:implementation-missing_value_\(applier\) ;
@@ -9815,6 +9822,75 @@ WHERE {
     $output2 ?property ?value.
 }
 """ ] ) .
+
+cb:component-pie_chart_average_visualizer-pie_aggregation_average_specification a tb:ParameterSpecification ;
+    tb:hasValue "Average" .
+
+cb:component-pie_chart_count_visualizer-pie_aggregation_occurence_count_specification a tb:ParameterSpecification ;
+    tb:hasValue "Occurence Count" .
+
+cb:component-pie_chart_sum_visualizer-pie_aggregation_sum_specification a tb:ParameterSpecification ;
+    tb:hasValue "Sum" .
+
+cb:component-polynomial_svm_learner-kernel_type_polynomial_specification a tb:ParameterSpecification ;
+    tb:hasValue "Polynomial" .
+
+cb:component-random_absolute_train_test_split-sampling_method_random_specification a tb:ParameterSpecification ;
+    tb:hasValue "Random" .
+
+cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification a tb:ParameterSpecification ;
+    tb:hasValue "Absolute" .
+
+cb:component-random_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification a tb:ParameterSpecification ;
+    tb:hasValue "Absolute" .
+
+cb:component-random_absolute_train_test_split_\(tensor\)-sampling_method_random_specification a tb:ParameterSpecification ;
+    tb:hasValue "Random" .
+
+cb:component-random_relative_train_test_split-sampling_method_random_specification a tb:ParameterSpecification ;
+    tb:hasValue "Random" .
+
+cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification a tb:ParameterSpecification ;
+    tb:hasValue "Relative" .
+
+cb:component-random_relative_train_test_split_\(tensor\)-partition_method_relative_specification a tb:ParameterSpecification ;
+    tb:hasValue "Relative" .
+
+cb:component-random_relative_train_test_split_\(tensor\)-sampling_method_random_specification a tb:ParameterSpecification ;
+    tb:hasValue "Random" .
+
+cb:component-rbf_svm_learner-kernel_type_rbf_specification a tb:ParameterSpecification ;
+    tb:hasValue "RBF" .
+
+cb:component-recurrent_nn_learner-nn_type_recurrent_specification a tb:ParameterSpecification ;
+    tb:hasValue "Recurrent" .
+
+cb:component-recurrent_nn_multidimensional_learner-nn_type_recurrent_specification a tb:ParameterSpecification ;
+    tb:hasValue "Recurrent" .
+
+cb:component-top_k_absolute_train_test_split-sampling_method_first_specification a tb:ParameterSpecification ;
+    tb:hasValue "First" .
+
+cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification a tb:ParameterSpecification ;
+    tb:hasValue "Absolute" .
+
+cb:component-top_k_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification a tb:ParameterSpecification ;
+    tb:hasValue "Absolute" .
+
+cb:component-top_k_absolute_train_test_split_\(tensor\)-sampling_method_first_specification a tb:ParameterSpecification ;
+    tb:hasValue "First" .
+
+cb:component-top_k_relative_train_test_split-sampling_method_first_specification a tb:ParameterSpecification ;
+    tb:hasValue "First" .
+
+cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification a tb:ParameterSpecification ;
+    tb:hasValue "Relative" .
+
+cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification a tb:ParameterSpecification ;
+    tb:hasValue "Relative" .
+
+cb:component-top_k_relative_train_test_split_\(tensor\)-sampling_method_first_specification a tb:ParameterSpecification ;
+    tb:hasValue "First" .
 
 cb:component-xgboost_predictor a tb:ApplierComponent ;
     rdfs:label "XGBoost Predictor" ;
@@ -9838,6 +9914,9 @@ WHERE {
     $input1 cb:setsClassColumnName ?classColumnName .
 }
             """ ] ) .
+
+cb:component-z_score_scaling-normalization_mode_2_specification a tb:ParameterSpecification ;
+    tb:hasValue 2 .
 
 cb:hasFloatColumn a sh:PropertyShape ;
     sh:path dmop:hasColumn ;
@@ -10130,14 +10209,14 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:MissingValueModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     rdfs:label "NN Multidimensional Predictor" ;
@@ -10175,20 +10254,20 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10426,14 +10505,14 @@ cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ] ;
+                    tb:hasImportanceLevel 2 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -10464,18 +10543,6 @@ cb:isTrainConstraint a sh:PropertyConstraintComponent ;
 dmop:hasDataPrimitiveTypeColumn rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
 dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
-
-ab:partition_method_absolute_specification a tb:ParameterSpecification ;
-    tb:hasValue "Absolute" .
-
-ab:partition_method_relative_specification a tb:ParameterSpecification ;
-    tb:hasValue "Relative" .
-
-ab:size_of_first_partition_absolute_specification a tb:ParameterSpecification ;
-    tb:hasValue "Absolute" .
-
-ab:size_of_first_partition_relative_specification a tb:ParameterSpecification ;
-    tb:hasValue "Relative" .
 
 cb:AnomalyDetection a tb:Task ;
     tb:subtaskOf cb:Description .
@@ -11117,18 +11184,6 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
-ab:nn_type_convolutional_specification a tb:ParameterSpecification ;
-    tb:hasValue "Convolutional" .
-
-ab:nn_type_feedforward_specification a tb:ParameterSpecification ;
-    tb:hasValue "FeedForward" .
-
-ab:nn_type_lstm_specification a tb:ParameterSpecification ;
-    tb:hasValue "LSTM" .
-
-ab:nn_type_recurrent_specification a tb:ParameterSpecification ;
-    tb:hasValue "Recurrent" .
-
 cb:Description a tb:Task .
 
 cb:NN a tb:Algorithm ;
@@ -11317,17 +11372,17 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ] ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -11362,14 +11417,14 @@ cb:implementation-tensor_data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:LabeledTabularDatasetShape a sh:NodeShape ;
     sh:property [ sh:minCount 1 ;
@@ -11398,10 +11453,10 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
@@ -11432,10 +11487,10 @@ cb:implementation-nn_multidimensional_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11450,12 +11505,6 @@ cb:implementation-nn_multidimensional_learner-label_array a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "$$LABEL$$" ;
     tb:has_position 0 .
-
-ab:sampling_method_first_specification a tb:ParameterSpecification ;
-    tb:hasValue "First" .
-
-ab:sampling_method_random_specification a tb:ParameterSpecification ;
-    tb:hasValue "Random" .
 
 cb:Model rdfs:subClassOf tb:Data .
 
