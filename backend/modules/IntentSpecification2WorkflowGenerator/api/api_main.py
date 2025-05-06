@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import os
@@ -5,7 +6,7 @@ from pathlib import Path
 
 import proactive
 
-from flask import Flask, request, send_file
+from flask import Flask, abort, request, send_file
 from flask_cors import CORS
 
 #TODO cahnge import names to the adecuate files
@@ -42,6 +43,7 @@ def run_abstract_planner():
     task = data.get('problem', '')
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
+    experiment_constraints = data.get('experiment_constraints',{}) # TODO: Provide performance constraints to the main interface
     percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
     complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
@@ -62,6 +64,36 @@ def run_abstract_planner():
         intent_graph.add((ab.term(intent_name), tb.specifiesValue, Literal(param_val)))
         intent_graph.add((Literal(param_val), tb.forParameter, URIRef(param)))
 
+    for constraint in experiment_constraints:
+        value = list(constraint.values())[0]
+        key = list(constraint.keys())[0]
+        constraint_node = get_constraint(ontology,name=key)
+
+        if not constraint_node is None:
+            intent_graph.add((ab.term(intent_name), tb.hasConstraint, constraint_node))
+
+            constraint_type = ontology.objects(constraint_node, tb.constraintType, unique=True)
+
+            value_node = BNode()
+            if constraint_type == "Literal":
+                intent_graph.add((value_node, RDF.type, tb.LiteralValue))
+                intent_graph.add((value_node, tb.hasLiteralValue, Literal(value)))
+
+            elif constraint_type == "Range":
+                intent_graph.add((value_node, RDF.type, tb.RangeValue))
+
+                if value[0] is not None:
+                    intent_graph.add((value_node, tb.hasMinValue, Literal(value[0])))
+                if value[1] is not None:
+                    intent_graph.add((value_node, tb.hasMaxValue, Literal(value[1])))
+
+            intent_graph.add((constraint_node, tb.hasConstraintValue, value_node))
+        
+        else:
+            print(f"ERROR: Constraint {key} not found in the knowledge graph")
+
+
+
     intent_graph.add((ab.term(intent_name), tb.has_component_threshold, Literal(percentage)))
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
@@ -76,14 +108,23 @@ def get_mdp_input(intent_graph: Graph):
     intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True))
     intent_task = next(intent_graph.subjects(tb.tackles,intent_name, unique=True))
     intent_algorithm = next(intent_graph.objects(intent_name,tb.specifies,unique=True),None)
-    return {
+    json_data = {
         'domain': "manufacturing",
-        'intent': None,
+        'intent': "anomaly detection",
         'algorithm': intent_algorithm.fragment if intent_algorithm is not None else None,
         'method': intent_task.fragment if intent_task is not None else None,
         "hard_constraints": [],
-        "soft_constraints": []
+        "soft_constraints": [
+            {
+            "name": "pu",
+            "type": "categorical",
+            "value": "GPU"
+            },
+        ]
     }
+    with open("intent_to_mdp.json", mode='w') as f:
+        json.dump(json_data,f,indent=4)
+    return json_data
 
 
 def convert_strings_to_uris(obj):

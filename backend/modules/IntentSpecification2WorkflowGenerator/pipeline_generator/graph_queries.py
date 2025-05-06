@@ -5,6 +5,23 @@ from rdflib import Graph, URIRef
 from common import *
 
 
+def get_constraint_by_name(ontology:Graph, constraint_name:str):
+    query = f"""
+    PREFIX tb: <{tb}>
+    SELECT ?constraint
+    WHERE {{
+        ?constraint a tb:ExperimentConstraint ;
+        rdfs:label "{constraint_name}" .
+    }}
+    """
+
+    result = ontology.query(query).bindings
+
+    if len(result) == 1:
+        return result[0]["constraint"]
+    
+    return None
+
 def get_intent_iri(intent_graph: Graph) -> URIRef:
     intent_iri_query = f"""
 PREFIX tb: <{tb}>

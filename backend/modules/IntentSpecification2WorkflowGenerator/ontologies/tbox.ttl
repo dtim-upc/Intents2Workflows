@@ -126,6 +126,10 @@ tb:hasConstraint a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
     rdfs:range tb:Constraint .
 
+tb:hasConstraintValue a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range tb:ConstraintValue .
+
 tb:hasDatatag a owl:ObjectProperty ;
     rdfs:domain tb:DataSpecTag ;
     rdfs:range tb:DataTag .
@@ -161,6 +165,22 @@ tb:hasLearner a owl:ObjectProperty ;
         tb:VisualizerImplementation ;
     rdfs:range tb:LearnerComponent,
         tb:LearnerImplementation .
+
+tb:hasLiteralValue a owl:ObjectProperty ;
+    rdfs:domain tb:LiteralValue ;
+    rdfs:range xsd:string .
+
+tb:hasMaxValue a owl:ObjectProperty ;
+    rdfs:domain tb:RangeValue ;
+    rdfs:range xsd:double .
+
+tb:hasMinValue a owl:ObjectProperty ;
+    rdfs:domain tb:RangeValue ;
+    rdfs:range xsd:double .
+
+tb:hasOptionExplorerName a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range xsd:string .
 
 tb:hasOutput a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
@@ -230,12 +250,8 @@ tb:has_position a owl:DatatypeProperty ;
     rdfs:range xsd:integer .
 
 tb:isHard a owl:ObjectProperty ;
-    rdfs:domain tb:Constraint ;
+    rdfs:domain tb:ExperimentConstraint ;
     rdfs:range xsd:boolean .
-
-tb:onConstraint a owl:ObjectProperty ;
-    rdfs:domain tb:ConstraintValue ;
-    rdfs:range tb:Constraint .
 
 tb:onMetric a owl:ObjectProperty ;
     rdfs:domain tb:EvaluationRequirement ;
@@ -312,9 +328,10 @@ tb:withMethod a owl:ObjectProperty ;
     rdfs:domain tb:EvaluationRequirement ;
     rdfs:range tb:Method .
 
-tb:ConstraintValue a owl:Class .
-
 tb:DataTag a owl:Class .
+
+tb:LiteralValue a owl:Class ;
+    rdfs:subClassOf tb:ConstraintValue .
 
 tb:Method a owl:Class .
 
@@ -335,6 +352,9 @@ tb:Metric a owl:Class .
 
 tb:ParameterValue a owl:Class .
 
+tb:RangeValue a owl:Class ;
+    rdfs:subClassOf tb:ConstraintValue .
+
 tb:VisualizerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;
     owl:disjointWith tb:ApplierComponent,
@@ -345,11 +365,13 @@ tb:VisualizerImplementation a owl:Class ;
     owl:disjointWith tb:ApplierImplementation,
         tb:LearnerImplementation .
 
-tb:Constraint a owl:Class .
+tb:ConstraintValue a owl:Class .
 
 tb:DataSpecTag a owl:Class .
 
 tb:EvaluationRequirement a owl:Class .
+
+tb:ExperimentConstraint a owl:Class .
 
 tb:ModelEvaluation a owl:Class .
 

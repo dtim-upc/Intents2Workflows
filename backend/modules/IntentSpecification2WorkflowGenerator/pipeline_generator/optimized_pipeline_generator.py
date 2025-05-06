@@ -620,9 +620,10 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
     inputs = graph_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
 
     shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
-    
-    if shapes_to_satisfy is not None and len(shapes_to_satisfy) > 0:
-        return None
+
+    if shapes_to_satisfy is None:
+        shapes_to_satisfy = {}
+
     
     if log:
         tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
@@ -727,6 +728,7 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
 
         component = transformation_combination[-1]
         print("COMPONENT: ",component)
+        print("COMBINATION: ", transformation_combination[:-1])
         
         wg, w = build_general_workflow(workflow_name, ontology, dataset, component,
                                         transformation_combination[:-1], intent_graph = intent_graph)

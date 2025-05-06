@@ -330,6 +330,7 @@ def add_shapes(cbox):
     cbox.add((cb.TabularDataset, RDF.type, SH.NodeShape))
     cbox.add((cb.TabularDataset, RDF.type, tb.DataTag))
     cbox.add((cb.TabularDataset, SH.property, bnode))
+    cbox.add((cb.TabularDataset, SH.targetClass, dmop.TabularDataset))
 
 
     numeric_column_shape = cb.NumericColumnShape
@@ -488,6 +489,17 @@ def add_shapes(cbox):
     cbox.add((cb.LowMVTabularDatasetShape, SH.targetClass, dmop.TabularDataset))    
 
 
+def add_constraints(cbox):
+    constraints = [
+        (cb.usingGPU, "GPU", "pu", "Literal", False),
+    ]
+
+    for node, name, optionExplorerName, constraintType, isHard in constraints:
+        cbox.add((node, RDF.type, tb.ExperimentConstraint))
+        cbox.add((node, RDFS.label, Literal(name)))
+        cbox.add((node, tb.constraintType, Literal(constraintType)))
+        cbox.add((node, tb.hasOptionExplorerName, Literal(optionExplorerName)))
+        cbox.add((node, tb.isHard, Literal(isHard)))
 
 
 def main(dest='../ontologies/cbox.ttl'):
@@ -500,6 +512,7 @@ def main(dest='../ontologies/cbox.ttl'):
     # add_datasets(cbox)
     add_subproperties(cbox)
     add_shapes(cbox)
+    add_constraints(cbox)
 
     cbox.serialize(dest, format='turtle')
 

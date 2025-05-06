@@ -35,6 +35,10 @@ def get_custom_ontology_only_problems():
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph
 
+def get_constraint(ontology: Graph, name: str):
+    return graph_queries.get_constraint_by_name(ontology,name)
+
+
 def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
     #impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
     #               for algo in algos_list for imp in get_potential_implementations_constrained(ontology, shape_graph, algo,exclude_appliers=False)}
