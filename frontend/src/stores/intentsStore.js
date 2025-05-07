@@ -291,5 +291,28 @@ export const useIntentsStore = defineStore('intents', {
 
       this.allAlgorithms = ["DecisionTree", "XGBoost", "SVM"]
     },
+
+    getShapeGraph() {
+      const shape_graph = 
+        `@prefix ab: <https://extremexp.eu/ontology/abox#> .
+        @prefix cb: <https://extremexp.eu/ontology/cbox#> .
+        @prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
+        @prefix tb: <https://extremexp.eu/ontology/tbox#> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+        @prefix sh: <http://www.w3.org/ns/shacl#> .
+        @prefix owl: <http://www.w3.org/2002/07/owl#> .
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        
+        ab:AlgorithmConstraint
+          a sh:NodeShape ;
+          #sh:targetClass tb:Algorithm ; #Not needed (ignored by validate function), but it clarifies the purpose of the constraint
+          sh:property [
+            sh:path rdfs:label ;
+            sh:hasValue "${this.selectedAlgorithm}";
+            
+          ].`
+      return this.selectedAlgorithm != null? shape_graph : ""
+    }
   }
 })

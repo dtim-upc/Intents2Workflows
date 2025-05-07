@@ -162,6 +162,7 @@ const handleSubmit = async() => {
         {'GPU': true},
         {'testing': [8, 10]}
     ],
+    'shape_graph': intentsStore.getShapeGraph(),
   }
 
   const successCallback = () => {
