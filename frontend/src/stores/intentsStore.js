@@ -312,7 +312,7 @@ export const useIntentsStore = defineStore('intents', {
             sh:hasValue "${this.selectedAlgorithm}";
             
           ].`
-      return this.selectedAlgorithm != null? shape_graph : ""
+      return this.selectedAlgorithm != ""? shape_graph : ""
     }
   }
 })

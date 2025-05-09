@@ -322,7 +322,7 @@ def add_shapes(cbox):
     cbox.add((non_null_tabular_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((non_null_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
     cbox.add((non_null_tabular_dataset_shape, SH.property, bnode))
-
+ 
     bnode = BNode()
     cbox.add((bnode, SH.path, RDF.type))
     cbox.add((bnode, SH.hasValue, dmop.TabularDataset))
@@ -331,6 +331,15 @@ def add_shapes(cbox):
     cbox.add((cb.TabularDataset, RDF.type, tb.DataTag))
     cbox.add((cb.TabularDataset, SH.property, bnode))
     cbox.add((cb.TabularDataset, SH.targetClass, dmop.TabularDataset))
+
+    bnode = BNode()
+    cbox.add((bnode, SH.path, RDF.type))
+    cbox.add((bnode, SH.hasValue, dmop.TensorDataset))
+
+    cbox.add((cb.TensorDataset, RDF.type, SH.NodeShape))
+    cbox.add((cb.TensorDataset, RDF.type, tb.DataTag))
+    cbox.add((cb.TensorDataset, SH.property, bnode))
+    cbox.add((cb.TensorDataset, SH.targetClass, dmop.TensorDataset))
 
 
     numeric_column_shape = cb.NumericColumnShape

@@ -347,8 +347,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_absolute_train_test_split-sampling_method_random_specification,
@@ -375,19 +375,30 @@ cb:component-random_absolute_train_test_split_\(tensor\) a tb:Component ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(IF( ?size1 - $parameter4>0, ?size1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
@@ -425,8 +436,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(xsd:integer(ROUND(?rows1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_relative_train_test_split-sampling_method_random_specification,
@@ -453,19 +464,30 @@ cb:component-random_relative_train_test_split_\(tensor\) a tb:Component ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(xsd:integer(ROUND(?size1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
@@ -522,8 +544,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
@@ -549,19 +571,31 @@ cb:component-top_k_absolute_train_test_split_\(tensor\) a tb:Component ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+
+    BIND(IF( ?size1 - $parameter4>0, ?size1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification,
@@ -598,8 +632,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(xsd:integer(ROUND(?rows1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_relative_train_test_split-sampling_method_first_specification,
@@ -625,19 +659,30 @@ cb:component-top_k_relative_train_test_split_\(tensor\) a tb:Component ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(xsd:integer(ROUND(?size1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
@@ -797,17 +842,17 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -875,12 +920,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1003,13 +1048,13 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -3841,10 +3886,10 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -5970,22 +6015,22 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Line Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LinePlotVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LinePlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-line_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -6910,14 +6955,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -10126,14 +10171,14 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:DecisionTreeModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:DecisionTreeModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10209,14 +10254,14 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     rdfs:label "NN Multidimensional Predictor" ;
@@ -10254,20 +10299,20 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10312,14 +10357,14 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
@@ -10373,13 +10418,13 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "SVM Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
@@ -10505,14 +10550,14 @@ cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
+                    tb:hasImportanceLevel 2 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -11316,14 +11361,14 @@ cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-pie_donut_chart-frequency a tb:Parameter ;
     rdfs:label "frequency" ;
@@ -11372,13 +11417,13 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:knime-node-name "SVM Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -11442,7 +11487,12 @@ cb:NNModel rdfs:subClassOf cb:Model .
 cb:Normalization a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
-cb:TensorDataset tb:has_weight 1 .
+cb:TensorDataset a sh:NodeShape,
+        tb:DataTag ;
+    sh:property [ sh:hasValue dmop:TensorDataset ;
+            sh:path rdf:type ] ;
+    sh:targetClass dmop:TensorDataset ;
+    tb:has_weight 1 .
 
 cb:implementation-nn_learner a tb:LearnerImplementation ;
     rdfs:label "NN Learner" ;
@@ -11456,13 +11506,13 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11487,10 +11537,10 @@ cb:implementation-nn_multidimensional_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;

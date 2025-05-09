@@ -44,19 +44,30 @@ tensor_random_relative_train_test_split_component = Component(
         Transformation(
             query='''
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(xsd:integer(ROUND(?size1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -85,19 +96,30 @@ tensor_random_absolute_train_test_split_component = Component(
         Transformation(
             query='''
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(IF( ?size1 - $parameter4>0, ?size1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -125,19 +147,30 @@ tensor_top_relative_train_test_split_component = Component(
         Transformation(
             query='''
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+    BIND(xsd:integer(ROUND(?size1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -165,19 +198,31 @@ tensor_top_absolute_train_test_split_component = Component(
         Transformation(
             query='''
 DELETE {
-    $output1 dmop:numberOfRows ?rows1.
-    $output2 dmop:numberOfRows ?rows1.
+    ?dim1 dmop:dimensionSize ?size1 .
+    ?dim2 dmop:dimensionSize ?size1 .
 }
 INSERT {
-    $output1 dmop:numberOfRows ?newRows1 .
     $output1 dmop:isTrainDataset True .
-    $output2 dmop:numberOfRows ?newRows2 .
     $output2 dmop:isTestDataset True .
+
+    ?dim1 dmop:dimensionSize ?newRows1 .
+    ?dim2 dmop:dimensionSize ?newRows2 .
 }
 WHERE {
-    $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+
+    $output1 dmop:hasArray ?array1 .
+    ?array1 dmop:hasFeatureDimension ?dim1 .
+    ?dim1 dmop:isHorizontalPartitionDimension true .
+    ?dim1 dmop:dimensionSize ?size1 .
+
+    $output2 dmop:hasArray ?array2 .
+    ?array2 dmop:hasFeatureDimension ?dim2 .
+    ?dim2 dmop:isHorizontalPartitionDimension true .
+    ?dim2 dmop:dimensionSize ?size1 .
+
+
+    BIND(IF( ?size1 - $parameter4>0, ?size1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?size1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
