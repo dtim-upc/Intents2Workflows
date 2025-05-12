@@ -1,0 +1,84 @@
+@prefix ab: <https://extremexp.eu/ontology/abox#> .
+@prefix dmop: <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ab:iris a dmop:TabularDataset ;
+    dmop:containsOutliers true ;
+    dmop:delimiter "," ;
+    dmop:doubleQuote false ;
+    dmop:encoding "cp1252" ;
+    dmop:fileFormat "CSV" ;
+    dmop:hasColumn ab:petal.length,
+        ab:petal.width,
+        ab:sepal.length,
+        ab:sepal.width,
+        ab:variety ;
+    dmop:hasHeader true ;
+    dmop:isNormallyDistributed true ;
+    dmop:lineDelimiter """\r
+""" ;
+    dmop:numberOfColumns 5 ;
+    dmop:numberOfRows 150 ;
+    dmop:path "C:/Users/gerard.pons.recasens/Desktop/Github Repos/Intents2Workflows/backend/api/datasets/iris.csv" ;
+    dmop:quoteChar "\"" ;
+    dmop:skipInitialSpace false .
+
+ab:petal.length a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "petal.length" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:Float ;
+    dmop:hasOutliers true ;
+    dmop:hasPosition 2 ;
+    dmop:isCategorical false ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isNormalDistribution true ;
+    dmop:isUnique false .
+
+ab:petal.width a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "petal.width" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:Float ;
+    dmop:hasOutliers true ;
+    dmop:hasPosition 3 ;
+    dmop:isCategorical false ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isNormalDistribution true ;
+    dmop:isUnique false .
+
+ab:sepal.length a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "sepal.length" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:Float ;
+    dmop:hasOutliers true ;
+    dmop:hasPosition 0 ;
+    dmop:isCategorical false ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isNormalDistribution true ;
+    dmop:isUnique false .
+
+ab:sepal.width a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "sepal.width" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:Float ;
+    dmop:hasOutliers true ;
+    dmop:hasPosition 1 ;
+    dmop:isCategorical false ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isNormalDistribution true ;
+    dmop:isUnique false .
+
+ab:variety a dmop:Column ;
+    dmop:containsNulls false ;
+    dmop:hasColumnName "variety" ;
+    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+    dmop:hasOutliers false ;
+    dmop:hasPosition 4 ;
+    dmop:isCategorical true ;
+    dmop:isFeature true ;
+    dmop:isLabel false ;
+    dmop:isUnique false .
+

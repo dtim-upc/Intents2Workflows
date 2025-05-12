@@ -322,10 +322,25 @@ def add_shapes(cbox):
     cbox.add((non_null_tabular_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((non_null_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
     cbox.add((non_null_tabular_dataset_shape, SH.property, bnode))
+ 
+    bnode = BNode()
+    cbox.add((bnode, SH.path, RDF.type))
+    cbox.add((bnode, SH.hasValue, dmop.TabularDataset))
 
     cbox.add((cb.TabularDataset, RDF.type, SH.NodeShape))
     cbox.add((cb.TabularDataset, RDF.type, tb.DataTag))
+    cbox.add((cb.TabularDataset, SH.property, bnode))
     cbox.add((cb.TabularDataset, SH.targetClass, dmop.TabularDataset))
+
+    bnode = BNode()
+    cbox.add((bnode, SH.path, RDF.type))
+    cbox.add((bnode, SH.hasValue, dmop.TensorDataset))
+
+    cbox.add((cb.TensorDataset, RDF.type, SH.NodeShape))
+    cbox.add((cb.TensorDataset, RDF.type, tb.DataTag))
+    cbox.add((cb.TensorDataset, SH.property, bnode))
+    cbox.add((cb.TensorDataset, SH.targetClass, dmop.TensorDataset))
+
 
     numeric_column_shape = cb.NumericColumnShape
     cbox.add((numeric_column_shape, RDF.type, SH.NodeShape))
@@ -363,6 +378,11 @@ def add_shapes(cbox):
     cbox.add((cb.TrainTabularDatasetShape, SH.property, cb.isTrainConstraint))
     cbox.add((cb.TrainTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
 
+    cbox.add((cb.TrainTensorDatasetShape, RDF.type, SH.NodeShape))
+    cbox.add((cb.TrainTensorDatasetShape, RDF.type, tb.DataTag))
+    cbox.add((cb.TrainTensorDatasetShape, SH.property, cb.isTrainConstraint))
+    cbox.add((cb.TrainTensorDatasetShape, SH.targetClass, dmop.TensorDataset))
+
     # TestTabularDatasetShape
     cbox.add((cb.isTestConstraint, RDF.type, SH.PropertyConstraintComponent))
     cbox.add((cb.isTestConstraint, SH.path, dmop.isTestDataset))
@@ -373,6 +393,11 @@ def add_shapes(cbox):
     cbox.add((cb.TestTabularDatasetShape, RDF.type, tb.DataTag))
     cbox.add((cb.TestTabularDatasetShape, SH.property, cb.isTestConstraint))
     cbox.add((cb.TestTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
+
+    cbox.add((cb.TestTensorDatasetShape, RDF.type, SH.NodeShape))
+    cbox.add((cb.TestTensorDatasetShape, RDF.type, tb.DataTag))
+    cbox.add((cb.TestTensorDatasetShape, SH.property, cb.isTestConstraint))
+    cbox.add((cb.TestTensorDatasetShape, SH.targetClass, dmop.TensorDataset))
 
 
     ####################################################################################################################
@@ -483,6 +508,17 @@ def add_shapes(cbox):
     cbox.add((cb.LowMVTabularDatasetShape, SH.targetClass, dmop.TabularDataset))    
 
 
+def add_constraints(cbox):
+    constraints = [
+        (cb.usingGPU, "GPU", "pu", "Literal", False),
+    ]
+
+    for node, name, optionExplorerName, constraintType, isHard in constraints:
+        cbox.add((node, RDF.type, tb.ExperimentConstraint))
+        cbox.add((node, RDFS.label, Literal(name)))
+        cbox.add((node, tb.constraintType, Literal(constraintType)))
+        cbox.add((node, tb.hasOptionExplorerName, Literal(optionExplorerName)))
+        cbox.add((node, tb.isHard, Literal(isHard)))
 
 
 def main(dest='../ontologies/cbox.ttl'):
@@ -495,6 +531,7 @@ def main(dest='../ontologies/cbox.ttl'):
     # add_datasets(cbox)
     add_subproperties(cbox)
     add_shapes(cbox)
+    add_constraints(cbox)
 
     cbox.serialize(dest, format='turtle')
 

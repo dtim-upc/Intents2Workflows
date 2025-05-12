@@ -165,8 +165,10 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
         experiments_set = pickle.load(f)
 
 
+
     df1 = pd.read_csv(triples_path, sep="\t", header= None)
     df2 = pd.read_csv(new_triples_path, sep="\t", header=None)
+
 
     # Remove the triples that are not embedded, as they do not bring information to the project
     values_to_remove = {"https://extremexp.eu/ontology#hasMetric", "https://extremexp.eu/ontology#onMetric", "https://extremexp.eu/ontology#hasValue"} 
@@ -177,11 +179,11 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
     combined_df = pd.concat([df1, df2], ignore_index=True)
     combined_df.to_csv(triples_path, sep="\t", index=False, header=False)
 
+
     training_triples_factory = TriplesFactory.from_path(triples_path)
 
     # Initialize the model with all the triples (hence already containing bigger embeddings)
     model = TransE(triples_factory=training_triples_factory, embedding_dim=embedding_dimension, random_seed = seed).to(device)
-
     new_ent_emb = model.entity_representations[0](indices= None).clone().detach().to(device)
     new_rel_emb = model.relation_representations[0](indices= None).clone().detach().to(device)
 
@@ -264,7 +266,6 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
             new_ent_emb[idx] = centroid_data
             datasets_set.add(dataset)
     
-
     with open(norm_path_as, "wb") as f:
         pickle.dump(algorithms_set, f)
 
@@ -307,6 +308,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
 
     with open(norm_path_r2i, "wb") as f:
         pickle.dump(new_rel_to_id, f)
+
 
     ################################################################################
     ############################## START SUGGESTIONS ##############################
@@ -422,6 +424,7 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
                 algorithm_sparql_explanation = 'This is you most frequently used algorithm for '+input_intent+' experiments.'
     
 
+
     ################################################################################
     ##################################### KGE ######################################
     ################################################################################
@@ -462,5 +465,6 @@ def recommendations(input_experiment,input_user,input_intent,input_dataset):
             suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],algorithm_kge_explanation])
         else:
             suggestions['algorithm'].append([considered_algorithm.split('#sklearn-')[1],''])
+    
         
     return suggestions

@@ -12,6 +12,10 @@ dolce:hasQuality a owl:ObjectProperty ;
     rdfs:range tb:DataCharacteristics,
         tb:WorkflowCharacterisitics .
 
+dmop:TabularDataset rdfs:subClassOf tb:Dataset .
+
+dmop:TensorDataset rdfs:subClassOf tb:Dataset .
+
 dmop:containsNulls rdfs:subPropertyOf dmop:ColumnValueInfoProperty .
 
 dmop:containsOutliers rdfs:subPropertyOf dmop:DatasetInfoProperty .
@@ -84,6 +88,10 @@ tb:PlotType a owl:Class .
 
 tb:WorkflowCharacteristics a owl:Class .
 
+tb:constraintType a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range xsd:string .
+
 tb:copy_input a owl:DatatypeProperty ;
     rdfs:domain tb:CopyTransformation ;
     rdfs:range xsd:integer .
@@ -126,6 +134,10 @@ tb:hasConstraint a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
     rdfs:range tb:Constraint .
 
+tb:hasConstraintValue a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range tb:ConstraintValue .
+
 tb:hasDatatag a owl:ObjectProperty ;
     rdfs:domain tb:DataSpecTag ;
     rdfs:range tb:DataTag .
@@ -161,6 +173,22 @@ tb:hasLearner a owl:ObjectProperty ;
         tb:VisualizerImplementation ;
     rdfs:range tb:LearnerComponent,
         tb:LearnerImplementation .
+
+tb:hasLiteralValue a owl:ObjectProperty ;
+    rdfs:domain tb:LiteralValue ;
+    rdfs:range xsd:string .
+
+tb:hasMaxValue a owl:ObjectProperty ;
+    rdfs:domain tb:RangeValue ;
+    rdfs:range xsd:double .
+
+tb:hasMinValue a owl:ObjectProperty ;
+    rdfs:domain tb:RangeValue ;
+    rdfs:range xsd:double .
+
+tb:hasOptionExplorerName a owl:ObjectProperty ;
+    rdfs:domain tb:ExperimentConstraint ;
+    rdfs:range xsd:string .
 
 tb:hasOutput a owl:ObjectProperty ;
     rdfs:domain tb:Step ;
@@ -230,12 +258,8 @@ tb:has_position a owl:DatatypeProperty ;
     rdfs:range xsd:integer .
 
 tb:isHard a owl:ObjectProperty ;
-    rdfs:domain tb:Constraint ;
+    rdfs:domain tb:ExperimentConstraint ;
     rdfs:range xsd:boolean .
-
-tb:onConstraint a owl:ObjectProperty ;
-    rdfs:domain tb:ConstraintValue ;
-    rdfs:range tb:Constraint .
 
 tb:onMetric a owl:ObjectProperty ;
     rdfs:domain tb:EvaluationRequirement ;
@@ -312,9 +336,10 @@ tb:withMethod a owl:ObjectProperty ;
     rdfs:domain tb:EvaluationRequirement ;
     rdfs:range tb:Method .
 
-tb:ConstraintValue a owl:Class .
-
 tb:DataTag a owl:Class .
+
+tb:LiteralValue a owl:Class ;
+    rdfs:subClassOf tb:ConstraintValue .
 
 tb:Method a owl:Class .
 
@@ -331,9 +356,14 @@ tb:CopyTransformation a owl:Class ;
 
 tb:DataCharacteristics a owl:Class .
 
+tb:Dataset a owl:Class .
+
 tb:Metric a owl:Class .
 
 tb:ParameterValue a owl:Class .
+
+tb:RangeValue a owl:Class ;
+    rdfs:subClassOf tb:ConstraintValue .
 
 tb:VisualizerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;
@@ -345,7 +375,7 @@ tb:VisualizerImplementation a owl:Class ;
     owl:disjointWith tb:ApplierImplementation,
         tb:LearnerImplementation .
 
-tb:Constraint a owl:Class .
+tb:ConstraintValue a owl:Class .
 
 tb:DataSpecTag a owl:Class .
 
@@ -366,6 +396,8 @@ tb:ApplierImplementation a owl:Class ;
     rdfs:subClassOf tb:Implementation .
 
 tb:DataSpec a owl:Class .
+
+tb:ExperimentConstraint a owl:Class .
 
 tb:LearnerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;

@@ -60,8 +60,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(xsd:integer(ROUND(?rows1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -101,8 +101,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -141,8 +141,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(ROUND(?rows1 * (1 - $parameter3)) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(xsd:integer(ROUND(?rows1 * (1 - $parameter3))) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),
@@ -181,8 +181,8 @@ INSERT {
 }
 WHERE {
     $output1 dmop:numberOfRows ?rows1.
-    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows1)
-    BIND(?rows1 - ?newRows1 AS ?newRows2)
+    BIND(IF( ?rows1 - $parameter4>0, ?rows1 - $parameter4, 0 ) AS ?newRows2)
+    BIND(?rows1 - ?newRows2 AS ?newRows1)
 }
 ''',
         ),

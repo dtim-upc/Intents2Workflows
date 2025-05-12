@@ -158,6 +158,11 @@ const handleSubmit = async() => {
     'intent_name': intentName.value,
     'dataset': dataProductsStore.selectedDataProductURI,
     'problem': intentsStore.problems[problem.value],
+    'experiment_constraints': [
+        {'GPU': true},
+        {'testing': [8, 10]}
+    ],
+    'shape_graph': intentsStore.getShapeGraph(),
   }
 
   const successCallback = () => {

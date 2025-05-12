@@ -14,11 +14,11 @@ ab:AlgorithmConstraint
 	#sh:targetClass tb:Algorithm ; #Not needed (ignored by validate function), but it clarifies the purpose of the constraint
 	sh:property [
 		sh:path rdfs:label ;
-		sh:or (
-			[sh:hasValue "XGBoost"]
-			[sh:hasValue "SVM"]
-			[sh:hasValue "NN"]
-		);
+		#sh:or (
+		#	[sh:hasValue "XGBoost"]
+		#	[sh:hasValue "SVM"]
+		#	[sh:hasValue "NN"]
+		#);
 		
 	]
 	.
@@ -28,9 +28,9 @@ ab:ImplementationConstraint
 	#sh:targetClass tb:Implementation ;
 	sh:property [
 		sh:path rdfs:label ;
-		sh:not [
-			sh:hasValue "XGBoost Linear Learner" ;
-		]
+		# sh:not [
+		# 	sh:hasValue "XGBoost Linear Learner" ;
+		# ]
 	] .
 
 ab:ComponentConstraint 
@@ -38,9 +38,9 @@ ab:ComponentConstraint
 	#sh:targetClass tb:Component ;.
 	sh:property [
 		sh:path rdfs:label ;
-		sh:not [
-			sh:hasValue "RBF SVM Learner"
-		]
+		# sh:not [
+		# 	sh:hasValue "RBF SVM Learner"
+		# ]
 	]
 .
 

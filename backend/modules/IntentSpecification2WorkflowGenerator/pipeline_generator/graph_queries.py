@@ -4,6 +4,27 @@ from rdflib import Graph, URIRef
 
 from common import *
 
+def get_data_input(graph:Graph, inputs:list[URIRef]):
+    data_input = next(i for i in inputs if (i, RDF.type , dmop.TabularDataset) in graph or (i, RDF.type , dmop.TensorDataset) in graph)
+    return data_input
+
+
+def get_constraint_by_name(ontology:Graph, constraint_name:str):
+    query = f"""
+    PREFIX tb: <{tb}>
+    SELECT ?constraint
+    WHERE {{
+        ?constraint a tb:ExperimentConstraint ;
+        rdfs:label "{constraint_name}" .
+    }}
+    """
+
+    result = ontology.query(query).bindings
+
+    if len(result) == 1:
+        return result[0]["constraint"]
+    
+    return None
 
 def get_intent_iri(intent_graph: Graph) -> URIRef:
     intent_iri_query = f"""
@@ -140,14 +161,19 @@ def unpack_shapes(shapes:str) -> List[URIRef]:
     spec_shapes = shapes.split(',')
     spec_shapes_uris = [URIRef(s) for s in spec_shapes]
 
+    def shape_to_top(shape,uris):
+        uris.remove(shape)
+        uris.insert(0,shape)
+
     # Logical planner is only executed correctly if traintabular shape goes first. TODO Change this behaviour
     if cb.TrainTabularDatasetShape in spec_shapes_uris:
-        spec_shapes_uris.remove(cb.TrainTabularDatasetShape)
-        spec_shapes_uris.insert(0,cb.TrainTabularDatasetShape)
-
+        shape_to_top(cb.TrainTabularDatasetShape, spec_shapes_uris)
     if cb.TestTabularDatasetShape in spec_shapes_uris:
-        spec_shapes_uris.remove(cb.TestTabularDatasetShape)
-        spec_shapes_uris.insert(0,cb.TestTabularDatasetShape)
+        shape_to_top(cb.TestTabularDatasetShape, spec_shapes_uris)
+    if cb.TrainTensorDatasetShape in spec_shapes_uris:
+        shape_to_top(cb.TrainTensorDatasetShape, spec_shapes_uris)
+    if cb.TestTensorDatasetShape in spec_shapes_uris:
+        shape_to_top(cb.TestTensorDatasetShape, spec_shapes_uris)
     return spec_shapes_uris
 
 
@@ -236,11 +262,28 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
 
     return implementations
 
+def targets_dataset(ontology:Graph, shape:URIRef):
+    query = f"""
+            PREFIX sh: <{SH}>
+            PREFIX rdfs: <{RDFS}>
+            PREFIX tb: <{tb}>
+
+            ASK {{
+                {{
+                {shape.n3()} a sh:NodeShape ;
+                    sh:targetClass ?dataset .
+                ?dataset rdfs:subClassOf tb:Dataset .
+                }}
+            }}
+    """
+
+    return ontology.query(query).askAnswer
+
 
 def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
     for i, io_shapes in enumerate(ios):
         for io_shape in io_shapes:
-            if ((io_shape, SH.targetClass, dmop.TabularDataset) in ontology 
+            if (targets_dataset(ontology, io_shape) 
                 or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
                 or io_shape.fragment == "TabularDatasetShape"):
 
@@ -254,11 +297,12 @@ def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = Fal
                     ASK {{
                         {{
                         {io_shape.n3()} a sh:NodeShape ;
-                                        sh:targetClass dmop:TabularDataset ;
+                                        sh:targetClass ?class ;
                                         sh:property [
                                             sh:path dmop:isTestDataset ;
                                             sh:hasValue true
                                         ] .
+                            ?class rdfs:subClassOf tb:Dataset
                         }}
                     }}
                     '''
@@ -269,18 +313,19 @@ def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = Fal
                 if train:
                     train_query = f'''
                     PREFIX sh: <{SH}>
-                    PREFIX rdfs: <{RDFS}>
+                    PREFIX rdfs: <{RDFS}> 
                     PREFIX cb: <{cb}>
                     PREFIX dmop: <{dmop}>
 
                     ASK {{
                         {{
                         {io_shape.n3()} a sh:NodeShape ;
-                                        sh:targetClass dmop:TabularDataset ;
+                                        sh:targetClass ?class ;
                                         sh:property [
                                             sh:path dmop:isTrainDataset ;
                                             sh:hasValue true
                                         ] .
+                        ?class rdfs:subClassOf tb:Dataset
                         }}
                     }}
                     '''
@@ -397,7 +442,7 @@ def get_component_transformations(ontology: Graph, component: URIRef) -> List[UR
 
 
 def get_inputs_all_columns(graph: Graph, inputs: List[URIRef]) -> List:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph,inputs)
     columns_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>
@@ -416,7 +461,9 @@ def get_inputs_all_columns(graph: Graph, inputs: List[URIRef]) -> List:
 
 def get_inputs_label_name(graph: Graph, inputs: List[URIRef]) -> str:
     
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph,inputs)
+    if data_input is None:
+        return ""
 
     label_query = f"""
         PREFIX rdfs: <{RDFS}>
@@ -439,7 +486,7 @@ def get_inputs_label_name(graph: Graph, inputs: List[URIRef]) -> str:
 
 def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> str:
     
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph, inputs)
 
     column_query = f"""
         PREFIX rdfs: <{RDFS}>
@@ -460,7 +507,7 @@ def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> st
 
 
 def get_inputs_numeric_columns(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph, inputs)
     columns_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>
@@ -480,7 +527,7 @@ def get_inputs_numeric_columns(graph: Graph, inputs: List[URIRef]) -> str:
 
 
 def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph, inputs)
 
     categ_query = f"""
         PREFIX rdfs: <{RDFS}>
@@ -499,7 +546,10 @@ def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef]) -> str:
     return [x['label'].value for x in columns]
 
 def get_inputs_feature_types(graph: Graph, inputs: List[URIRef]) -> Set[Type]:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
+    data_input = get_data_input(graph, inputs)
+
+    if data_input is None:
+        return set()
     columns_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>

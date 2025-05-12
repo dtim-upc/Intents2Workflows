@@ -1,11 +1,12 @@
+import json
 import os
 import shutil
-from os import abort
+import os
 from pathlib import Path
 
 import proactive
 
-from flask import Flask, request, send_file
+from flask import Flask, abort, request, send_file
 from flask_cors import CORS
 
 #TODO cahnge import names to the adecuate files
@@ -22,11 +23,14 @@ CORS(app)
 temporary_folder = os.path.abspath(r'./api/temp_files')
 if not os.path.exists(temporary_folder):
     os.makedirs(temporary_folder)
+ 
+print("Loading ontology...")
+ontology = get_custom_ontology_only_problems()
+print("Ontology loaded!")
 
 @app.get('/problems')
 def get_problems():
-    ontology_only_problems = get_custom_ontology_only_problems()
-    problems = {n.fragment: n for n in ontology_only_problems.subjects(RDF.type, tb.Task)}
+    problems = {n.fragment: n for n in ontology.subjects(RDF.type, tb.Task)}
     return problems
 
 @app.post('/abstract_planner')
@@ -34,19 +38,21 @@ def run_abstract_planner():
     intent_graph = get_graph_xp()
 
     data = request.json
-    print(data.keys())
     intent_name = data.get('intent_name', '')
     dataset = data.get('dataset', '')
     task = data.get('problem', '')
     algorithm = data.get('algorithm', '')
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
+    experiment_constraints = data.get('experiment_constraints',{}) # TODO: Provide performance constraints to the main interface
     percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
     complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
+    #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
+
+    shape_graph.serialize("sg.ttl", format="turtle")
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
     intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
@@ -60,6 +66,36 @@ def run_abstract_planner():
         intent_graph.add((ab.term(intent_name), tb.specifiesValue, Literal(param_val)))
         intent_graph.add((Literal(param_val), tb.forParameter, URIRef(param)))
 
+    for constraint in experiment_constraints:
+        value = list(constraint.values())[0]
+        key = list(constraint.keys())[0]
+        constraint_node = get_constraint(ontology,name=key)
+
+        if not constraint_node is None:
+            intent_graph.add((ab.term(intent_name), tb.hasConstraint, constraint_node))
+
+            constraint_type = ontology.objects(constraint_node, tb.constraintType, unique=True)
+
+            value_node = BNode()
+            if constraint_type == "Literal":
+                intent_graph.add((value_node, RDF.type, tb.LiteralValue))
+                intent_graph.add((value_node, tb.hasLiteralValue, Literal(value)))
+
+            elif constraint_type == "Range":
+                intent_graph.add((value_node, RDF.type, tb.RangeValue))
+
+                if value[0] is not None:
+                    intent_graph.add((value_node, tb.hasMinValue, Literal(value[0])))
+                if value[1] is not None:
+                    intent_graph.add((value_node, tb.hasMaxValue, Literal(value[1])))
+
+            intent_graph.add((constraint_node, tb.hasConstraintValue, value_node))
+        
+        else:
+            print(f"ERROR: Constraint {key} not found in the knowledge graph")
+
+
+
     intent_graph.add((ab.term(intent_name), tb.has_component_threshold, Literal(percentage)))
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
@@ -68,7 +104,30 @@ def run_abstract_planner():
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
-        "algorithm_implementations": algorithm_implementations}
+        "algorithm_implementations": algorithm_implementations, "mdp_input":get_mdp_input(intent_graph)}
+
+def get_mdp_input(intent_graph: Graph):
+    intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True))
+    intent_task = next(intent_graph.subjects(tb.tackles,intent_name, unique=True))
+    intent_algorithm = next(intent_graph.objects(intent_name,tb.specifies,unique=True),None)
+    json_data = {
+        'domain': "manufacturing",
+        'intent': "anomaly detection",
+        'algorithm': intent_algorithm.fragment if intent_algorithm is not None else None,
+        'method': intent_task.fragment if intent_task is not None else None,
+        "hard_constraints": [],
+        "soft_constraints": [
+            {
+            "name": "pu",
+            "type": "categorical",
+            "value": "GPU"
+            },
+        ]
+    }
+    with open("intent_to_mdp.json", mode='w') as f:
+        json.dump(json_data,f,indent=4)
+    return json_data
+
 
 def convert_strings_to_uris(obj):
     if isinstance(obj, list):  # If the object is a list
@@ -87,10 +146,10 @@ def run_logical_planner():
     algorithm_implementations = request.json.get('algorithm_implementations', '')
     dataset = request.json.get('dataset', '')
 
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    ontology = ontology.parse(data = dataset, format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    extended_ontology = ontology.parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse('./IntentSpecification2WorkflowGenerator/pipeline_generator/shapeGraph.ttl')
+    shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     # The algorithms come from the frontend in String format. We need to change them back to URIRefs
     algorithm_implementations_uris = convert_strings_to_uris(algorithm_implementations)
@@ -101,8 +160,8 @@ def run_logical_planner():
              for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
              for impl in impls]
 
-    workflow_plans = workflow_planner(ontology, shape_graph, impls, intent)
-    logical_plans = logical_planner(ontology, workflow_plans)
+    workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
+    logical_plans = logical_planner(extended_ontology, workflow_plans)
 
     return logical_plans
 
@@ -111,7 +170,7 @@ def run_logical_planner():
 def download_knime():
     print(request.json.keys())
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
     intent_name = get_intent_name(plan_graph)
@@ -128,7 +187,7 @@ def download_knime():
 @app.post('/workflow_plans/knime/all')
 def download_all_knime():
     graphs = request.json.get("graphs", "")
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     knime_folder = os.path.join(temporary_folder, 'knime')
@@ -155,7 +214,7 @@ def download_all_knime():
 @app.post('/intent-to-dsl')
 def download_file():
     raw_graphs = request.json.get("graphs", "")
-    ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
 
 
     workflow_graphs = []
@@ -267,8 +326,8 @@ def store_rdf_zenoh():
 # TODO: Make the actual translation from the original RDF graph to the Proactive definition
 @app.post('/workflow_plans/proactive')
 def download_proactive():
-    graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
-    ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    #graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
+    #ontology = Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     layout = request.json.get('layout', '')
     label_column = request.json.get('label_column', '')
     data_product_name = request.json.get('data_product_name', '')

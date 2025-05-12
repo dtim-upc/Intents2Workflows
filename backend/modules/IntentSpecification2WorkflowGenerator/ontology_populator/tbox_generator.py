@@ -70,8 +70,10 @@ def add_classes(ontology: Graph):
         tb.VisualizationRequirement,
         tb.PlotType,
         tb.PlotProperties,
-        tb.Constraint,
+        tb.ExperimentConstraint,
         tb.ConstraintValue,
+        tb.RangeValue,
+        tb.LiteralValue,
         tb.Task,
         tb.Algorithm,
         tb.Implementation,
@@ -95,6 +97,7 @@ def add_classes(ontology: Graph):
         tb.Step,
         tb.ModelEvaluation,
         tb.Data,
+        tb.Dataset,
         tb.DataCharacteristics,
         tb.DataSpec,
         tb.DataSpecTag,
@@ -118,6 +121,12 @@ def add_classes(ontology: Graph):
     ontology.add((tb.LearnerComponent, OWL.disjointWith, tb.ApplierComponent))
     ontology.add((tb.VisualizerComponent, OWL.disjointWith, tb.ApplierComponent))
     ontology.add((tb.VisualizerComponent, OWL.disjointWith, tb.LearnerComponent))
+
+    ontology.add((tb.RangeValue, RDFS.subClassOf, tb.ConstraintValue))
+    ontology.add((tb.LiteralValue, RDFS.subClassOf, tb.ConstraintValue))
+
+    ontology.add((dmop.TabularDataset, RDFS.subClassOf, tb.Dataset))
+    ontology.add((dmop.TensorDataset, RDFS.subClassOf, tb.Dataset))
 
 
 def add_properties(ontology: Graph):
@@ -156,10 +165,15 @@ def add_properties(ontology: Graph):
         (tb.specifies, tb.ModelEvaluation, tb.Metric),
         (tb.hasValue, tb.ModelEvaluation, XSD.double),
         # Constraint
-        (tb.isHard, tb.Constraint, XSD.boolean),
+        (tb.isHard, tb.ExperimentConstraint, XSD.boolean),
+        (tb.constraintType, tb.ExperimentConstraint, XSD.string),
         ### tb.on is TO BE DEFINED
         # Constraint Value
-        (tb.onConstraint, tb.ConstraintValue, tb.Constraint),
+        (tb.hasConstraintValue, tb.ExperimentConstraint, tb.ConstraintValue),
+        (tb.hasOptionExplorerName, tb.ExperimentConstraint, XSD.string),
+        (tb.hasMinValue, tb.RangeValue, XSD.double),
+        (tb.hasMaxValue, tb.RangeValue, XSD.double),
+        (tb.hasLiteralValue, tb.LiteralValue, XSD.string),
         ### tb.hasValue is TO BE DEFINED
         # Algorithm
         (tb.solves, tb.Algorithm, tb.Task),
