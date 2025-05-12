@@ -9,6 +9,7 @@ services:
       - "9000:9000"
     networks:
       - intents-network
+
   backend_api:
     build:
       context: ./backend/api          
@@ -17,6 +18,10 @@ services:
       - "9001:9001"
     networks:
       - intents-network
+    volumes:
+      - shared-ontology:/app/ontology
+      - shared-model:/app/kge_model
+
   intents:
     build:
       context: ./backend/Modules/IntentSpecification2WorkflowGenerator          
@@ -25,6 +30,7 @@ services:
       - "9002:9002"
     networks:
       - intents-network
+
   anticipation:
     build:
       context: ./backend/Modules/IntentAnticipation          
@@ -34,8 +40,14 @@ services:
       - "9004:9004"
     networks:
       - intents-network
+    volumes:
+      - shared-ontology:/api/ontology
+      - shared-model:/api/kge_model
 
 
+volumes:
+  shared-ontology:
+  shared-model:
 
 networks:
   intents-network:
