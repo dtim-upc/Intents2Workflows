@@ -13,7 +13,7 @@
           <q-item v-for="(absPlan) in intentsStore.abstractPlans"
                   :key="absPlan.id" class="q-my-sm">
             <q-item-section avatar>
-              <q-checkbox v-model="absPlan.selected"/>
+              <q-checkbox v-model="selectedPlans" :val="absPlan"/>
             </q-item-section>
             <q-item-section> 
               <text-body1 style="font-size: 17px;"> {{ absPlan.name }} </text-body1>
@@ -28,7 +28,7 @@
         <DialogWithVisualizedPlan v-model:dialog="dialog" :visualizedPlan="visualizedPlan"/>
       </div>
       <div class="col-12">
-        <q-btn label="Run logical planner" color="primary" type="submit"/>
+        <q-btn label="Run logical planner" color="primary" type="submit" :disabled="get_num_selected_plans() == 0"/>
       </div>
       <div class="col-12">
         <q-btn label="Select all" @click="selectAll()"/>
@@ -56,6 +56,12 @@ const dialog = ref(false)
 const visualizedPlan = ref(null)
 
 console.log(intentsStore.abstractPlans)
+
+const selectedPlans = ref(intentsStore.abstractPlans); 
+
+const get_num_selected_plans = () => {
+  return selectedPlans.value.length
+}
         
 const handleSubmit = async() => {
   $q.loading.show({message: 'Running logical planner'})
@@ -65,14 +71,13 @@ const handleSubmit = async() => {
 
   //await dataProductsStore.getDataProductAnnotations(intentsStore.selectedDataProdutName)
 
-  let plan_ids = []
-  intentsStore.abstractPlans.map(absPlan => {
-    if (absPlan.selected) {
-      plan_ids.push(absPlan.id)
-    }
+  intentsStore.selectedAlgorithms = []
+  selectedPlans.value.map(absPlan => {
+    intentsStore.selectedAlgorithms.push(absPlan.name)
   })
-  const data = {"plan_ids": plan_ids, "intent_graph":intentsStore.intent_graph, 'dataset':dataProductsStore.selectedDataProductAnnotations,
-                "algorithm_implementations": intentsStore.algorithmImplementations}
+
+  intentsStore.getShapeGraph()
+  const data = {"shape_graph": intentsStore.getShapeGraph(), "intent_graph":intentsStore.intent_graph, 'dataset':dataProductsStore.selectedDataProductAnnotations}
 
   await intentsStore.setLogicalPlans(data, successCallback)
   $q.loading.hide()

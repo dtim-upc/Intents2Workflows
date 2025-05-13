@@ -26,7 +26,7 @@ export const useIntentsStore = defineStore('intents', {
     selectedPreprocessingAlgorithm: "",
     allPreprocessingAlgorithms: [],
     algorithmRecommendations: [],
-    selectedAlgorithm: "",
+    selectedAlgorithms: [],
     allAlgorithms: [],
 
     dataProductURI: "", // URI of the selected data product. This is required given that when working with graphs we need URIs
@@ -125,6 +125,7 @@ export const useIntentsStore = defineStore('intents', {
         // Formatting the plans to be displayed in the UI
         const keys = Object.keys(response.data);
         this.logicalPlans = [];
+        this.countSelectedPlans = 0;
       
         for (let key of keys) {
           let found = false
@@ -280,7 +281,7 @@ export const useIntentsStore = defineStore('intents', {
       let response = await intentsAPI.getRecommendation(user, dataset, intent);
       this.algorithmRecommendations = response.data.algorithm; //TODO display these recommendations with explanation
 
-      this.selectedAlgorithm = ""
+      this.selectedAlgorithms = []
     },
 
     async getAllInfo() {
@@ -293,6 +294,12 @@ export const useIntentsStore = defineStore('intents', {
     },
 
     getShapeGraph() {
+
+        // Generate one `sh:hasValue` line per element
+      const hasValueLines = this.selectedAlgorithms
+        .map(alg => `[sh:hasValue "${alg}"]`)
+        .join("\n");
+
       const shape_graph = 
         `@prefix ab: <https://extremexp.eu/ontology/abox#> .
         @prefix cb: <https://extremexp.eu/ontology/cbox#> .
@@ -309,10 +316,13 @@ export const useIntentsStore = defineStore('intents', {
           #sh:targetClass tb:Algorithm ; #Not needed (ignored by validate function), but it clarifies the purpose of the constraint
           sh:property [
             sh:path rdfs:label ;
-            sh:hasValue "${this.selectedAlgorithm}";
+            sh:or (
+            ${hasValueLines}
+            );
             
           ].`
-      return this.selectedAlgorithm != ""? shape_graph : ""
+
+      return (this.selectedAlgorithms.length > 0 && this.selectedAlgorithms.some(item => item != null)) ? shape_graph : ""
     }
   }
 })

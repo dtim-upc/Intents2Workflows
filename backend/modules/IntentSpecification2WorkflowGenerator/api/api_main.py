@@ -107,7 +107,7 @@ def run_abstract_planner():
         "algorithm_implementations": algorithm_implementations, "mdp_input":get_mdp_input(intent_graph)}
 
 def get_mdp_input(intent_graph: Graph):
-    intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True))
+    intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True)) #TODO: get this information from get_intent_info function
     intent_task = next(intent_graph.subjects(tb.tackles,intent_name, unique=True))
     intent_algorithm = next(intent_graph.objects(intent_name,tb.specifies,unique=True),None)
     json_data = {
@@ -141,24 +141,17 @@ def convert_strings_to_uris(obj):
 @app.post('/logical_planner')
 def run_logical_planner():
 
-    plan_ids = request.json.get('plan_ids', '')
     intent_json = request.json.get('intent_graph', '')
-    algorithm_implementations = request.json.get('algorithm_implementations', '')
     dataset = request.json.get('dataset', '')
 
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     extended_ontology = ontology.parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
-    shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
-
-    # The algorithms come from the frontend in String format. We need to change them back to URIRefs
-    algorithm_implementations_uris = convert_strings_to_uris(algorithm_implementations)
+    #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent = Graph().parse(data=intent_json, format='turtle')
 
-    impls = [impl
-             for alg, impls in algorithm_implementations_uris.items() if str(alg) in plan_ids
-             for impl in impls]
+    algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent)
 
     workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
     logical_plans = logical_planner(extended_ontology, workflow_plans)

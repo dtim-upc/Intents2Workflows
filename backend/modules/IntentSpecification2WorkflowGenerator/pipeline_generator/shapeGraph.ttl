@@ -14,11 +14,11 @@ ab:AlgorithmConstraint
 	#sh:targetClass tb:Algorithm ; #Not needed (ignored by validate function), but it clarifies the purpose of the constraint
 	sh:property [
 		sh:path rdfs:label ;
-		#sh:or (
-		#	[sh:hasValue "XGBoost"]
-		#	[sh:hasValue "SVM"]
-		#	[sh:hasValue "NN"]
-		#);
+		sh:or (
+			[sh:hasValue "XGBoost"]
+			[sh:hasValue "SVM"]
+			[sh:hasValue "NN"]
+		);
 		
 	]
 	.

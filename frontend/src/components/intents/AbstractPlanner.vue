@@ -96,12 +96,12 @@ const target = computed({ get: () => intentsStore.target})
 const selectedAlgorithm = computed({
   get: () => {
     // Set default to 'No Restriction' (value: null)
-    const selected = intentsStore.selectedAlgorithm;
+    const selected = intentsStore.selectedAlgorithms[0];
     return algorithmOptions.value.find(opt => opt.value === selected) || algorithmOptions.value[0]; // default to 'No Restriction'
   },
   set: (obj) => {
     // Set value of selected algorithm
-    intentsStore.selectedAlgorithm = obj?.value || null; // Set 'No Restriction' if null
+    intentsStore.selectedAlgorithms = [obj?.value || null]; // Set 'No Restriction' if null
   }
 });
 
