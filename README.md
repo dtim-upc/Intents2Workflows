@@ -63,6 +63,7 @@ Lets ensemble everything to be able to compile and make run the code.
    pip install -r requirements.txt    
    ```
 
+In the .env file of the backend, you should include DAL_TOKEN='your_token' if you want the system to be automatically updated with new experiments.
 #### Intents modules <a name="intents-installation"></a>
 The intent-generation functionalities are separated into two different modules, which can be found in the backend folder. 
 1. Go to `Intents2Workflows/modules/IntentSpecification2WorkflowGenerator`. Install all the required libraries with the following command:
