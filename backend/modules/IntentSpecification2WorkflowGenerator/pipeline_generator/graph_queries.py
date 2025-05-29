@@ -255,6 +255,12 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
             }}
             ?spec tb:hasSpecTag ?sptg .
             ?sptg tb:hasDatatag {shape.n3()} .
+            FILTER NOT EXISTS {{
+                ?implementation  tb:specifiesInput ?inpspec .
+                ?inpspec tb:hasSpecTag ?inpsptg .
+                ?inpsptg tb:hasDatatag {shape.n3()} .
+
+            }}
         }}
     """
     result = ontology.query(implementation_query).bindings
