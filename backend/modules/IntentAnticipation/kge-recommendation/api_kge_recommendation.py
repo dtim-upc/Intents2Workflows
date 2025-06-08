@@ -36,21 +36,15 @@ def get_recommendations_route():
         return jsonify({"error": "Missing user, dataset, or intent parameter"}), 400
 
     try:
+        # Annotate current experiment
         experiment = annotate_tsv(user,intent,dataset)
+        # Fetch DAL for new experiments
+        update_graph()
         results = recommendations(experiment,user,intent,dataset)
         return jsonify(results), 200
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
-
-@app.route('/get_kg', methods=['GET'])
-def get_kg_route():
-    try:
-        generate_graph()
-        return 'Success', 200
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500   
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500 
 
 
 @app.route('/get_all_info', methods=['GET'])
