@@ -517,7 +517,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
 def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef, main_component: URIRef,
                            transformations: List[URIRef], intent_graph:Graph) -> Tuple[Graph, URIRef]:
     
-    tqdm.write("\n\n BUILDING WORKFLOW")
+    #tqdm.write("\n\n BUILDING WORKFLOW")
 
     workflow_graph = get_graph_xp()
     workflow = ab.term(workflow_name)
@@ -636,22 +636,25 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
 
     available_transformations = { shape: [] 
                                     for shape in unsatisfied_shapes}
-
+    total_num_comb = 1
     for shape in unsatisfied_shapes:
+        num_combs_impl = 0
         for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
 
             if log:
                 tqdm.write(f'Suitable implementation for {shape}: {imp}')
 
-            transformations = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=log, depth=depth+1)
+            transformations, num_comb = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=log, depth=depth+1)
             if transformations is not None:
                 available_transformations[shape].extend(transformations)
+                num_combs_impl += num_comb
 
 
         if len(available_transformations[shape]) == 0:
             if log:
                 tqdm.write("implementations not found")
-            return None
+            return None, 0
+        total_num_comb = total_num_comb * num_combs_impl
         
     if log:
         tqdm.write(f'AVAILABLE TRANSFORMATIONS: {available_transformations}')
@@ -664,26 +667,27 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
     if len(unsatisfied_shapes) > 0 and len(available_transformations) > 0:
         transformation_combinations =  itertools.product(*available_transformations.values(),[implementation])
     elif len(unsatisfied_shapes) > 0:
-        return None
+        return None, 0
     else:  
         transformation_combinations = [implementation]
+        total_num_comb = 1
     
-    #tqdm.write("Trs_comb = " + str(transformation_combinations))
-    
-
     transformation_combinations_constrained = transformation_combinations 
-    return transformation_combinations_constrained
+    return transformation_combinations_constrained, total_num_comb
     
 def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):
     if isinstance(plan, URIRef):
         available_components = get_implementation_components_constrained(ontology, shape_graph, plan)
         best_components = get_best_components(ontology, task, available_components, dataset, component_threshold)
-        return [list(best_components.keys())]
+        return [list(best_components.keys())], len(best_components.keys())
     else: #tuple
         elms = []
+        total_comb = 1
         for element in plan:
-            elms.extend(get_prep_comp(ontology, shape_graph, dataset, component_threshold, task,element))
-        return elms
+            comp_list, num_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task,element)
+            elms.extend(comp_list)
+            total_comb = total_comb * num_comb
+        return elms, total_comb
     
 def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, pot_impls, log: bool = False) -> List[Graph]:
 
@@ -697,23 +701,30 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
         tqdm.write('-------------------------------------------------')
 
     options = []
+    combs = 0
     for imp in pot_impls:
-        result = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=True)
+        result, comb = get_implementation_prerquisites(ontology, shape_graph, dataset, imp, max_imp_level, log=log)
         if not result is None and result != []:
             options.append(result)
+            combs += comb
    
- 
+    
     workflow_order = 0
     workflows = []
-    for transformation_combination in options:
-        tqdm.write(str(workflow_order))
+    t_comb = 0
 
-        prep_components = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, transformation_combination)
+    for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0,
+                                                leave=False):
+        #tqdm.write(str(workflow_order))
 
+        prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, transformation_combination)
 
+        t_comb += comp_comb
+        
         component_combinations = itertools.product(*prep_components)
 
-        for component_combination in component_combinations:
+        for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1,
+                                                leave=False):
 
             if is_valid_workflow_combination(ontology, shape_graph, component_combination):
                 workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
