@@ -30,8 +30,11 @@ def has_nulls(column):
 def is_categorical(column_type, column):
     if get_column_type(column_type, column) in [dmop.Integer, dmop.Float]:
         return False
-    else:
+    elif len(column.unique()) < 20 and len(column.unique())/len(column) < 0.5: 
+        #columns should be categorical if values are repeated accross the column. Otherwise it's text.
+        #Categorical variable with more than 20 levels is rare
         return True
+    return False
 
 
 def is_unique(column_type, column):
@@ -79,7 +82,6 @@ def get_percentage_of_missing_rows(dataset):
         return 0
     return round(dataset.isna().any(axis=1).sum()/dataset.shape[0], 3)
 
-
 def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
     graph.add((dataset_node, RDF.type, dmop.TabularDataset))
 
@@ -97,6 +99,7 @@ def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
 
     dataset_path = next(graph.objects(dataset_node,dmop.path,unique=True),"...")
     dataset_name = quote(Path(dataset_path).with_suffix('').name)
+ 
     for col in dataset.columns:
         col_type = dataset[col].dtype.name
         col_node = ab.term(f'{col}')

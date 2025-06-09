@@ -140,7 +140,8 @@ def add_models(cbox):
         'NormalizerModel',
         'MissingValueModel',
         'XGBoostModel',
-        'NNModel'
+        'NNModel',
+        'NumericCategoricalModel',
     ]
 
     cbox.add((cb.Model, RDFS.subClassOf, tb.Data))
@@ -505,7 +506,49 @@ def add_shapes(cbox):
 
     cbox.add((cb.LowMVTabularDatasetShape, RDF.type, SH.NodeShape))
     cbox.add((cb.LowMVTabularDatasetShape, SH.property, cb.missingValueConstraint))
-    cbox.add((cb.LowMVTabularDatasetShape, SH.targetClass, dmop.TabularDataset))    
+    cbox.add((cb.LowMVTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
+
+
+    # NumericCategoricalTabularDatasetShape
+    cbox.add((cb.isStringConstraint, RDF.type, SH.PropertyShape))
+    cbox.add((cb.isStringConstraint, SH.path, dmop.hasDataPrimitiveTypeColumn))  
+    cbox.add((cb.isStringConstraint, SH.hasValue, dmop.String))  
+
+    cbox.add((cb.isFeature, RDF.type, SH.PropertyShape))
+    cbox.add((cb.isFeature, SH.path, dmop.isFeature))  
+    cbox.add((cb.isFeature, SH.hasValue, Literal(True)))  
+
+    cbox.add((cb.isCategorical, RDF.type, SH.PropertyShape))
+    cbox.add((cb.isCategorical, SH.path, dmop.isCategorical))  
+    cbox.add((cb.isCategorical, SH.hasValue, Literal(True)))  
+
+    
+    # Create the and list as an RDF List
+    and_list = BNode()
+    cbox.add((and_list, RDF.type, SH.AndConstraintComponent))
+
+    # Add constraints to the and_list
+    constraint_list = Collection(cbox, and_list)
+    constraint_list.append(cb.isCategorical)
+    constraint_list.append(cb.isFeature)
+    constraint_list.append(cb.isStringConstraint)
+
+    bnode = BNode()
+    cbox.add((bnode, SH["and"], and_list))
+    cbox.add((bnode, RDF.type, SH.NodeShape))
+    # cbox.add((bnode, SH["and"], cb.isFeature))
+    # cbox.add((bnode, SH["and"], cb.isCategorical))
+    # cbox.add((bnode, SH["and"], cb.isStringConstraint))
+
+    cbox.add((cb.hasAnyStringCategoricalColumn, RDF.type, SH.PropertyShape))
+    cbox.add((cb.hasAnyStringCategoricalColumn, SH.path, dmop.hasColumn))
+    cbox.add((cb.hasAnyStringCategoricalColumn, SH.qualifiedValueShape, bnode))
+    cbox.add((cb.hasAnyStringCategoricalColumn, SH.qualifiedMaxCount, Literal(0)))
+
+    cbox.add((cb.NumericCategoricalTabularDatasetShape, RDF.type, SH.NodeShape))
+    cbox.add((cb.NumericCategoricalTabularDatasetShape, SH.property, cb.hasAnyStringCategoricalColumn))
+    cbox.add((cb.NumericCategoricalTabularDatasetShape, SH.targetClass, dmop.TabularDataset))
+    
 
 
 def add_constraints(cbox):

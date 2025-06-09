@@ -17,7 +17,8 @@ svm_learner_implementation = KnimeImplementation(
         KnimeParameter("Kernel type", XSD.string, None, 'kernel_type'),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NonNullTabularDatasetShape, (cb.NormalizedTabularDatasetShape,1)],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NonNullTabularDatasetShape, 
+         (cb.NormalizedTabularDatasetShape,1), (cb.NumericCategoricalTabularDatasetShape,1)],
     ],
     output=[
         cb.SVMModel,
@@ -113,7 +114,7 @@ svm_predictor_implementation = KnimeImplementation(
     ],
     input=[
         cb.SVMModel,
-        [cb.TestTabularDatasetShape, cb.NormalizedTabularDatasetShape, cb.NonNullTabularDatasetShape]
+        [cb.TestTabularDatasetShape, cb.NonNullTabularDatasetShape, (cb.NormalizedTabularDatasetShape,1), (cb.NumericCategoricalTabularDatasetShape,1)]
     ],
     output=[
         cb.TabularDatasetShape,

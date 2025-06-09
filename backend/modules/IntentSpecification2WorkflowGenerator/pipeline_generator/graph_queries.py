@@ -532,7 +532,7 @@ def get_inputs_numeric_columns(graph: Graph, inputs: List[URIRef]) -> str:
     return [x['label'].value for x in columns]
 
 
-def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef]) -> str:
+def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef], includeTarget=True) -> str:
     data_input = get_data_input(graph, inputs)
 
     categ_query = f"""
@@ -545,6 +545,7 @@ def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef]) -> str:
             ?column dmop:isCategorical true ;
                     dmop:hasDataPrimitiveTypeColumn ?type ;
                     dmop:hasColumnName ?label .
+            {"?column dmop:isLabel false ." if not includeTarget else ""}
         }}
     """
     columns = graph.query(categ_query).bindings

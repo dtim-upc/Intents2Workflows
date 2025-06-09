@@ -158,6 +158,9 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
         if isinstance(value.value, str) and '$$CSV_PATH$$' in value.value:
             new_value = value.replace('$$CSV_PATH$$', f'{get_csv_path(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
+        if isinstance(value.value, str) and '$$CATEGORICAL_COLUMNS$$' in value.value:
+            new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
+            parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '&amp;' in value.value:
             new_value = value.replace('&amp;', '&')
             parameters[param] = (Literal(new_value), order, condition)

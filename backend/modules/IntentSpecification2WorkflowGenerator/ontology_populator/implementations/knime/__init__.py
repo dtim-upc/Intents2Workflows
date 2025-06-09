@@ -12,6 +12,7 @@ from .scatter_plot import *
 from .line_plot import *
 from .heatmap import *
 from .xgboost import *
+from .categorical_to_number import *
 
 implementations = [
     partitioning_implementation,
@@ -34,6 +35,8 @@ implementations = [
     xgboost_linear_learner_implementation,
     xgboost_tree_learner_implementation,
     xgboost_predictor_implementation,
+    categorizer_implementation,
+    categorizer_applier_implementation,
 ]
 
 components = [
@@ -71,4 +74,6 @@ components = [
     xgboost_linear_learner_component,
     xgboost_tree_learner_component,
     xgboost_predictor_component,
+    categorizer_component,
+    categorizer_applier_component,
 ]
