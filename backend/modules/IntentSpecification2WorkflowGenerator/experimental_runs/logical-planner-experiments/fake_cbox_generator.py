@@ -248,15 +248,15 @@ def generate_fake_abox(num_main_implementations: int, prep_depth: int, num_compo
 
 
 def generate_experiment_suite(folder: str):
-    num_main_implementations = [ 1, 1, 1, 1 ]
-    prep_depth = [ 0, 0, 1, 1, 2]
-    shapes_per_implementation = [ 2, 2, 2, 2 ]
-    implementations_per_shape = [ 1, 1, 1, 1]
-    num_components_per_implementation = [ 1, 2, 2, 3 ]
+    num_main_implementations = [ 1, 1, 1, 1, 1, 1 ]
+    prep_depth = [ 1, 1, 1, 1, 1, 1]
+    shapes_per_implementation = [2, 2, 2, 2, 2, 2]
+    implementations_per_shape = [ 1, 1, 1, 1, 1, 1]
+    num_components_per_implementation = [ 1, 2, 3, 4, 5, 6]
 
     for i in range(len(num_main_implementations)):
         generate_fake_abox(num_main_implementations[i], prep_depth[i], num_components_per_implementation[i], shapes_per_implementation[i], implementations_per_shape[i], folder)
 
 
 if __name__ == '__main__':
-    generate_experiment_suite('./fake_cboxes')
+    generate_experiment_suite('./fake_cboxes/generation_test')
