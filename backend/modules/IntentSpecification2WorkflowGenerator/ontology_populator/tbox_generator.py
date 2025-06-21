@@ -162,9 +162,10 @@ def add_properties(ontology: Graph):
         # Workflow Characteristics
         ### TO BE DEFINED
         # Model Evaluatoin
-        (tb.specifies, tb.ModelEvaluation, tb.Metric),
+        (tb.specifiesMetric, tb.ModelEvaluation, tb.Metric),
         (tb.hasValue, tb.ModelEvaluation, XSD.double),
         # Constraint
+        (tb.constrainedBy, tb.Intent, tb.ExperimentConstraint),
         (tb.isHard, tb.ExperimentConstraint, XSD.boolean),
         (tb.constraintType, tb.ExperimentConstraint, XSD.string),
         ### tb.on is TO BE DEFINED
@@ -178,6 +179,7 @@ def add_properties(ontology: Graph):
         # Algorithm
         (tb.solves, tb.Algorithm, tb.Task),
         # Implementation
+        (tb.implements, tb.Implementation, tb.Algorithm),
         (tb.hasParameter, tb.Implementation, tb.Parameter),
         (tb.hasLearner, tb.ApplierImplementation, tb.LearnerImplementation),
         (tb.hasApplier, tb.LearnerImplementation, tb.ApplierImplementation),

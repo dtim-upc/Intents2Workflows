@@ -321,6 +321,7 @@ def add_shapes(cbox):
 
     non_null_tabular_dataset_shape = cb.NonNullTabularDatasetShape
     cbox.add((non_null_tabular_dataset_shape, RDF.type, SH.NodeShape))
+    cbox.add((cb.TabularDataset, RDF.type, tb.DataTag))
     cbox.add((non_null_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
     cbox.add((non_null_tabular_dataset_shape, SH.property, bnode))
  
@@ -554,6 +555,7 @@ def add_shapes(cbox):
 def add_constraints(cbox):
     constraints = [
         (cb.usingGPU, "GPU", "pu", "Literal", False),
+        (cb.ram, "RAM", "ram", "Range", False),
     ]
 
     for node, name, optionExplorerName, constraintType, isHard in constraints:

@@ -15,6 +15,7 @@ sys.path.append(os.path.join(os.path.abspath(os.path.join('..'))))
 
 from common import *
 import pipeline_generator.graph_queries as graph_queries
+import pipeline_generator.option_explorer as option_explorer
 
 MAX_PLAN_LENGTH = 10
 
@@ -601,6 +602,8 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
         tqdm.write(f'Task: {task.fragment}')
         tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task_constrained(ontology, shape_graph,task)]}')
         tqdm.write('-------------------------------------------------')
+
+    option_explorer.get_best_options(intent_graph, ontology)
 
     algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,shape_graph,task)
     

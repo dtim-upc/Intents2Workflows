@@ -52,8 +52,6 @@ def run_abstract_planner():
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
-    shape_graph.serialize("sg.ttl", format="turtle")
-
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
     intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
     intent_graph.add((URIRef(task), tb.tackles, ab.term(intent_name)))
@@ -74,9 +72,10 @@ def run_abstract_planner():
         if not constraint_node is None:
             intent_graph.add((ab.term(intent_name), tb.hasConstraint, constraint_node))
 
-            constraint_type = ontology.objects(constraint_node, tb.constraintType, unique=True)
+            constraint_type = str(next(ontology.objects(constraint_node, tb.constraintType, unique=True)))
 
             value_node = BNode()
+            print(constraint_type == "Literal")
             if constraint_type == "Literal":
                 intent_graph.add((value_node, RDF.type, tb.LiteralValue))
                 intent_graph.add((value_node, tb.hasLiteralValue, Literal(value)))
@@ -90,7 +89,6 @@ def run_abstract_planner():
                     intent_graph.add((value_node, tb.hasMaxValue, Literal(value[1])))
 
             intent_graph.add((constraint_node, tb.hasConstraintValue, value_node))
-        
         else:
             print(f"ERROR: Constraint {key} not found in the knowledge graph")
 
@@ -100,6 +98,7 @@ def run_abstract_planner():
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
     intent = intent_graph
+    intent.serialize('intent.ttl', format="turtle")
 
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
