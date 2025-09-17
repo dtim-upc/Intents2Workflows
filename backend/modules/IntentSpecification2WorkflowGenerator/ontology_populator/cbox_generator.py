@@ -8,8 +8,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import *
 from ontology_populator.implementations.knime import implementations as implementations_k, components as components_k
 from ontology_populator.implementations.simple import implementations as implementations_s, components as components_s
+from ontology_populator.implementations.python import implementations as implementations_p
 
-implementations = implementations_k + implementations_s
+implementations = implementations_k + implementations_s + implementations_p
 components = components_k + components_s
 
 
@@ -20,6 +21,19 @@ def init_cbox() -> Graph:
     cbox.add((URIRef(str(cb)), RDFS.label, Literal("ExtremeXP Ontology CBox")))
 
     return cbox
+
+def add_operations(cbox):
+    operations = [
+        cb.SUM,
+        cb.SUB,
+        cb.MUL,
+        cb.DIV,
+        cb.POW,
+        cb.SQRT
+    ]
+
+    for o in operations:
+        cbox.add((o, RDF.type, tb.Operation))
 
 
 def add_problems(cbox):
@@ -568,6 +582,7 @@ def add_constraints(cbox):
 
 def main(dest='../ontologies/cbox.ttl'):
     cbox = init_cbox()
+    add_operations(cbox)
     add_problems(cbox)
     add_algorithms(cbox)
     add_implementations(cbox)

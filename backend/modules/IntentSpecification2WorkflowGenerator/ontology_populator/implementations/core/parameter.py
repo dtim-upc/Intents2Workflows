@@ -21,3 +21,22 @@ class Parameter:
         self.url_name = self.label.replace(' ', '_').replace('-', '_').lower()
 
         self.uri_ref = None
+
+class BaseParameter:
+    def __init__(self, label: str, datatype: URIRef, condition: str = '') -> None:
+        super().__init__()
+        self.label = label
+        self.datatype = datatype
+      
+        self.condition = condition
+
+        self.url_name = self.label.replace(' ', '_').replace('-', '_').lower()
+
+        self.uri_ref = None
+
+        self.default_value = None
+
+class BaseFactorParameter(BaseParameter):
+    def __init__(self, label:str, levels: list[str]) -> None:
+        super().__init__(label, XSD.enumeration)
+        self.levels = levels

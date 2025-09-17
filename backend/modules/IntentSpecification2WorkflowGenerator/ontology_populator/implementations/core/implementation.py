@@ -5,7 +5,7 @@ from rdflib.collection import Collection
 
 import os 
 import sys
-from .parameter import Parameter
+from .parameter import Parameter, BaseFactorParameter
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
@@ -91,18 +91,26 @@ class Implementation:
             add_dataspectag_node(output_tag,output_node)
 
         # Parameter triples
-        for i, parameter in enumerate(self.parameters.values()):
+        for i, parameter in enumerate(self.parameters):
             g.add((parameter.uri_ref, RDF.type, tb.Parameter))
             g.add((parameter.uri_ref, RDFS.label, Literal(parameter.label)))
             g.add((parameter.uri_ref, tb.has_datatype, parameter.datatype))
             g.add((parameter.uri_ref, tb.has_position, Literal(i)))
             g.add((parameter.uri_ref, tb.has_condition, Literal(parameter.condition)))
-            if isinstance(parameter.default_value, URIRef):
-                g.add((parameter.uri_ref, tb.has_defaultvalue, parameter.default_value))
-            else:
-                g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(parameter.default_value)))
-            g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
+            if not parameter.default_value is None:
+                if isinstance(parameter.default_value, URIRef):
+                    g.add((parameter.uri_ref, tb.has_defaultvalue, parameter.default_value))
+                else:
+                    g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(parameter.default_value)))
 
+            if isinstance(parameter, BaseFactorParameter):
+                print("BaseFactor detectat:",parameter)
+                for level in parameter.levels:
+                    level_uri = parameter.uri_ref + '-'+ level
+                    g.add((level_uri, RDF.type, tb.FactorLevel))
+                    g.add((parameter.uri_ref, tb.hasLevel, level_uri))
+
+            g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
         return self.uri_ref
 
     def add_counterpart_relationship(self, g: Graph):

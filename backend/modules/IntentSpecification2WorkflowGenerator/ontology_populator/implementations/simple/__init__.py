@@ -2,6 +2,7 @@ from .nn import *
 from .io import data_reader_implementation, data_writer_implementation, data_reader_component, data_writer_component
 from .nn_multidimensional import *
 from .partitioning_multidimensional import *
+from .svm import svm_learner_implementation, svm_predictor_implementation
 implementations = [
     nn_learner_implementation,
     nn_predictor_implementation,
@@ -10,6 +11,8 @@ implementations = [
     nn_multi_learner_implementation,
     nn_multi_predictor_implementation,
     tensor_partitioning_implementation,
+    svm_learner_implementation,
+    svm_predictor_implementation,
 ]
 
 components = [
