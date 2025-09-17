@@ -108,6 +108,7 @@ class Implementation:
                 for level in parameter.levels:
                     level_uri = parameter.uri_ref + '-'+ level
                     g.add((level_uri, RDF.type, tb.FactorLevel))
+                    g.add((level_uri, tb.hasValue, Literal(level)))
                     g.add((parameter.uri_ref, tb.hasLevel, level_uri))
 
             g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))

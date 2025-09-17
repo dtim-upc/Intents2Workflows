@@ -705,51 +705,16 @@ WHERE {
 cb:python-implementation-python_svm_learner a tb:EngineImplementation ;
     tb:engine "Python" ;
     tb:hasBaseImplementation cb:implementation-svm_learner ;
+    tb:hasParameter cb:python-implementation-python_svm_learner-c,
+        cb:python-implementation-python_svm_learner-coef0,
+        cb:python-implementation-python_svm_learner-degree,
+        cb:python-implementation-python_svm_learner-gamma,
+        cb:python-implementation-python_svm_learner-kernel,
+        cb:python-implementation-python_svm_learner-target ;
     tb:name "Python SVM Learner" ;
     tb:python-function "SVC" ;
     tb:python-module "svm" ;
     tb:python-package "sklearn" .
-
-cb:python-implementation-python_svm_learner-c a tb:DerivedParameter ;
-    tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-overlapping_penalty ] ;
-    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
-    tb:python_key "C" .
-
-cb:python-implementation-python_svm_learner-coef0 a tb:DerivedParameter ;
-    tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-bias ] ;
-    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
-    tb:python_key "coef0" .
-
-cb:python-implementation-python_svm_learner-degree a tb:DerivedParameter ;
-    tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-power ] ;
-    tb:has_datatype "http://www.w3.org/2001/XMLSchema#integer" ;
-    tb:python_key "degree" .
-
-cb:python-implementation-python_svm_learner-gamma a tb:DerivedParameter ;
-    tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-gamma ] ;
-    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
-    tb:python_key "gamma" .
-
-cb:python-implementation-python_svm_learner-kernel tb:hasLevel cb:python-implementation-python_svm_learner-kernel-poly,
-        cb:python-implementation-python_svm_learner-kernel-rbf,
-        cb:python-implementation-python_svm_learner-kernel-sigmoid ;
-    tb:has_datatype "http://www.w3.org/2001/XMLSchema#enumeration" ;
-    tb:python_key "kernel" .
-
-cb:python-implementation-python_svm_learner-target tb:has_datatype "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:python_key "Target" .
 
 cb:python-implementation-python_svm_predictor a tb:EngineImplementation ;
     tb:engine "Python" ;
@@ -972,7 +937,7 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
@@ -980,7 +945,7 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -1177,13 +1142,13 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1313,17 +1278,17 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 3 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:has_rank 3 ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2625,14 +2590,14 @@ cb:implementation-categorizer a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-categorizer-append_columns a tb:Parameter ;
     rdfs:label "Append columns" ;
@@ -2881,24 +2846,24 @@ cb:implementation-categorizer_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Categorizer (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-categorizer_\(applier\)-append_columns a tb:Parameter ;
     rdfs:label "Append columns" ;
@@ -4359,22 +4324,22 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:HeatMapVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:HeatMapVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-heatmap_visualizer-allowed_page_sizes_0 a tb:Parameter ;
     rdfs:label "Allowed Page Sizes 0" ;
@@ -6492,14 +6457,14 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LinePlotVisualizationShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-line_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -7413,14 +7378,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:MissingValueModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -8670,22 +8635,22 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Scatter Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ScatterPlotVisualizationShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-scatter_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -9413,18 +9378,6 @@ cb:implementation-scatter_plot_visualizer-y_axis_min a tb:Parameter ;
     tb:knime_key "yAxisMin" ;
     tb:knime_path "model" .
 
-cb:implementation-svm_learner-kernel_type a tb:Parameter ;
-    rdfs:label "Kernel type" ;
-    tb:hasLevel cb:implementation-svm_learner-kernel_type-Polynomial,
-        cb:implementation-svm_learner-kernel_type-RBF,
-        cb:implementation-svm_learner-kernel_type-Sigmoid ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:enumeration ;
-    tb:has_position 5 ;
-    tb:specifiedBy cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification,
-        cb:component-polynomial_svm_learner-kernel_type_polynomial_specification,
-        cb:component-rbf_svm_learner-kernel_type_rbf_specification .
-
 cb:implementation-tensor_data_partitioning-class_columns a tb:Parameter ;
     rdfs:label "Class columns" ;
     tb:has_condition "" ;
@@ -10062,14 +10015,70 @@ cb:missingValueConstraint a sh:PropertyShape ;
     sh:maxInclusive 5e-02 ;
     sh:path dmop:missingvaluesPercentage .
 
+cb:python-implementation-python_svm_learner-c a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
+            tb:hasTerm1 0 ;
+            tb:hasTerm2 cb:implementation-svm_learner-overlapping_penalty ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
+    tb:has_default_value 1.1e+00 ;
+    tb:python_key "C" .
+
+cb:python-implementation-python_svm_learner-coef0 a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
+            tb:hasTerm1 0 ;
+            tb:hasTerm2 cb:implementation-svm_learner-bias ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
+    tb:has_default_value 0e+00 ;
+    tb:python_key "coef0" .
+
+cb:python-implementation-python_svm_learner-degree a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
+            tb:hasTerm1 0 ;
+            tb:hasTerm2 cb:implementation-svm_learner-power ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#integer" ;
+    tb:has_default_value 3 ;
+    tb:python_key "degree" .
+
+cb:python-implementation-python_svm_learner-gamma a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
+            tb:hasTerm1 0 ;
+            tb:hasTerm2 cb:implementation-svm_learner-gamma ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
+    tb:has_default_value "scale" ;
+    tb:python_key "gamma" .
+
+cb:python-implementation-python_svm_learner-kernel a tb:FactorParameter ;
+    tb:hasBaseParameter cb:implementation-svm_learner-kernel_type ;
+    tb:hasLevel cb:python-implementation-python_svm_learner-kernel-poly,
+        cb:python-implementation-python_svm_learner-kernel-rbf,
+        cb:python-implementation-python_svm_learner-kernel-sigmoid ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#enumeration" ;
+    tb:has_default_value "rbf" ;
+    tb:python_key "kernel" .
+
 cb:python-implementation-python_svm_learner-kernel-poly a tb:FactorLevel ;
-    owl:sameAs cb:implementation-svm_learner-kernel_type-Polynomial .
+    tb:equivalentTo cb:implementation-svm_learner-kernel_type-Polynomial ;
+    tb:hasValue "poly" .
 
 cb:python-implementation-python_svm_learner-kernel-rbf a tb:FactorLevel ;
-    owl:sameAs cb:implementation-svm_learner-kernel_type-RBF .
+    tb:equivalentTo cb:implementation-svm_learner-kernel_type-RBF ;
+    tb:hasValue "rbf" .
 
 cb:python-implementation-python_svm_learner-kernel-sigmoid a tb:FactorLevel ;
-    owl:sameAs cb:implementation-svm_learner-kernel_type-Sigmoid .
+    tb:equivalentTo cb:implementation-svm_learner-kernel_type-Sigmoid ;
+    tb:hasValue "sigmoid" .
+
+cb:python-implementation-python_svm_learner-target tb:has_datatype "http://www.w3.org/2001/XMLSchema#string" ;
+    tb:has_default_value "target" ;
+    tb:python_key "Target" .
 
 dmop:isFeature rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
@@ -10524,14 +10533,14 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:DecisionTreeModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10607,14 +10616,14 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:MissingValueModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:MissingValueModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     rdfs:label "NN Multidimensional Predictor" ;
@@ -10652,20 +10661,20 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10761,11 +10770,26 @@ cb:implementation-svm_learner-gamma a tb:Parameter ;
     tb:has_datatype xsd:double ;
     tb:has_position 4 .
 
-cb:implementation-svm_learner-kernel_type-Polynomial a tb:FactorLevel .
+cb:implementation-svm_learner-kernel_type a tb:Parameter ;
+    rdfs:label "Kernel type" ;
+    tb:hasLevel cb:implementation-svm_learner-kernel_type-Polynomial,
+        cb:implementation-svm_learner-kernel_type-RBF,
+        cb:implementation-svm_learner-kernel_type-Sigmoid ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:enumeration ;
+    tb:has_position 5 ;
+    tb:specifiedBy cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification,
+        cb:component-polynomial_svm_learner-kernel_type_polynomial_specification,
+        cb:component-rbf_svm_learner-kernel_type_rbf_specification .
 
-cb:implementation-svm_learner-kernel_type-RBF a tb:FactorLevel .
+cb:implementation-svm_learner-kernel_type-Polynomial a tb:FactorLevel ;
+    tb:hasValue "Polynomial" .
 
-cb:implementation-svm_learner-kernel_type-Sigmoid a tb:FactorLevel .
+cb:implementation-svm_learner-kernel_type-RBF a tb:FactorLevel ;
+    tb:hasValue "RBF" .
+
+cb:implementation-svm_learner-kernel_type-Sigmoid a tb:FactorLevel ;
+    tb:hasValue "Sigmoid" .
 
 cb:implementation-svm_learner-overlapping_penalty a tb:Parameter ;
     rdfs:label "Overlapping Penalty" ;
@@ -11511,23 +11535,23 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:SVMModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -11837,10 +11861,10 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11900,6 +11924,9 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
@@ -11907,10 +11934,7 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
+                    tb:hasImportanceLevel 1 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;

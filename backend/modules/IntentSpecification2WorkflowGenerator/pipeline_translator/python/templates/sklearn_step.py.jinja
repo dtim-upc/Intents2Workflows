@@ -1,0 +1,15 @@
+from {{library}} import {{module}}
+
+def {{step_name}}(X):
+    Xt = X.drop(["{{target}}"],axis=1)
+    yt = X["{{target}}"]
+    model = {{module}}.{{function}}({%- for param, value in parameters -%}{{param}}={%- if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif -%}{%- endfor -%})
+    return model.fit(Xt, yt)
+        
+
+#{{step_name}}({%- for d in input_data -%}{{d}}{% if not loop.last %}, {%- endif -%}{%- endfor -%})
+
+
+
+
+

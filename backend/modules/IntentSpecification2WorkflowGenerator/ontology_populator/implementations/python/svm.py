@@ -12,7 +12,7 @@ python_svm_learner_implementation = PythonImplementation(
                         default_value="target"), 
         PythonNumericParameter("C", XSD.double,
                         expression = AlgebraicExpression(cb.SUM, 0 ,next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'Overlapping Penalty'),0)),
-                        default_value=1.0),
+                        default_value=1.1),
         PythonNumericParameter("coef0", XSD.double,
                         expression = AlgebraicExpression(cb.SUM, 0 ,next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'Bias'),0)),
                         default_value=0.0),

@@ -117,20 +117,24 @@ class PythonImplementation:
                     for i, level in enumerate(parameter.levels):
                         level_uri = parameter.uri_ref + '-'+ level
                         base_level_uri = parameter.base_parameter.uri_ref + '-' + parameter.base_parameter.levels[i]
-                        print(level_uri, base_level_uri)
                         g.add((level_uri, RDF.type, tb.FactorLevel))
+                        g.add((level_uri, tb.hasValue, Literal(level)))
                         g.add((parameter.uri_ref, tb.hasLevel, level_uri))
-                        g.add((level_uri, OWL.sameAs, base_level_uri))
+                        g.add((level_uri, tb.equivalentTo, base_level_uri))
+                    g.add((parameter.uri_ref, RDF.type, tb.FactorParameter))
+                    g.add((parameter.uri_ref, tb.hasBaseParameter, parameter.base_parameter.uri_ref))
                 
                 elif isinstance(parameter, PythonNumericParameter):
                     expression_uri = parameter.expression.add_to_graph(g)
                     g.add((parameter.uri_ref, RDF.type, tb.DerivedParameter))
                     g.add((parameter.uri_ref, tb.derivedFrom, expression_uri))
-                    
+                    g.add((parameter.uri_ref, RDF.type, tb.NumericParameter))
 
-
+                
                 g.add((parameter.uri_ref, tb.python_key, Literal(parameter.python_key)))
                 g.add((parameter.uri_ref, tb.has_datatype, Literal(parameter.datatype)))
+                g.add((parameter.uri_ref, tb.has_default_value, Literal(parameter.default_value))) #TODO allow for null default values
+                g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
 
         # Base implementation
         g.add((self.uri_ref, tb.hasBaseImplementation, self.baseImplementation.uri_ref))
