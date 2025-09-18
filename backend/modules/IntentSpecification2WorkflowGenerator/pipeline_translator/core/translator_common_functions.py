@@ -149,8 +149,27 @@ def get_workflow_connections(workflow_graph: Graph) -> List[Tuple[URIRef, URIRef
     return [(r['source'], r['destination'], r['sourcePort'], r['destinationPort']) for r in results]
 
 
+#TODO refactor get_engine_x_param functions to avoid redundancy
+def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?param
+    WHERE {{
+        {implementation.n3()} a tb:Implementation .
+        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
+                tb:engine "{engine}" ;
+                tb:hasParameter ?param .
+        ?param a tb:TextParameter .
+                
+    }}
+    '''
+
+    results = ontology.query(query).bindings
+    return [r['param'] for r in results]
+
+
+
 def get_engine_factor_params(ontology: Graph, implementation: URIRef, engine:str):
-    print(implementation)
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?factor
@@ -164,13 +183,10 @@ def get_engine_factor_params(ontology: Graph, implementation: URIRef, engine:str
     }}
     '''
 
-    print("Query factor:", query)
     results = ontology.query(query).bindings
-    print("Result:", results)
     return [r['factor'] for r in results]
 
 def get_engine_numeric_params(ontology: Graph, implementation: URIRef, engine:str):
-    print(isinstance(implementation,URIRef))
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?param
@@ -183,9 +199,7 @@ def get_engine_numeric_params(ontology: Graph, implementation: URIRef, engine:st
                 
     }}
     '''
-    print("Query number:", query)
     results = ontology.query(query).bindings
-    print("Result:", results)
     return [r['param'] for r in results]
 
 def get_base_param(ontology: Graph, factorParameter: URIRef):
@@ -208,10 +222,7 @@ def translate_factor_level(ontology:Graph, base_param:URIRef, base_level:str, en
         
     }}
     '''
-
-    print("Factor level:",query)
     result = ontology.query(query).bindings
-    print("Result:",result)
     return result[0]['value']
 
 def get_default_value(ontology: Graph, parameter:URIRef):
@@ -232,29 +243,52 @@ def get_algebraic_expression(ontology:Graph, param:URIRef):
     return result[0]['expr'] 
 
 def unpack_expression(ontology:Graph,alg_expr:URIRef):
+    print("unpacking", alg_expr)
     term1 = next(ontology.objects(alg_expr,tb.hasTerm1,unique=True),None)
     term2 = next(ontology.objects(alg_expr,tb.hasTerm2,unique=True),None)
     operation = next(ontology.objects(alg_expr,tb.hasOperation,unique=True),None)
     return term1, term2, operation
 
 def get_term_type(ontology:Graph, term:URIRef):
-    print(term)
     if isinstance(term,Literal):
         return "number" #TODO what happens when string is given?
-    elif isinstance(term,URIRef):
+    elif isinstance(term,URIRef) or isinstance(term, BNode):
         type = next(ontology.objects(term, RDF.type, unique=True),None)
         return type.fragment
     else:
         raise Exception("Invalid term: "+term)
     
 def extract_literal_value(literal):
-    if literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#double'):
-        return float(literal.value)
-    elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#string'):
-        return str(literal.value)
-    elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#integer'):
-        return int(literal.value)
-    elif literal.datatype is None:
-        return literal
+    if isinstance(literal,URIRef):
+        if literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#double'):
+            return float(literal.value)
+        elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#string'):
+            return str(literal.value)
+        elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#integer'):
+            return int(literal.value)
+        elif literal.datatype is None:
+            return literal
+        else:
+            raise Exception("Unsuported type "+literal.datatype)
     else:
-        raise Exception("Unsuported type "+literal.datatype)
+        return literal
+    
+
+def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engine:str):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?impl
+    WHERE {{
+        ?impl a tb:EngineImplementation ;
+            tb:engine "{engine}" ;
+            tb:hasBaseImplementation {base_implementation.n3()} .          
+    }}
+    '''
+    result = ontology.query(query).bindings
+    
+    if len(result) > 1:
+        print(f"WARNING: More than one engine implementations found for {base_implementation} in {engine} engine. Only one of them (chosen randomly) will be used")
+    elif len(result) <= 0:
+        return None
+    
+    return result[0]['impl'] 

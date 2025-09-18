@@ -417,12 +417,12 @@ def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -
     URIRef, Tuple[Literal, Literal, Literal]]:
     parameters_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?parameter ?parameterValue ?position ?condition
+        SELECT ?parameter ?value ?position ?condition
         WHERE {{
             {component.n3()} tb:hasImplementation ?implementation .
             ?implementation tb:hasParameter ?parameter .
-            ?parameter tb:has_defaultvalue ?parameterValue ;
-                       tb:has_position ?position ;
+            ?parameter tb:has_position ?position ;
+                       tb:has_defaultvalue ?value ;
                        tb:has_condition ?condition .
             FILTER NOT EXISTS {{
                 ?parameter tb:specifiedBy ?parameterSpecification .
@@ -431,7 +431,7 @@ def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -
         ORDER BY ?position
     """
     results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['parameterValue'], param['position'], param['condition']) for param in results}
+    return {param['parameter']: (param['value'],param['position'], param['condition']) for param in results}
 
 
 def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:

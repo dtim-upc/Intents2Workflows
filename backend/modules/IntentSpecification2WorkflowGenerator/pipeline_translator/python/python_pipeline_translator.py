@@ -29,13 +29,36 @@ except ImportError:
     easygui = None
 
 
+def translate_text_params(ontology:URIRef, workflow_graph: Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
+    python_params = []
+    text_params = get_engine_text_params(ontology,implementation,engine='Python')
+    target = None
+
+    print("Text params:", text_params)
+
+    for param in text_params:
+        base_param = get_base_param(ontology, param)
+        if base_param in step_parameters.keys():
+            value = step_parameters[base_param]
+        else:
+            value = get_default_value(ontology, param)
+
+        key = next(ontology.objects(param, tb.python_key, unique=True))
+        if key == Literal('Target'):# Extract target from the parameters. Key Target specified as python_key in the ontology
+            target = value
+        else:
+            python_params.append((key, extract_literal_value(value)))
+    return python_params, target
+
+
 def translate_factor_params(ontology:URIRef, workflow_graph: Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
     python_params = []
     factor_params = get_engine_factor_params(ontology,implementation,engine='Python')
-    print("python factor params:",factor_params)
+
+    print("Factor params:", factor_params)
+
     for param in factor_params:
         base_param = get_base_param(ontology, param)
-        print(param,"base's param ->",base_param)
         if base_param in step_parameters.keys():
             value = translate_factor_level(ontology, base_param, step_parameters[base_param], param)
         else:
@@ -47,7 +70,8 @@ def translate_factor_params(ontology:URIRef, workflow_graph: Graph, implementati
 
 
 def calculate(term1, term2, operation):
-    if term1 is None or (term2 is None and operation != "SQRT"):
+    print("Calculant", term1, operation, term2)
+    if term1 is None or (term2 is None and operation not in ['COPY', "SQRT"]):
         return None
 
     if operation == "SUM":
@@ -62,6 +86,10 @@ def calculate(term1, term2, operation):
         return term1 ^ term2 
     elif operation == "SQRT":
         return math.sqrt(term1)
+    elif operation == "EQ":
+        return term1 == term2
+    elif operation == 'COPY':
+        return term1
     else:
         raise Exception("Invalid operation: "+operation)
 
@@ -69,12 +97,12 @@ def calculate(term1, term2, operation):
 def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_parameters:URIRef):
     term1, term2, operation = unpack_expression(ontology,expression)
 
+    print("Algebraic expression", term1, operation, term2)
+
     assert not term1 is None and not operation is None
 
     operation = URIRef(operation).fragment
-    assert (term2 is None and operation == 'SQRT') or not term2 is None
-
-    print(term1, term2, operation)
+    assert (term2 is None and operation in ['COPY', 'SQRT']) or not term2 is None
 
 
     def compute_term_value(term):
@@ -88,7 +116,7 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
                 value= None
         elif type in ["integer", "decimal", "number"]:
                 value = term
-        elif type == "Expression":
+        elif type == "AlgebraicExpression":
                 value = compute_algebraic_expression(ontology, term, step_parameters)
         else:
             raise Exception("Invalid term type: "+type)
@@ -103,11 +131,11 @@ def translate_numeric_params(ontology:Graph, workflow_graph: Graph, implementati
     python_params = []
     numeric_params = get_engine_numeric_params(ontology,implementation,'Python')
     for param in numeric_params:
+        print("PARÀMETRE:",param)
         alg_expression = get_algebraic_expression(ontology, param)
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
         if value is None:
             value = get_default_value(ontology, param)
-            print("Default value de",param,"és",value)
         
         key = next(ontology.objects(param, tb.python_key, unique=True))
         python_params.append((key, extract_literal_value(value)))
@@ -127,16 +155,28 @@ def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: U
 
     return step_parameters
 
-def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef):
-    component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
+def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef, implementation:URIRef):
     step_parameters = get_step_parameters_agnostic(ontology, workflow_graph, step)
     print("Implementation: ",implementation)
     print("parameters: ",step_parameters)
+
+    text_params, target = translate_text_params(ontology,workflow_graph, implementation, step_parameters)
+    print("Target:",target)
+    print("Text params translated:", text_params)
     factor_params: List[Tuple[URIRef,Literal]] = translate_factor_params(ontology,workflow_graph, implementation, step_parameters)
     print("Factor params translated:", factor_params)
     numeric_params: List[Tuple[URIRef,Literal]] = translate_numeric_params(ontology,workflow_graph, implementation, step_parameters)
     print("Numeric params translated:", numeric_params)
-    return factor_params + numeric_params
+    return text_params + factor_params + numeric_params, target
+
+def get_python_module(ontology: Graph, implementation: URIRef):
+    return next(ontology.objects(implementation, tb.python_module, unique=True),None)
+
+def get_python_function(ontology: Graph, implementation: URIRef):
+    return next(ontology.objects(implementation, tb.python_function, unique=True),None)
+
+def get_template(ontology: Graph, implementation: URIRef):
+    return next(ontology.objects(implementation, tb.template, unique=True),None)
 
 def ttl_to_py(ontology: Graph, source_path: str, destination_path: str) -> None:
     tqdm.write('Creating new workflow')
@@ -147,20 +187,52 @@ def ttl_to_py(ontology: Graph, source_path: str, destination_path: str) -> None:
 
     tqdm.write('\tBuilding steps')
     steps = get_workflow_steps(graph)
-    step_paths = []
+    steps_struct = {}
+    target = None
     for i, step in enumerate(steps):
-        python_step_parameters = translate_parameters(ontology, graph, step)
-        step_template = environment.get_template("sklearn_step.py.jinja")
-        step_file = step_template.render(library = "sklearn",
-                                         module = 'svm',
-                                         parameters = python_step_parameters,
-                                         input_data = ["TrainingDataset"],
-                                         function = "SVC",
-                                         step_name = "testPhase",
-                                         target="survived")
+
+        component, implementation = get_step_component_implementation(ontology, graph, step)
+        task = get_implementation_task(ontology, implementation).fragment
+        python_step_parameters, new_target = translate_parameters(ontology, graph, step, implementation)
+        target = new_target if not new_target is None else target #Applier does not have information about the target, so it should be given by the learner
+
+        engine_implementation = get_engine_implementation(ontology, implementation, 'Python')
+        python_module = get_python_module(ontology, engine_implementation)
+        python_function = get_python_function(ontology, engine_implementation)
+        template = get_template(ontology, engine_implementation)
+
+        inputs = get_step_inputs(graph, step)
+        outputs = get_step_outputs(graph, step)
+
+        step_template = environment.get_template(f"{template}.py.jinja")
         
-        with open(os.path.join(destination_path, 'test.py'), encoding='UTF-8', mode='w') as file:
-            file.write(step_file)
+        step_file = step_template.render(module = python_module,
+                                         parameters = python_step_parameters,
+                                         function = python_function,
+                                         step_name = task,
+                                         target=target,
+                                         inputs = [i for i in range(len(inputs))],
+                                         outputs = [i for i in range(len(outputs))])
+        steps_struct[step] = {'task':task, 'inputs': [None]*len(inputs), 'outputs':[task+str(i) for i in range(len(outputs))], 'file': step_file}
+    
+    connections = get_workflow_connections(graph)
+
+    for source_step, destination_step, source_port, destination_port in connections:
+        steps_struct[destination_step]['inputs'][int(destination_port)] = steps_struct[source_step]['outputs'][int(source_port)]
+
+    main_template = environment.get_template('main.py.jinja')
+
+    main_file = main_template.render(steps = steps,
+                                     step_files = steps_struct)
+    
+
+    with open(os.path.join(destination_path, 'test.py'), encoding='UTF-8', mode='w') as file:
+            file.write("#This script has been automatically generated by I2WG")
+    
+    with open(os.path.join(destination_path, 'test.py'), encoding='UTF-8', mode='a') as file:
+        for step in steps:
+            file.write(steps_struct[step]['file'])
+        file.write(main_file)
 
 
     tqdm.write('Done')

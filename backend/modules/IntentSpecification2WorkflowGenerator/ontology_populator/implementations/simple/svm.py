@@ -5,7 +5,7 @@ svm_learner_implementation = Implementation(
     name='SVM Learner',
     algorithm=cb.SVM,
     parameters=[
-        BaseParameter("SVM Class column", XSD.string),
+        BaseParameter("SVM Class column", XSD.string, value="$$LABEL_CATEGORICAL$$"),
         BaseParameter("Overlapping Penalty", XSD.double),
         BaseParameter("Bias", XSD.double),
         BaseParameter("Power", XSD.double),

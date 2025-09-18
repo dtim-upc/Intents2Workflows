@@ -29,7 +29,9 @@ def add_operations(cbox):
         cb.MUL,
         cb.DIV,
         cb.POW,
-        cb.SQRT
+        cb.SQRT,
+        cb.EQ,
+        cb.COPY,
     ]
 
     for o in operations:

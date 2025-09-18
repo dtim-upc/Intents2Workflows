@@ -23,7 +23,7 @@ class Parameter:
         self.uri_ref = None
 
 class BaseParameter:
-    def __init__(self, label: str, datatype: URIRef, condition: str = '') -> None:
+    def __init__(self, label: str, datatype: URIRef, value: str = None, condition: str = '') -> None:
         super().__init__()
         self.label = label
         self.datatype = datatype
@@ -34,7 +34,7 @@ class BaseParameter:
 
         self.uri_ref = None
 
-        self.default_value = None
+        self.default_value = value
 
 class BaseFactorParameter(BaseParameter):
     def __init__(self, label:str, levels: list[str]) -> None:

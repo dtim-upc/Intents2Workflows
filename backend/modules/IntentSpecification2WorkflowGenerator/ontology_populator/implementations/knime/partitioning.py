@@ -6,7 +6,7 @@ partitioning_implementation = KnimeImplementation(
     name='Data Partitioning',
     algorithm=cb.Partitioning,
     parameters=[
-        KnimeParameter("Size of First Partition", XSD.string, None, "method"),
+        KnimeParameter("Size type", XSD.string, None, "method"),
         KnimeParameter("Sampling Method", XSD.string, None, "samplingMethod"),
         KnimeParameter("Fraction (Relative size)", XSD.double, 0.8, "fraction"),
         KnimeParameter("Count (Absolute size)", XSD.int, 100, "count"),

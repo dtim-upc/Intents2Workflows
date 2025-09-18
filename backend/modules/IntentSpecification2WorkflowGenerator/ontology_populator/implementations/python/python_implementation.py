@@ -7,7 +7,7 @@ from ontology_populator.implementations.core.parameter import LiteralValue
 
 
 class AlgebraicExpression:
-    def __init__(self, operation: URIRef, term1: Union[Parameter, 'AlgebraicExpression', LiteralValue], term2:  Union[Parameter, 'AlgebraicExpression', LiteralValue]):
+    def __init__(self, operation: URIRef, term1: Union[Parameter, 'AlgebraicExpression', LiteralValue], term2:  Union[Parameter, 'AlgebraicExpression', LiteralValue] = None):
         self.operation = Literal(operation)
         self.term1 = term1
         self.term2 = term2
@@ -37,12 +37,6 @@ class AlgebraicExpression:
             g.add((expr,tb.hasTerm2, term2_uri))
         
         return expr
-
-
-        
-
-
-
 
 #TODO derived from EngineParameter
 class PythonParameter:
@@ -75,14 +69,21 @@ class PythonFactorParameter(PythonParameter):
         self.base_parameter = base_parameter
         self.levels = levels
 
+class PythonTextParameter(PythonParameter):
+    def __init__(self, python_key: str, base_parameter: Parameter, 
+                 default_value: Union[URIRef, LiteralValue]) -> None:
+        super().__init__(python_key, XSD.string,  default_value)
+        self.base_parameter = base_parameter
+
 
 class PythonImplementation:
 
     def __init__(self, name: str, baseImplementation: Implementation, parameters: List[PythonParameter],
-                 python_package, python_module, python_function, namespace: Namespace = cb) -> None:
-        self.python_package = python_package
+                 python_module, module_version, python_function, template, namespace: Namespace = cb) -> None:
         self.python_module = python_module
+        self.python_module_version = module_version
         self.python_function = python_function
+        self.template = template
         self.parameters = parameters
         self.baseImplementation = baseImplementation
         self.name = name
@@ -101,9 +102,10 @@ class PythonImplementation:
 
         g.add((self.uri_ref, tb.term('name'), Literal(self.name)))
 
-        g.add((self.uri_ref, tb.term('python-package'), Literal(self.python_package)))
-        g.add((self.uri_ref, tb.term('python-module'), Literal(self.python_module)))
-        g.add((self.uri_ref, tb.term('python-function'), Literal(self.python_function)))
+        g.add((self.uri_ref, tb.term('python_module'), Literal(self.python_module)))
+        g.add((self.uri_ref, tb.term('python_function'), Literal(self.python_function)))
+        g.add((self.uri_ref, tb.term('python_version'), Literal(self.python_module_version)))
+        g.add((self.uri_ref, tb.term('template'), Literal(self.template)))
 
         # Parameters
         for parameter in self.parameters:
@@ -129,6 +131,11 @@ class PythonImplementation:
                     g.add((parameter.uri_ref, RDF.type, tb.DerivedParameter))
                     g.add((parameter.uri_ref, tb.derivedFrom, expression_uri))
                     g.add((parameter.uri_ref, RDF.type, tb.NumericParameter))
+
+                elif isinstance(parameter, PythonTextParameter):
+                    g.add((parameter.uri_ref, RDF.type, tb.TextParameter))
+                    g.add((parameter.uri_ref, tb.hasBaseParameter, parameter.base_parameter.uri_ref))
+
 
                 
                 g.add((parameter.uri_ref, tb.python_key, Literal(parameter.python_key)))

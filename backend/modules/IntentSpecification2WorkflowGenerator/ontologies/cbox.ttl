@@ -46,6 +46,8 @@ dmop:skipInitialSpace rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
 cb: a owl:Ontology ;
     rdfs:label "ExtremeXP Ontology CBox" .
 
+cb:COPY a tb:Operation .
+
 cb:DBSCAN a tb:Algorithm ;
     rdfs:label "DBSCAN" ;
     tb:solves cb:Clustering .
@@ -59,6 +61,8 @@ cb:DecisionTreeModelShape a sh:NodeShape,
 cb:DuplicateRemoval a tb:Algorithm ;
     rdfs:label "DuplicateRemoval" ;
     tb:solves cb:DuplicationRemoval .
+
+cb:EQ a tb:Operation .
 
 cb:Explanation a tb:Task .
 
@@ -366,7 +370,7 @@ WHERE {
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_absolute_train_test_split-sampling_method_random_specification,
-        cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification .
+        cb:component-random_absolute_train_test_split-size_type_absolute_specification .
 
 cb:component-random_absolute_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Random Absolute Train-Test Split (Tensor)" ;
@@ -455,7 +459,7 @@ WHERE {
 }
 """ ] ) ;
     tb:overridesParameter cb:component-random_relative_train_test_split-sampling_method_random_specification,
-        cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification .
+        cb:component-random_relative_train_test_split-size_type_relative_specification .
 
 cb:component-random_relative_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Random Relative Train-Test Split (Tensor)" ;
@@ -563,7 +567,7 @@ WHERE {
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
-        cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification .
+        cb:component-top_k_absolute_train_test_split-size_type_absolute_specification .
 
 cb:component-top_k_absolute_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Top K Absolute Train-Test Split (Tensor)" ;
@@ -651,7 +655,7 @@ WHERE {
 }
 """ ] ) ;
     tb:overridesParameter cb:component-top_k_relative_train_test_split-sampling_method_first_specification,
-        cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification .
+        cb:component-top_k_relative_train_test_split-size_type_relative_specification .
 
 cb:component-top_k_relative_train_test_split_\(tensor\) a tb:Component ;
     rdfs:label "Top K Relative Train-Test Split (Tensor)" ;
@@ -702,6 +706,19 @@ WHERE {
     tb:overridesParameter cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification,
         cb:component-top_k_relative_train_test_split_\(tensor\)-sampling_method_first_specification .
 
+cb:python-implementation-python_data_partitioning a tb:EngineImplementation ;
+    tb:engine "Python" ;
+    tb:hasBaseImplementation cb:implementation-data_partitioning ;
+    tb:hasParameter cb:python-implementation-python_data_partitioning-random_state,
+        cb:python-implementation-python_data_partitioning-shuffle,
+        cb:python-implementation-python_data_partitioning-test_size,
+        cb:python-implementation-python_data_partitioning-train_size ;
+    tb:name "Python Data Partitioning" ;
+    tb:python_function "train_test_split" ;
+    tb:python_module "sklearn.model_selection" ;
+    tb:python_version "1.7.2" ;
+    tb:template "basic_function" .
+
 cb:python-implementation-python_svm_learner a tb:EngineImplementation ;
     tb:engine "Python" ;
     tb:hasBaseImplementation cb:implementation-svm_learner ;
@@ -712,17 +729,19 @@ cb:python-implementation-python_svm_learner a tb:EngineImplementation ;
         cb:python-implementation-python_svm_learner-kernel,
         cb:python-implementation-python_svm_learner-target ;
     tb:name "Python SVM Learner" ;
-    tb:python-function "SVC" ;
-    tb:python-module "svm" ;
-    tb:python-package "sklearn" .
+    tb:python_function "SVC" ;
+    tb:python_module "sklearn.svm" ;
+    tb:python_version "1.7.2" ;
+    tb:template "sklearn_train" .
 
 cb:python-implementation-python_svm_predictor a tb:EngineImplementation ;
     tb:engine "Python" ;
     tb:hasBaseImplementation cb:implementation-svm_predictor ;
     tb:name "Python SVM Predictor" ;
-    tb:python-function "fit" ;
-    tb:python-module "None" ;
-    tb:python-package "sklearn" .
+    tb:python_function "SVC" ;
+    tb:python_module "sklearn.svm" ;
+    tb:python_version "1.7.2" ;
+    tb:template "sklearn_predict" .
 
 cb:ram a tb:ExperimentConstraint ;
     rdfs:label "RAM" ;
@@ -936,16 +955,16 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -1014,12 +1033,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1070,20 +1089,6 @@ cb:component-feedforward_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter cb:component-feedforward_nn_multidimensional_learner-nn_type_feedforward_specification .
 
-cb:component-hypertangent_svm_learner a tb:LearnerComponent ;
-    rdfs:label "HyperTangent SVM Learner" ;
-    tb:exposesParameter cb:implementation-svm_learner-svm_class_column ;
-    tb:hasApplier cb:component-svm_predictor ;
-    tb:hasImplementation cb:implementation-svm_learner ;
-    tb:hasTransformation ( [ a tb:Transformation ;
-                tb:transformation_language "SPARQL" ;
-                tb:transformation_query """
-INSERT DATA{
-    $output1 cb:setsClassColumnName $parameter1 .
-}
-            """ ] ) ;
-    tb:overridesParameter cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification .
-
 cb:component-lstm_nn_learner a tb:LearnerComponent ;
     rdfs:label "LSTM NN Learner" ;
     tb:exposesParameter cb:implementation-nn_learner-class_column ;
@@ -1105,13 +1110,13 @@ cb:component-mean_imputation a tb:LearnerComponent ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1142,13 +1147,13 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1237,6 +1242,20 @@ cb:component-recurrent_nn_multidimensional_learner a tb:LearnerComponent ;
     tb:hasTransformation [ rdf:rest () ] ;
     tb:overridesParameter cb:component-recurrent_nn_multidimensional_learner-nn_type_recurrent_specification .
 
+cb:component-sigmoid_svm_learner a tb:LearnerComponent ;
+    rdfs:label "Sigmoid SVM Learner" ;
+    tb:exposesParameter cb:implementation-svm_learner-svm_class_column ;
+    tb:hasApplier cb:component-svm_predictor ;
+    tb:hasImplementation cb:implementation-svm_learner ;
+    tb:hasTransformation ( [ a tb:Transformation ;
+                tb:transformation_language "SPARQL" ;
+                tb:transformation_query """
+INSERT DATA{
+    $output1 cb:setsClassColumnName $parameter1 .
+}
+            """ ] ) ;
+    tb:overridesParameter cb:component-sigmoid_svm_learner-kernel_type_sigmoid_specification .
+
 cb:component-xgboost_linear_learner a tb:LearnerComponent ;
     rdfs:label "XGBoost Linear Learner" ;
     tb:exposesParameter cb:implementation-xgboost_linear_learner-target_column ;
@@ -1278,17 +1297,17 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:has_rank 3 ;
+            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 3 ;
-            tb:relatedtoDatatag cb:OutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2590,14 +2609,14 @@ cb:implementation-categorizer a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-categorizer-append_columns a tb:Parameter ;
     rdfs:label "Append columns" ;
@@ -2846,14 +2865,14 @@ cb:implementation-categorizer_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Categorizer (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
@@ -3976,37 +3995,20 @@ cb:implementation-csv_writer-writer_location_flag a tb:Parameter ;
 cb:implementation-data_partitioning-class_columns a tb:Parameter ;
     rdfs:label "Class columns" ;
     tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:has_position 5 ;
-    tb:knime_key "class_column" ;
-    tb:knime_path "model" .
+    tb:has_datatype xsd:string ;
+    tb:has_position 5 .
 
-cb:implementation-data_partitioning-sampling_method a tb:Parameter ;
-    rdfs:label "Sampling Method" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:has_position 1 ;
-    tb:knime_key "samplingMethod" ;
-    tb:knime_path "model" ;
-    tb:specifiedBy cb:component-random_absolute_train_test_split-sampling_method_random_specification,
-        cb:component-random_relative_train_test_split-sampling_method_random_specification,
-        cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
-        cb:component-top_k_relative_train_test_split-sampling_method_first_specification .
+cb:implementation-data_partitioning-sampling_method-First a tb:FactorLevel ;
+    tb:hasValue "First" .
 
-cb:implementation-data_partitioning-size_of_first_partition a tb:Parameter ;
-    rdfs:label "Size of First Partition" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:has_position 0 ;
-    tb:knime_key "method" ;
-    tb:knime_path "model" ;
-    tb:specifiedBy cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification,
-        cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification,
-        cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification,
-        cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification .
+cb:implementation-data_partitioning-sampling_method-Random a tb:FactorLevel ;
+    tb:hasValue "Random" .
+
+cb:implementation-data_partitioning-size_type-Absolute a tb:FactorLevel ;
+    tb:hasValue "Absolute" .
+
+cb:implementation-data_partitioning-size_type-Relative a tb:FactorLevel ;
+    tb:hasValue "Relative" .
 
 cb:implementation-data_reader a tb:Implementation ;
     rdfs:label "Data Reader" ;
@@ -4321,13 +4323,13 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -6449,10 +6451,10 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Line Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -7378,14 +7380,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Missing Value (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -8635,22 +8637,22 @@ cb:implementation-scatter_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Scatter Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:ScatterPlotVisualizationShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-scatter_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -10015,12 +10017,61 @@ cb:missingValueConstraint a sh:PropertyShape ;
     sh:maxInclusive 5e-02 ;
     sh:path dmop:missingvaluesPercentage .
 
-cb:python-implementation-python_svm_learner-c a tb:DerivedParameter,
+cb:python-implementation-python_data_partitioning-random_state a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 "None" ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#int" ;
+    tb:has_default_value "None" ;
+    tb:python_key "random_state" .
+
+cb:python-implementation-python_data_partitioning-shuffle a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#EQ" ;
+            tb:hasTerm1 cb:implementation-data_partitioning-sampling_method ;
+            tb:hasTerm2 "Random" ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#boolean" ;
+    tb:has_default_value true ;
+    tb:python_key "shuffle" .
+
+cb:python-implementation-python_data_partitioning-test_size a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 "None" ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#numeric" ;
+    tb:has_default_value "None" ;
+    tb:python_key "test_size" .
+
+cb:python-implementation-python_data_partitioning-train_size a tb:DerivedParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
             tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-overlapping_penalty ] ;
+            tb:hasTerm1 [ a tb:AlgebraicExpression ;
+                    tb:hasOperation "https://extremexp.eu/ontology/cbox#MUL" ;
+                    tb:hasTerm1 [ a tb:AlgebraicExpression ;
+                            tb:hasOperation "https://extremexp.eu/ontology/cbox#EQ" ;
+                            tb:hasTerm1 cb:implementation-data_partitioning-size_type ;
+                            tb:hasTerm2 "Absolute" ] ;
+                    tb:hasTerm2 cb:implementation-data_partitioning-count_\(absolute_size\) ] ;
+            tb:hasTerm2 [ a tb:AlgebraicExpression ;
+                    tb:hasOperation "https://extremexp.eu/ontology/cbox#MUL" ;
+                    tb:hasTerm1 [ a tb:AlgebraicExpression ;
+                            tb:hasOperation "https://extremexp.eu/ontology/cbox#EQ" ;
+                            tb:hasTerm1 cb:implementation-data_partitioning-size_type ;
+                            tb:hasTerm2 "Relative" ] ;
+                    tb:hasTerm2 cb:implementation-data_partitioning-fraction_\(relative_size\) ] ] ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#numeric" ;
+    tb:has_default_value 2.5e-01 ;
+    tb:python_key "train_size" .
+
+cb:python-implementation-python_svm_learner-c a tb:DerivedParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-svm_learner-overlapping_penalty ] ;
     tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
     tb:has_default_value 1.1e+00 ;
     tb:python_key "C" .
@@ -10028,9 +10079,8 @@ cb:python-implementation-python_svm_learner-c a tb:DerivedParameter,
 cb:python-implementation-python_svm_learner-coef0 a tb:DerivedParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-bias ] ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-svm_learner-bias ] ;
     tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
     tb:has_default_value 0e+00 ;
     tb:python_key "coef0" .
@@ -10038,9 +10088,8 @@ cb:python-implementation-python_svm_learner-coef0 a tb:DerivedParameter,
 cb:python-implementation-python_svm_learner-degree a tb:DerivedParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-power ] ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-svm_learner-power ] ;
     tb:has_datatype "http://www.w3.org/2001/XMLSchema#integer" ;
     tb:has_default_value 3 ;
     tb:python_key "degree" .
@@ -10048,9 +10097,8 @@ cb:python-implementation-python_svm_learner-degree a tb:DerivedParameter,
 cb:python-implementation-python_svm_learner-gamma a tb:DerivedParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUM" ;
-            tb:hasTerm1 0 ;
-            tb:hasTerm2 cb:implementation-svm_learner-gamma ] ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-svm_learner-gamma ] ;
     tb:has_datatype "http://www.w3.org/2001/XMLSchema#double" ;
     tb:has_default_value "scale" ;
     tb:python_key "gamma" .
@@ -10076,7 +10124,9 @@ cb:python-implementation-python_svm_learner-kernel-sigmoid a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-svm_learner-kernel_type-Sigmoid ;
     tb:hasValue "sigmoid" .
 
-cb:python-implementation-python_svm_learner-target tb:has_datatype "http://www.w3.org/2001/XMLSchema#string" ;
+cb:python-implementation-python_svm_learner-target a tb:TextParameter ;
+    tb:hasBaseParameter cb:implementation-svm_learner-svm_class_column ;
+    tb:has_datatype "http://www.w3.org/2001/XMLSchema#string" ;
     tb:has_default_value "target" ;
     tb:python_key "Target" .
 
@@ -10189,9 +10239,6 @@ cb:component-histogram_count_visualizer-histogram_aggregation_occurence_count_sp
 cb:component-histogram_sum_visualizer-histogram_aggregation_sum_specification a tb:ParameterSpecification ;
     tb:hasValue "Sum" .
 
-cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification a tb:ParameterSpecification ;
-    tb:hasValue "HyperTangent" .
-
 cb:component-lstm_nn_learner-nn_type_lstm_specification a tb:ParameterSpecification ;
     tb:hasValue "LSTM" .
 
@@ -10246,7 +10293,7 @@ cb:component-polynomial_svm_learner-kernel_type_polynomial_specification a tb:Pa
 cb:component-random_absolute_train_test_split-sampling_method_random_specification a tb:ParameterSpecification ;
     tb:hasValue "Random" .
 
-cb:component-random_absolute_train_test_split-size_of_first_partition_absolute_specification a tb:ParameterSpecification ;
+cb:component-random_absolute_train_test_split-size_type_absolute_specification a tb:ParameterSpecification ;
     tb:hasValue "Absolute" .
 
 cb:component-random_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification a tb:ParameterSpecification ;
@@ -10258,7 +10305,7 @@ cb:component-random_absolute_train_test_split_\(tensor\)-sampling_method_random_
 cb:component-random_relative_train_test_split-sampling_method_random_specification a tb:ParameterSpecification ;
     tb:hasValue "Random" .
 
-cb:component-random_relative_train_test_split-size_of_first_partition_relative_specification a tb:ParameterSpecification ;
+cb:component-random_relative_train_test_split-size_type_relative_specification a tb:ParameterSpecification ;
     tb:hasValue "Relative" .
 
 cb:component-random_relative_train_test_split_\(tensor\)-partition_method_relative_specification a tb:ParameterSpecification ;
@@ -10276,10 +10323,13 @@ cb:component-recurrent_nn_learner-nn_type_recurrent_specification a tb:Parameter
 cb:component-recurrent_nn_multidimensional_learner-nn_type_recurrent_specification a tb:ParameterSpecification ;
     tb:hasValue "Recurrent" .
 
+cb:component-sigmoid_svm_learner-kernel_type_sigmoid_specification a tb:ParameterSpecification ;
+    tb:hasValue "Sigmoid" .
+
 cb:component-top_k_absolute_train_test_split-sampling_method_first_specification a tb:ParameterSpecification ;
     tb:hasValue "First" .
 
-cb:component-top_k_absolute_train_test_split-size_of_first_partition_absolute_specification a tb:ParameterSpecification ;
+cb:component-top_k_absolute_train_test_split-size_type_absolute_specification a tb:ParameterSpecification ;
     tb:hasValue "Absolute" .
 
 cb:component-top_k_absolute_train_test_split_\(tensor\)-partition_method_absolute_specification a tb:ParameterSpecification ;
@@ -10291,7 +10341,7 @@ cb:component-top_k_absolute_train_test_split_\(tensor\)-sampling_method_first_sp
 cb:component-top_k_relative_train_test_split-sampling_method_first_specification a tb:ParameterSpecification ;
     tb:hasValue "First" .
 
-cb:component-top_k_relative_train_test_split-size_of_first_partition_relative_specification a tb:ParameterSpecification ;
+cb:component-top_k_relative_train_test_split-size_type_relative_specification a tb:ParameterSpecification ;
     tb:hasValue "Relative" .
 
 cb:component-top_k_relative_train_test_split_\(tensor\)-partition_method_relative_specification a tb:ParameterSpecification ;
@@ -10446,6 +10496,18 @@ cb:implementation-csv_writer-writer_file a tb:Parameter ;
     tb:has_position 0 ;
     tb:knime_key "path" ;
     tb:knime_path "model/settings/file_chooser_settings/path" .
+
+cb:implementation-data_partitioning-sampling_method a tb:Parameter ;
+    rdfs:label "Sampling Method" ;
+    tb:hasLevel cb:implementation-data_partitioning-sampling_method-First,
+        cb:implementation-data_partitioning-sampling_method-Random ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:enumeration ;
+    tb:has_position 1 ;
+    tb:specifiedBy cb:component-random_absolute_train_test_split-sampling_method_random_specification,
+        cb:component-random_relative_train_test_split-sampling_method_random_specification,
+        cb:component-top_k_absolute_train_test_split-sampling_method_first_specification,
+        cb:component-top_k_relative_train_test_split-sampling_method_first_specification .
 
 cb:implementation-data_reader-reader_file a tb:Parameter ;
     rdfs:label "Reader File" ;
@@ -10636,14 +10698,14 @@ cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10666,13 +10728,13 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -10719,14 +10781,14 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizerModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
@@ -10778,9 +10840,9 @@ cb:implementation-svm_learner-kernel_type a tb:Parameter ;
     tb:has_condition "" ;
     tb:has_datatype xsd:enumeration ;
     tb:has_position 5 ;
-    tb:specifiedBy cb:component-hypertangent_svm_learner-kernel_type_hypertangent_specification,
-        cb:component-polynomial_svm_learner-kernel_type_polynomial_specification,
-        cb:component-rbf_svm_learner-kernel_type_rbf_specification .
+    tb:specifiedBy cb:component-polynomial_svm_learner-kernel_type_polynomial_specification,
+        cb:component-rbf_svm_learner-kernel_type_rbf_specification,
+        cb:component-sigmoid_svm_learner-kernel_type_sigmoid_specification .
 
 cb:implementation-svm_learner-kernel_type-Polynomial a tb:FactorLevel ;
     tb:hasValue "Polynomial" .
@@ -10915,11 +10977,11 @@ cb:implementation-xgboost_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-name "XGBoost Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 2 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -11037,9 +11099,9 @@ WHERE {
 cb:component-svm_predictor a tb:ApplierComponent ;
     rdfs:label "SVM Predictor" ;
     tb:hasImplementation cb:implementation-svm_predictor ;
-    tb:hasLearner cb:component-hypertangent_svm_learner,
-        cb:component-polynomial_svm_learner,
-        cb:component-rbf_svm_learner ;
+    tb:hasLearner cb:component-polynomial_svm_learner,
+        cb:component-rbf_svm_learner,
+        cb:component-sigmoid_svm_learner ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 2 ;
                 tb:copy_output 1 ;
@@ -11205,34 +11267,23 @@ cb:implementation-bar_chart_visualizer a tb:VisualizerImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
-cb:implementation-data_partitioning-count_\(absolute_size\) a tb:Parameter ;
-    rdfs:label "Count (Absolute size)" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int,
-        "http://www.w3.org/2001/XMLSchema#int" ;
-    tb:has_defaultvalue 100 ;
-    tb:has_position 3 ;
-    tb:knime_key "count" ;
-    tb:knime_path "model" .
-
-cb:implementation-data_partitioning-fraction_\(relative_size\) a tb:Parameter ;
-    rdfs:label "Fraction (Relative size)" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double,
-        "http://www.w3.org/2001/XMLSchema#double" ;
-    tb:has_defaultvalue 8e-01 ;
-    tb:has_position 2 ;
-    tb:knime_key "fraction" ;
-    tb:knime_path "model" .
-
 cb:implementation-data_partitioning-random_seed a tb:Parameter ;
     rdfs:label "Random seed" ;
     tb:has_condition "" ;
-    tb:has_datatype xsd:string,
-        "http://www.w3.org/2001/XMLSchema#string" ;
-    tb:has_position 4 ;
-    tb:knime_key "random_seed" ;
-    tb:knime_path "model" .
+    tb:has_datatype xsd:string ;
+    tb:has_position 4 .
+
+cb:implementation-data_partitioning-size_type a tb:Parameter ;
+    rdfs:label "Size type" ;
+    tb:hasLevel cb:implementation-data_partitioning-size_type-Absolute,
+        cb:implementation-data_partitioning-size_type-Relative ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:enumeration ;
+    tb:has_position 0 ;
+    tb:specifiedBy cb:component-random_absolute_train_test_split-size_type_absolute_specification,
+        cb:component-random_relative_train_test_split-size_type_relative_specification,
+        cb:component-top_k_absolute_train_test_split-size_type_absolute_specification,
+        cb:component-top_k_relative_train_test_split-size_type_relative_specification .
 
 cb:implementation-histogram_visualizer a tb:VisualizerImplementation ;
     rdfs:label "Histogram Visualizer" ;
@@ -11535,13 +11586,8 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:SVMModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
@@ -11549,9 +11595,14 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ] ;
-            tb:has_position 1 ] ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -11608,11 +11659,11 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 2 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 2 ] ;
             tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
@@ -11678,42 +11729,17 @@ cb:implementation-bar_chart_visualizer-included_frequency_columns a tb:Parameter
     tb:knime_key "included_names" ;
     tb:knime_path "model/freq" .
 
-cb:implementation-data_partitioning a tb:Implementation ;
-    rdfs:label "Data Partitioning" ;
-    tb:engine "KNIME",
-        "Simple" ;
-    tb:hasParameter cb:implementation-data_partitioning-class_columns,
-        cb:implementation-data_partitioning-count_\(absolute_size\),
-        cb:implementation-data_partitioning-fraction_\(relative_size\),
-        cb:implementation-data_partitioning-random_seed,
-        cb:implementation-data_partitioning-sampling_method,
-        cb:implementation-data_partitioning-size_of_first_partition ;
-    tb:implements cb:Partitioning ;
-    tb:knime-factory "org.knime.base.node.preproc.partition.PartitionNodeFactory" ;
-    tb:knime-node-bundle-name "KNIME Base Nodes" ;
-    tb:knime-node-bundle-symbolic-name "org.knime.base" ;
-    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
-    tb:knime-node-bundle-version "4.7.0.v202301251625" ;
-    tb:knime-node-feature-name "" ;
-    tb:knime-node-feature-symbolic-name "" ;
-    tb:knime-node-feature-vendor "" ;
-    tb:knime-node-feature-version "0.0.0" ;
-    tb:knime-node-name "Data Partitioning" ;
-    tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+cb:implementation-data_partitioning-count_\(absolute_size\) a tb:Parameter ;
+    rdfs:label "Count (Absolute size)" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 3 .
+
+cb:implementation-data_partitioning-fraction_\(relative_size\) a tb:Parameter ;
+    rdfs:label "Fraction (Relative size)" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 2 .
 
 cb:implementation-histogram_visualizer-histogram_category a tb:Parameter ;
     rdfs:label "Histogram Category" ;
@@ -11762,14 +11788,14 @@ cb:implementation-normalizer_\(pmml\) a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-pie_donut_chart-frequency a tb:Parameter ;
     rdfs:label "frequency" ;
@@ -11791,12 +11817,6 @@ cb:implementation-pie_donut_chart-pie_chart_category a tb:Parameter ;
     tb:knime_key "cat" ;
     tb:knime_path "model" .
 
-cb:implementation-svm_learner-svm_class_column a tb:Parameter ;
-    rdfs:label "SVM Class column" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 0 .
-
 cb:implementation-tensor_data_partitioning a tb:Implementation ;
     rdfs:label "Tensor Data Partitioning" ;
     tb:engine "Simple" ;
@@ -11814,14 +11834,14 @@ cb:implementation-tensor_data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:LabeledTabularDatasetShape a sh:NodeShape ;
     sh:property [ sh:minCount 1 ;
@@ -11846,6 +11866,32 @@ cb:TensorDataset a sh:NodeShape,
     sh:targetClass dmop:TensorDataset ;
     tb:has_weight 1 .
 
+cb:implementation-data_partitioning a tb:Implementation ;
+    rdfs:label "Data Partitioning" ;
+    tb:engine "Simple" ;
+    tb:hasParameter cb:implementation-data_partitioning-class_columns,
+        cb:implementation-data_partitioning-count_\(absolute_size\),
+        cb:implementation-data_partitioning-fraction_\(relative_size\),
+        cb:implementation-data_partitioning-random_seed,
+        cb:implementation-data_partitioning-sampling_method,
+        cb:implementation-data_partitioning-size_type ;
+    tb:implements cb:Partitioning ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
 cb:implementation-nn_learner a tb:LearnerImplementation ;
     rdfs:label "NN Learner" ;
     tb:engine "Simple" ;
@@ -11855,16 +11901,16 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11921,19 +11967,19 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11941,6 +11987,13 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:SVMModel ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
+
+cb:implementation-svm_learner-svm_class_column a tb:Parameter ;
+    rdfs:label "SVM Class column" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
+    tb:has_position 0 .
 
 cb:TrainTabularDatasetShape a sh:NodeShape,
         tb:DataTag ;

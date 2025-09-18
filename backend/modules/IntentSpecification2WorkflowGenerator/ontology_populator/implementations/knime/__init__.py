@@ -15,7 +15,7 @@ from .xgboost import *
 from .categorical_to_number import *
 
 implementations = [
-    partitioning_implementation,
+    #partitioning_implementation,
     decision_tree_learner_implementation,
     decision_tree_predictor_implementation,
     normalizer_implementation,

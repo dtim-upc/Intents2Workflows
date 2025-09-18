@@ -123,7 +123,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
 
     updated_parameters = parameters.copy()
 
-    for parameter, (default_value, position, condition) in parameters.items():
+    for parameter, (value, position, condition) in parameters.items():
         if parameter in intent_parameter_keys:
             intent_value = intent_parameters[parameter]
             updated_parameters[parameter] = (intent_value, position, condition)
@@ -150,7 +150,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
         if isinstance(value.value, str) and '$$LABEL$$' in value.value:
             new_value = value.replace('$$LABEL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$LABEL_CATEGORICAL$$' in value.value: #this allows target column to be defined withou exposed parameters
+        if isinstance(value.value, str) and '$$LABEL_CATEGORICAL$$' in value.value: #this allows target column to be defined without exposed parameters
             new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$NUMERIC_COLUMNS$$' in value.value:
@@ -473,12 +473,15 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     annotate_ios_with_specs(ontology, workflow_graph, transformation_outputs,output_specs)
     
     parameters = get_component_parameters(ontology, component)
+ 
 
     overridden_parameters = get_component_overridden_paramspecs(ontology, workflow_graph, component)
     parameters = perform_param_substitution(graph=workflow_graph, parameters=parameters,
                                                         implementation=component_implementation,
                                                         inputs=transformation_inputs,
                                                         intent_graph=intent_graph)
+
+
     
     param_specs = assign_to_parameter_specs(workflow_graph, parameters)
     param_specs.update(overridden_parameters)
