@@ -156,11 +156,14 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
         if isinstance(value.value, str) and '$$NUMERIC_COLUMNS$$' in value.value:
             new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{graph_queries.get_inputs_numeric_columns(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$CSV_PATH$$' in value.value:
-            new_value = value.replace('$$CSV_PATH$$', f'{get_csv_path(graph, inputs)}')
+        if isinstance(value.value, str) and '$$PATH$$' in value.value:
+            new_value = value.replace('$$PATH$$', f'{get_path(graph, inputs)}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '$$CATEGORICAL_COLUMNS$$' in value.value:
             new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
+            parameters[param] = (Literal(new_value), order, condition)
+        if isinstance(value.value, str) and '$$DATA_RAW_FORMAT$$' in value.value:
+            new_value = value.replace('$$DATA_RAW_FORMAT$$', f'{graph_queries.get_intent_dataset_format(intent_graph=intent_graph,intent_iri=graph_queries.get_intent_iri(intent_graph))}')
             parameters[param] = (Literal(new_value), order, condition)
         if isinstance(value.value, str) and '&amp;' in value.value:
             new_value = value.replace('&amp;', '&')
@@ -252,7 +255,7 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
 
 
 
-def get_csv_path(graph: Graph, inputs: List[URIRef]) -> str:
+def get_path(graph: Graph, inputs: List[URIRef]) -> str:
     data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
     path = next(graph.objects(data_input, dmop.path), True)
     return path.value
@@ -427,10 +430,13 @@ def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, da
     #loader_component = cb.term('component-csv_local_reader')
     loader_step_name = get_step_name(workflow.fragment, 0, loader_component)
     loader_parameters = get_component_parameters(ontology, loader_component)
+    print("loader_parameters", loader_parameters)
     loader_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, loader_component)
+    print("loader_overriden_specs", loader_overridden_paramspecs)
     loader_parameters = perform_param_substitution(workflow_graph, None, loader_parameters, [dataset_node])
     loader_param_specs = assign_to_parameter_specs(workflow_graph, loader_parameters)
     loader_param_specs.update(loader_overridden_paramspecs)
+    print("loader_param_specs", loader_param_specs)
     return add_step(workflow_graph, workflow, loader_step_name, loader_component, loader_param_specs, 0, None, None,
                     [dataset_node])
 
@@ -538,17 +544,21 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
     copy_subgraph(ontology, dataset, workflow_graph, dataset_node)
 
-    format = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
+    format:str = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
 
     knime_compatible = True
 
-    if format == "CSV":
-        loader_component = cb.term('component-csv_local_reader')
+    loader_component = cb.term(f'component-{format.lower()}_reader_component')
+    saver_component = cb.term(f'component-data_writer_component')
+
+    """if format == "CSV":
+        #loader_component = cb.term('component-csv_local_reader')
         saver_component = cb.term('component-csv_local_writer')
     else:
-        loader_component = cb.term('component-data_reader_component')
+        #loader_component = cb.term('component-data_reader_component')
         saver_component = cb.term('component-data_writer_component')
-        knime_compatible = False
+        knime_compatible = False"""
+    
 
     loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node,loader_component)
     task_order += 1

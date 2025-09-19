@@ -2,6 +2,8 @@ import os
 from typing import List, Tuple
 import sys
 
+import rdflib
+
 root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
@@ -25,7 +27,11 @@ def get_implementation_task(ontology: Graph, implementation: URIRef):
                 SELECT ?task
                 WHERE {{ {implementation.n3()} tb:implements ?task .}} """
     
+    
     results = ontology.query(query).bindings
+
+    print(implementation)
+    print(results)
 
     assert len(results) == 1
 
@@ -250,29 +256,16 @@ def unpack_expression(ontology:Graph,alg_expr:URIRef):
     return term1, term2, operation
 
 def get_term_type(ontology:Graph, term:URIRef):
-    if isinstance(term,Literal):
-        return "number" #TODO what happens when string is given?
+    if isinstance(term,rdflib.Literal):
+        return "Literal" #TODO what happens when string is given?
+    elif term == cb.NONE:
+        return "NONE"
     elif isinstance(term,URIRef) or isinstance(term, BNode):
         type = next(ontology.objects(term, RDF.type, unique=True),None)
+        print(type)
         return type.fragment
     else:
         raise Exception("Invalid term: "+term)
-    
-def extract_literal_value(literal):
-    if isinstance(literal,URIRef):
-        if literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#double'):
-            return float(literal.value)
-        elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#string'):
-            return str(literal.value)
-        elif literal.datatype == URIRef('http://www.w3.org/2001/XMLSchema#integer'):
-            return int(literal.value)
-        elif literal.datatype is None:
-            return literal
-        else:
-            raise Exception("Unsuported type "+literal.datatype)
-    else:
-        return literal
-    
 
 def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engine:str):
     query = f'''

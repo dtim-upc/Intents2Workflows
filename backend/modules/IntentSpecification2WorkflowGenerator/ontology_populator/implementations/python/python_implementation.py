@@ -15,7 +15,10 @@ class AlgebraicExpression:
     def add_to_graph(self, g: Graph):
 
         def term_to_uri(term):
-            if isinstance(term, AlgebraicExpression):
+
+            if term is None:
+                return cb.NONE
+            elif isinstance(term, AlgebraicExpression):
                 return term.add_to_graph(g)
             elif isinstance(term, Parameter) or isinstance(term, BaseParameter): #TODO fix parameter subclasses mess
                 return term.uri_ref
@@ -140,7 +143,14 @@ class PythonImplementation:
                 
                 g.add((parameter.uri_ref, tb.python_key, Literal(parameter.python_key)))
                 g.add((parameter.uri_ref, tb.has_datatype, Literal(parameter.datatype)))
-                g.add((parameter.uri_ref, tb.has_default_value, Literal(parameter.default_value))) #TODO allow for null default values
+
+                default_value = parameter.default_value
+                if default_value is None:
+                    g.add((parameter.uri_ref, tb.has_default_value, cb.NONE))
+                else:
+                    g.add((parameter.uri_ref, tb.has_default_value, Literal(default_value)))
+
+                #g.add((parameter.uri_ref, tb.has_default_value, default_value)) #TODO allow for null default values
                 g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
 
         # Base implementation

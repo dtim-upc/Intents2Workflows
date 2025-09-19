@@ -6,7 +6,7 @@ csv_reader_implementation = KnimeImplementation(
     name='CSV Reader',
     algorithm=cb.DataLoading,
     parameters=[
-        KnimeParameter("Reader File", XSD.string, '$$CSV_PATH$$', 'path', path='model/settings/file_selection/path'),
+        KnimeParameter("Reader File", XSD.string, '$$PATH$$', 'path', path='model/settings/file_selection/path'),
         KnimeParameter("Reader Location flag", XSD.boolean, True, 'location_present',
                        path='model/settings/file_selection/path'),
         KnimeParameter("Reader Filesystem", XSD.string, None, 'file_system_type', path='model/settings/file_selection/path'),

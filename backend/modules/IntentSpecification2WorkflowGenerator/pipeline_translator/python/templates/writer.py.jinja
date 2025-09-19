@@ -1,0 +1,7 @@
+
+import {{module}}
+
+def {{step_name}} (result):
+    {{module}}.{{function}}(result).to_csv({% for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
+
+

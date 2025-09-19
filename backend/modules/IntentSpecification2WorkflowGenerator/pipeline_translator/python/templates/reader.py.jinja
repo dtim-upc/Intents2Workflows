@@ -1,0 +1,41 @@
+{% set ns = namespace(format="") %}
+{%- for param, value in parameters %}
+{%- if param|trim == 'format' %}
+{%- set ns.format = value %}
+{%- elif param|trim == 'path' %}
+{%- set ns.path = value %}
+{%- endif %}
+{%- endfor %}
+{%- if ns.format == "CSV"%}
+
+import csv
+import pandas as pd
+
+def {{step_name}}():
+    with open("{{ns.path}}", 'r') as csvfile:
+        encoding = csvfile.encoding
+        lines = [csvfile.readline() for _ in range(50)]
+
+    dialect = csv.Sniffer().sniff(''.join(lines))
+    hasHeader = csv.Sniffer().has_header(''.join(lines))
+
+    return pd.read_csv("{{ns.path}}", encoding=encoding, delimiter=dialect.delimiter)
+
+{% elif ns.format == "Parquet" %}
+import pandas as pd
+
+def {{step_name}}():
+    return pd.read_parquet("{{ns.path}}")
+
+{% elif ns.format == "NumpyZip"%}
+    npz_data = np.load("{{ns.path}}", allow_pickle=False)
+    files = npz_data.files
+    return npz_data
+
+{% else %}
+
+def {{step_name}}():
+    print("Format {{format}} currently not supported")
+    pass
+
+{% endif %}

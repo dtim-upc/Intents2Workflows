@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from typing import Tuple, Dict, List
 import jinja2
 import math
+import rdflib
 
 from tqdm import tqdm
 
@@ -43,11 +44,17 @@ def translate_text_params(ontology:URIRef, workflow_graph: Graph, implementation
         else:
             value = get_default_value(ontology, param)
 
+        if isinstance(value, rdflib.Literal):
+            print("Transformant text literal...", value)
+            value = value.toPython()
+        else:
+            print("No necessita transformació:",value)
+
         key = next(ontology.objects(param, tb.python_key, unique=True))
         if key == Literal('Target'):# Extract target from the parameters. Key Target specified as python_key in the ontology
             target = value
         else:
-            python_params.append((key, extract_literal_value(value)))
+            python_params.append((key, value))
     return python_params, target
 
 
@@ -63,9 +70,15 @@ def translate_factor_params(ontology:URIRef, workflow_graph: Graph, implementati
             value = translate_factor_level(ontology, base_param, step_parameters[base_param], param)
         else:
             value = get_default_value(ontology, param)
+        
+        if isinstance(value, rdflib.Literal):
+            print("Transformant factor literal...", value)
+            value = value.toPython()
+        else:
+            print("No necessita transformació:",value)
 
         key = next(ontology.objects(param, tb.python_key, unique=True))
-        python_params.append((key, extract_literal_value(value)))
+        python_params.append((key, value))
     return python_params
 
 
@@ -114,8 +127,10 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
             else:
                 print("Term",term,"not present in step parameters. Using default value")
                 value= None
-        elif type in ["integer", "decimal", "number"]:
-                value = term
+        elif type =="Literal":
+                value = term.toPython()
+        elif type == "NONE":
+                value = None
         elif type == "AlgebraicExpression":
                 value = compute_algebraic_expression(ontology, term, step_parameters)
         else:
@@ -136,9 +151,18 @@ def translate_numeric_params(ontology:Graph, workflow_graph: Graph, implementati
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
         if value is None:
             value = get_default_value(ontology, param)
+
+        if value == cb.NONE:
+            print(value, "És NULL")
+            value = None
+        elif isinstance(value, rdflib.Literal):
+            print("Transformant literal...", value)
+            value = value.toPython()
+        else:
+            print("No necessita transformació:",value)
         
         key = next(ontology.objects(param, tb.python_key, unique=True))
-        python_params.append((key, extract_literal_value(value)))
+        python_params.append((key, value))
     return python_params
 
 def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
@@ -190,7 +214,6 @@ def ttl_to_py(ontology: Graph, source_path: str, destination_path: str) -> None:
     steps_struct = {}
     target = None
     for i, step in enumerate(steps):
-
         component, implementation = get_step_component_implementation(ontology, graph, step)
         task = get_implementation_task(ontology, implementation).fragment
         python_step_parameters, new_target = translate_parameters(ontology, graph, step, implementation)
@@ -205,6 +228,8 @@ def ttl_to_py(ontology: Graph, source_path: str, destination_path: str) -> None:
         outputs = get_step_outputs(graph, step)
 
         step_template = environment.get_template(f"{template}.py.jinja")
+
+        print("RENDER parameters:", python_step_parameters)
         
         step_file = step_template.render(module = python_module,
                                          parameters = python_step_parameters,
