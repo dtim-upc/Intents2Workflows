@@ -1,8 +1,8 @@
 from common import *
-from .python_implementation import PythonImplementation, PythonNumericParameter, PythonTextParameter, PythonFactorParameter, AlgebraicExpression
+from .python_implementation import PythonImplementation
+from .python_parameter import PythonNumericParameter
 from ..simple import partitioning
-from ..core import *
-
+from ..core.expression import AlgebraicExpression
 
 base_params = partitioning.partitioning_implementation.parameters.keys()
 

@@ -1,13 +1,14 @@
 from common import *
-from ..core import *
-from .python_implementation import PythonImplementation, PythonTextParameter, PythonNumericParameter, PythonFactorParameter, AlgebraicExpression
+from ..core.expression import AlgebraicExpression
+from .python_parameter import PythonNumericParameter, PythonTextParameter, PythonFactorParameter
+from .python_implementation import PythonImplementation
 from ..simple import svm
 
 python_svm_learner_implementation = PythonImplementation(
     name='Python SVM Learner',
     baseImplementation = svm.svm_learner_implementation,
     parameters=[
-        PythonTextParameter("Target",
+        PythonTextParameter(key="Target",
                         base_parameter= next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'SVM Class column'),None),
                         default_value="target"), 
         PythonNumericParameter("C", XSD.double,

@@ -40,10 +40,10 @@ implementations = [
 ]
 
 components = [
-    random_relative_train_test_split_component,
-    random_absolute_train_test_split_component,
-    top_relative_train_test_split_component,
-    top_absolute_train_test_split_component,
+    #random_relative_train_test_split_component,
+    #random_absolute_train_test_split_component,
+    #top_relative_train_test_split_component,
+    #top_absolute_train_test_split_component,
     decision_tree_learner_component,
     decision_tree_predictor_component,
     min_max_scaling_component,

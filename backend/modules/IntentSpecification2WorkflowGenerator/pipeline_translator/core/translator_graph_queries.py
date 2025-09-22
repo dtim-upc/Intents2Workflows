@@ -25,7 +25,6 @@ def get_input_specs(ontology, implementation):
 def is_predictior(ontology: Graph, implementation: URIRef):
     query = f""" PREFIX tb: <https://extremexp.eu/ontology/tbox#>
                 ASK {{ {implementation.n3()} a tb:ApplierImplementation .}} """
-    print(query)
     return ontology.query(query).askAnswer
    
 
@@ -36,9 +35,6 @@ def get_implementation_task(ontology: Graph, implementation: URIRef):
     
     
     results = ontology.query(query).bindings
-
-    print(implementation)
-    print(results)
 
     assert len(results) == 1
 
@@ -176,28 +172,41 @@ def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
                 
     }}
     '''
-
     results = ontology.query(query).bindings
     return [r['param'] for r in results]
 
 
-
-def get_engine_factor_params(ontology: Graph, implementation: URIRef, engine:str):
+def is_parameter(ontology:Graph, uri:URIRef):
     query = f'''
     PREFIX tb: <{tb}>
-    SELECT ?factor
-    WHERE {{
-        {implementation.n3()} a tb:Implementation .
-        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
-                tb:engine "{engine}" ;
-                tb:hasParameter ?factor .
-        ?factor a tb:FactorParameter .
-                
+    ASK {{
+        {uri.n3()} a tb:Parameter .
     }}
     '''
 
-    results = ontology.query(query).bindings
-    return [r['factor'] for r in results]
+    print(query,ontology.query(query).askAnswer)
+    return ontology.query(query).askAnswer
+
+
+def is_factor(ontology:Graph, parameter:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    ASK {{
+        {parameter.n3()} a tb:FactorParameter .
+    }}
+    '''
+
+    return ontology.query(query).askAnswer
+
+def is_expression(ontology:Graph, uri:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    ASK {{
+        {uri.n3()} a tb:AlgebraicExpression .
+    }}
+    '''
+    return ontology.query(query).askAnswer
+
 
 def get_engine_numeric_params(ontology: Graph, implementation: URIRef, engine:str):
     query = f'''
@@ -256,23 +265,10 @@ def get_algebraic_expression(ontology:Graph, param:URIRef):
     return result[0]['expr'] 
 
 def unpack_expression(ontology:Graph,alg_expr:URIRef):
-    print("unpacking", alg_expr)
     term1 = next(ontology.objects(alg_expr,tb.hasTerm1,unique=True),None)
     term2 = next(ontology.objects(alg_expr,tb.hasTerm2,unique=True),None)
     operation = next(ontology.objects(alg_expr,tb.hasOperation,unique=True),None)
     return term1, term2, operation
-
-def get_term_type(ontology:Graph, term:URIRef):
-    if isinstance(term,rdflib.Literal):
-        return "Literal" #TODO what happens when string is given?
-    elif term == cb.NONE:
-        return "NONE"
-    elif isinstance(term,URIRef) or isinstance(term, BNode):
-        type = next(ontology.objects(term, RDF.type, unique=True),None)
-        print(type)
-        return type.fragment
-    else:
-        raise Exception("Invalid term: "+term)
 
 def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engine:str):
     query = f'''

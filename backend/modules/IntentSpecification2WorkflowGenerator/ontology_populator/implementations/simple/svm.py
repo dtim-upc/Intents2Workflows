@@ -5,12 +5,12 @@ svm_learner_implementation = Implementation(
     name='SVM Learner',
     algorithm=cb.SVM,
     parameters=[
-        BaseParameter("SVM Class column", XSD.string, value="$$LABEL_CATEGORICAL$$"),
-        BaseParameter("Overlapping Penalty", XSD.double),
-        BaseParameter("Bias", XSD.double),
-        BaseParameter("Power", XSD.double),
-        BaseParameter("Gamma", XSD.double),
-        BaseFactorParameter("Kernel type", ['Polynomial', 'Sigmoid', 'RBF']),
+        Parameter("SVM Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
+        Parameter("Overlapping Penalty", XSD.double),
+        Parameter("Bias", XSD.double),
+        Parameter("Power", XSD.double),
+        Parameter("Gamma", XSD.double),
+        FactorParameter("Kernel type", ['Polynomial', 'Sigmoid', 'RBF']),
     ],
     input=[
         [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NonNullTabularDatasetShape, 

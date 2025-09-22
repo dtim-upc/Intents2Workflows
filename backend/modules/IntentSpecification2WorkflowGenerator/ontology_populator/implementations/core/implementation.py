@@ -1,11 +1,8 @@
-import uuid
 from typing import List, Union
-
-from rdflib.collection import Collection
 
 import os 
 import sys
-from .parameter import Parameter, BaseFactorParameter
+from .parameter import Parameter, FactorParameter
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
@@ -103,7 +100,7 @@ class Implementation:
                 else:
                     g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(parameter.default_value)))
 
-            if isinstance(parameter, BaseFactorParameter):
+            if isinstance(parameter, FactorParameter):
                 print("BaseFactor detectat:",parameter)
                 for level in parameter.levels:
                     level_uri = parameter.uri_ref + '-'+ level

@@ -1,7 +1,7 @@
 from typing import List, Union, Optional
 
 from common import *
-from ontology_populator.implementations.core import Implementation, Parameter
+from ontology_populator.implementations.core.implementation import Implementation, Parameter
 from ontology_populator.implementations.core.parameter import LiteralValue
 
 

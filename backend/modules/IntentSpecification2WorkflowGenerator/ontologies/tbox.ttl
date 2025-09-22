@@ -230,18 +230,6 @@ tb:hasStep a owl:ObjectProperty ;
     rdfs:domain tb:Workflow ;
     rdfs:range tb:Step .
 
-tb:hasTerm1 a owl:ObjectProperty ;
-    rdfs:domain tb:AlgebraicExpression ;
-    rdfs:range xsd:numeric,
-        tb:AlgebraicOperation,
-        tb:Parameter .
-
-tb:hasTerm2 a owl:ObjectProperty ;
-    rdfs:domain tb:AlgebraicExpression ;
-    rdfs:range xsd:numeric,
-        tb:AlgebraicOperation,
-        tb:Parameter .
-
 tb:hasTransformation a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
     rdfs:range rdf:List .
@@ -398,6 +386,8 @@ tb:UserFeedback a owl:Class .
 
 tb:VisualizationRequirement a owl:Class .
 
+tb:AlgebraicExpression a owl:Class .
+
 tb:CopyTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
@@ -440,8 +430,6 @@ tb:ParameterSpecification a owl:Class .
 tb:Requirement a owl:Class .
 
 tb:Rule a owl:Class .
-
-tb:AlgebraicExpression a owl:Class .
 
 tb:ApplierComponent a owl:Class ;
     rdfs:subClassOf tb:Component .

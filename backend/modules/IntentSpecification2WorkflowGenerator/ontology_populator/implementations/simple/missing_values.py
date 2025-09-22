@@ -5,15 +5,15 @@ missing_value_implementation = Implementation(
     name='Missing Value',
     algorithm=cb.MissingValueRemoval,
     parameters=[
-        BaseParameter('Integer', XSD.string, None, condition='$$INTEGER_COLUMN$$'),
-        BaseParameter('String', XSD.string, None, condition='$$STRING_COLUMN$$'),
-        BaseParameter('Float', XSD.string, None, condition='$$FLOAT_COLUMN$$'),
+        Parameter('Integer', XSD.string, None, condition='$$INTEGER_COLUMN$$'),
+        Parameter('String', XSD.string, None, condition='$$STRING_COLUMN$$'),
+        Parameter('Float', XSD.string, None, condition='$$FLOAT_COLUMN$$'),
 
-        BaseParameter('Numeric columns', XSD.string,"$$NUMERIC_COLUMNS$$"),
-        BaseParameter('Categorical columns', XSD.string,"$$CATEGORICAL_COLUMNS$$"),
+        Parameter('Numeric columns', XSD.string,"$$NUMERIC_COLUMNS$$"),
+        Parameter('Categorical columns', XSD.string,"$$CATEGORICAL_COLUMNS$$"),
 
-        BaseFactorParameter('Numeric strategy', ["MeanImputation", "Drop"]),
-        BaseFactorParameter('Factor strategy', ["MostFrequent","Drop"]),
+        FactorParameter('Numeric strategy', ["MeanImputation", "Drop"]),
+        FactorParameter('Factor strategy', ["MostFrequent","Drop"]),
 
     ],
     input=[

@@ -6,8 +6,8 @@ data_reader_implementation = Implementation(
     name='Data Reader',
     algorithm=cb.DataLoading,
     parameters=[
-        BaseParameter("Reader File", XSD.string, '$$PATH$$'),
-        BaseParameter("Format", XSD.string, '$$DATA_RAW_FORMAT$$')
+        Parameter("Reader File", XSD.string, '$$PATH$$'),
+        Parameter("Format", XSD.string, '$$DATA_RAW_FORMAT$$')
     ],
     input=[],
     output=[
@@ -35,7 +35,7 @@ data_writer_implementation = Implementation(
     name='Data Writer',
     algorithm=cb.DataStoring,
     parameters=[
-        BaseParameter('Output path', XSD.string, r"./output.csv"),
+        Parameter('Output path', XSD.string, r"./output.csv"),
     ],
     input=[cb.TabularDatasetShape],
     output=[],

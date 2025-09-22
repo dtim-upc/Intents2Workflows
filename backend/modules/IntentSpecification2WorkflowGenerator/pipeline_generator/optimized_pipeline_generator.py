@@ -697,6 +697,7 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
 def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):
     if isinstance(plan, URIRef):
         available_components = get_implementation_components_constrained(ontology, shape_graph, plan)
+        print(f"available_components of {plan}:",available_components)
         best_components = get_best_components(ontology, task, available_components, dataset, component_threshold)
         return [list(best_components.keys())], len(best_components.keys())
     else: #tuple
@@ -735,6 +736,7 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
     for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0,
                                                 leave=False):
         #tqdm.write(str(workflow_order))
+        #print("TC", *transformation_combination)
 
         prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, transformation_combination)
 

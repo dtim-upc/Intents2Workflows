@@ -3,7 +3,7 @@ from .io import data_reader_implementation, data_writer_implementation, data_rea
 from .nn_multidimensional import *
 from .partitioning_multidimensional import *
 from .svm import svm_learner_implementation, svm_predictor_implementation
-from .partitioning import partitioning_implementation
+from .partitioning import partitioning_implementation, top_absolute_train_test_split_component, top_relative_train_test_split_component, random_absolute_train_test_split_component, random_relative_train_test_split_component
 from .missing_values import missing_value_applier_component, missing_value_implementation, missing_value_applier_implementation, drop_rows_component, mean_imputation_component
 implementations = [
     nn_learner_implementation,
@@ -40,4 +40,8 @@ components = [
     missing_value_applier_component,
     drop_rows_component,
     mean_imputation_component,
+    top_relative_train_test_split_component,
+    top_absolute_train_test_split_component,
+    random_absolute_train_test_split_component,
+    random_relative_train_test_split_component
 ]

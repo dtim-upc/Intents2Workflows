@@ -1,5 +1,6 @@
-from .python_implementation import PythonImplementation, PythonTextParameter, PythonFactorParameter
 from common import *
+from .python_implementation import PythonImplementation
+from .python_parameter import PythonFactorParameter, PythonTextParameter
 from ..simple.missing_values import missing_value_implementation, missing_value_applier_implementation
 
 python_missing_value_implementation = PythonImplementation(

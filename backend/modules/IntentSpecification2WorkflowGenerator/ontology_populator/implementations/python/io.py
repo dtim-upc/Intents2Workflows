@@ -1,6 +1,7 @@
 from common import *
 from ontology_populator.implementations.core import *
-from .python_implementation import PythonImplementation, PythonTextParameter
+from .python_implementation import PythonImplementation
+from .python_parameter import PythonTextParameter
 from ..simple.io import data_reader_implementation, data_writer_implementation
 
 python_reader_implementation = PythonImplementation(

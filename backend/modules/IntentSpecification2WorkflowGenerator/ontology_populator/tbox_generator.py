@@ -225,12 +225,12 @@ def add_properties(ontology: Graph):
         (tb.derivedFrom, tb.DerivedParameter, tb.AlgebraicExpression),
 
         #Algebraic Operation
-        (tb.hasTerm1, tb.AlgebraicExpression, tb.Parameter),
-        (tb.hasTerm1, tb.AlgebraicExpression, tb.AlgebraicOperation),
-        (tb.hasTerm1, tb.AlgebraicExpression, XSD.numeric),
-        (tb.hasTerm2, tb.AlgebraicExpression, tb.Parameter),
-        (tb.hasTerm2, tb.AlgebraicExpression, tb.AlgebraicOperation),
-        (tb.hasTerm2, tb.AlgebraicExpression, XSD.numeric),
+        #(tb.hasTerm1, tb.AlgebraicExpression, tb.Parameter),
+        #(tb.hasTerm1, tb.AlgebraicExpression, tb.AlgebraicOperation),
+        #(tb.hasTerm1, tb.AlgebraicExpression, XSD.numeric),
+        #(tb.hasTerm2, tb.AlgebraicExpression, tb.Parameter),
+        #(tb.hasTerm2, tb.AlgebraicExpression, tb.AlgebraicOperation),
+        #(tb.hasTerm2, tb.AlgebraicExpression, XSD.numeric),
         (tb.hasOperation, tb.AlgebraicExpression, tb.Operation),
 
         # Hyperparameter Specification

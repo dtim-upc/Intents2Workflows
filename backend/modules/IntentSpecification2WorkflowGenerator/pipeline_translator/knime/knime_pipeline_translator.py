@@ -17,7 +17,7 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
-from pipeline_translator.core.translator_common_functions import *
+from ..core.translator_graph_queries import *
 
 from rdflib import Graph, URIRef, RDF, XSD
 
