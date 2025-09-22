@@ -11,7 +11,8 @@ from flask_cors import CORS
 
 #TODO cahnge import names to the adecuate files
 from api.functions import *
-from pipeline_translator.knime.knime_pipeline_translator import translate_graph_folder, translate_graph
+from pipeline_translator.knime import knime_pipeline_translator
+from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
 
 import requests
@@ -45,7 +46,7 @@ def run_abstract_planner():
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
     experiment_constraints = data.get('experiment_constraints',{}) # TODO: Provide performance constraints to the main interface
     percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
-    complexity = data.get('workflow_complexity', 2) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
+    complexity = data.get('workflow_complexity', 0) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
@@ -171,7 +172,7 @@ def download_knime():
     plan_graph.serialize(file_path, format='turtle')
 
     knime_file_path = file_path[:-4] + '.knwf'
-    translate_graph(ontology, file_path, knime_file_path)
+    knime_pipeline_translator.translate_graph(ontology, file_path, knime_file_path)
 
     return send_file(knime_file_path, as_attachment=True)
 
@@ -198,7 +199,7 @@ def download_all_knime():
         if compatible:
             graph.serialize(file_path, format='turtle')
 
-    translate_graph_folder(ontology, folder, knime_folder, keep_folder=False)
+    knime_pipeline_translator.translate_graph_folder(ontology, folder, knime_folder, keep_folder=False)
 
     compress(knime_folder, knime_folder + '.zip')
     return send_file(knime_folder + '.zip', as_attachment=True)
@@ -227,6 +228,23 @@ def download_file():
 
     # Send the file for download
     return send_file(file_path, as_attachment=True)
+
+@app.post('/workflow_plans/python')
+def download_python():
+    print(request.json.keys())
+    plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
+    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    
+    plan_id = request.json.get('plan_id', uuid.uuid4())
+    intent_name = get_intent_name(plan_graph)
+
+    file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
+    plan_graph.serialize(file_path, format='turtle')
+
+    python_file_path = file_path[:-4]+'.py'
+    python_pipeline_translator.translate_graph(ontology, file_path, python_file_path)
+
+    return send_file(python_file_path, as_attachment=True)
 
 ################################# INTEGRATION FUNCTIONS
 

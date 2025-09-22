@@ -7,8 +7,8 @@ partitioning_implementation = Implementation(
     parameters=[
         BaseFactorParameter("Size type", ['Absolute', 'Relative']),
         BaseFactorParameter("Sampling Method", ['Random', 'First']),
-        BaseParameter("Fraction (Relative size)", XSD.double),
-        BaseParameter("Count (Absolute size)", XSD.int),
+        BaseParameter("Fraction (Relative size)", XSD.double, 0.25),
+        BaseParameter("Count (Absolute size)", XSD.int, 10),
         BaseParameter("Random seed", XSD.string),
         BaseParameter("Class columns", XSD.string),
     ],

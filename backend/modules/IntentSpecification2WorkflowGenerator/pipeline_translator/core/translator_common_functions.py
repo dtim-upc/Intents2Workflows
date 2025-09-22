@@ -22,6 +22,13 @@ def get_input_specs(ontology, implementation):
     return get_implementation_input_specs(ontology, implementation)
 
 
+def is_predictior(ontology: Graph, implementation: URIRef):
+    query = f""" PREFIX tb: <https://extremexp.eu/ontology/tbox#>
+                ASK {{ {implementation.n3()} a tb:ApplierImplementation .}} """
+    print(query)
+    return ontology.query(query).askAnswer
+   
+
 def get_implementation_task(ontology: Graph, implementation: URIRef):
     query = f""" PREFIX tb: <https://extremexp.eu/ontology/tbox#>
                 SELECT ?task

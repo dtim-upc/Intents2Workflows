@@ -806,7 +806,7 @@ cb:python-implementation-python_data_writer a tb:EngineImplementation ;
     tb:hasBaseImplementation cb:implementation-data_writer ;
     tb:hasParameter cb:python-implementation-python_data_writer-path_or_buf ;
     tb:name "Python Data writer" ;
-    tb:python_function "Dataframe" ;
+    tb:python_function "DataFrame" ;
     tb:python_module "pandas" ;
     tb:python_version "2.2.3" ;
     tb:template "writer" .
@@ -1259,16 +1259,16 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
             tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
@@ -1413,17 +1413,17 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -3720,13 +3720,13 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -5848,22 +5848,22 @@ cb:implementation-line_plot_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Line Plot Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LinePlotVisualizationShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-line_plot_visualizer-always_show_origin a tb:Parameter ;
     rdfs:label "Always Show Origin" ;
@@ -9879,14 +9879,14 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:DecisionTreeModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10035,20 +10035,20 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10093,14 +10093,14 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
     tb:knime-node-name "Normalizer Apply (PMML)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizerModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizerModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizerModel ;
@@ -10930,14 +10930,14 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ] ;
@@ -10993,17 +10993,17 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "XGBoost Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:XGBoostModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 2 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:XGBoostModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -11072,12 +11072,14 @@ cb:implementation-data_partitioning-count_\(absolute_size\) a tb:Parameter ;
     rdfs:label "Count (Absolute size)" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:int ;
+    tb:has_defaultvalue 10 ;
     tb:has_position 3 .
 
 cb:implementation-data_partitioning-fraction_\(relative_size\) a tb:Parameter ;
     rdfs:label "Fraction (Relative size)" ;
     tb:has_condition "" ;
     tb:has_datatype xsd:double ;
+    tb:has_defaultvalue 2.5e-01 ;
     tb:has_position 2 .
 
 cb:implementation-histogram_visualizer-histogram_category a tb:Parameter ;
@@ -11173,14 +11175,14 @@ cb:implementation-tensor_data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:LabeledTabularDatasetShape a sh:NodeShape ;
     sh:property [ sh:minCount 1 ;
@@ -11222,14 +11224,14 @@ cb:implementation-data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:implementation-nn_learner a tb:LearnerImplementation ;
     rdfs:label "NN Learner" ;
@@ -11240,16 +11242,16 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11274,10 +11276,10 @@ cb:implementation-nn_multidimensional_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTensorDatasetShape ;
+                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTensorDatasetShape ;
+                    tb:hasDatatag cb:TrainTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11306,17 +11308,17 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;

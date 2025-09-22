@@ -192,6 +192,18 @@ export const useIntentsStore = defineStore('intents', {
       }
     },
 
+    async downloadPython(plan) {
+      const data = {"graph": plan.graph, "plan_id": plan.id}
+      try {
+        const response = await intentsAPI.downloadPython(data);
+        FileSaver.saveAs(new Blob([response.data]), `${plan.id}.py`);
+        notify.positive(`Python file downloaded`);
+      } catch (error) {
+        notify.negative("Error downloading the Python file");
+        console.error("Error:", error);
+      }
+    },
+
     async downloadProactive(plan) {
       console.log(this.intents)
       console.log(this.intentName)
