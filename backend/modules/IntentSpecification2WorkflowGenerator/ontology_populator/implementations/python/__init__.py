@@ -2,6 +2,7 @@ from .svm import python_svm_learner_implementation, python_svm_predictor_impleme
 from .partitioning import python_partitioning_implementation
 from .io import python_reader_implementation, python_writer_implementation
 from .missing_values import python_missing_value_implementation, python_missing_value_applier_implementation
+from .xgboost import python_xgboost_learner_implementation, python_xgboost_predictor_implementation
 implementations = [
     python_svm_learner_implementation,
     python_svm_predictor_implementation,
@@ -10,5 +11,7 @@ implementations = [
     python_writer_implementation,
     python_missing_value_applier_implementation,
     python_missing_value_implementation,
+    python_xgboost_predictor_implementation,
+    python_xgboost_learner_implementation
 ]
 

@@ -18,7 +18,6 @@ def literal_to_raw_datatype(value):
     elif value == cb.NONE:
         return None
     return value
-    
 
 def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
     python_params = []
@@ -37,7 +36,8 @@ def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters
 
         value = literal_to_raw_datatype(value)
         key = next(ontology.objects(param, tb.key, unique=True))
-
+        
+        print(key, value)
         if key == Literal('Target'):# Extract target from the parameters. Key Target specified as key in the ontology
             target = value
         else:

@@ -353,8 +353,8 @@ PREFIX dmop: <{dmop}>
                 query = query.replace(f'$param{order + 1}', f'{value.n3()}')
                 query = query.replace(f'$parameter{order + 1}', f'{value.n3()}')
             
-            #tqdm.write("Query:")
-            #tqdm.write(str(query))
+            tqdm.write("Query:")
+            tqdm.write(str(query))
             workflow_graph.update(query)
 
 
@@ -616,7 +616,7 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
         tqdm.write(f'Algorithm: {algorithm.fragment if algorithm is not None else [algo.fragment for algo in get_algorithms_from_task_constrained(ontology, shape_graph,task)]}')
         tqdm.write('-------------------------------------------------')
 
-    option_explorer.get_best_options(intent_graph, ontology)
+    #option_explorer.get_best_options(intent_graph, ontology)
 
     algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,shape_graph,task)
     

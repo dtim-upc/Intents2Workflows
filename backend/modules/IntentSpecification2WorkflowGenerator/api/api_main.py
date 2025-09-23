@@ -241,7 +241,7 @@ def download_python():
     file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
     plan_graph.serialize(file_path, format='turtle')
 
-    python_file_path = file_path[:-4]+'.py'
+    python_file_path = file_path[:-4]
     python_pipeline_translator.translate_graph(ontology, file_path, python_file_path)
 
     return send_file(python_file_path, as_attachment=True)

@@ -109,6 +109,7 @@ def add_algorithms(cbox):
         # Data Management
         (cb.Partitioning, cb.DataManagement),
         (cb.LabelExtraction, cb.DataManagement),
+        (cb.DropColumns, cb.DataManagement),
 
         # Data Visualization
         (cb.PieChart, cb.DataVisualization),
@@ -158,6 +159,7 @@ def add_models(cbox):
         'XGBoostModel',
         'NNModel',
         'NumericCategoricalModel',
+        'ProjectionModel',
     ]
 
     cbox.add((cb.Model, RDFS.subClassOf, tb.Data))
@@ -365,6 +367,8 @@ def add_shapes(cbox):
     cbox.add((numeric_column_shape, SH.targetClass, dmop.Column))
     cbox.add((numeric_column_shape, SH.property, numeric_column_property))
 
+
+    #NumericTabularDatasetShape
     bnode = BNode()
     cbox.add((bnode, SH.path, dmop.hasColumn))
     cbox.add((bnode, SH.node, numeric_column_shape))
@@ -373,6 +377,25 @@ def add_shapes(cbox):
     cbox.add((numeric_tabular_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((numeric_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
     cbox.add((numeric_tabular_dataset_shape, SH.property, bnode))
+
+    #NumercOnlyTabularDatasetShape
+
+    labelnode = BNode()
+    cbox.add((labelnode, SH.path, dmop.isLabel))
+    cbox.add((labelnode, SH.hasValue, Literal(True)))
+
+    or_list = BNode()
+    constraint_list = Collection(cbox, or_list)
+    constraint_list.append(numeric_column_shape)
+    constraint_list.append(labelnode)
+
+    bnode = BNode() 
+    cbox.add((bnode, SH["or"], or_list))
+    numericonly_tabular_dataset_shape = cb.NumericOnlyTabularDatasetShape
+    cbox.add((numericonly_tabular_dataset_shape, RDF.type, SH.NodeShape))
+    cbox.add((numericonly_tabular_dataset_shape, SH.targetObjectsOf, dmop.hasColumn))
+    cbox.add((numericonly_tabular_dataset_shape, SH.property, bnode))
+
 
     # NormalizedTabularDatasetShape 
     cbox.add((cb.isNormalizedConstraint, RDF.type, SH.PropertyConstraintComponent))
