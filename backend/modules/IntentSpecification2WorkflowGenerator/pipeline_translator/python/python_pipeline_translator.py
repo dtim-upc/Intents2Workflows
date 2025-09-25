@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Dict
 import jinja2
 from rdflib import Graph, URIRef, RDF
 
@@ -32,6 +33,17 @@ def get_python_function(ontology: Graph, implementation: URIRef):
 def get_template(ontology: Graph, implementation: URIRef):
     return next(ontology.objects(implementation, tb.template, unique=True),None)
 
+def split_parameters(ontology: Graph, params: Dict[str,str]):
+    control_params = {}
+    function_params = {}
+    for key, value in params.items():
+        param_uri = next(ontology.subjects(tb.key, Literal(key)), None)
+        if next(ontology.objects(param_uri, tb.isControlParameter,unique=True),False):
+            control_params[key.toPython()] = value
+        else:
+            function_params[key] = value
+    return control_params, function_params
+
 def translate_graph(ontology: Graph, source_path: str, destination_path: str) -> None:
     tqdm.write('Creating new workflow')
 
@@ -43,13 +55,17 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
     steps = get_workflow_steps(graph)
     steps_struct = {}
     target = None
+    control_params = {}
     for step in tqdm(steps):
         component, implementation = get_step_component_implementation(ontology, graph, step)
         task = get_implementation_task(ontology, implementation).fragment
         if is_predictior(ontology, implementation):
             task += '_predictor'
-        python_step_parameters, new_target = translate_parameters(ontology, graph, step, implementation)
-        target = new_target if not new_target is None else target #Applier does not have information about the target, so it should be given by the learner
+        python_step_parameters = translate_parameters(ontology, graph, step, implementation,'Python')
+        cp, function_params = split_parameters(ontology, python_step_parameters)
+        control_params.update(cp)
+        print("Control:",control_params) 
+        #print("Function:",function_params)
 
         engine_implementation = get_engine_implementation(ontology, implementation, 'Python')
         python_module = get_python_module(ontology, engine_implementation)
@@ -64,7 +80,8 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
         #tqdm.write("RENDER parameters:", python_step_parameters)
         
         step_file = step_template.render(module = python_module,
-                                         parameters = python_step_parameters,
+                                         parameters = function_params.items(),
+                                         control = control_params,
                                          function = python_function,
                                          step_name = task,
                                          target=target,
@@ -73,7 +90,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
         steps_struct[step] = {'task':task, 'inputs': [None]*len(inputs), 'outputs':[task+str(i) for i in range(len(outputs))], 'file': step_file}
     
     connections = get_workflow_connections(graph)
-
+ 
     for source_step, destination_step, source_port, destination_port in connections:
         steps_struct[destination_step]['inputs'][int(destination_port)] = steps_struct[source_step]['outputs'][int(source_port)]
 

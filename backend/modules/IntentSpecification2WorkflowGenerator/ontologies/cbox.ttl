@@ -151,6 +151,11 @@ cb:NumericCategoricalModelShape a sh:NodeShape,
         tb:DataSpec ;
     sh:targetClass cb:NumericCategoricalModel .
 
+cb:NumericTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:node cb:NumericColumnShape ;
+            sh:path dmop:hasColumn ] ;
+    sh:targetClass dmop:TabularDataset .
+
 cb:OneClassSVM a tb:Algorithm ;
     rdfs:label "OneClassSVM" ;
     tb:solves cb:AnomalyDetection .
@@ -219,6 +224,26 @@ cb:Python-implementation-python_missing_value_\(applier\) a tb:EngineImplementat
     tb:python_version "1.7.2" ;
     tb:template "sklearn_imputation_applier" .
 
+cb:Python-implementation-python_numeric_projection_predictor a tb:EngineImplementation ;
+    tb:engine "Python" ;
+    tb:hasBaseImplementation cb:implementation-numeric_projection_predictor ;
+    tb:name "Python Numeric projection Predictor" ;
+    tb:python_function "custom" ;
+    tb:python_module "pandas" ;
+    tb:python_version "2.2.3" ;
+    tb:template "projection_predict" .
+
+cb:Python-implementation-python_numerical_projection a tb:EngineImplementation ;
+    tb:engine "Python" ;
+    tb:hasBaseImplementation cb:implementation-numerical_projection ;
+    tb:hasParameter cb:Python-implementation-python_numerical_projection-columns,
+        cb:Python-implementation-python_numerical_projection-target ;
+    tb:name "Python Numerical Projection" ;
+    tb:python_function "custom" ;
+    tb:python_module "pandas" ;
+    tb:python_version "2.2.3" ;
+    tb:template "projection_train" .
+
 cb:Python-implementation-python_svm_learner a tb:EngineImplementation ;
     tb:engine "Python" ;
     tb:hasBaseImplementation cb:implementation-svm_learner ;
@@ -263,7 +288,6 @@ cb:Python-implementation-python_xgboost_learner a tb:EngineImplementation ;
         cb:Python-implementation-python_xgboost_learner-n_estimators,
         cb:Python-implementation-python_xgboost_learner-n_jobs,
         cb:Python-implementation-python_xgboost_learner-normalize_type,
-        cb:Python-implementation-python_xgboost_learner-numeric_columns,
         cb:Python-implementation-python_xgboost_learner-objective,
         cb:Python-implementation-python_xgboost_learner-one_drop,
         cb:Python-implementation-python_xgboost_learner-random_state,
@@ -278,8 +302,7 @@ cb:Python-implementation-python_xgboost_learner a tb:EngineImplementation ;
         cb:Python-implementation-python_xgboost_learner-subsample,
         cb:Python-implementation-python_xgboost_learner-target,
         cb:Python-implementation-python_xgboost_learner-top_k,
-        cb:Python-implementation-python_xgboost_learner-tree_method,
-        cb:Python-implementation-python_xgboost_learner-updater ;
+        cb:Python-implementation-python_xgboost_learner-tree_method ;
     tb:name "Python XGBoost Learner" ;
     tb:python_function "XGBClassifier" ;
     tb:python_module "xgboost" ;
@@ -1043,6 +1066,7 @@ cb:Python-implementation-python_data_partitioning-random_state a tb:DerivedParam
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:NONE ] ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "random_state" .
 
 cb:Python-implementation-python_data_partitioning-shuffle a tb:DerivedParameter,
@@ -1052,6 +1076,7 @@ cb:Python-implementation-python_data_partitioning-shuffle a tb:DerivedParameter,
             tb:hasTerm1 cb:implementation-data_partitioning-sampling_method ;
             tb:hasTerm2 "Random" ] ;
     tb:has_default_value true ;
+    tb:isControlParameter false ;
     tb:key "shuffle" .
 
 cb:Python-implementation-python_data_partitioning-test_size a tb:DerivedParameter,
@@ -1060,6 +1085,7 @@ cb:Python-implementation-python_data_partitioning-test_size a tb:DerivedParamete
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:NONE ] ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "test_size" .
 
 cb:Python-implementation-python_data_partitioning-train_size a tb:DerivedParameter,
@@ -1081,26 +1107,31 @@ cb:Python-implementation-python_data_partitioning-train_size a tb:DerivedParamet
                             tb:hasTerm2 "Relative" ] ;
                     tb:hasTerm2 cb:implementation-data_partitioning-fraction_\(relative_size\) ] ] ;
     tb:has_default_value 2.5e-01 ;
+    tb:isControlParameter false ;
     tb:key "train_size" .
 
 cb:Python-implementation-python_data_reader-format a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-data_reader-format ;
     tb:has_default_value "CSV" ;
+    tb:isControlParameter false ;
     tb:key "format" .
 
 cb:Python-implementation-python_data_reader-path a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-data_reader-reader_file ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "path" .
 
 cb:Python-implementation-python_data_writer-path_or_buf a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-data_writer-output_path ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "path_or_buf" .
 
 cb:Python-implementation-python_missing_value-categorical_columns a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-missing_value-categorical_columns ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "categorical_columns" .
 
 cb:Python-implementation-python_missing_value-factor_strategy a tb:FactorParameter,
@@ -1109,6 +1140,7 @@ cb:Python-implementation-python_missing_value-factor_strategy a tb:FactorParamet
     tb:hasLevel cb:Python-implementation-python_missing_value-factor_strategy-drop,
         cb:Python-implementation-python_missing_value-factor_strategy-most_frequent ;
     tb:has_default_value "most_frecuent" ;
+    tb:isControlParameter false ;
     tb:key "Factor strategy" .
 
 cb:Python-implementation-python_missing_value-factor_strategy-drop a tb:FactorLevel ;
@@ -1122,6 +1154,7 @@ cb:Python-implementation-python_missing_value-factor_strategy-most_frequent a tb
 cb:Python-implementation-python_missing_value-numeric_columns a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-missing_value-numeric_columns ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "numeric_columns" .
 
 cb:Python-implementation-python_missing_value-numeric_strategy a tb:FactorParameter,
@@ -1130,6 +1163,7 @@ cb:Python-implementation-python_missing_value-numeric_strategy a tb:FactorParame
     tb:hasLevel cb:Python-implementation-python_missing_value-numeric_strategy-drop,
         cb:Python-implementation-python_missing_value-numeric_strategy-mean ;
     tb:has_default_value "mean" ;
+    tb:isControlParameter false ;
     tb:key "Numeric strategy" .
 
 cb:Python-implementation-python_missing_value-numeric_strategy-drop a tb:FactorLevel ;
@@ -1140,12 +1174,25 @@ cb:Python-implementation-python_missing_value-numeric_strategy-mean a tb:FactorL
     tb:equivalentTo cb:implementation-missing_value-numeric_strategy-MeanImputation ;
     tb:hasValue "mean" .
 
+cb:Python-implementation-python_numerical_projection-columns a tb:TextParameter ;
+    tb:hasBaseParameter cb:implementation-numerical_projection-projected_columns ;
+    tb:has_default_value "[]" ;
+    tb:isControlParameter false ;
+    tb:key "columns" .
+
+cb:Python-implementation-python_numerical_projection-target a tb:TextParameter ;
+    tb:hasBaseParameter cb:implementation-numerical_projection-target_column ;
+    tb:has_default_value "" ;
+    tb:isControlParameter true ;
+    tb:key "Target" .
+
 cb:Python-implementation-python_svm_learner-c a tb:DerivedParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-svm_learner-overlapping_penalty ] ;
     tb:has_default_value 1.1e+00 ;
+    tb:isControlParameter false ;
     tb:key "C" .
 
 cb:Python-implementation-python_svm_learner-coef0 a tb:DerivedParameter,
@@ -1154,6 +1201,7 @@ cb:Python-implementation-python_svm_learner-coef0 a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-svm_learner-bias ] ;
     tb:has_default_value 0e+00 ;
+    tb:isControlParameter false ;
     tb:key "coef0" .
 
 cb:Python-implementation-python_svm_learner-degree a tb:DerivedParameter,
@@ -1162,6 +1210,7 @@ cb:Python-implementation-python_svm_learner-degree a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-svm_learner-power ] ;
     tb:has_default_value 3 ;
+    tb:isControlParameter false ;
     tb:key "degree" .
 
 cb:Python-implementation-python_svm_learner-gamma a tb:DerivedParameter,
@@ -1170,6 +1219,7 @@ cb:Python-implementation-python_svm_learner-gamma a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-svm_learner-gamma ] ;
     tb:has_default_value "scale" ;
+    tb:isControlParameter false ;
     tb:key "gamma" .
 
 cb:Python-implementation-python_svm_learner-kernel a tb:FactorParameter,
@@ -1179,6 +1229,7 @@ cb:Python-implementation-python_svm_learner-kernel a tb:FactorParameter,
         cb:Python-implementation-python_svm_learner-kernel-rbf,
         cb:Python-implementation-python_svm_learner-kernel-sigmoid ;
     tb:has_default_value "rbf" ;
+    tb:isControlParameter false ;
     tb:key "kernel" .
 
 cb:Python-implementation-python_svm_learner-kernel-poly a tb:FactorLevel ;
@@ -1196,6 +1247,7 @@ cb:Python-implementation-python_svm_learner-kernel-sigmoid a tb:FactorLevel ;
 cb:Python-implementation-python_svm_learner-target a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-svm_learner-svm_class_column ;
     tb:has_default_value "target" ;
+    tb:isControlParameter true ;
     tb:key "Target" .
 
 cb:Python-implementation-python_xgboost_learner-base_score a tb:DerivedParameter,
@@ -1204,6 +1256,7 @@ cb:Python-implementation-python_xgboost_learner-base_score a tb:DerivedParameter
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-base_score ] ;
     tb:has_default_value 5e-01 ;
+    tb:isControlParameter false ;
     tb:key "base_score" .
 
 cb:Python-implementation-python_xgboost_learner-booster a tb:FactorParameter,
@@ -1213,6 +1266,7 @@ cb:Python-implementation-python_xgboost_learner-booster a tb:FactorParameter,
         cb:Python-implementation-python_xgboost_learner-booster-gblinear,
         cb:Python-implementation-python_xgboost_learner-booster-gbtree ;
     tb:has_default_value "gbtree" ;
+    tb:isControlParameter false ;
     tb:key "booster" .
 
 cb:Python-implementation-python_xgboost_learner-booster-dart a tb:FactorLevel ;
@@ -1233,6 +1287,7 @@ cb:Python-implementation-python_xgboost_learner-colsample_bylevel a tb:DerivedPa
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_level ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "colsample_bylevel" .
 
 cb:Python-implementation-python_xgboost_learner-colsample_bynode a tb:DerivedParameter,
@@ -1241,6 +1296,7 @@ cb:Python-implementation-python_xgboost_learner-colsample_bynode a tb:DerivedPar
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_node ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "colsample_bynode" .
 
 cb:Python-implementation-python_xgboost_learner-colsample_bytree a tb:DerivedParameter,
@@ -1249,6 +1305,7 @@ cb:Python-implementation-python_xgboost_learner-colsample_bytree a tb:DerivedPar
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_tree ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "colsample_bytree" .
 
 cb:Python-implementation-python_xgboost_learner-feature_selector a tb:FactorParameter,
@@ -1260,6 +1317,7 @@ cb:Python-implementation-python_xgboost_learner-feature_selector a tb:FactorPara
         cb:Python-implementation-python_xgboost_learner-feature_selector-shuffle,
         cb:Python-implementation-python_xgboost_learner-feature_selector-thrifty ;
     tb:has_default_value "cyclic" ;
+    tb:isControlParameter false ;
     tb:key "feature_selector" .
 
 cb:Python-implementation-python_xgboost_learner-feature_selector-cyclic a tb:FactorLevel ;
@@ -1288,6 +1346,7 @@ cb:Python-implementation-python_xgboost_learner-gamma a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-gamma ] ;
     tb:has_default_value 0e+00 ;
+    tb:isControlParameter false ;
     tb:key "gamma" .
 
 cb:Python-implementation-python_xgboost_learner-grow_policy a tb:FactorParameter,
@@ -1296,6 +1355,7 @@ cb:Python-implementation-python_xgboost_learner-grow_policy a tb:FactorParameter
     tb:hasLevel cb:Python-implementation-python_xgboost_learner-grow_policy-depthwise,
         cb:Python-implementation-python_xgboost_learner-grow_policy-lossguide ;
     tb:has_default_value "depthwise" ;
+    tb:isControlParameter false ;
     tb:key "grow_policy" .
 
 cb:Python-implementation-python_xgboost_learner-grow_policy-depthwise a tb:FactorLevel ;
@@ -1312,6 +1372,7 @@ cb:Python-implementation-python_xgboost_learner-learning_rate a tb:DerivedParame
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-eta ] ;
     tb:has_default_value 1e-01 ;
+    tb:isControlParameter false ;
     tb:key "learning_rate" .
 
 cb:Python-implementation-python_xgboost_learner-max_bin a tb:DerivedParameter,
@@ -1320,6 +1381,7 @@ cb:Python-implementation-python_xgboost_learner-max_bin a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-max_bin ] ;
     tb:has_default_value 256 ;
+    tb:isControlParameter false ;
     tb:key "max_bin" .
 
 cb:Python-implementation-python_xgboost_learner-max_delta_step a tb:DerivedParameter,
@@ -1328,6 +1390,7 @@ cb:Python-implementation-python_xgboost_learner-max_delta_step a tb:DerivedParam
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-max_delta_step ] ;
     tb:has_default_value 0e+00 ;
+    tb:isControlParameter false ;
     tb:key "max_delta_step" .
 
 cb:Python-implementation-python_xgboost_learner-max_depth a tb:DerivedParameter,
@@ -1336,6 +1399,7 @@ cb:Python-implementation-python_xgboost_learner-max_depth a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-max_depth ] ;
     tb:has_default_value 3 ;
+    tb:isControlParameter false ;
     tb:key "max_depth" .
 
 cb:Python-implementation-python_xgboost_learner-max_leaves a tb:DerivedParameter,
@@ -1344,6 +1408,7 @@ cb:Python-implementation-python_xgboost_learner-max_leaves a tb:DerivedParameter
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-max_leaves ] ;
     tb:has_default_value 0 ;
+    tb:isControlParameter false ;
     tb:key "max_leaves" .
 
 cb:Python-implementation-python_xgboost_learner-min_child_weight a tb:DerivedParameter,
@@ -1352,6 +1417,7 @@ cb:Python-implementation-python_xgboost_learner-min_child_weight a tb:DerivedPar
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-min_child_weight ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "min_child_weight" .
 
 cb:Python-implementation-python_xgboost_learner-n_estimators a tb:DerivedParameter,
@@ -1360,6 +1426,7 @@ cb:Python-implementation-python_xgboost_learner-n_estimators a tb:DerivedParamet
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-boosting_rounds ] ;
     tb:has_default_value 100 ;
+    tb:isControlParameter false ;
     tb:key "n_estimators" .
 
 cb:Python-implementation-python_xgboost_learner-n_jobs a tb:DerivedParameter,
@@ -1368,6 +1435,7 @@ cb:Python-implementation-python_xgboost_learner-n_jobs a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ] ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "n_jobs" .
 
 cb:Python-implementation-python_xgboost_learner-normalize_type a tb:FactorParameter,
@@ -1376,6 +1444,7 @@ cb:Python-implementation-python_xgboost_learner-normalize_type a tb:FactorParame
     tb:hasLevel cb:Python-implementation-python_xgboost_learner-normalize_type-forest,
         cb:Python-implementation-python_xgboost_learner-normalize_type-tree ;
     tb:has_default_value "tree" ;
+    tb:isControlParameter false ;
     tb:key "normalize_type" .
 
 cb:Python-implementation-python_xgboost_learner-normalize_type-forest a tb:FactorLevel ;
@@ -1386,17 +1455,13 @@ cb:Python-implementation-python_xgboost_learner-normalize_type-tree a tb:FactorL
     tb:equivalentTo cb:implementation-xgboost_learner-normalize_type-tree ;
     tb:hasValue "tree" .
 
-cb:Python-implementation-python_xgboost_learner-numeric_columns a tb:TextParameter ;
-    tb:hasBaseParameter cb:implementation-xgboost_learner-numeric_columns ;
-    tb:has_default_value cb:NONE ;
-    tb:key "numeric_columns" .
-
 cb:Python-implementation-python_xgboost_learner-objective a tb:FactorParameter,
         tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-xgboost_learner-objective ;
     tb:hasLevel <https://extremexp.eu/ontology/cbox#Python-implementation-python_xgboost_learner-objective-binary:logistic>,
         <https://extremexp.eu/ontology/cbox#Python-implementation-python_xgboost_learner-objective-multi:softprob> ;
     tb:has_default_value "binary:logistic" ;
+    tb:isControlParameter false ;
     tb:key "objective" .
 
 <https://extremexp.eu/ontology/cbox#Python-implementation-python_xgboost_learner-objective-binary:logistic> a tb:FactorLevel ;
@@ -1413,6 +1478,7 @@ cb:Python-implementation-python_xgboost_learner-one_drop a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-one_drop ] ;
     tb:has_default_value 0 ;
+    tb:isControlParameter false ;
     tb:key "one_drop" .
 
 cb:Python-implementation-python_xgboost_learner-random_state a tb:DerivedParameter,
@@ -1421,6 +1487,7 @@ cb:Python-implementation-python_xgboost_learner-random_state a tb:DerivedParamet
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-random_seed ] ;
     tb:has_default_value 0 ;
+    tb:isControlParameter false ;
     tb:key "random_state" .
 
 cb:Python-implementation-python_xgboost_learner-rate_drop a tb:DerivedParameter,
@@ -1429,6 +1496,7 @@ cb:Python-implementation-python_xgboost_learner-rate_drop a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-rate_drop ] ;
     tb:has_default_value 0e+00 ;
+    tb:isControlParameter false ;
     tb:key "rate_drop" .
 
 cb:Python-implementation-python_xgboost_learner-reg_alpha a tb:DerivedParameter,
@@ -1437,6 +1505,7 @@ cb:Python-implementation-python_xgboost_learner-reg_alpha a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-alpha ] ;
     tb:has_default_value 0 ;
+    tb:isControlParameter false ;
     tb:key "reg_alpha" .
 
 cb:Python-implementation-python_xgboost_learner-reg_lambda a tb:DerivedParameter,
@@ -1445,6 +1514,7 @@ cb:Python-implementation-python_xgboost_learner-reg_lambda a tb:DerivedParameter
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-lambda ] ;
     tb:has_default_value 1 ;
+    tb:isControlParameter false ;
     tb:key "reg_lambda" .
 
 cb:Python-implementation-python_xgboost_learner-sample_type a tb:FactorParameter,
@@ -1453,6 +1523,7 @@ cb:Python-implementation-python_xgboost_learner-sample_type a tb:FactorParameter
     tb:hasLevel cb:Python-implementation-python_xgboost_learner-sample_type-uniform,
         cb:Python-implementation-python_xgboost_learner-sample_type-weighted ;
     tb:has_default_value "uniform" ;
+    tb:isControlParameter false ;
     tb:key "sample_type" .
 
 cb:Python-implementation-python_xgboost_learner-sample_type-uniform a tb:FactorLevel ;
@@ -1466,6 +1537,7 @@ cb:Python-implementation-python_xgboost_learner-sample_type-weighted a tb:Factor
 cb:Python-implementation-python_xgboost_learner-sample_weight a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-xgboost_learner-sample_weight ;
     tb:has_default_value cb:NONE ;
+    tb:isControlParameter false ;
     tb:key "sample_weight" .
 
 cb:Python-implementation-python_xgboost_learner-scale_pos_weight a tb:DerivedParameter,
@@ -1474,6 +1546,7 @@ cb:Python-implementation-python_xgboost_learner-scale_pos_weight a tb:DerivedPar
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-scale_pos_weight ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "scale_pos_weight" .
 
 cb:Python-implementation-python_xgboost_learner-sketch_eps a tb:DerivedParameter,
@@ -1482,6 +1555,7 @@ cb:Python-implementation-python_xgboost_learner-sketch_eps a tb:DerivedParameter
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-sketch_eps ] ;
     tb:has_default_value 3e-02 ;
+    tb:isControlParameter false ;
     tb:key "sketch_eps" .
 
 cb:Python-implementation-python_xgboost_learner-skip_drop a tb:DerivedParameter,
@@ -1490,6 +1564,7 @@ cb:Python-implementation-python_xgboost_learner-skip_drop a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-skip_drop ] ;
     tb:has_default_value 0e+00 ;
+    tb:isControlParameter false ;
     tb:key "skip_drop" .
 
 cb:Python-implementation-python_xgboost_learner-subsample a tb:DerivedParameter,
@@ -1498,11 +1573,13 @@ cb:Python-implementation-python_xgboost_learner-subsample a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-subsample ] ;
     tb:has_default_value 1e+00 ;
+    tb:isControlParameter false ;
     tb:key "subsample" .
 
 cb:Python-implementation-python_xgboost_learner-target a tb:TextParameter ;
     tb:hasBaseParameter cb:implementation-xgboost_learner-target_column ;
     tb:has_default_value "target" ;
+    tb:isControlParameter true ;
     tb:key "Target" .
 
 cb:Python-implementation-python_xgboost_learner-top_k a tb:DerivedParameter,
@@ -1511,6 +1588,7 @@ cb:Python-implementation-python_xgboost_learner-top_k a tb:DerivedParameter,
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-xgboost_learner-top_k ] ;
     tb:has_default_value 0 ;
+    tb:isControlParameter false ;
     tb:key "top_k" .
 
 cb:Python-implementation-python_xgboost_learner-tree_method a tb:FactorParameter,
@@ -1521,6 +1599,7 @@ cb:Python-implementation-python_xgboost_learner-tree_method a tb:FactorParameter
         cb:Python-implementation-python_xgboost_learner-tree_method-exact,
         cb:Python-implementation-python_xgboost_learner-tree_method-hist ;
     tb:has_default_value "auto" ;
+    tb:isControlParameter false ;
     tb:key "tree_method" .
 
 cb:Python-implementation-python_xgboost_learner-tree_method-approx a tb:FactorLevel ;
@@ -1538,22 +1617,6 @@ cb:Python-implementation-python_xgboost_learner-tree_method-exact a tb:FactorLev
 cb:Python-implementation-python_xgboost_learner-tree_method-hist a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-xgboost_learner-tree_method-hist ;
     tb:hasValue "hist" .
-
-cb:Python-implementation-python_xgboost_learner-updater a tb:FactorParameter,
-        tb:TextParameter ;
-    tb:hasBaseParameter cb:implementation-xgboost_learner-updater ;
-    tb:hasLevel cb:Python-implementation-python_xgboost_learner-updater-coord_descent,
-        cb:Python-implementation-python_xgboost_learner-updater-shotgun ;
-    tb:has_default_value "shotgun" ;
-    tb:key "updater" .
-
-cb:Python-implementation-python_xgboost_learner-updater-coord_descent a tb:FactorLevel ;
-    tb:equivalentTo cb:implementation-xgboost_learner-updater-CoordDescent ;
-    tb:hasValue "coord_descent" .
-
-cb:Python-implementation-python_xgboost_learner-updater-shotgun a tb:FactorLevel ;
-    tb:equivalentTo cb:implementation-xgboost_learner-updater-Shotgun ;
-    tb:hasValue "shotgun" .
 
 cb:ScatterPlot a tb:Algorithm ;
     rdfs:label "ScatterPlot" ;
@@ -1638,17 +1701,17 @@ cb:component-decimal_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1716,12 +1779,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1792,13 +1855,13 @@ cb:component-mean_imputation a tb:LearnerComponent ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -1824,17 +1887,17 @@ cb:component-min_max_scaling a tb:LearnerComponent ;
     tb:hasApplier cb:component-normalizer_applier ;
     tb:hasImplementation cb:implementation-normalizer_\(pmml\) ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
+            tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:NotNormalDistributionDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:NotOutlieredDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2075,13 +2138,13 @@ cb:component-z_score_scaling a tb:LearnerComponent ;
             tb:relatedtoDatatag cb:OutlieredDatasetShape ;
             tb:relatedtoTask cb:Classification ],
         [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 3 ;
             tb:relatedtoDatatag cb:NormalDistributionDatasetShape ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -3383,14 +3446,14 @@ cb:implementation-categorizer a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-categorizer-append_columns a tb:Parameter ;
     rdfs:label "Append columns" ;
@@ -3639,24 +3702,24 @@ cb:implementation-categorizer_\(applier\) a tb:ApplierImplementation ;
     tb:knime-node-name "Categorizer (Applier)" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 0 ] .
 
 cb:implementation-categorizer_\(applier\)-append_columns a tb:Parameter ;
     rdfs:label "Append columns" ;
@@ -4378,13 +4441,13 @@ cb:implementation-heatmap_visualizer a tb:VisualizerImplementation ;
     tb:knime-node-name "Heatmap Visualizer" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -7465,20 +7528,6 @@ cb:implementation-normalizer_\(pmml\)-normalization_mode a tb:Parameter ;
         cb:component-min_max_scaling-normalization_mode_1_specification,
         cb:component-z_score_scaling-normalization_mode_2_specification .
 
-cb:implementation-numerical_projection-projected_columns a tb:Parameter ;
-    rdfs:label "Projected columns" ;
-    tb:has_condition "" ;
-    tb:has_datatype rdf:List ;
-    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
-    tb:has_position 0 .
-
-cb:implementation-numerical_projection-target_column a tb:Parameter ;
-    rdfs:label "Target Column" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
-    tb:has_position 1 .
-
 cb:implementation-pie_donut_chart-aggi_enabledstatus a tb:Parameter ;
     rdfs:label "AGGI EnabledStatus" ;
     tb:has_condition "" ;
@@ -9393,6 +9442,27 @@ cb:implementation-tensor_data_partitioning-sampling_method a tb:Parameter ;
         cb:component-top_k_absolute_train_test_split_\(tensor\)-sampling_method_first_specification,
         cb:component-top_k_relative_train_test_split_\(tensor\)-sampling_method_first_specification .
 
+cb:implementation-xgboost_learner-numeric_columns a tb:Parameter ;
+    rdfs:label "Numeric columns" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
+    tb:has_position 1 .
+
+cb:implementation-xgboost_learner-updater a tb:Parameter ;
+    rdfs:label "Updater" ;
+    tb:hasLevel cb:implementation-xgboost_learner-updater-CoordDescent,
+        cb:implementation-xgboost_learner-updater-Shotgun ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:enumeration ;
+    tb:has_position 11 .
+
+cb:implementation-xgboost_learner-updater-CoordDescent a tb:FactorLevel ;
+    tb:hasValue "CoordDescent" .
+
+cb:implementation-xgboost_learner-updater-Shotgun a tb:FactorLevel ;
+    tb:hasValue "Shotgun" .
+
 cb:integerTypeConstraint a sh:PropertyShape ;
     sh:hasValue dmop:Integer ;
     sh:path dmop:hasDataPrimitiveTypeColumn .
@@ -9462,16 +9532,6 @@ cb:NumericColumnProperty sh:in ( dmop:Integer dmop:Float ) ;
 cb:NumericColumnShape a sh:NodeShape ;
     sh:property cb:NumericColumnProperty ;
     sh:targetClass dmop:Column .
-
-cb:NumericOnlyTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:or ( cb:NumericColumnShape [ sh:hasValue true ;
-                        sh:path dmop:isLabel ] ) ] ;
-    sh:targetObjectsOf dmop:hasColumn .
-
-cb:NumericTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:node cb:NumericColumnShape ;
-            sh:path dmop:hasColumn ] ;
-    sh:targetClass dmop:TabularDataset .
 
 cb:OutlieredDatasetShape a sh:NodeShape,
         tb:DataTag ;
@@ -9763,10 +9823,10 @@ cb:implementation-decision_tree_learner a tb:LearnerImplementation ;
     tb:knime-node-name "Decision Tree Learner" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -9808,14 +9868,14 @@ cb:implementation-decision_tree_predictor a tb:ApplierImplementation ;
     tb:knime-node-name "Decision Tree Predictor" ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:DecisionTreeModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -10041,61 +10101,19 @@ cb:implementation-normalizer_apply_\(pmml\) a tb:ApplierImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
-cb:implementation-numeric_projection_predictor a tb:ApplierImplementation ;
-    rdfs:label "Numeric projection Predictor" ;
-    tb:engine "Simple" ;
-    tb:hasLearner cb:implementation-numerical_projection ;
-    tb:implements cb:DropColumns ;
-    tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ProjectionModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ] ;
-            tb:has_position 1 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+cb:implementation-numerical_projection-projected_columns a tb:Parameter ;
+    rdfs:label "Projected columns" ;
+    tb:has_condition "" ;
+    tb:has_datatype rdf:List ;
+    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
+    tb:has_position 0 .
 
-cb:implementation-numerical_projection a tb:LearnerImplementation ;
-    rdfs:label "Numerical Projection" ;
-    tb:engine "Simple" ;
-    tb:hasApplier cb:implementation-numeric_projection_predictor ;
-    tb:hasParameter cb:implementation-numerical_projection-projected_columns,
-        cb:implementation-numerical_projection-target_column ;
-    tb:implements cb:DropColumns ;
-    tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ProjectionModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+cb:implementation-numerical_projection-target_column a tb:Parameter ;
+    rdfs:label "Target Column" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
+    tb:has_position 1 .
 
 cb:implementation-scatter_plot_visualizer-scatterplot_x_axis_column a tb:Parameter ;
     rdfs:label "Scatterplot X Axis Column" ;
@@ -10327,13 +10345,6 @@ cb:implementation-xgboost_learner-number_of_threads a tb:Parameter ;
     tb:has_datatype xsd:int ;
     tb:has_position 5 .
 
-cb:implementation-xgboost_learner-numeric_columns a tb:Parameter ;
-    rdfs:label "Numeric columns" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
-    tb:has_position 1 .
-
 cb:implementation-xgboost_learner-objective a tb:Parameter ;
     rdfs:label "Objective" ;
     tb:hasLevel <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic>,
@@ -10437,20 +10448,6 @@ cb:implementation-xgboost_learner-tree_method-exact a tb:FactorLevel ;
 
 cb:implementation-xgboost_learner-tree_method-hist a tb:FactorLevel ;
     tb:hasValue "hist" .
-
-cb:implementation-xgboost_learner-updater a tb:Parameter ;
-    rdfs:label "Updater" ;
-    tb:hasLevel cb:implementation-xgboost_learner-updater-CoordDescent,
-        cb:implementation-xgboost_learner-updater-Shotgun ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:enumeration ;
-    tb:has_position 11 .
-
-cb:implementation-xgboost_learner-updater-CoordDescent a tb:FactorLevel ;
-    tb:hasValue "CoordDescent" .
-
-cb:implementation-xgboost_learner-updater-Shotgun a tb:FactorLevel ;
-    tb:hasValue "Shotgun" .
 
 cb:isTestConstraint a sh:PropertyConstraintComponent ;
     sh:datatype xsd:boolean ;
@@ -10945,6 +10942,50 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 1 ] .
 
+cb:implementation-numeric_projection_predictor a tb:ApplierImplementation ;
+    rdfs:label "Numeric projection Predictor" ;
+    tb:engine "Simple" ;
+    tb:hasLearner cb:implementation-numerical_projection ;
+    tb:implements cb:DropColumns ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ProjectionModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
+cb:implementation-numerical_projection a tb:LearnerImplementation ;
+    rdfs:label "Numerical Projection" ;
+    tb:engine "Simple" ;
+    tb:hasApplier cb:implementation-numeric_projection_predictor ;
+    tb:hasParameter cb:implementation-numerical_projection-projected_columns,
+        cb:implementation-numerical_projection-target_column ;
+    tb:implements cb:DropColumns ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:ProjectionModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
+
 cb:implementation-pie_donut_chart a tb:VisualizerImplementation ;
     rdfs:label "Pie_Donut Chart" ;
     tb:engine "KNIME",
@@ -11090,14 +11131,14 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
             tb:has_position 0 ],
         [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -11135,17 +11176,17 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     tb:implements cb:XGBoost ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericTabularDatasetShape ;
+                    tb:hasDatatag cb:XGBoostModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:XGBoostModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -11158,6 +11199,14 @@ dmop:isLabel rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
 cb:Description a tb:Task .
 
+cb:LabeledTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:minCount 1 ;
+            sh:path dmop:hasColumn ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:hasValue true ;
+                    sh:path dmop:isLabel ] ] ;
+    sh:targetClass dmop:TabularDataset .
+
 cb:NN a tb:Algorithm ;
     rdfs:label "NN" ;
     tb:solves cb:Classification .
@@ -11165,6 +11214,17 @@ cb:NN a tb:Algorithm ;
 cb:NormalizerModel rdfs:subClassOf cb:Model .
 
 cb:NumericCategoricalModel rdfs:subClassOf cb:Model .
+
+cb:NumericCategoricalTabularDatasetShape a sh:NodeShape ;
+    sh:property cb:hasAnyStringCategoricalColumn ;
+    sh:targetClass dmop:TabularDataset .
+
+cb:NumericOnlyTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:node [ sh:or ( cb:NumericColumnShape [ sh:hasValue true ;
+                                sh:path dmop:isLabel ] ) ] ;
+            sh:path dmop:hasColumn ] ;
+    sh:targetClass dmop:TabularDataset ;
+    sh:targetObjectsOf dmop:hasColumn .
 
 cb:component-nn_multidimensional_predictor a tb:ApplierComponent ;
     rdfs:label "NN Multidimensional Predictor" ;
@@ -11311,24 +11371,16 @@ cb:implementation-tensor_data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTensorDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] .
 
 cb:DataManagement a tb:Task .
-
-cb:LabeledTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:minCount 1 ;
-            sh:path dmop:hasColumn ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:hasValue true ;
-                    sh:path dmop:isLabel ] ] ;
-    sh:targetClass dmop:TabularDataset .
 
 cb:MissingValueManagement a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
@@ -11338,16 +11390,17 @@ cb:NNModel rdfs:subClassOf cb:Model .
 cb:Normalization a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
-cb:NumericCategoricalTabularDatasetShape a sh:NodeShape ;
-    sh:property cb:hasAnyStringCategoricalColumn ;
-    sh:targetClass dmop:TabularDataset .
-
 cb:TensorDataset a sh:NodeShape,
         tb:DataTag ;
     sh:property [ sh:hasValue dmop:TensorDataset ;
             sh:path rdf:type ] ;
     sh:targetClass dmop:TensorDataset ;
     tb:has_weight 1 .
+
+cb:TrainTabularDatasetShape a sh:NodeShape,
+        tb:DataTag ;
+    sh:property cb:isTrainConstraint ;
+    sh:targetClass dmop:TabularDataset .
 
 cb:implementation-data_partitioning a tb:Implementation ;
     rdfs:label "Data Partitioning" ;
@@ -11384,13 +11437,13 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
@@ -11450,12 +11503,6 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
@@ -11463,6 +11510,12 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -11519,10 +11572,10 @@ cb:implementation-xgboost_learner a tb:LearnerImplementation ;
     tb:implements cb:XGBoost ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
@@ -11541,11 +11594,6 @@ cb:implementation-xgboost_learner-target_column a tb:Parameter ;
     tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
     tb:has_position 0 .
 
-cb:TrainTabularDatasetShape a sh:NodeShape,
-        tb:DataTag ;
-    sh:property cb:isTrainConstraint ;
-    sh:targetClass dmop:TabularDataset .
-
 cb:Visualization rdfs:subClassOf tb:Data .
 
 cb:implementation-data_reader a tb:Implementation ;
@@ -11560,6 +11608,11 @@ cb:implementation-data_reader a tb:Implementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
+cb:NonNullTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:node cb:NonNullColumnShape ;
+            sh:path dmop:hasColumn ] ;
+    sh:targetClass dmop:TabularDataset .
+
 cb:implementation-data_reader-reader_file a tb:Parameter ;
     rdfs:label "Reader File" ;
     tb:has_condition "" ;
@@ -11568,11 +11621,6 @@ cb:implementation-data_reader-reader_file a tb:Parameter ;
     tb:has_position 0 .
 
 cb:Model rdfs:subClassOf tb:Data .
-
-cb:NonNullTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:node cb:NonNullColumnShape ;
-            sh:path dmop:hasColumn ] ;
-    sh:targetClass dmop:TabularDataset .
 
 cb:TestTabularDatasetShape a sh:NodeShape,
         tb:DataTag ;

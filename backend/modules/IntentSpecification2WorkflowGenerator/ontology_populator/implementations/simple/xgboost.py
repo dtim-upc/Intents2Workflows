@@ -41,10 +41,10 @@ xgboost_learner_implementation = Implementation(
         Parameter("Skip drop", XSD.double),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NumericTabularDatasetShape],
+        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NumericOnlyTabularDatasetShape],
     ],
     output=[
-        cb.XGBoostModel,
+        cb.XGBoostModel, 
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -133,7 +133,7 @@ xgboost_predictor_implementation = Implementation(
     ],
     input=[
         cb.XGBoostModel,
-        [cb.TestTabularDatasetShape, cb.NumericTabularDatasetShape]
+        [cb.TestTabularDatasetShape, cb.NumericOnlyTabularDatasetShape]
     ],
     output=[
         cb.TabularDatasetShape,
@@ -169,4 +169,3 @@ WHERE {
         xgboost_dart_learner_component,
     ],
 )
-

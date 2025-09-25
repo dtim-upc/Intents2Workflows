@@ -9,7 +9,7 @@ projection_numerical_learner_implementation = Implementation(
         Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape],
+        cb.TabularDataset,
     ],
     output=[
         cb.NumericOnlyTabularDatasetShape,
@@ -65,7 +65,7 @@ projection_numerical_predictor_implementation = Implementation(
     parameters=[],
     input=[
         cb.ProjectionModel,
-        [cb.TestTabularDatasetShape, cb.NonNullTabularDatasetShape, (cb.NormalizedTabularDatasetShape,1), (cb.NumericCategoricalTabularDatasetShape,1)]
+        cb.TabularDataset
     ],
     output=[
         cb.NumericOnlyTabularDatasetShape,

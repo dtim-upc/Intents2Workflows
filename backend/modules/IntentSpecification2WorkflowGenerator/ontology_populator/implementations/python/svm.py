@@ -10,7 +10,7 @@ python_svm_learner_implementation = PythonImplementation(
     parameters=[
         PythonTextParameter(key="Target",
                         base_parameter= next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'SVM Class column'),None),
-                        default_value="target"), 
+                        default_value="target", control_parameter=True), 
         PythonNumericParameter("C", XSD.double,
                         expression = AlgebraicExpression(cb.COPY, next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'Overlapping Penalty'),0)),
                         default_value=1.1),

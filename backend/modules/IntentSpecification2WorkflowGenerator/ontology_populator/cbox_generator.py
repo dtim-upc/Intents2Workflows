@@ -394,7 +394,12 @@ def add_shapes(cbox):
     numericonly_tabular_dataset_shape = cb.NumericOnlyTabularDatasetShape
     cbox.add((numericonly_tabular_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((numericonly_tabular_dataset_shape, SH.targetObjectsOf, dmop.hasColumn))
-    cbox.add((numericonly_tabular_dataset_shape, SH.property, bnode))
+
+    property_bnode = BNode()
+    cbox.add((property_bnode, SH.node, bnode))
+    cbox.add((property_bnode, SH.path, dmop.hasColumn))
+    cbox.add((numericonly_tabular_dataset_shape, SH.property, property_bnode))
+    cbox.add((numericonly_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
 
 
     # NormalizedTabularDatasetShape 

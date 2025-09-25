@@ -1,0 +1,7 @@
+
+def {{step_name}}(data):
+    columns = {%for p, v in parameters%}{{v}}{%endfor%}
+    columns.append("{{control['Target']}}")
+    return data[columns], columns
+
+

@@ -19,9 +19,9 @@ def literal_to_raw_datatype(value):
         return None
     return value
 
-def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
-    python_params = []
-    text_params = queries.get_engine_text_params(ontology,implementation,engine='Python')
+def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal], engine:str):
+    python_params = {}
+    text_params = queries.get_engine_text_params(ontology,implementation,engine=engine)
     target = None
 
     for param in text_params:
@@ -38,11 +38,8 @@ def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters
         key = next(ontology.objects(param, tb.key, unique=True))
         
         print(key, value)
-        if key == Literal('Target'):# Extract target from the parameters. Key Target specified as key in the ontology
-            target = value
-        else:
-            python_params.append((key, value))
-    return python_params, target
+        python_params[key] = value
+    return python_params
 
 
 def calculate(term1, term2, operation):
@@ -106,12 +103,11 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
     return calculate(value_1, value_2, operation)
 
 
-def translate_numeric_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
-    python_params = []
-    numeric_params = queries.get_engine_numeric_params(ontology,implementation,'Python')
-    ontology.serialize('./test.ttl')
+def translate_numeric_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal], engine:str):
+    python_params = {}
+    numeric_params = queries.get_engine_numeric_params(ontology,implementation,engine=engine)
+
     for param in numeric_params:
-        print(param)
         alg_expression = queries.get_algebraic_expression(ontology, param)
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
 
@@ -121,7 +117,7 @@ def translate_numeric_params(ontology:Graph, implementation:URIRef, step_paramet
         value = literal_to_raw_datatype(value)
 
         key = next(ontology.objects(param, tb.key, unique=True))
-        python_params.append((key, value))
+        python_params[key] = value
     return python_params
 
 def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
@@ -137,9 +133,9 @@ def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: U
 
     return step_parameters
 
-def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef, implementation:URIRef):
+def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef, implementation:URIRef, engine:str):
     step_parameters = get_step_parameters_agnostic(ontology, workflow_graph, step)
 
-    text_params, target = translate_text_params(ontology, implementation, step_parameters)
-    numeric_params: List[Tuple[URIRef,Literal]] = translate_numeric_params(ontology,  implementation, step_parameters)
-    return text_params + numeric_params, target
+    text_params = translate_text_params(ontology, implementation, step_parameters,engine)
+    numeric_params: Dict = translate_numeric_params(ontology,  implementation, step_parameters,engine)
+    return text_params | numeric_params

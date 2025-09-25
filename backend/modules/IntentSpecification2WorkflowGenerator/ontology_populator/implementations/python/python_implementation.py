@@ -24,4 +24,8 @@ class PythonImplementation(EngineImplementation):
         g.add((self.uri_ref, tb.term('python_version'), Literal(self.python_module_version)))
         g.add((self.uri_ref, tb.term('template'), Literal(self.template)))
 
+        for p in self.parameters:
+            g.add((p.uri_ref, tb.isControlParameter, Literal(p.is_control_parameter)))
+
         return super().add_to_graph(g)
+ 
