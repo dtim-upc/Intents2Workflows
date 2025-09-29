@@ -546,7 +546,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
     format:str = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
 
-    knime_compatible = True
+    #knime_compatible = True
 
     loader_component = cb.term(f'component-{format.lower()}_reader_component')
     saver_component = cb.term(f'component-data_writer_component')
@@ -580,7 +580,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         if not output_test_dataset_node is None:
             test_dataset_node = output_test_dataset_node
 
-        knime_compatible = knime_compatible & (engine == Literal('KNIME'))
+        #knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
         task_order += 1
          
@@ -602,7 +602,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         add_saver_step(ontology, workflow_graph, workflow, test_dataset_node, previous_test_step, task_order, saver_component)
         
         
-    workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
+    #workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
                 
     return workflow_graph, workflow
 

@@ -31,5 +31,9 @@ class EngineFactorParameter(EngineTextParameter):
     def __init__(self, engine:str, key: str, levels: list[str], base_parameter: FactorParameter, 
                  default_value: Union[URIRef, LiteralValue]):
         super().__init__(engine=engine,key=key,base_parameter=base_parameter,default_value=default_value)
-        self.levels = levels
+        self.levels_dict = levels
         #EngineFactor parameter is defined as a text parameter with finite values
+
+class EngineSpecificParameter(EngineParameter):
+    def __init__(self, engine:str, key: str, datatype: URIRef, default_value: Union[URIRef, LiteralValue]):
+        super().__init__(engine=engine,key=key, datatype=datatype,default_value=default_value)

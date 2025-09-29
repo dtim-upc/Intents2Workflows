@@ -1,44 +1,46 @@
 from .partitioning import *
-from .decision_tree import *
-from .normalization import *
-from .decision_tree import *
-from .svm import *
-from .missing_values import *
+# from .decision_tree import *
+# from .normalization import *
+# from .decision_tree import *
+# from .svm import *
+# from .missing_values import *
 from .csv_io import *
-from .pie_chart import *
-from .bar_chart import *
-from .histogram import *
-from .scatter_plot import *
-from .line_plot import *
-from .heatmap import *
-from .xgboost import *
-from .categorical_to_number import *
+# from .pie_chart import *
+# from .bar_chart import *
+# from .histogram import *
+# from .scatter_plot import *
+# from .line_plot import *
+# from .heatmap import *
+# from .xgboost import *
+# from .categorical_to_number import *
 
 implementations = [
-    #partitioning_implementation,
-    decision_tree_learner_implementation,
-    decision_tree_predictor_implementation,
-    normalizer_implementation,
-    normalizer_applier_implementation,
+    knime_partitioning_implementation,
+    #decision_tree_learner_implementation,
+    #decision_tree_predictor_implementation,
+    #normalizer_implementation,
+    #normalizer_applier_implementation,
     #svm_learner_implementation, #TODO fix this
     #svm_predictor_implementation,
     #missing_value_implementation,
     #missing_value_applier_implementation,
-    #csv_reader_implementation,
-    csv_writer_implementation,
-    piechart_visualizer_implementation,
-    barchart_visualizer_implementation,
-    histogram_visualizer_implementation,
-    scatterplot_visualizer_implementation,
-    lineplot_visualizer_implementation,
-    heatmap_visualizer_implementation,
+    knime_csv_reader_implementation,
+    knime_csv_writer_implementation,
+    #piechart_visualizer_implementation,
+    #barchart_visualizer_implementation,
+    #histogram_visualizer_implementation,
+    #scatterplot_visualizer_implementation,
+    #lineplot_visualizer_implementation,
+    #heatmap_visualizer_implementation,
     #xgboost_linear_learner_implementation,
     #xgboost_tree_learner_implementation,
     #xgboost_predictor_implementation,
-    categorizer_implementation,
-    categorizer_applier_implementation,
+    #categorizer_implementation,
+    #categorizer_applier_implementation,
 ]
 
+components = []
+"""
 components = [
     #random_relative_train_test_split_component,
     #random_absolute_train_test_split_component,
@@ -77,3 +79,4 @@ components = [
     categorizer_component,
     categorizer_applier_component,
 ]
+"""

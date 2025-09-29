@@ -7,7 +7,7 @@ data_reader_implementation = Implementation(
     algorithm=cb.DataLoading,
     parameters=[
         Parameter("Reader File", XSD.string, '$$PATH$$'),
-        Parameter("Format", XSD.string, '$$DATA_RAW_FORMAT$$')
+        FactorParameter("Format", levels=FORMATS,  default_value = '$$DATA_RAW_FORMAT$$')
     ],
     input=[],
     output=[

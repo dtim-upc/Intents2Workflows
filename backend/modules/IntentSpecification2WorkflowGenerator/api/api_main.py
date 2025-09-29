@@ -195,7 +195,7 @@ def download_all_knime():
     for graph_id, graph_content in graphs.items():
         graph = Graph().parse(data=graph_content, format='turtle')
         file_path = os.path.join(folder, f'{graph_id}.ttl')
-        compatible = getKnimeCompatibility(graph)
+        compatible = True #getKnimeCompatibility(graph)
         if compatible:
             graph.serialize(file_path, format='turtle')
 

@@ -23,7 +23,7 @@ python_svm_learner_implementation = PythonImplementation(
         PythonNumericParameter("gamma", XSD.double,
                         expression = AlgebraicExpression(cb.COPY, next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'Gamma'),0)),
                         default_value='scale'),
-        PythonFactorParameter("kernel", ['poly', 'sigmoid', 'rbf'],
+        PythonFactorParameter("kernel", {'poly':'Polynomial', 'sigmoid':'Sigmoid', 'rbf':'RBF'},
                         base_parameter=next((param for param in svm.svm_learner_implementation.parameters.keys() if param.label == 'Kernel type'),None),
                         default_value='rbf'),
     ],

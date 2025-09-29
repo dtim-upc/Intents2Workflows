@@ -1,27 +1,23 @@
 from typing import List, Union, Optional
 
 from common import *
-from ontology_populator.implementations.core.implementation import Implementation, Parameter
-from ontology_populator.implementations.core.parameter import LiteralValue
+from ontology_populator.implementations.core.engine_implementation import EngineImplementation
+from ontology_populator.implementations.core.implementation import Implementation
+
+from .knime_parameter import KnimeParameter
 
 
-class KnimeImplementation(Implementation):
+class KnimeImplementation(EngineImplementation):
 
-    def __init__(self, name: str, algorithm: URIRef, parameters: List[Parameter],
-                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature',
-                 input: List[Union[URIRef, List[URIRef]]] = None, output: List[URIRef] = None,
-                 implementation_type=tb.Implementation, counterpart: 'Implementation' = None,
-                 ) -> None:
-        super().__init__(name, algorithm, parameters, input, output, implementation_type, counterpart)
+    def __init__(self, name: str, base_implementation: Implementation, parameters: List[KnimeParameter],
+                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature', namespace = cb) -> None:
+        
+        super().__init__(name, "KNIME", base_implementation, parameters, namespace)
         self.knime_node_factory = knime_node_factory
         self.knime_bundle = knime_bundle
         self.knime_feature = knime_feature
 
     def add_to_graph(self, g: Graph):
-        super().add_to_graph(g)
-
-        g.add((self.uri_ref, tb.engine, Literal('KNIME')))
-
         g.add((self.uri_ref, tb.term('knime-node-name'), Literal(self.name)))
 
         # Node Factory
@@ -40,22 +36,12 @@ class KnimeImplementation(Implementation):
         g.add((self.uri_ref, tb.term('knime-node-feature-version'), Literal(self.knime_feature.version)))
 
         # Parameters
-        for parameter in self.parameters.values():
+        for parameter in self.parameters:
             if isinstance(parameter, KnimeParameter):
-                g.add((parameter.uri_ref, tb.knime_key, Literal(parameter.knime_key)))
-                g.add((parameter.uri_ref, tb.knime_path, Literal(parameter.path)))
-                g.add((parameter.uri_ref, tb.has_datatype, Literal(parameter.datatype)))
+                path_value = Literal(parameter.path) if parameter.path is not None else cb.NONE
+                g.add((parameter.uri_ref, tb.knime_path, path_value))
 
-        return self.uri_ref
-
-
-class KnimeParameter(Parameter):
-
-    def __init__(self, label: str, datatype: URIRef, default_value: Union[URIRef, LiteralValue],
-                 knime_key: str, condition: str = '', path: str = 'model') -> None:
-        super().__init__(label, datatype, default_value, condition)
-        self.knime_key = knime_key
-        self.path = path
+        return super().add_to_graph(g)
 
 
 class KnimeBundle:

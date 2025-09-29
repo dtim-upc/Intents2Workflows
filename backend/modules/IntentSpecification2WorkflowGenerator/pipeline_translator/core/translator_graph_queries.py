@@ -89,6 +89,9 @@ def get_step_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef) ->
     # print(f'TYPES: {types}')
     return list(zip(keys, param_values, paths, types))
 
+def get_parameter_datatype(ontology: Graph, parameter: URIRef):
+    return next(ontology.objects(parameter, tb.has_datatype, True), None)
+
 def get_step_inputs(workflow_graph:Graph, step:URIRef):
     query = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
                 SELECT ?pos ?data 
@@ -96,7 +99,7 @@ def get_step_inputs(workflow_graph:Graph, step:URIRef):
                     {step.n3()} tb:hasInput ?inp .
                     ?inp 
                         tb:has_data ?data ;
-                        tb:has_position ?pos .      
+                        tb:has_position ?pos .       
                 }} 
                 ORDER BY ?pos"""
     result = workflow_graph.query(query).bindings
@@ -158,7 +161,6 @@ def get_workflow_connections(workflow_graph: Graph) -> List[Tuple[URIRef, URIRef
     return [(r['source'], r['destination'], r['sourcePort'], r['destinationPort']) for r in results]
 
 
-#TODO refactor get_engine_x_param functions to avoid redundancy
 def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
     query = f'''
     PREFIX tb: <{tb}>
@@ -169,6 +171,22 @@ def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
                 tb:engine "{engine}" ;
                 tb:hasParameter ?param .
         ?param a tb:TextParameter .
+                
+    }}
+    '''
+    results = ontology.query(query).bindings
+    return [r['param'] for r in results]
+
+def get_engine_specific_params(ontology:Graph, implementation:URIRef, engine:str):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?param
+    WHERE {{
+        {implementation.n3()} a tb:Implementation .
+        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
+                tb:engine "{engine}" ;
+                tb:hasParameter ?param .
+        ?param a tb:EngineSpecificParameter .
                 
     }}
     '''
@@ -288,3 +306,24 @@ def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engin
         return None
     
     return result[0]['impl'] 
+
+def get_engine_parameter(ontology: Graph, key: str, implementation:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?param
+    WHERE {{
+        ?param a tb:EngineParameter ;
+            tb:key "{key}" .
+        {implementation.n3()} tb:hasParameter ?param .           
+    }}
+    '''
+    print(query)
+    result = ontology.query(query).bindings
+    
+    if len(result) > 1:
+        print(f"WARNING: More than one parameter found for key {key}. Only one of them  will be used")
+    elif len(result) <= 0:
+        print(f"WARNING: No parameter found for key {key}.")
+        return None
+    
+    return result[0]['param']

@@ -102,17 +102,22 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         alg = next(ontology.objects(impl, tb.implements)), 
         (impl, RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl, RDF.type))
 
-        algs_shapes[alg[0]] = get_implementation_input_specs(ontology, impl)[0] #assuming data shapes is on input 0
-
+        input_specs = get_implementation_input_specs(ontology, impl)
+        if len(input_specs) > 0:
+            algs_shapes[alg[0]] = input_specs[0] #assuming data shapes is on input 0 
+        else:
+            algs_shapes[alg[0]] = []
+       
         alg_plans[alg[0]].append(impl)
-
         available_algs.append(alg[0])
     
     plans = {}
 
     for alg in available_algs:
         print(alg)
-        if cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
+        if len(algs_shapes[alg]) <= 0:
+            plans[alg] = connect_algorithms(ontology, shape_graph, [alg])
+        elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
@@ -152,7 +157,7 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
                    f'{counter[main_component]}')
         counter[main_component] += 1
-        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle"), "knimeCompatible": getKnimeCompatibility(workflow_plan)}
+        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle"), "knimeCompatible": True}#getKnimeCompatibility(workflow_plan)}
 
     return logical_plans
 

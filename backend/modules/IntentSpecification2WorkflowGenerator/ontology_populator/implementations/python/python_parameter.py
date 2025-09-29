@@ -18,5 +18,5 @@ class PythonTextParameter(PythonParameter, EngineTextParameter):
         super().__init__(key=key, base_parameter=base_parameter, default_value=default_value, control_parameter=control_parameter)
 
 class PythonFactorParameter(PythonParameter, EngineFactorParameter):
-    def __init__(self, key:str, levels: List[str], base_parameter:URIRef, default_value:Union[URIRef, LiteralValue], control_parameter=False):
+    def __init__(self, key:str, levels: dict, base_parameter:URIRef, default_value:Union[URIRef, LiteralValue], control_parameter=False):
         super().__init__(key=key, levels=levels, base_parameter=base_parameter, default_value=default_value, control_parameter=control_parameter)

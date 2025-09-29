@@ -120,10 +120,22 @@ def translate_numeric_params(ontology:Graph, implementation:URIRef, step_paramet
         python_params[key] = value
     return python_params
 
+def get_engine_specific_params(ontology:Graph, implementation:URIRef, engine:str):
+    params = {}
+    specific_params = queries.get_engine_specific_params(ontology,implementation,engine=engine)
+
+    for param in specific_params:
+        value = queries.get_default_value(ontology, param)
+        value = literal_to_raw_datatype(value)
+
+        key = next(ontology.objects(param, tb.key, unique=True))
+        params[key] = value
+    return params
+
 def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
 
     parameters = list(workflow_graph.objects(step, tb.usesParameter, True))
-
+ 
     step_parameters = {}
 
     for param in parameters:
@@ -138,4 +150,5 @@ def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef, imp
 
     text_params = translate_text_params(ontology, implementation, step_parameters,engine)
     numeric_params: Dict = translate_numeric_params(ontology,  implementation, step_parameters,engine)
-    return text_params | numeric_params
+    specific_params = get_engine_specific_params(ontology,implementation,engine=engine)
+    return text_params | numeric_params | specific_params

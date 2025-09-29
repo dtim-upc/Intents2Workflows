@@ -1,6 +1,6 @@
 from common import *
 from .python_implementation import PythonImplementation
-from .python_parameter import PythonFactorParameter, PythonTextParameter
+from .python_parameter import PythonTextParameter
 from ..simple.projection import projection_numerical_learner_implementation, projection_numerical_predictor_implementation
 
 python_projection_numerical_learner_implementation = PythonImplementation(

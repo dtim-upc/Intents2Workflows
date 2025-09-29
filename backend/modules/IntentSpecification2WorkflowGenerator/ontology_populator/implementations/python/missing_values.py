@@ -14,13 +14,14 @@ python_missing_value_implementation = PythonImplementation(
                             base_parameter=next((p for p in missing_value_implementation.parameters.keys() if p.label == 'Categorical columns'),None),
                             default_value=None),
 
-        PythonFactorParameter('Numeric strategy', ["mean","drop"], 
+        PythonFactorParameter('Numeric strategy', {"mean":"MeanImputation","drop":"Drop"}, 
                               base_parameter=next((p for p in missing_value_implementation.parameters.keys() if p.label == 'Numeric strategy'),None),
                               default_value = "mean"),
                               
-        PythonFactorParameter('Factor strategy', ["most_frequent","drop"],
+        PythonFactorParameter('Factor strategy', {"most_frequent":"MostFrequent","drop":"Drop"},
                               base_parameter=next((p for p in missing_value_implementation.parameters.keys() if p.label == 'Factor strategy'),None),
                               default_value = "most_frecuent"), #TODO drop is not present in sklearn, should be untranslatable
+
     ],
     python_module='sklearn',
     module_version='1.7.2',

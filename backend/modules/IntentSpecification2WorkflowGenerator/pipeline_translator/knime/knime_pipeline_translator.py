@@ -17,7 +17,9 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
+
 from ..core.translator_graph_queries import *
+from ..core.parameter_translator import translate_parameters
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -30,13 +32,21 @@ except ImportError:
 
 def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, str]:
     results = {}
+    print(f"Getting KNIME properties for implementation {implementation}")
     for p, o in ontology.predicate_objects(implementation):
+        print(f"Property: {p}, Object: {o}")
         if p.fragment.startswith('knime'):
             results[p.fragment[6:]] = o.value
             # print(f"THIS: {p.fragment[6:]} ---> {o.value}")
     return results
 
 def update_param_hierarchy(param_dict:Dict, path: List[str], element):
+    print(f"Updating param hierarchy. path: {path}, element: {element}")
+
+    if path == cb.NONE:
+        print("Path is NONE for parameter ", element)
+        return param_dict
+    
 
     if len(path) == 0:
         if element[0] != "$$SKIP$$":
@@ -53,7 +63,7 @@ def update_param_hierarchy(param_dict:Dict, path: List[str], element):
     return param_dict
 
 
-def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
+def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef, implementation: URIRef, engine_implementation: URIRef):
     types = {
         XSD.string: 'xstring',
         cb.term('char'): 'xchar',
@@ -66,12 +76,17 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
         RDF.List: ''
     }
 
-    parameters = get_step_parameters(ontology, workflow_graph, step)
+    parameters = translate_parameters(ontology=ontology, workflow_graph=workflow_graph, step=step,implementation=implementation, engine="KNIME")#get_step_parameters(ontology, workflow_graph, step)
     param_dict = {'folders': {},
                   'elements': []}
-    
+     
 
-    for key, value, path, value_type in parameters:
+    for key, value in parameters.items():
+        param_uri = get_engine_parameter(ontology, key, engine_implementation)
+        value_type=get_parameter_datatype(ontology, param_uri)
+        path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
+        print(f"Key: {key}, Value: {value}, Type: {value_type}, Path: {path}, Param URI: {param_uri}")
+
         if value_type == RDF.List:
             param_value = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
             arrayPath = path+'/'+key
@@ -79,7 +94,7 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
             for i,param in enumerate(param_value):
                 parameters.append((str(i),param,arrayPath,XSD.string))
         else:
-            if value is None or (isinstance(value, str) and value.lower() == 'none'):
+            if value is None or (isinstance(value, str) and value.lower() == 'none') or value == cb.NONE:
                 param_value = None
             else:
                 param_value = value
@@ -91,16 +106,19 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
 def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folder, iterator: int) -> str:
 
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
-    properties = get_knime_properties(ontology, implementation)
+    engine_implementation = get_engine_implementation(ontology, implementation, 'KNIME')
+    properties = get_knime_properties(ontology, engine_implementation)
 
     
-    conf_params = get_config_parameters(ontology, workflow_graph, step)
+    conf_params = get_config_parameters(ontology, workflow_graph, step, implementation, engine_implementation)
     num_ports = get_number_of_output_ports(ontology, workflow_graph, step)
 
     step_template = environment.get_template("step.py.jinja")
     step_file = step_template.render(properties = properties,
-                                     parameters = conf_params,
+                                     parameters = conf_params,  
                                      num_ports = num_ports)
+    
+    print("Properties:", properties)
     
     path_name = properties["node-name"].replace('(', '_').replace(')', '_')
     
