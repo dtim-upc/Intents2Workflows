@@ -8,6 +8,7 @@ import zipfile
 import tempfile
 import shutil
 import atexit
+import laspy
 
 
 # Create a temporary directory
@@ -132,6 +133,17 @@ class ZipLoader(FolderLoader):
         self.metadata['path'] = Path(dir).resolve().as_posix()
 
 
+class LidarLoader(DataLoader):
+    fileFormat = "Lidar point cloud"
+
+    def getDataFrame(self):
+        laspy_data = laspy.read(self.file_path)
+        points = [ laspy_data ]
+        return np.array(points)
+
+
+
+
 class DummyLoader(DataLoader):
     fileFormat = "Unsupported"
     
@@ -156,6 +168,7 @@ loaders = {
     "parquet": ParquetLoader,
     "zip": ZipLoader,
     "npz": NumpyZipLoader,
+    "las": LidarLoader,
     "": FolderLoader,
 }
 
