@@ -7,8 +7,10 @@ from ontology_populator.implementations.core.parameter import Parameter
 
 class KnimeParameter:
     def __init__(self, path, **kwargs):
+        self.knime_path = path
+        self.knime_key = kwargs.get('key')
+        kwargs['key'] = f"{hash(self.knime_path)}-{self.knime_key}" #to ensure unique URIs for parameters with same key but different path
         super().__init__(engine="KNIME", **kwargs)
-        self.path = path
 
 class KnimeSpecificParameter(KnimeParameter,EngineSpecificParameter):
     def __init__(self, key:str, datatype:URIRef, default_value:Union[URIRef, LiteralValue], path: str = 'model'):

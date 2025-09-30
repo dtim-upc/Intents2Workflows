@@ -10,7 +10,7 @@ knime_csv_reader_implementation = KnimeImplementation(
         KnimeTextParameter('path', 
                            base_parameter=next((param for param in data_reader_implementation.parameters.keys() if param.label == "Reader File"), None),
                            default_value='$$PATH$$', path='model/settings/file_selection/path'),
-        KnimeSpecificParameter('location_present', XSD.string, default_value=True, path='model/settings/file_selection/path'),
+        KnimeSpecificParameter('location_present', XSD.boolean, default_value=True, path='model/settings/file_selection/path'),
         KnimeSpecificParameter('file_system_type', XSD.string, "LOCAL", path='model/settings/file_selection/path'),
 
         KnimeSpecificParameter('SettingsModelID', XSD.string, 'SMID_ReaderFileChooser',
@@ -75,7 +75,7 @@ knime_csv_reader_implementation = KnimeImplementation(
 
         KnimeSpecificParameter("charset", XSD.string, None, path='model/encoding'),
 
-        KnimeSpecificParameter('SMID_FilterMode', XSD.string,'SettingsModelID',path='model/settings/file_selection/filter_mode_Internals'),
+        KnimeSpecificParameter('SettingsModelID', XSD.string,'SMID_FilterMode',path='model/settings/file_selection/filter_mode_Internals'),
         KnimeSpecificParameter('EnabledStatus', XSD.boolean, True, path='model/settings/file_selection/filter_mode_Internals'),
 
         KnimeSpecificParameter("filter_mode", XSD.string, 'FILE', path='model/settings/file_selection/filter_mode'),
@@ -137,7 +137,7 @@ knime_csv_writer_implementation = KnimeImplementation(
         KnimeSpecificParameter("EnabledStatus", XSD.boolean, True, path='model/settings/file_chooser_settings/filter_mode_Internals'),
 
         KnimeSpecificParameter('column_delimiter', XSD.string, ',', path='model/settings'),
-        KnimeSpecificParameter('row_delimeter', XSD.string, None, path='model/settings'),
+        KnimeSpecificParameter('row_delimiter', XSD.string, None, path='model/settings'),
         KnimeSpecificParameter('quote_char', cb.term('char'), '"', path='model/settings'),
         KnimeSpecificParameter('quote_escape_char', cb.term('char'), '"', path='model/settings'),
         KnimeSpecificParameter('write_column_header', XSD.boolean, True, path='model/settings'),

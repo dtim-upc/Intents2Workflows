@@ -41,7 +41,7 @@ def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, s
     return results
 
 def update_param_hierarchy(param_dict:Dict, path: List[str], element):
-    print(f"Updating param hierarchy. path: {path}, element: {element}")
+    #print(f"Updating param hierarchy. path: {path}, element: {element}")
 
     if path == cb.NONE:
         print("Path is NONE for parameter ", element)
@@ -56,7 +56,7 @@ def update_param_hierarchy(param_dict:Dict, path: List[str], element):
         if level not in param_dict['folders']:
             param_dict['folders'][level] = {
                 'folders': {},
-                'elements': []
+                'elements': [] 
             }
         param_dict[level] = update_param_hierarchy(param_dict['folders'][level], path, element)
     
@@ -84,12 +84,13 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef, 
     for key, value in parameters.items():
         param_uri = get_engine_parameter(ontology, key, engine_implementation)
         value_type=get_parameter_datatype(ontology, param_uri)
-        path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
-        print(f"Key: {key}, Value: {value}, Type: {value_type}, Path: {path}, Param URI: {param_uri}")
+        knime_key = next(ontology.objects(param_uri, tb.knime_key, unique=True), '')
+        knime_path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
+        print(f"Key: {key}, knime_key: {knime_key}, Value: {value}, Type: {value_type}, Path: {knime_path}, Param URI: {param_uri}")
 
         if value_type == RDF.List:
             param_value = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
-            arrayPath = path+'/'+key
+            arrayPath = knime_path+'/'+ knime_key
             parameters.append( ("array-size", str(len(param_value)), arrayPath, XSD.int) )
             for i,param in enumerate(param_value):
                 parameters.append((str(i),param,arrayPath,XSD.string))
@@ -99,7 +100,7 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef, 
             else:
                 param_value = value
 
-            param_dict = update_param_hierarchy(param_dict, path.split('/'),(str(key),param_value,types[value_type]))
+            param_dict = update_param_hierarchy(param_dict, knime_path.split('/'),(str(knime_key),param_value,types[value_type]))
     return param_dict
 
 
@@ -118,7 +119,7 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
                                      parameters = conf_params,  
                                      num_ports = num_ports)
     
-    print("Properties:", properties)
+    #print("Properties:", properties)
     
     path_name = properties["node-name"].replace('(', '_').replace(')', '_')
     

@@ -119,71 +119,72 @@ cb:KMeans a tb:Algorithm ;
 cb:KNIME-implementation-knime_csv_reader a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_reader ;
-    tb:hasParameter cb:KNIME-implementation-knime_csv_reader-append_path_column_internals,
-        cb:KNIME-implementation-knime_csv_reader-autodetect_buffer_size,
-        cb:KNIME-implementation-knime_csv_reader-charset,
-        cb:KNIME-implementation-knime_csv_reader-column_delimiter,
-        cb:KNIME-implementation-knime_csv_reader-comment_char,
-        cb:KNIME-implementation-knime_csv_reader-connected_fs,
-        cb:KNIME-implementation-knime_csv_reader-convenience_fs_category,
-        cb:KNIME-implementation-knime_csv_reader-custom_url_timeout,
-        cb:KNIME-implementation-knime_csv_reader-decimal_separator,
-        cb:KNIME-implementation-knime_csv_reader-enabledstatus,
-        cb:KNIME-implementation-knime_csv_reader-fail_on_differing_specs,
-        cb:KNIME-implementation-knime_csv_reader-file_system_type,
-        cb:KNIME-implementation-knime_csv_reader-files_extension_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-files_extension_expression,
-        cb:KNIME-implementation-knime_csv_reader-files_name_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-files_name_expression,
-        cb:KNIME-implementation-knime_csv_reader-files_name_filter_type,
-        cb:KNIME-implementation-knime_csv_reader-filter_files_extension,
-        cb:KNIME-implementation-knime_csv_reader-filter_files_name,
-        cb:KNIME-implementation-knime_csv_reader-filter_folders_name,
-        cb:KNIME-implementation-knime_csv_reader-filter_mode,
-        cb:KNIME-implementation-knime_csv_reader-folders_name_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-folders_name_expression,
-        cb:KNIME-implementation-knime_csv_reader-folders_name_filter_type,
-        cb:KNIME-implementation-knime_csv_reader-follow_links,
-        cb:KNIME-implementation-knime_csv_reader-format,
-        cb:KNIME-implementation-knime_csv_reader-has_column_header,
-        cb:KNIME-implementation-knime_csv_reader-has_fs_port,
-        cb:KNIME-implementation-knime_csv_reader-has_row_id,
-        cb:KNIME-implementation-knime_csv_reader-include_hidden_files,
-        cb:KNIME-implementation-knime_csv_reader-include_hidden_folders,
-        cb:KNIME-implementation-knime_csv_reader-include_special_files,
-        cb:KNIME-implementation-knime_csv_reader-include_subfolders,
-        cb:KNIME-implementation-knime_csv_reader-limit_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-limit_data_rows_scanned,
-        cb:KNIME-implementation-knime_csv_reader-limit_memory_per_column,
-        cb:KNIME-implementation-knime_csv_reader-location_present,
-        cb:KNIME-implementation-knime_csv_reader-max_data_rows_scanned,
-        cb:KNIME-implementation-knime_csv_reader-max_rows,
-        cb:KNIME-implementation-knime_csv_reader-maximum_number_of_columns,
-        cb:KNIME-implementation-knime_csv_reader-mountpoint,
-        cb:KNIME-implementation-knime_csv_reader-number_of_lines_to_skip,
-        cb:KNIME-implementation-knime_csv_reader-number_of_rows_to_skip,
-        cb:KNIME-implementation-knime_csv_reader-overwritten_by_variable,
-        cb:KNIME-implementation-knime_csv_reader-path,
-        cb:KNIME-implementation-knime_csv_reader-path_column_name_internals,
-        cb:KNIME-implementation-knime_csv_reader-prepend_file_idx_to_row_id,
-        cb:KNIME-implementation-knime_csv_reader-quote_char,
-        cb:KNIME-implementation-knime_csv_reader-quote_escape_char,
-        cb:KNIME-implementation-knime_csv_reader-quote_option,
-        cb:KNIME-implementation-knime_csv_reader-relative_to,
-        cb:KNIME-implementation-knime_csv_reader-replace_empty_quotes_with_missing,
-        cb:KNIME-implementation-knime_csv_reader-row_delimiter,
-        cb:KNIME-implementation-knime_csv_reader-save_table_spec_config_internals,
-        cb:KNIME-implementation-knime_csv_reader-settingsmodelid,
-        cb:KNIME-implementation-knime_csv_reader-skip_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-skip_empty_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-skip_lines,
-        cb:KNIME-implementation-knime_csv_reader-smid_filtermode,
-        cb:KNIME-implementation-knime_csv_reader-spaceid,
-        cb:KNIME-implementation-knime_csv_reader-spacename,
-        cb:KNIME-implementation-knime_csv_reader-spec_merge_mode_internals,
-        cb:KNIME-implementation-knime_csv_reader-support_short_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-thousands_separator,
-        cb:KNIME-implementation-knime_csv_reader-use_line_break_row_delimiter ;
+    tb:hasParameter cb:KNIME-implementation-knime_csv_reader-3796150433838708781_filter_mode,
+        cb:KNIME-implementation-knime_csv_reader-3796150433838708781_include_subfolders,
+        cb:KNIME-implementation-knime_csv_reader-5144964664012192909_enabledstatus,
+        cb:KNIME-implementation-knime_csv_reader-5144964664012192909_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_append_path_column_internals,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_decimal_separator,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_fail_on_differing_specs,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_data_rows_scanned,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_memory_per_column,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_max_data_rows_scanned,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_maximum_number_of_columns,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_path_column_name_internals,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_quote_option,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_replace_empty_quotes_with_missing,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_save_table_spec_config_internals,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_spec_merge_mode_internals,
+        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_thousands_separator,
+        cb:KNIME-implementation-knime_csv_reader-6428085477937620720_charset,
+        cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_enabledstatus,
+        cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_file_system_type,
+        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_location_present,
+        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_path,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_expression,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_expression,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_filter_type,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_extension,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_name,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_folders_name,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_expression,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_filter_type,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_follow_links,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_files,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_folders,
+        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_special_files,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_connected_fs,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_convenience_fs_category,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_custom_url_timeout,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_has_fs_port,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_mountpoint,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_overwritten_by_variable,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_relative_to,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spaceid,
+        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spacename,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_autodetect_buffer_size,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_column_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_comment_char,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_column_header,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_row_id,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_prepend_file_idx_to_row_id,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_char,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_escape_char,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_row_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_skip_empty_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_support_short_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_use_line_break_row_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_limit_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_max_rows,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_lines_to_skip,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_rows_to_skip,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_lines,
+        cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format ;
     tb:knime-factory "org.knime.base.node.io.filehandling.csv.reader.CSVTableReaderNodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
     tb:knime-node-bundle-symbolic-name "org.knime.base" ;
@@ -199,44 +200,46 @@ cb:KNIME-implementation-knime_csv_reader a tb:EngineImplementation ;
 cb:KNIME-implementation-knime_csv_writer a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_writer ;
-    tb:hasParameter cb:KNIME-implementation-knime_csv_writer-add_custom_text_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-add_table_name_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-add_time_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-add_user_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-character_set,
-        cb:KNIME-implementation-knime_csv_writer-column_delimiter,
-        cb:KNIME-implementation-knime_csv_writer-comment_indentation,
-        cb:KNIME-implementation-knime_csv_writer-comment_line_marker,
-        cb:KNIME-implementation-knime_csv_writer-compress_with_gzip,
-        cb:KNIME-implementation-knime_csv_writer-connected_fs,
-        cb:KNIME-implementation-knime_csv_writer-convenience_fs_category,
-        cb:KNIME-implementation-knime_csv_writer-create_missing_folders,
-        cb:KNIME-implementation-knime_csv_writer-custom_comment_text,
-        cb:KNIME-implementation-knime_csv_writer-custom_url_timeout,
-        cb:KNIME-implementation-knime_csv_writer-decimal_separator,
-        cb:KNIME-implementation-knime_csv_writer-enabledstatus,
-        cb:KNIME-implementation-knime_csv_writer-file_system_type,
-        cb:KNIME-implementation-knime_csv_writer-has_fs_port,
-        cb:KNIME-implementation-knime_csv_writer-if_path_exists,
-        cb:KNIME-implementation-knime_csv_writer-keep_trailing_zero_in_decimals,
-        cb:KNIME-implementation-knime_csv_writer-location_present,
-        cb:KNIME-implementation-knime_csv_writer-missing_value_pattern,
-        cb:KNIME-implementation-knime_csv_writer-mountpoint,
-        cb:KNIME-implementation-knime_csv_writer-overwritten_by_variable,
-        cb:KNIME-implementation-knime_csv_writer-path,
-        cb:KNIME-implementation-knime_csv_writer-quote_char,
-        cb:KNIME-implementation-knime_csv_writer-quote_escape_char,
-        cb:KNIME-implementation-knime_csv_writer-quote_mode,
-        cb:KNIME-implementation-knime_csv_writer-relative_to,
-        cb:KNIME-implementation-knime_csv_writer-row_delimeter,
-        cb:KNIME-implementation-knime_csv_writer-separator_replacement,
-        cb:KNIME-implementation-knime_csv_writer-settingsmodelid,
-        cb:KNIME-implementation-knime_csv_writer-skip_column_header_on_append,
-        cb:KNIME-implementation-knime_csv_writer-spaceid,
-        cb:KNIME-implementation-knime_csv_writer-spacename,
-        cb:KNIME-implementation-knime_csv_writer-use_scientific_format,
-        cb:KNIME-implementation-knime_csv_writer-write_column_header,
-        cb:KNIME-implementation-knime_csv_writer-write_row_header ;
+    tb:hasParameter cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_custom_text_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_table_name_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_time_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_user_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_indentation,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_line_marker,
+        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_custom_comment_text,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_connected_fs,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_convenience_fs_category,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_custom_url_timeout,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_has_fs_port,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_mountpoint,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_overwritten_by_variable,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_relative_to,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spaceid,
+        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spacename,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_compress_with_gzip,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_decimal_separator,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_keep_trailing_zero_in_decimals,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_missing_value_pattern,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_quote_mode,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_separator_replacement,
+        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_use_scientific_format,
+        cb:KNIME-implementation-knime_csv_writer-6063513576421209041_create_missing_folders,
+        cb:KNIME-implementation-knime_csv_writer-6063513576421209041_if_path_exists,
+        cb:KNIME-implementation-knime_csv_writer-6101317396526985862_enabledstatus,
+        cb:KNIME-implementation-knime_csv_writer-6101317396526985862_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_writer-6428085477937620720_character_set,
+        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_file_system_type,
+        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_location_present,
+        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_path,
+        cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_enabledstatus,
+        cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_column_delimiter,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_char,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_escape_char,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_row_delimiter,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_skip_column_header_on_append,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_column_header,
+        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_row_header ;
     tb:knime-factory "org.knime.base.node.io.filehandling.csv.writer.CSVWriter2NodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
     tb:knime-node-bundle-symbolic-name "org.knime.base" ;
@@ -252,12 +255,12 @@ cb:KNIME-implementation-knime_csv_writer a tb:EngineImplementation ;
 cb:KNIME-implementation-knime_data_partitioning a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_partitioning ;
-    tb:hasParameter cb:KNIME-implementation-knime_data_partitioning-class_column,
-        cb:KNIME-implementation-knime_data_partitioning-count,
-        cb:KNIME-implementation-knime_data_partitioning-fraction,
-        cb:KNIME-implementation-knime_data_partitioning-method,
-        cb:KNIME-implementation-knime_data_partitioning-random_seed,
-        cb:KNIME-implementation-knime_data_partitioning-samplingmethod ;
+    tb:hasParameter cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_class_column,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_count,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_fraction,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_random_seed,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod ;
     tb:knime-factory "org.knime.base.node.preproc.partition.PartitionNodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
     tb:knime-node-bundle-symbolic-name "org.knime.base" ;
@@ -1026,853 +1029,980 @@ cb:HeatMapVisualization rdfs:subClassOf cb:Visualization .
 
 cb:HistogramVisualization rdfs:subClassOf cb:Visualization .
 
-cb:KNIME-implementation-knime_csv_reader-append_path_column_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "append_path_column_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-autodetect_buffer_size a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 1048576 ;
-    tb:key "autodetect_buffer_size" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-charset a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value cb:NONE ;
-    tb:key "charset" ;
-    tb:knime_path "model/encoding" .
-
-cb:KNIME-implementation-knime_csv_reader-column_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "," ;
-    tb:key "column_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-comment_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "#" ;
-    tb:key "comment_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-connected_fs a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "connected_fs" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-convenience_fs_category a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "convenience_fs_category" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-custom_url_timeout a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 1000 ;
-    tb:key "custom_url_timeout" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-decimal_separator a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "." ;
-    tb:key "decimal_separator" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-enabledstatus a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "EnabledStatus" ;
-    tb:knime_path "model/settings/file_selection/filter_mode_Internals",
-        "model/settings/file_selection_Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-fail_on_differing_specs a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "fail_on_differing_specs" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-file_system_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "file_system_type" ;
-    tb:knime_path "model/settings/file_selection/path" .
-
-cb:KNIME-implementation-knime_csv_reader-files_extension_case_sensitive a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "files_extension_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-files_extension_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "files_extension_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-files_name_case_sensitive a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "files_name_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-files_name_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "*" ;
-    tb:key "files_name_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-files_name_filter_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "WILDCARD" ;
-    tb:key "files_name_filter_type" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-filter_files_extension a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "filter_files_extension" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-filter_files_name a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "filter_files_name" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-filter_folders_name a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "filter_folders_name" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-filter_mode a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-3796150433838708781_filter_mode a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "FILE" ;
-    tb:key "filter_mode" ;
+    tb:key "3796150433838708781-filter_mode" ;
+    tb:knime_key "filter_mode" ;
     tb:knime_path "model/settings/file_selection/filter_mode" .
 
-cb:KNIME-implementation-knime_csv_reader-folders_name_case_sensitive a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-3796150433838708781_include_subfolders a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "folders_name_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-folders_name_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "*" ;
-    tb:key "folders_name_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-folders_name_filter_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "WILDCARD" ;
-    tb:key "folders_name_filter_type" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-follow_links a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "follow_links" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-format a tb:EngineParameter,
-        tb:FactorParameter,
-        tb:TextParameter ;
-    tb:engine "KNIME" ;
-    tb:hasBaseParameter cb:implementation-data_reader-format ;
-    tb:hasLevel cb:KNIME-implementation-knime_csv_reader-format-CSV ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "CSV" ;
-    tb:key "Format" ;
-    tb:knime_path cb:NONE .
-
-cb:KNIME-implementation-knime_csv_reader-format-CSV a tb:FactorLevel ;
-    tb:equivalentTo cb:implementation-data_reader-format-CSV ;
-    tb:hasValue "CSV" .
-
-cb:KNIME-implementation-knime_csv_reader-has_column_header a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "has_column_header" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-has_fs_port a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "has_fs_port" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-has_row_id a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "has_row_id" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-include_hidden_files a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "include_hidden_files" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-include_hidden_folders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "include_hidden_folders" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-include_special_files a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "include_special_files" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-include_subfolders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "include_subfolders" ;
+    tb:key "3796150433838708781-include_subfolders" ;
+    tb:knime_key "include_subfolders" ;
     tb:knime_path "model/settings/file_selection/filter_mode" .
 
-cb:KNIME-implementation-knime_csv_reader-limit_data_rows a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-5144964664012192909_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5144964664012192909-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_selection/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-5144964664012192909_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_FilterMode" ;
+    tb:key "5144964664012192909-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_selection/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_append_path_column_internals a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "limit_data_rows" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-limit_data_rows_scanned a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "limit_data_rows_scanned" ;
+    tb:key "5187234475392633828-append_path_column_Internals" ;
+    tb:knime_key "append_path_column_Internals" ;
     tb:knime_path "model/advanced_settings" .
 
-cb:KNIME-implementation-knime_csv_reader-limit_memory_per_column a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "limit_memory_per_column" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-location_present a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_decimal_separator a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value true ;
-    tb:key "location_present" ;
-    tb:knime_path "model/settings/file_selection/path" .
+    tb:has_default_value "." ;
+    tb:key "5187234475392633828-decimal_separator" ;
+    tb:knime_key "decimal_separator" ;
+    tb:knime_path "model/advanced_settings" .
 
-cb:KNIME-implementation-knime_csv_reader-max_data_rows_scanned a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_fail_on_differing_specs a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5187234475392633828-fail_on_differing_specs" ;
+    tb:knime_key "fail_on_differing_specs" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_data_rows_scanned a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5187234475392633828-limit_data_rows_scanned" ;
+    tb:knime_key "limit_data_rows_scanned" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_memory_per_column a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5187234475392633828-limit_memory_per_column" ;
+    tb:knime_key "limit_memory_per_column" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_max_data_rows_scanned a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:long ;
     tb:has_default_value 10000 ;
-    tb:key "max_data_rows_scanned" ;
+    tb:key "5187234475392633828-max_data_rows_scanned" ;
+    tb:knime_key "max_data_rows_scanned" ;
     tb:knime_path "model/advanced_settings" .
 
-cb:KNIME-implementation-knime_csv_reader-max_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:long ;
-    tb:has_default_value 50 ;
-    tb:key "max_rows" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-maximum_number_of_columns a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_maximum_number_of_columns a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:integer ;
     tb:has_default_value 8192 ;
-    tb:key "maximum_number_of_columns" ;
+    tb:key "5187234475392633828-maximum_number_of_columns" ;
+    tb:knime_key "maximum_number_of_columns" ;
     tb:knime_path "model/advanced_settings" .
 
-cb:KNIME-implementation-knime_csv_reader-mountpoint a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_path_column_name_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Path" ;
+    tb:key "5187234475392633828-path_column_name_Internals" ;
+    tb:knime_key "path_column_name_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_quote_option a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "REMOVE_QUOTES_AND_TRIM" ;
+    tb:key "5187234475392633828-quote_option" ;
+    tb:knime_key "quote_option" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_replace_empty_quotes_with_missing a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5187234475392633828-replace_empty_quotes_with_missing" ;
+    tb:knime_key "replace_empty_quotes_with_missing" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_save_table_spec_config_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "5187234475392633828-save_table_spec_config_Internals" ;
+    tb:knime_key "save_table_spec_config_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_spec_merge_mode_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "UNION" ;
+    tb:key "5187234475392633828-spec_merge_mode_Internals" ;
+    tb:knime_key "spec_merge_mode_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-5187234475392633828_thousands_separator a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00000" ;
+    tb:key "5187234475392633828-thousands_separator" ;
+    tb:knime_key "thousands_separator" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-6428085477937620720_charset a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value cb:NONE ;
+    tb:key "6428085477937620720-charset" ;
+    tb:knime_key "charset" ;
+    tb:knime_path "model/encoding" .
+
+cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1160182828334973092-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_selection_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_ReaderFileChooser" ;
+    tb:key "-1160182828334973092-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_selection_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_file_system_type a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "LOCAL" ;
-    tb:key "mountpoint" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+    tb:key "-3017014383616313200-file_system_type" ;
+    tb:knime_key "file_system_type" ;
+    tb:knime_path "model/settings/file_selection/path" .
 
-cb:KNIME-implementation-knime_csv_reader-number_of_lines_to_skip a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:long ;
-    tb:has_default_value 1 ;
-    tb:key "number_of_lines_to_skip" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-number_of_rows_to_skip a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:long ;
-    tb:has_default_value 1 ;
-    tb:key "number_of_rows_to_skip" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-overwritten_by_variable a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_location_present a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "overwritten_by_variable" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+    tb:has_default_value true ;
+    tb:key "-3017014383616313200-location_present" ;
+    tb:knime_key "location_present" ;
+    tb:knime_path "model/settings/file_selection/path" .
 
-cb:KNIME-implementation-knime_csv_reader-path a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_path a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_reader-reader_file ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "$$PATH$$" ;
-    tb:key "path" ;
+    tb:key "-3017014383616313200-path" ;
+    tb:knime_key "path" ;
     tb:knime_path "model/settings/file_selection/path" .
 
-cb:KNIME-implementation-knime_csv_reader-path_column_name_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "Path" ;
-    tb:key "path_column_name_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-prepend_file_idx_to_row_id a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_case_sensitive a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "prepend_file_idx_to_row_id" ;
-    tb:knime_path "model/settings" .
+    tb:key "-713918241010824354-files_extension_case_sensitive" ;
+    tb:knime_key "files_extension_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_reader-quote_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "\"" ;
-    tb:key "quote_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-quote_escape_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "\"" ;
-    tb:key "quote_escape_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-quote_option a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "REMOVE_QUOTES_AND_TRIM" ;
-    tb:key "quote_option" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-relative_to a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "knime.workflow" ;
-    tb:key "relative_to" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-replace_empty_quotes_with_missing a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "replace_empty_quotes_with_missing" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-row_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00013%%00010" ;
-    tb:key "row_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-save_table_spec_config_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "save_table_spec_config_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-settingsmodelid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "SMID_ReaderFileChooser" ;
-    tb:key "SettingsModelID" ;
-    tb:knime_path "model/settings/file_selection_Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-skip_data_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "skip_data_rows" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-skip_empty_data_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "skip_empty_data_rows" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-skip_lines a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "skip_lines" ;
-    tb:knime_path "model/limit_rows" .
-
-cb:KNIME-implementation-knime_csv_reader-smid_filtermode a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "SettingsModelID" ;
-    tb:key "SMID_FilterMode" ;
-    tb:knime_path "model/settings/file_selection/filter_mode_Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-spaceid a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_expression a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "" ;
-    tb:key "spaceId" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+    tb:key "-713918241010824354-files_extension_expression" ;
+    tb:knime_key "files_extension_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_reader-spacename a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "spaceName" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-spec_merge_mode_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "UNION" ;
-    tb:key "spec_merge_mode_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-support_short_data_rows a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_case_sensitive a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "support_short_data_rows" ;
-    tb:knime_path "model/settings" .
+    tb:key "-713918241010824354-files_name_case_sensitive" ;
+    tb:knime_key "files_name_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_reader-thousands_separator a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_expression a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00000" ;
-    tb:key "thousands_separator" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:has_default_value "*" ;
+    tb:key "-713918241010824354-files_name_expression" ;
+    tb:knime_key "files_name_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_reader-use_line_break_row_delimiter a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_filter_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "WILDCARD" ;
+    tb:key "-713918241010824354-files_name_filter_type" ;
+    tb:knime_key "files_name_filter_type" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_extension a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-713918241010824354-filter_files_extension" ;
+    tb:knime_key "filter_files_extension" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_name a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-713918241010824354-filter_files_name" ;
+    tb:knime_key "filter_files_name" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_folders_name a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-713918241010824354-filter_folders_name" ;
+    tb:knime_key "filter_folders_name" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_case_sensitive a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-713918241010824354-folders_name_case_sensitive" ;
+    tb:knime_key "folders_name_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_expression a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "*" ;
+    tb:key "-713918241010824354-folders_name_expression" ;
+    tb:knime_key "folders_name_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_filter_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "WILDCARD" ;
+    tb:key "-713918241010824354-folders_name_filter_type" ;
+    tb:knime_key "folders_name_filter_type" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_follow_links a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "use_line_break_row_delimiter" ;
-    tb:knime_path "model/settings" .
+    tb:key "-713918241010824354-follow_links" ;
+    tb:knime_key "follow_links" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_writer-add_custom_text_to_comment a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_files a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "add_custom_text_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
+    tb:key "-713918241010824354-include_hidden_files" ;
+    tb:knime_key "include_hidden_files" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_writer-add_table_name_to_comment a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_folders a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "add_table_name_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
+    tb:key "-713918241010824354-include_hidden_folders" ;
+    tb:knime_key "include_hidden_folders" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_writer-add_time_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "add_time_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-add_user_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "add_user_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-character_set a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "windows-1252" ;
-    tb:key "character_set" ;
-    tb:knime_path "model/encoding" .
-
-cb:KNIME-implementation-knime_csv_writer-column_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "," ;
-    tb:key "column_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_writer-comment_indentation a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00009" ;
-    tb:key "comment_indentation" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-comment_line_marker a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "#" ;
-    tb:key "comment_line_marker" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-compress_with_gzip a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "compress_with_gzip" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-connected_fs a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_special_files a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "connected_fs" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+    tb:key "-713918241010824354-include_special_files" ;
+    tb:knime_key "include_special_files" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
-cb:KNIME-implementation-knime_csv_writer-convenience_fs_category a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_connected_fs a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7536642086417066777-connected_fs" ;
+    tb:knime_key "connected_fs" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_convenience_fs_category a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "LOCAL" ;
-    tb:key "convenience_fs_category" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+    tb:key "-7536642086417066777-convenience_fs_category" ;
+    tb:knime_key "convenience_fs_category" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-create_missing_folders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "create_missing_folders" ;
-    tb:knime_path "model/settings/file_chooser_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-custom_comment_text a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "custom_comment_text" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-custom_url_timeout a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_custom_url_timeout a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:integer ;
     tb:has_default_value 1000 ;
-    tb:key "custom_url_timeout" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+    tb:key "-7536642086417066777-custom_url_timeout" ;
+    tb:knime_key "custom_url_timeout" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-decimal_separator a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype cb:char ;
-    tb:has_default_value "." ;
-    tb:key "decimal_separator" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-enabledstatus a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_has_fs_port a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "EnabledStatus" ;
-    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals",
-        "model/settings/file_chooser_settings_Internals" .
+    tb:has_default_value false ;
+    tb:key "-7536642086417066777-has_fs_port" ;
+    tb:knime_key "has_fs_port" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-file_system_type a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_mountpoint a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "LOCAL" ;
-    tb:key "file_system_type" ;
-    tb:knime_path "model/settings/file_chooser_settings/path" .
+    tb:key "-7536642086417066777-mountpoint" ;
+    tb:knime_key "mountpoint" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-has_fs_port a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_overwritten_by_variable a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "has_fs_port" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+    tb:key "-7536642086417066777-overwritten_by_variable" ;
+    tb:knime_key "overwritten_by_variable" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-if_path_exists a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_relative_to a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value "fail" ;
-    tb:key "if_path_exists" ;
-    tb:knime_path "model/settings/file_chooser_settings" .
+    tb:has_default_value "knime.workflow" ;
+    tb:key "-7536642086417066777-relative_to" ;
+    tb:knime_key "relative_to" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-keep_trailing_zero_in_decimals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "keep_trailing_zero_in_decimals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-location_present a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "location_present" ;
-    tb:knime_path "model/settings/file_chooser_settings/path" .
-
-cb:KNIME-implementation-knime_csv_writer-missing_value_pattern a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spaceid a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "" ;
-    tb:key "missing_value_pattern" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:key "-7536642086417066777-spaceId" ;
+    tb:knime_key "spaceId" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-mountpoint a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spacename a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "mountpoint" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+    tb:has_default_value "" ;
+    tb:key "-7536642086417066777-spaceName" ;
+    tb:knime_key "spaceName" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-overwritten_by_variable a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_autodetect_buffer_size a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 1048576 ;
+    tb:key "-7674164143472923331-autodetect_buffer_size" ;
+    tb:knime_key "autodetect_buffer_size" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_column_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "," ;
+    tb:key "-7674164143472923331-column_delimiter" ;
+    tb:knime_key "column_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_comment_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "#" ;
+    tb:key "-7674164143472923331-comment_char" ;
+    tb:knime_key "comment_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_column_header a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7674164143472923331-has_column_header" ;
+    tb:knime_key "has_column_header" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_row_id a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "overwritten_by_variable" ;
+    tb:key "-7674164143472923331-has_row_id" ;
+    tb:knime_key "has_row_id" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_prepend_file_idx_to_row_id a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7674164143472923331-prepend_file_idx_to_row_id" ;
+    tb:knime_key "prepend_file_idx_to_row_id" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "\"" ;
+    tb:key "-7674164143472923331-quote_char" ;
+    tb:knime_key "quote_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_escape_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "\"" ;
+    tb:key "-7674164143472923331-quote_escape_char" ;
+    tb:knime_key "quote_escape_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_row_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00013%%00010" ;
+    tb:key "-7674164143472923331-row_delimiter" ;
+    tb:knime_key "row_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_skip_empty_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7674164143472923331-skip_empty_data_rows" ;
+    tb:knime_key "skip_empty_data_rows" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_support_short_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7674164143472923331-support_short_data_rows" ;
+    tb:knime_key "support_short_data_rows" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_use_line_break_row_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7674164143472923331-use_line_break_row_delimiter" ;
+    tb:knime_key "use_line_break_row_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_limit_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-9066527318165239390-limit_data_rows" ;
+    tb:knime_key "limit_data_rows" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_max_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:long ;
+    tb:has_default_value 50 ;
+    tb:key "-9066527318165239390-max_rows" ;
+    tb:knime_key "max_rows" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_lines_to_skip a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:long ;
+    tb:has_default_value 1 ;
+    tb:key "-9066527318165239390-number_of_lines_to_skip" ;
+    tb:knime_key "number_of_lines_to_skip" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_rows_to_skip a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:long ;
+    tb:has_default_value 1 ;
+    tb:key "-9066527318165239390-number_of_rows_to_skip" ;
+    tb:knime_key "number_of_rows_to_skip" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-9066527318165239390-skip_data_rows" ;
+    tb:knime_key "skip_data_rows" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_lines a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-9066527318165239390-skip_lines" ;
+    tb:knime_key "skip_lines" ;
+    tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-data_reader-format ;
+    tb:hasLevel cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format-CSV ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "CSV" ;
+    tb:key "-9223363241072498996-Format" ;
+    tb:knime_key "Format" ;
+    tb:knime_path cb:NONE .
+
+cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format-CSV a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-data_reader-format-CSV ;
+    tb:hasValue "CSV" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_custom_text_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2271312613677848149-add_custom_text_to_comment" ;
+    tb:knime_key "add_custom_text_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_table_name_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2271312613677848149-add_table_name_to_comment" ;
+    tb:knime_key "add_table_name_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_time_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2271312613677848149-add_time_to_comment" ;
+    tb:knime_key "add_time_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_user_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2271312613677848149-add_user_to_comment" ;
+    tb:knime_key "add_user_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_indentation a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00009" ;
+    tb:key "2271312613677848149-comment_indentation" ;
+    tb:knime_key "comment_indentation" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_line_marker a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "#" ;
+    tb:key "2271312613677848149-comment_line_marker" ;
+    tb:knime_key "comment_line_marker" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2271312613677848149_custom_comment_text a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2271312613677848149-custom_comment_text" ;
+    tb:knime_key "custom_comment_text" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_connected_fs a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "2338304390572161672-connected_fs" ;
+    tb:knime_key "connected_fs" ;
     tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-path a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_convenience_fs_category a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "2338304390572161672-convenience_fs_category" ;
+    tb:knime_key "convenience_fs_category" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_custom_url_timeout a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 1000 ;
+    tb:key "2338304390572161672-custom_url_timeout" ;
+    tb:knime_key "custom_url_timeout" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_has_fs_port a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2338304390572161672-has_fs_port" ;
+    tb:knime_key "has_fs_port" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_mountpoint a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "2338304390572161672-mountpoint" ;
+    tb:knime_key "mountpoint" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_overwritten_by_variable a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2338304390572161672-overwritten_by_variable" ;
+    tb:knime_key "overwritten_by_variable" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_relative_to a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "knime.workflow.data" ;
+    tb:key "2338304390572161672-relative_to" ;
+    tb:knime_key "relative_to" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spaceid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2338304390572161672-spaceId" ;
+    tb:knime_key "spaceId" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spacename a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2338304390572161672-spaceName" ;
+    tb:knime_key "spaceName" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_compress_with_gzip a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "5187234475392633828-compress_with_gzip" ;
+    tb:knime_key "compress_with_gzip" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_decimal_separator a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype cb:char ;
+    tb:has_default_value "." ;
+    tb:key "5187234475392633828-decimal_separator" ;
+    tb:knime_key "decimal_separator" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_keep_trailing_zero_in_decimals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "5187234475392633828-keep_trailing_zero_in_decimals" ;
+    tb:knime_key "keep_trailing_zero_in_decimals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_missing_value_pattern a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "5187234475392633828-missing_value_pattern" ;
+    tb:knime_key "missing_value_pattern" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_quote_mode a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "STRINGS_ONLY" ;
+    tb:key "5187234475392633828-quote_mode" ;
+    tb:knime_key "quote_mode" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_separator_replacement a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "5187234475392633828-separator_replacement" ;
+    tb:knime_key "separator_replacement" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-5187234475392633828_use_scientific_format a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "5187234475392633828-use_scientific_format" ;
+    tb:knime_key "use_scientific_format" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-6063513576421209041_create_missing_folders a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "6063513576421209041-create_missing_folders" ;
+    tb:knime_key "create_missing_folders" ;
+    tb:knime_path "model/settings/file_chooser_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-6063513576421209041_if_path_exists a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "fail" ;
+    tb:key "6063513576421209041-if_path_exists" ;
+    tb:knime_key "if_path_exists" ;
+    tb:knime_path "model/settings/file_chooser_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-6101317396526985862_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "6101317396526985862-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-6101317396526985862_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_FilterMode" ;
+    tb:key "6101317396526985862-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-6428085477937620720_character_set a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "windows-1252" ;
+    tb:key "6428085477937620720-character_set" ;
+    tb:knime_key "character_set" ;
+    tb:knime_path "model/encoding" .
+
+cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_file_system_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "-1549082366044309286-file_system_type" ;
+    tb:knime_key "file_system_type" ;
+    tb:knime_path "model/settings/file_chooser_settings/path" .
+
+cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_location_present a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1549082366044309286-location_present" ;
+    tb:knime_key "location_present" ;
+    tb:knime_path "model/settings/file_chooser_settings/path" .
+
+cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_path a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_writer-output_path ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "./output.csv" ;
-    tb:key "path" ;
+    tb:key "-1549082366044309286-path" ;
+    tb:knime_key "path" ;
     tb:knime_path "model/settings/file_chooser_settings/path" .
 
-cb:KNIME-implementation-knime_csv_writer-quote_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype cb:char ;
-    tb:has_default_value "\"" ;
-    tb:key "quote_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_writer-quote_escape_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype cb:char ;
-    tb:has_default_value "\"" ;
-    tb:key "quote_escape_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_writer-quote_mode a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "STRINGS_ONLY" ;
-    tb:key "quote_mode" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-relative_to a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "knime.workflow.data" ;
-    tb:key "relative_to" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-row_delimeter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value cb:NONE ;
-    tb:key "row_delimeter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_writer-separator_replacement a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "separator_replacement" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-settingsmodelid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "SMID_FilterMode",
-        "SMID_WriterFileChooser" ;
-    tb:key "SettingsModelID" ;
-    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals",
-        "model/settings/file_chooser_settings_Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-skip_column_header_on_append a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "skip_column_header_on_append" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_writer-spaceid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "spaceId" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-spacename a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "spaceName" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-use_scientific_format a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "use_scientific_format" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-write_column_header a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_enabledstatus a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "write_column_header" ;
+    tb:key "-4103310723755146452-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_WriterFileChooser" ;
+    tb:key "-4103310723755146452-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_column_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "," ;
+    tb:key "-7674164143472923331-column_delimiter" ;
+    tb:knime_key "column_delimiter" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-write_row_header a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype cb:char ;
+    tb:has_default_value "\"" ;
+    tb:key "-7674164143472923331-quote_char" ;
+    tb:knime_key "quote_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_escape_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype cb:char ;
+    tb:has_default_value "\"" ;
+    tb:key "-7674164143472923331-quote_escape_char" ;
+    tb:knime_key "quote_escape_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_row_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value cb:NONE ;
+    tb:key "-7674164143472923331-row_delimiter" ;
+    tb:knime_key "row_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_skip_column_header_on_append a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "write_row_header" ;
+    tb:key "-7674164143472923331-skip_column_header_on_append" ;
+    tb:knime_key "skip_column_header_on_append" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_data_partitioning-class_column a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_column_header a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7674164143472923331-write_column_header" ;
+    tb:knime_key "write_column_header" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_row_header a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7674164143472923331-write_row_header" ;
+    tb:knime_key "write_row_header" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_class_column a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-class_columns ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "class_column" ;
+    tb:key "7634015853554237322-class_column" ;
+    tb:knime_key "class_column" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-count a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_count a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
@@ -1881,10 +2011,11 @@ cb:KNIME-implementation-knime_data_partitioning-count a tb:DerivedParameter,
     tb:engine "KNIME" ;
     tb:has_datatype xsd:int ;
     tb:has_default_value 100 ;
-    tb:key "count" ;
+    tb:key "7634015853554237322-count" ;
+    tb:knime_key "count" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-fraction a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_fraction a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
@@ -1893,58 +2024,62 @@ cb:KNIME-implementation-knime_data_partitioning-fraction a tb:DerivedParameter,
     tb:engine "KNIME" ;
     tb:has_datatype xsd:double ;
     tb:has_default_value 8e-01 ;
-    tb:key "fraction" ;
+    tb:key "7634015853554237322-fraction" ;
+    tb:knime_key "fraction" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-method a tb:EngineParameter,
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method a tb:EngineParameter,
         tb:FactorParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-size_type ;
-    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-method-Absolute,
-        cb:KNIME-implementation-knime_data_partitioning-method-Relative ;
+    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Absolute,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Relative ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "method" ;
+    tb:key "7634015853554237322-method" ;
+    tb:knime_key "method" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-method-Absolute a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Absolute a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-size_type-Absolute ;
     tb:hasValue "Absolute" .
 
-cb:KNIME-implementation-knime_data_partitioning-method-Relative a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Relative a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-size_type-Relative ;
     tb:hasValue "Relative" .
 
-cb:KNIME-implementation-knime_data_partitioning-random_seed a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_random_seed a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
             tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
             tb:hasTerm1 cb:implementation-data_partitioning-random_seed ] ;
     tb:engine "KNIME" ;
-    tb:has_datatype xsd:int ;
+    tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "random_seed" ;
+    tb:key "7634015853554237322-random_seed" ;
+    tb:knime_key "random_seed" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-samplingmethod a tb:EngineParameter,
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod a tb:EngineParameter,
         tb:FactorParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-sampling_method ;
-    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-samplingmethod-First,
-        cb:KNIME-implementation-knime_data_partitioning-samplingmethod-Random ;
+    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-First,
+        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-Random ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "samplingMethod" ;
+    tb:key "7634015853554237322-samplingMethod" ;
+    tb:knime_key "samplingMethod" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-samplingmethod-First a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-First a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-sampling_method-First ;
     tb:hasValue "First" .
 
-cb:KNIME-implementation-knime_data_partitioning-samplingmethod-Random a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-Random a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-sampling_method-Random ;
     tb:hasValue "Random" .
 
@@ -2819,13 +2954,13 @@ cb:component-mean_imputation a tb:LearnerComponent ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ],
-        [ a tb:Rule ;
             tb:has_rank 2 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ] ;
+            tb:relatedtoTask cb:Classification ],
+        [ a tb:Rule ;
+            tb:has_rank 1 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -3482,14 +3617,14 @@ cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTensorDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -3507,20 +3642,20 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -3554,14 +3689,14 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
@@ -3631,23 +3766,23 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
-                    tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
+                    tb:hasImportanceLevel 1 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:SVMModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -4054,14 +4189,14 @@ cb:implementation-missing_value a tb:LearnerImplementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-numeric_projection_predictor a tb:ApplierImplementation ;
     rdfs:label "Numeric projection Predictor" ;
@@ -4134,17 +4269,17 @@ cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
     tb:implements cb:XGBoost ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:XGBoostModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:XGBoostModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -4377,10 +4512,10 @@ cb:implementation-xgboost_learner a tb:LearnerImplementation ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -4420,14 +4555,14 @@ cb:implementation-data_partitioning a tb:Implementation ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] .
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
 
 cb:implementation-data_reader a tb:Implementation ;
     rdfs:label "Data Reader" ;

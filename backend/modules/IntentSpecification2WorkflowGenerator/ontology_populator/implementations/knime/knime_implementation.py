@@ -38,8 +38,9 @@ class KnimeImplementation(EngineImplementation):
         # Parameters
         for parameter in self.parameters:
             if isinstance(parameter, KnimeParameter):
-                path_value = Literal(parameter.path) if parameter.path is not None else cb.NONE
+                path_value = Literal(parameter.knime_path) if parameter.knime_path is not None else cb.NONE
                 g.add((parameter.uri_ref, tb.knime_path, path_value))
+                g.add((parameter.uri_ref, tb.knime_key, Literal(parameter.knime_key)))
 
         return super().add_to_graph(g)
 

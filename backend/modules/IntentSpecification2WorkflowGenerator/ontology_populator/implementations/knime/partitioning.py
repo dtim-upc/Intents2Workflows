@@ -21,7 +21,7 @@ knime_partitioning_implementation = KnimeImplementation(
         KnimeNumericParameter("count", XSD.int, 
                               expression=AlgebraicExpression(cb.COPY, next((param for param in partitioning_implementation.parameters.keys() if param.label == "Count (Absolute size)"),None)),
                               default_value=100),
-        KnimeNumericParameter("random_seed", XSD.int, 
+        KnimeNumericParameter("random_seed", XSD.string, 
                               expression=AlgebraicExpression(cb.COPY, next((param for param in partitioning_implementation.parameters.keys() if param.label == "Random seed"),None)),
                               default_value=None),
         KnimeTextParameter("class_column", 

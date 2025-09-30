@@ -199,10 +199,10 @@ def is_parameter(ontology:Graph, uri:URIRef):
     PREFIX tb: <{tb}>
     ASK {{
         {uri.n3()} a tb:Parameter .
-    }}
+    }} 
     '''
 
-    print(query,ontology.query(query).askAnswer)
+    #print(query,ontology.query(query).askAnswer)
     return ontology.query(query).askAnswer
 
 
@@ -317,7 +317,6 @@ def get_engine_parameter(ontology: Graph, key: str, implementation:URIRef):
         {implementation.n3()} tb:hasParameter ?param .           
     }}
     '''
-    print(query)
     result = ontology.query(query).bindings
     
     if len(result) > 1:
