@@ -1,11 +1,10 @@
 {% set ns = namespace(format="") %}
 {%- for param, value in parameters %}
-{%- if param|trim == 'format' %}
-{%- set ns.format = value %}
-{%- elif param|trim == 'path' %}
+{%- if param|trim == 'path' %}
 {%- set ns.path = value %}
 {%- endif %}
 {%- endfor %}
+{%- set ns.format = control['format'] %}
 {%- if ns.format == "CSV"%}
 
 import csv

@@ -13,7 +13,6 @@ projection_numerical_learner_implementation = Implementation(
     ],
     output=[
         cb.NumericOnlyTabularDatasetShape,
-        cb.ProjectionModel,
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -22,15 +21,15 @@ projection_numerical_learner_implementation = Implementation(
 numerical_transformation_query = '''
 DELETE {
     ?column ?predicate ?object.
-    $output1 dmop:hasColumn ?column.
-    $output1 dmop:numberOfColumns ?numCols.
+    $output0 dmop:hasColumn ?column.
+    $output0 dmop:numberOfColumns ?numCols.
 }
 INSERT {
-    $output1 dmop:numberOfColumns ?newNumCols.
+    $output0 dmop:numberOfColumns ?newNumCols.
 }
 WHERE {
     # Match non-numeric columns to delete
-    $output1 dmop:hasColumn ?column.
+    $output0 dmop:hasColumn ?column.
     ?column dmop:isFeature true ;
             dmop:hasDataPrimitiveTypeColumn ?type ;
             dmop:hasColumnName ?label ;
@@ -62,9 +61,11 @@ projection_numerical_learner_component = Component(
 projection_numerical_predictor_implementation = Implementation(
     name='Numeric projection Predictor',
     algorithm=cb.DropColumns,
-    parameters=[],
+    parameters=[
+        Parameter("Projected columns", RDF.List, default_value="$$NUMERIC_COLUMNS$$"),
+        Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
+    ],
     input=[
-        cb.ProjectionModel,
         cb.TabularDataset
     ],
     output=[
@@ -78,11 +79,11 @@ projection_numerical_predictor_component = Component(
     name='Projection numerical Predictor',
     implementation=projection_numerical_predictor_implementation,
     transformations=[
-        CopyTransformation(2, 1),
+        CopyTransformation(1, 1),
         Transformation(
             query=numerical_transformation_query),
     ],
     counterpart=[
         projection_numerical_learner_component
     ],
-)
+) 

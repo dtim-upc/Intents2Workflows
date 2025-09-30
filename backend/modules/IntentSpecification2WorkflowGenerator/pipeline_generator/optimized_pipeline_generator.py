@@ -310,7 +310,7 @@ def run_copy_transformation(ontology: Graph, workflow_graph: Graph, transformati
     input_index = next(ontology.objects(transformation, tb.copy_input, True)).value
     output_index = next(ontology.objects(transformation, tb.copy_output, True)).value
     #tqdm.write(f"Copy transformation: i:{str(input_index)} o:{str(output_index)}")
-    input = inputs[input_index - 1]
+    input = inputs[input_index - 1] 
     output = outputs[output_index - 1]
 
     copy_subgraph(workflow_graph, input, workflow_graph, output)
@@ -592,7 +592,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
                             task_order, previous_test_steps, test_dataset_node, model_node)
             previous_test_step = test_step
 
-            knime_compatible = knime_compatible & (engine == Literal('KNIME'))
+            #knime_compatible = knime_compatible & (engine == Literal('KNIME'))
 
             task_order += 1
         else:

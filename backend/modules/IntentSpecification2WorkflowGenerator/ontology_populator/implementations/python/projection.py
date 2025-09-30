@@ -17,17 +17,24 @@ python_projection_numerical_learner_implementation = PythonImplementation(
     python_module='pandas',
     module_version='2.2.3',
     python_function='custom',
-    template="projection_train"
+    template="projection"
 )
 
 python_projection_numerical_predictor_implementation = PythonImplementation(
     name='Python Numeric projection Predictor',
     baseImplementation=projection_numerical_predictor_implementation,
-    parameters=[],
+    parameters=[
+        PythonTextParameter("columns",
+                            base_parameter=next((p for p in projection_numerical_predictor_implementation.parameters.keys() if p.label == 'Projected columns'),None),
+                            default_value=[]),
+        PythonTextParameter("Target",
+                            base_parameter=next((p for p in projection_numerical_predictor_implementation.parameters.keys() if p.label == 'Target Column'),None),
+                            default_value="", control_parameter=True),
+    ],
     python_module='pandas',
     module_version='2.2.3',
     python_function='custom',
-    template="projection_predict"
+    template="projection"
 
 )
 

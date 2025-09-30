@@ -16,7 +16,7 @@ knime_partitioning_implementation = KnimeImplementation(
                              base_parameter=next((param for param in partitioning_implementation.parameters.keys() if param.label == "Sampling Method"),None),
                              default_value=None),
         KnimeNumericParameter("fraction", XSD.double,
-                              expression=AlgebraicExpression(cb.COPY, next((param for param in partitioning_implementation.parameters.keys() if param.label == "Fraction (Relative size)"),None)), 
+                              expression=AlgebraicExpression(cb.SUB, 1, next((param for param in partitioning_implementation.parameters.keys() if param.label == "Fraction (Relative size)"))), 
                              default_value=0.8),
         KnimeNumericParameter("count", XSD.int, 
                               expression=AlgebraicExpression(cb.COPY, next((param for param in partitioning_implementation.parameters.keys() if param.label == "Count (Absolute size)"),None)),

@@ -60,6 +60,8 @@ def calculate(term1, term2, operation):
         return math.sqrt(term1)
     elif operation == "EQ":
         return term1 == term2
+    elif operation == "NEQ":
+        return term1 != term2
     elif operation == 'COPY':
         return term1
     else:

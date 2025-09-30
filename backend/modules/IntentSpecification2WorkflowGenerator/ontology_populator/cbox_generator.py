@@ -31,6 +31,7 @@ def add_operations(cbox):
         cb.POW,
         cb.SQRT,
         cb.EQ,
+        cb.NEQ,
         cb.COPY,
     ]
 

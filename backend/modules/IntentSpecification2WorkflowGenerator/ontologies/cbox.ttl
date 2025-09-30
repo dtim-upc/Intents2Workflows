@@ -119,71 +119,71 @@ cb:KMeans a tb:Algorithm ;
 cb:KNIME-implementation-knime_csv_reader a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_reader ;
-    tb:hasParameter cb:KNIME-implementation-knime_csv_reader-3796150433838708781_filter_mode,
-        cb:KNIME-implementation-knime_csv_reader-3796150433838708781_include_subfolders,
-        cb:KNIME-implementation-knime_csv_reader-5144964664012192909_enabledstatus,
-        cb:KNIME-implementation-knime_csv_reader-5144964664012192909_settingsmodelid,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_append_path_column_internals,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_decimal_separator,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_fail_on_differing_specs,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_data_rows_scanned,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_memory_per_column,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_max_data_rows_scanned,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_maximum_number_of_columns,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_path_column_name_internals,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_quote_option,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_replace_empty_quotes_with_missing,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_save_table_spec_config_internals,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_spec_merge_mode_internals,
-        cb:KNIME-implementation-knime_csv_reader-5187234475392633828_thousands_separator,
-        cb:KNIME-implementation-knime_csv_reader-6428085477937620720_charset,
-        cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_enabledstatus,
-        cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_settingsmodelid,
-        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_file_system_type,
-        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_location_present,
-        cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_path,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_expression,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_expression,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_filter_type,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_extension,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_name,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_folders_name,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_case_sensitive,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_expression,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_filter_type,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_follow_links,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_files,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_folders,
-        cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_special_files,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_connected_fs,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_convenience_fs_category,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_custom_url_timeout,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_has_fs_port,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_mountpoint,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_overwritten_by_variable,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_relative_to,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spaceid,
-        cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spacename,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_autodetect_buffer_size,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_column_delimiter,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_comment_char,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_column_header,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_row_id,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_prepend_file_idx_to_row_id,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_char,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_escape_char,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_row_delimiter,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_skip_empty_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_support_short_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_use_line_break_row_delimiter,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_limit_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_max_rows,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_lines_to_skip,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_rows_to_skip,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_data_rows,
-        cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_lines,
+    tb:hasParameter cb:KNIME-implementation-knime_csv_reader-274567601415176229_enabledstatus,
+        cb:KNIME-implementation-knime_csv_reader-274567601415176229_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_autodetect_buffer_size,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_column_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_comment_char,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_has_column_header,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_has_row_id,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_prepend_file_idx_to_row_id,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_quote_char,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_quote_escape_char,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_row_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_skip_empty_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_support_short_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-3548818576192462408_use_line_break_row_delimiter,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_connected_fs,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_convenience_fs_category,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_custom_url_timeout,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_has_fs_port,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_mountpoint,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_overwritten_by_variable,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_relative_to,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_spaceid,
+        cb:KNIME-implementation-knime_csv_reader-6586255232409908895_spacename,
+        cb:KNIME-implementation-knime_csv_reader-7831858482681237926_filter_mode,
+        cb:KNIME-implementation-knime_csv_reader-7831858482681237926_include_subfolders,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_append_path_column_internals,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_decimal_separator,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_fail_on_differing_specs,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_limit_data_rows_scanned,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_limit_memory_per_column,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_max_data_rows_scanned,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_maximum_number_of_columns,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_path_column_name_internals,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_quote_option,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_replace_empty_quotes_with_missing,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_save_table_spec_config_internals,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_spec_merge_mode_internals,
+        cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_thousands_separator,
+        cb:KNIME-implementation-knime_csv_reader-_4311587554625942978_enabledstatus,
+        cb:KNIME-implementation-knime_csv_reader-_4311587554625942978_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_reader-_6151492507448492010_charset,
+        cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_file_system_type,
+        cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_location_present,
+        cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_path,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_limit_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_max_rows,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_number_of_lines_to_skip,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_number_of_rows_to_skip,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_skip_data_rows,
+        cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_skip_lines,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_extension_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_extension_expression,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_expression,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_filter_type,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_files_extension,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_files_name,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_folders_name,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_case_sensitive,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_expression,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_filter_type,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_follow_links,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_hidden_files,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_hidden_folders,
+        cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_special_files,
         cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format ;
     tb:knime-factory "org.knime.base.node.io.filehandling.csv.reader.CSVTableReaderNodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
@@ -200,46 +200,46 @@ cb:KNIME-implementation-knime_csv_reader a tb:EngineImplementation ;
 cb:KNIME-implementation-knime_csv_writer a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_writer ;
-    tb:hasParameter cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_custom_text_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_table_name_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_time_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_user_to_comment,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_indentation,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_line_marker,
-        cb:KNIME-implementation-knime_csv_writer-2271312613677848149_custom_comment_text,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_connected_fs,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_convenience_fs_category,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_custom_url_timeout,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_has_fs_port,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_mountpoint,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_overwritten_by_variable,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_relative_to,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spaceid,
-        cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spacename,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_compress_with_gzip,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_decimal_separator,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_keep_trailing_zero_in_decimals,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_missing_value_pattern,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_quote_mode,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_separator_replacement,
-        cb:KNIME-implementation-knime_csv_writer-5187234475392633828_use_scientific_format,
-        cb:KNIME-implementation-knime_csv_writer-6063513576421209041_create_missing_folders,
-        cb:KNIME-implementation-knime_csv_writer-6063513576421209041_if_path_exists,
-        cb:KNIME-implementation-knime_csv_writer-6101317396526985862_enabledstatus,
-        cb:KNIME-implementation-knime_csv_writer-6101317396526985862_settingsmodelid,
-        cb:KNIME-implementation-knime_csv_writer-6428085477937620720_character_set,
-        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_file_system_type,
-        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_location_present,
-        cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_path,
-        cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_enabledstatus,
-        cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_settingsmodelid,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_column_delimiter,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_char,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_escape_char,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_row_delimiter,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_skip_column_header_on_append,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_column_header,
-        cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_row_header ;
+    tb:hasParameter cb:KNIME-implementation-knime_csv_writer-162408746214418688_file_system_type,
+        cb:KNIME-implementation-knime_csv_writer-162408746214418688_location_present,
+        cb:KNIME-implementation-knime_csv_writer-162408746214418688_path,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_connected_fs,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_convenience_fs_category,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_custom_url_timeout,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_has_fs_port,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_mountpoint,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_overwritten_by_variable,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_relative_to,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_spaceid,
+        cb:KNIME-implementation-knime_csv_writer-2497959349302294485_spacename,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_column_delimiter,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_quote_char,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_quote_escape_char,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_row_delimiter,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_skip_column_header_on_append,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_write_column_header,
+        cb:KNIME-implementation-knime_csv_writer-3548818576192462408_write_row_header,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_compress_with_gzip,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_decimal_separator,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_keep_trailing_zero_in_decimals,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_missing_value_pattern,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_quote_mode,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_separator_replacement,
+        cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_use_scientific_format,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_custom_text_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_table_name_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_time_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_user_to_comment,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_comment_indentation,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_comment_line_marker,
+        cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_custom_comment_text,
+        cb:KNIME-implementation-knime_csv_writer-_6151492507448492010_character_set,
+        cb:KNIME-implementation-knime_csv_writer-_630386611074248453_enabledstatus,
+        cb:KNIME-implementation-knime_csv_writer-_630386611074248453_settingsmodelid,
+        cb:KNIME-implementation-knime_csv_writer-_7946851554217539911_create_missing_folders,
+        cb:KNIME-implementation-knime_csv_writer-_7946851554217539911_if_path_exists,
+        cb:KNIME-implementation-knime_csv_writer-_7992680041556289679_enabledstatus,
+        cb:KNIME-implementation-knime_csv_writer-_7992680041556289679_settingsmodelid ;
     tb:knime-factory "org.knime.base.node.io.filehandling.csv.writer.CSVWriter2NodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
     tb:knime-node-bundle-symbolic-name "org.knime.base" ;
@@ -255,12 +255,12 @@ cb:KNIME-implementation-knime_csv_writer a tb:EngineImplementation ;
 cb:KNIME-implementation-knime_data_partitioning a tb:EngineImplementation ;
     tb:engine "KNIME" ;
     tb:hasBaseImplementation cb:implementation-data_partitioning ;
-    tb:hasParameter cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_class_column,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_count,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_fraction,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_random_seed,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod ;
+    tb:hasParameter cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_class_column,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_count,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_fraction,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_random_seed,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod ;
     tb:knime-factory "org.knime.base.node.preproc.partition.PartitionNodeFactory" ;
     tb:knime-node-bundle-name "KNIME Base Nodes" ;
     tb:knime-node-bundle-symbolic-name "org.knime.base" ;
@@ -272,6 +272,112 @@ cb:KNIME-implementation-knime_data_partitioning a tb:EngineImplementation ;
     tb:knime-node-feature-version "0.0.0" ;
     tb:knime-node-name "Knime Data Partitioning" ;
     tb:name "Knime Data Partitioning" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner a tb:EngineImplementation ;
+    tb:engine "KNIME" ;
+    tb:hasBaseImplementation cb:implementation-xgboost_learner ;
+    tb:hasParameter cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_booster,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_topk,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_alpha,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_lambda,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_basescore,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_boostingrounds,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_manualnumthreads,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_numthreads,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_staticseed,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_targetcolumn,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_usestaticseed,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_weightcolumn,
+        <https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-8574683910163648986_$$skip$$>,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_enforce_option,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_filter_type,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_included_names ;
+    tb:knime-factory "org.knime.xgboost.base.nodes.learner.classification.XGBLinearClassificationLearnerNodeFactory2" ;
+    tb:knime-node-bundle-name "XGBoost Linear Model Learner" ;
+    tb:knime-node-bundle-symbolic-name "org.knime.xgboost" ;
+    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-bundle-version "5.4.0.v202411131247" ;
+    tb:knime-node-feature-name "KNIME XGBoost Integration" ;
+    tb:knime-node-feature-symbolic-name "org.knime.features.xgboost.feature.group" ;
+    tb:knime-node-feature-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-feature-version "5.4.0.v202411131247" ;
+    tb:knime-node-name "KNIME XGBoost Linear Learner" ;
+    tb:name "KNIME XGBoost Linear Learner" .
+
+cb:KNIME-implementation-knime_xgboost_predictor a tb:EngineImplementation ;
+    tb:engine "KNIME" ;
+    tb:hasBaseImplementation cb:implementation-xgboost_predictor ;
+    tb:hasParameter cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_appendprobabilities,
+        cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_batchsize,
+        cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_changepredictioncolumnname,
+        cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_predictioncolumnname,
+        cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_probabilitysuffix,
+        cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_unknownasmissing ;
+    tb:knime-factory "org.knime.xgboost.base.nodes.predictor.XGBClassificationPredictorNodeFactory" ;
+    tb:knime-node-bundle-name "XGBoost Linear Model Learner" ;
+    tb:knime-node-bundle-symbolic-name "org.knime.xgboost" ;
+    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-bundle-version "5.4.0.v202411131247" ;
+    tb:knime-node-feature-name "KNIME XGBoost Integration" ;
+    tb:knime-node-feature-symbolic-name "org.knime.features.xgboost.feature.group" ;
+    tb:knime-node-feature-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-feature-version "5.4.0.v202411131247" ;
+    tb:knime-node-name "KNIME XGBoost Predictor" ;
+    tb:name "KNIME XGBoost Predictor" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner a tb:EngineImplementation ;
+    tb:engine "KNIME" ;
+    tb:hasBaseImplementation cb:implementation-xgboost_learner ;
+    tb:hasParameter cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_alpha,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebylevel,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebynode,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebytree,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_eta,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_gamma,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_lambda,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxbin,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxdeltastep,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxdepth,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxleaves,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_minchildweight,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_onedrop,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_ratedrop,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_scaleposweight,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sketcheps,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_skipdrop,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_subsample,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_basescore,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_boostingrounds,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_manualnumthreads,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_numthreads,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_staticseed,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_targetcolumn,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_usestaticseed,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_weightcolumn,
+        <https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-8574683910163648986_$$skip$$>,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_enforce_option,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_filter_type,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_included_names ;
+    tb:knime-factory "org.knime.xgboost.base.nodes.learner.classification.XGBTreeClassificationLearnerNodeFactory2" ;
+    tb:knime-node-bundle-name "XGBoost Linear Model Learner" ;
+    tb:knime-node-bundle-symbolic-name "org.knime.xgboost" ;
+    tb:knime-node-bundle-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-bundle-version "5.4.0.v202411131247" ;
+    tb:knime-node-feature-name "KNIME XGBoost Integration" ;
+    tb:knime-node-feature-symbolic-name "org.knime.features.xgboost.feature.group" ;
+    tb:knime-node-feature-vendor "KNIME AG, Zurich, Switzerland" ;
+    tb:knime-node-feature-version "5.4.0.v202411131247" ;
+    tb:knime-node-name "KNIME XGBoost Tree Learner" ;
+    tb:name "KNIME XGBoost Tree Learner" .
 
 cb:KNN a tb:Algorithm ;
     rdfs:label "KNN" ;
@@ -322,6 +428,8 @@ cb:MissingValueModelShape a sh:NodeShape,
 cb:ModeImputation a tb:Algorithm ;
     rdfs:label "ModeImputation" ;
     tb:solves cb:MissingValueManagement .
+
+cb:NEQ a tb:Operation .
 
 cb:NNModelShape a sh:NodeShape,
         tb:DataSpec ;
@@ -448,11 +556,13 @@ cb:Python-implementation-python_missing_value_\(applier\) a tb:EngineImplementat
 cb:Python-implementation-python_numeric_projection_predictor a tb:EngineImplementation ;
     tb:engine "Python" ;
     tb:hasBaseImplementation cb:implementation-numeric_projection_predictor ;
+    tb:hasParameter cb:Python-implementation-python_numeric_projection_predictor-columns,
+        cb:Python-implementation-python_numeric_projection_predictor-target ;
     tb:name "Python Numeric projection Predictor" ;
     tb:python_function "custom" ;
     tb:python_module "pandas" ;
     tb:python_version "2.2.3" ;
-    tb:template "projection_predict" .
+    tb:template "projection" .
 
 cb:Python-implementation-python_numerical_projection a tb:EngineImplementation ;
     tb:engine "Python" ;
@@ -463,7 +573,7 @@ cb:Python-implementation-python_numerical_projection a tb:EngineImplementation ;
     tb:python_function "custom" ;
     tb:python_module "pandas" ;
     tb:python_version "2.2.3" ;
-    tb:template "projection_train" .
+    tb:template "projection" .
 
 cb:Python-implementation-python_svm_learner a tb:EngineImplementation ;
     tb:engine "Python" ;
@@ -1029,591 +1139,591 @@ cb:HeatMapVisualization rdfs:subClassOf cb:Visualization .
 
 cb:HistogramVisualization rdfs:subClassOf cb:Visualization .
 
-cb:KNIME-implementation-knime_csv_reader-3796150433838708781_filter_mode a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "FILE" ;
-    tb:key "3796150433838708781-filter_mode" ;
-    tb:knime_key "filter_mode" ;
-    tb:knime_path "model/settings/file_selection/filter_mode" .
-
-cb:KNIME-implementation-knime_csv_reader-3796150433838708781_include_subfolders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "3796150433838708781-include_subfolders" ;
-    tb:knime_key "include_subfolders" ;
-    tb:knime_path "model/settings/file_selection/filter_mode" .
-
-cb:KNIME-implementation-knime_csv_reader-5144964664012192909_enabledstatus a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-274567601415176229_enabledstatus a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "5144964664012192909-EnabledStatus" ;
+    tb:key "274567601415176229-EnabledStatus" ;
     tb:knime_key "EnabledStatus" ;
     tb:knime_path "model/settings/file_selection/filter_mode_Internals" .
 
-cb:KNIME-implementation-knime_csv_reader-5144964664012192909_settingsmodelid a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-274567601415176229_settingsmodelid a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "SMID_FilterMode" ;
-    tb:key "5144964664012192909-SettingsModelID" ;
+    tb:key "274567601415176229-SettingsModelID" ;
     tb:knime_key "SettingsModelID" ;
     tb:knime_path "model/settings/file_selection/filter_mode_Internals" .
 
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_append_path_column_internals a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_autodetect_buffer_size a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 1048576 ;
+    tb:key "3548818576192462408-autodetect_buffer_size" ;
+    tb:knime_key "autodetect_buffer_size" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_column_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "," ;
+    tb:key "3548818576192462408-column_delimiter" ;
+    tb:knime_key "column_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_comment_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "#" ;
+    tb:key "3548818576192462408-comment_char" ;
+    tb:knime_key "comment_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_has_column_header a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "3548818576192462408-has_column_header" ;
+    tb:knime_key "has_column_header" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_has_row_id a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "5187234475392633828-append_path_column_Internals" ;
-    tb:knime_key "append_path_column_Internals" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:key "3548818576192462408-has_row_id" ;
+    tb:knime_key "has_row_id" ;
+    tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_decimal_separator a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_prepend_file_idx_to_row_id a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "3548818576192462408-prepend_file_idx_to_row_id" ;
+    tb:knime_key "prepend_file_idx_to_row_id" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_quote_char a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value "." ;
-    tb:key "5187234475392633828-decimal_separator" ;
-    tb:knime_key "decimal_separator" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:has_default_value "\"" ;
+    tb:key "3548818576192462408-quote_char" ;
+    tb:knime_key "quote_char" ;
+    tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_fail_on_differing_specs a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_quote_escape_char a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "\"" ;
+    tb:key "3548818576192462408-quote_escape_char" ;
+    tb:knime_key "quote_escape_char" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_row_delimiter a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00013%%00010" ;
+    tb:key "3548818576192462408-row_delimiter" ;
+    tb:knime_key "row_delimiter" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_skip_empty_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "3548818576192462408-skip_empty_data_rows" ;
+    tb:knime_key "skip_empty_data_rows" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_support_short_data_rows a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "3548818576192462408-support_short_data_rows" ;
+    tb:knime_key "support_short_data_rows" ;
+    tb:knime_path "model/settings" .
+
+cb:KNIME-implementation-knime_csv_reader-3548818576192462408_use_line_break_row_delimiter a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "5187234475392633828-fail_on_differing_specs" ;
-    tb:knime_key "fail_on_differing_specs" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:key "3548818576192462408-use_line_break_row_delimiter" ;
+    tb:knime_key "use_line_break_row_delimiter" ;
+    tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_data_rows_scanned a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_connected_fs a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "5187234475392633828-limit_data_rows_scanned" ;
-    tb:knime_key "limit_data_rows_scanned" ;
-    tb:knime_path "model/advanced_settings" .
+    tb:key "6586255232409908895-connected_fs" ;
+    tb:knime_key "connected_fs" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_limit_memory_per_column a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "5187234475392633828-limit_memory_per_column" ;
-    tb:knime_key "limit_memory_per_column" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_max_data_rows_scanned a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:long ;
-    tb:has_default_value 10000 ;
-    tb:key "5187234475392633828-max_data_rows_scanned" ;
-    tb:knime_key "max_data_rows_scanned" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_maximum_number_of_columns a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 8192 ;
-    tb:key "5187234475392633828-maximum_number_of_columns" ;
-    tb:knime_key "maximum_number_of_columns" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_path_column_name_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "Path" ;
-    tb:key "5187234475392633828-path_column_name_Internals" ;
-    tb:knime_key "path_column_name_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_quote_option a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "REMOVE_QUOTES_AND_TRIM" ;
-    tb:key "5187234475392633828-quote_option" ;
-    tb:knime_key "quote_option" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_replace_empty_quotes_with_missing a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "5187234475392633828-replace_empty_quotes_with_missing" ;
-    tb:knime_key "replace_empty_quotes_with_missing" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_save_table_spec_config_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "5187234475392633828-save_table_spec_config_Internals" ;
-    tb:knime_key "save_table_spec_config_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_spec_merge_mode_internals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "UNION" ;
-    tb:key "5187234475392633828-spec_merge_mode_Internals" ;
-    tb:knime_key "spec_merge_mode_Internals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-5187234475392633828_thousands_separator a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00000" ;
-    tb:key "5187234475392633828-thousands_separator" ;
-    tb:knime_key "thousands_separator" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_reader-6428085477937620720_charset a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value cb:NONE ;
-    tb:key "6428085477937620720-charset" ;
-    tb:knime_key "charset" ;
-    tb:knime_path "model/encoding" .
-
-cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_enabledstatus a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-1160182828334973092-EnabledStatus" ;
-    tb:knime_key "EnabledStatus" ;
-    tb:knime_path "model/settings/file_selection_Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_1160182828334973092_settingsmodelid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "SMID_ReaderFileChooser" ;
-    tb:key "-1160182828334973092-SettingsModelID" ;
-    tb:knime_key "SettingsModelID" ;
-    tb:knime_path "model/settings/file_selection_Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_file_system_type a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_convenience_fs_category a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "LOCAL" ;
-    tb:key "-3017014383616313200-file_system_type" ;
-    tb:knime_key "file_system_type" ;
-    tb:knime_path "model/settings/file_selection/path" .
+    tb:key "6586255232409908895-convenience_fs_category" ;
+    tb:knime_key "convenience_fs_category" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_location_present a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_custom_url_timeout a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 1000 ;
+    tb:key "6586255232409908895-custom_url_timeout" ;
+    tb:knime_key "custom_url_timeout" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_has_fs_port a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "6586255232409908895-has_fs_port" ;
+    tb:knime_key "has_fs_port" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_mountpoint a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "6586255232409908895-mountpoint" ;
+    tb:knime_key "mountpoint" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_overwritten_by_variable a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "6586255232409908895-overwritten_by_variable" ;
+    tb:knime_key "overwritten_by_variable" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_relative_to a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "knime.workflow" ;
+    tb:key "6586255232409908895-relative_to" ;
+    tb:knime_key "relative_to" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_spaceid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "6586255232409908895-spaceId" ;
+    tb:knime_key "spaceId" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-6586255232409908895_spacename a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "6586255232409908895-spaceName" ;
+    tb:knime_key "spaceName" ;
+    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-7831858482681237926_filter_mode a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "FILE" ;
+    tb:key "7831858482681237926-filter_mode" ;
+    tb:knime_key "filter_mode" ;
+    tb:knime_path "model/settings/file_selection/filter_mode" .
+
+cb:KNIME-implementation-knime_csv_reader-7831858482681237926_include_subfolders a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "7831858482681237926-include_subfolders" ;
+    tb:knime_key "include_subfolders" ;
+    tb:knime_path "model/settings/file_selection/filter_mode" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_append_path_column_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-1821622057107746265-append_path_column_Internals" ;
+    tb:knime_key "append_path_column_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_decimal_separator a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "." ;
+    tb:key "-1821622057107746265-decimal_separator" ;
+    tb:knime_key "decimal_separator" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_fail_on_differing_specs a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "-3017014383616313200-location_present" ;
+    tb:key "-1821622057107746265-fail_on_differing_specs" ;
+    tb:knime_key "fail_on_differing_specs" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_limit_data_rows_scanned a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1821622057107746265-limit_data_rows_scanned" ;
+    tb:knime_key "limit_data_rows_scanned" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_limit_memory_per_column a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1821622057107746265-limit_memory_per_column" ;
+    tb:knime_key "limit_memory_per_column" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_max_data_rows_scanned a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:long ;
+    tb:has_default_value 10000 ;
+    tb:key "-1821622057107746265-max_data_rows_scanned" ;
+    tb:knime_key "max_data_rows_scanned" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_maximum_number_of_columns a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 8192 ;
+    tb:key "-1821622057107746265-maximum_number_of_columns" ;
+    tb:knime_key "maximum_number_of_columns" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_path_column_name_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Path" ;
+    tb:key "-1821622057107746265-path_column_name_Internals" ;
+    tb:knime_key "path_column_name_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_quote_option a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "REMOVE_QUOTES_AND_TRIM" ;
+    tb:key "-1821622057107746265-quote_option" ;
+    tb:knime_key "quote_option" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_replace_empty_quotes_with_missing a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1821622057107746265-replace_empty_quotes_with_missing" ;
+    tb:knime_key "replace_empty_quotes_with_missing" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_save_table_spec_config_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-1821622057107746265-save_table_spec_config_Internals" ;
+    tb:knime_key "save_table_spec_config_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_spec_merge_mode_internals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "UNION" ;
+    tb:key "-1821622057107746265-spec_merge_mode_Internals" ;
+    tb:knime_key "spec_merge_mode_Internals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_1821622057107746265_thousands_separator a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00000" ;
+    tb:key "-1821622057107746265-thousands_separator" ;
+    tb:knime_key "thousands_separator" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_reader-_4311587554625942978_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-4311587554625942978-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_selection_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-_4311587554625942978_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_ReaderFileChooser" ;
+    tb:key "-4311587554625942978-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_selection_Internals" .
+
+cb:KNIME-implementation-knime_csv_reader-_6151492507448492010_charset a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value cb:NONE ;
+    tb:key "-6151492507448492010-charset" ;
+    tb:knime_key "charset" ;
+    tb:knime_path "model/encoding" .
+
+cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_file_system_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "-6560005542533780973-file_system_type" ;
+    tb:knime_key "file_system_type" ;
+    tb:knime_path "model/settings/file_selection/path" .
+
+cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_location_present a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-6560005542533780973-location_present" ;
     tb:knime_key "location_present" ;
     tb:knime_path "model/settings/file_selection/path" .
 
-cb:KNIME-implementation-knime_csv_reader-_3017014383616313200_path a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6560005542533780973_path a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_reader-reader_file ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "$$PATH$$" ;
-    tb:key "-3017014383616313200-path" ;
+    tb:key "-6560005542533780973-path" ;
     tb:knime_key "path" ;
     tb:knime_path "model/settings/file_selection/path" .
 
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_case_sensitive a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_limit_data_rows a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "-713918241010824354-files_extension_case_sensitive" ;
-    tb:knime_key "files_extension_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_extension_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "-713918241010824354-files_extension_expression" ;
-    tb:knime_key "files_extension_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_case_sensitive a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-files_name_case_sensitive" ;
-    tb:knime_key "files_name_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "*" ;
-    tb:key "-713918241010824354-files_name_expression" ;
-    tb:knime_key "files_name_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_files_name_filter_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "WILDCARD" ;
-    tb:key "-713918241010824354-files_name_filter_type" ;
-    tb:knime_key "files_name_filter_type" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_extension a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-filter_files_extension" ;
-    tb:knime_key "filter_files_extension" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_files_name a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-filter_files_name" ;
-    tb:knime_key "filter_files_name" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_filter_folders_name a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-filter_folders_name" ;
-    tb:knime_key "filter_folders_name" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_case_sensitive a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-folders_name_case_sensitive" ;
-    tb:knime_key "folders_name_case_sensitive" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_expression a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "*" ;
-    tb:key "-713918241010824354-folders_name_expression" ;
-    tb:knime_key "folders_name_expression" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_folders_name_filter_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "WILDCARD" ;
-    tb:key "-713918241010824354-folders_name_filter_type" ;
-    tb:knime_key "folders_name_filter_type" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_follow_links a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-713918241010824354-follow_links" ;
-    tb:knime_key "follow_links" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_files a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-include_hidden_files" ;
-    tb:knime_key "include_hidden_files" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_hidden_folders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-713918241010824354-include_hidden_folders" ;
-    tb:knime_key "include_hidden_folders" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_713918241010824354_include_special_files a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-713918241010824354-include_special_files" ;
-    tb:knime_key "include_special_files" ;
-    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_connected_fs a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-7536642086417066777-connected_fs" ;
-    tb:knime_key "connected_fs" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_convenience_fs_category a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "-7536642086417066777-convenience_fs_category" ;
-    tb:knime_key "convenience_fs_category" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_custom_url_timeout a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 1000 ;
-    tb:key "-7536642086417066777-custom_url_timeout" ;
-    tb:knime_key "custom_url_timeout" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_has_fs_port a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7536642086417066777-has_fs_port" ;
-    tb:knime_key "has_fs_port" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_mountpoint a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "-7536642086417066777-mountpoint" ;
-    tb:knime_key "mountpoint" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_overwritten_by_variable a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7536642086417066777-overwritten_by_variable" ;
-    tb:knime_key "overwritten_by_variable" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_relative_to a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "knime.workflow" ;
-    tb:key "-7536642086417066777-relative_to" ;
-    tb:knime_key "relative_to" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spaceid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "-7536642086417066777-spaceId" ;
-    tb:knime_key "spaceId" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7536642086417066777_spacename a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "-7536642086417066777-spaceName" ;
-    tb:knime_key "spaceName" ;
-    tb:knime_path "model/settings/file_selection/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_autodetect_buffer_size a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 1048576 ;
-    tb:key "-7674164143472923331-autodetect_buffer_size" ;
-    tb:knime_key "autodetect_buffer_size" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_column_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "," ;
-    tb:key "-7674164143472923331-column_delimiter" ;
-    tb:knime_key "column_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_comment_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "#" ;
-    tb:key "-7674164143472923331-comment_char" ;
-    tb:knime_key "comment_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_column_header a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-7674164143472923331-has_column_header" ;
-    tb:knime_key "has_column_header" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_has_row_id a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7674164143472923331-has_row_id" ;
-    tb:knime_key "has_row_id" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_prepend_file_idx_to_row_id a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7674164143472923331-prepend_file_idx_to_row_id" ;
-    tb:knime_key "prepend_file_idx_to_row_id" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "\"" ;
-    tb:key "-7674164143472923331-quote_char" ;
-    tb:knime_key "quote_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_quote_escape_char a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "\"" ;
-    tb:key "-7674164143472923331-quote_escape_char" ;
-    tb:knime_key "quote_escape_char" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_row_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00013%%00010" ;
-    tb:key "-7674164143472923331-row_delimiter" ;
-    tb:knime_key "row_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_skip_empty_data_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7674164143472923331-skip_empty_data_rows" ;
-    tb:knime_key "skip_empty_data_rows" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_support_short_data_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-7674164143472923331-support_short_data_rows" ;
-    tb:knime_key "support_short_data_rows" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_7674164143472923331_use_line_break_row_delimiter a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "-7674164143472923331-use_line_break_row_delimiter" ;
-    tb:knime_key "use_line_break_row_delimiter" ;
-    tb:knime_path "model/settings" .
-
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_limit_data_rows a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "-9066527318165239390-limit_data_rows" ;
+    tb:key "-6604792497141417433-limit_data_rows" ;
     tb:knime_key "limit_data_rows" ;
     tb:knime_path "model/limit_rows" .
 
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_max_rows a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_max_rows a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:long ;
     tb:has_default_value 50 ;
-    tb:key "-9066527318165239390-max_rows" ;
+    tb:key "-6604792497141417433-max_rows" ;
     tb:knime_key "max_rows" ;
     tb:knime_path "model/limit_rows" .
 
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_lines_to_skip a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_number_of_lines_to_skip a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:long ;
     tb:has_default_value 1 ;
-    tb:key "-9066527318165239390-number_of_lines_to_skip" ;
+    tb:key "-6604792497141417433-number_of_lines_to_skip" ;
     tb:knime_key "number_of_lines_to_skip" ;
     tb:knime_path "model/limit_rows" .
 
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_number_of_rows_to_skip a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_number_of_rows_to_skip a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:long ;
     tb:has_default_value 1 ;
-    tb:key "-9066527318165239390-number_of_rows_to_skip" ;
+    tb:key "-6604792497141417433-number_of_rows_to_skip" ;
     tb:knime_key "number_of_rows_to_skip" ;
     tb:knime_path "model/limit_rows" .
 
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_data_rows a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_skip_data_rows a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "-9066527318165239390-skip_data_rows" ;
+    tb:key "-6604792497141417433-skip_data_rows" ;
     tb:knime_key "skip_data_rows" ;
     tb:knime_path "model/limit_rows" .
 
-cb:KNIME-implementation-knime_csv_reader-_9066527318165239390_skip_lines a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_reader-_6604792497141417433_skip_lines a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "-9066527318165239390-skip_lines" ;
+    tb:key "-6604792497141417433-skip_lines" ;
     tb:knime_key "skip_lines" ;
     tb:knime_path "model/limit_rows" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_extension_case_sensitive a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-files_extension_case_sensitive" ;
+    tb:knime_key "files_extension_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_extension_expression a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "-7982491222437991594-files_extension_expression" ;
+    tb:knime_key "files_extension_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_case_sensitive a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-files_name_case_sensitive" ;
+    tb:knime_key "files_name_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_expression a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "*" ;
+    tb:key "-7982491222437991594-files_name_expression" ;
+    tb:knime_key "files_name_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_files_name_filter_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "WILDCARD" ;
+    tb:key "-7982491222437991594-files_name_filter_type" ;
+    tb:knime_key "files_name_filter_type" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_files_extension a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-filter_files_extension" ;
+    tb:knime_key "filter_files_extension" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_files_name a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-filter_files_name" ;
+    tb:knime_key "filter_files_name" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_filter_folders_name a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-filter_folders_name" ;
+    tb:knime_key "filter_folders_name" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_case_sensitive a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-folders_name_case_sensitive" ;
+    tb:knime_key "folders_name_case_sensitive" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_expression a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "*" ;
+    tb:key "-7982491222437991594-folders_name_expression" ;
+    tb:knime_key "folders_name_expression" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_folders_name_filter_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "WILDCARD" ;
+    tb:key "-7982491222437991594-folders_name_filter_type" ;
+    tb:knime_key "folders_name_filter_type" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_follow_links a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7982491222437991594-follow_links" ;
+    tb:knime_key "follow_links" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_hidden_files a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-include_hidden_files" ;
+    tb:knime_key "include_hidden_files" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_hidden_folders a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-7982491222437991594-include_hidden_folders" ;
+    tb:knime_key "include_hidden_folders" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
+
+cb:KNIME-implementation-knime_csv_reader-_7982491222437991594_include_special_files a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7982491222437991594-include_special_files" ;
+    tb:knime_key "include_special_files" ;
+    tb:knime_path "model/settings/file_selection/filter_mode/filter_options" .
 
 cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format a tb:EngineParameter,
         tb:FactorParameter,
@@ -1631,378 +1741,378 @@ cb:KNIME-implementation-knime_csv_reader-_9223363241072498996_format-CSV a tb:Fa
     tb:equivalentTo cb:implementation-data_reader-format-CSV ;
     tb:hasValue "CSV" .
 
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_custom_text_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2271312613677848149-add_custom_text_to_comment" ;
-    tb:knime_key "add_custom_text_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_table_name_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2271312613677848149-add_table_name_to_comment" ;
-    tb:knime_key "add_table_name_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_time_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2271312613677848149-add_time_to_comment" ;
-    tb:knime_key "add_time_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_add_user_to_comment a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2271312613677848149-add_user_to_comment" ;
-    tb:knime_key "add_user_to_comment" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_indentation a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "%%00009" ;
-    tb:key "2271312613677848149-comment_indentation" ;
-    tb:knime_key "comment_indentation" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_comment_line_marker a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "#" ;
-    tb:key "2271312613677848149-comment_line_marker" ;
-    tb:knime_key "comment_line_marker" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2271312613677848149_custom_comment_text a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "2271312613677848149-custom_comment_text" ;
-    tb:knime_key "custom_comment_text" ;
-    tb:knime_path "model/comment_header_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_connected_fs a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "2338304390572161672-connected_fs" ;
-    tb:knime_key "connected_fs" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_convenience_fs_category a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-162408746214418688_file_system_type a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "LOCAL" ;
-    tb:key "2338304390572161672-convenience_fs_category" ;
-    tb:knime_key "convenience_fs_category" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_custom_url_timeout a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:integer ;
-    tb:has_default_value 1000 ;
-    tb:key "2338304390572161672-custom_url_timeout" ;
-    tb:knime_key "custom_url_timeout" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_has_fs_port a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2338304390572161672-has_fs_port" ;
-    tb:knime_key "has_fs_port" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_mountpoint a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "2338304390572161672-mountpoint" ;
-    tb:knime_key "mountpoint" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_overwritten_by_variable a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "2338304390572161672-overwritten_by_variable" ;
-    tb:knime_key "overwritten_by_variable" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_relative_to a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "knime.workflow.data" ;
-    tb:key "2338304390572161672-relative_to" ;
-    tb:knime_key "relative_to" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spaceid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "2338304390572161672-spaceId" ;
-    tb:knime_key "spaceId" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-2338304390572161672_spacename a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "2338304390572161672-spaceName" ;
-    tb:knime_key "spaceName" ;
-    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_compress_with_gzip a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "5187234475392633828-compress_with_gzip" ;
-    tb:knime_key "compress_with_gzip" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_decimal_separator a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype cb:char ;
-    tb:has_default_value "." ;
-    tb:key "5187234475392633828-decimal_separator" ;
-    tb:knime_key "decimal_separator" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_keep_trailing_zero_in_decimals a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "5187234475392633828-keep_trailing_zero_in_decimals" ;
-    tb:knime_key "keep_trailing_zero_in_decimals" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_missing_value_pattern a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "5187234475392633828-missing_value_pattern" ;
-    tb:knime_key "missing_value_pattern" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_quote_mode a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "STRINGS_ONLY" ;
-    tb:key "5187234475392633828-quote_mode" ;
-    tb:knime_key "quote_mode" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_separator_replacement a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "" ;
-    tb:key "5187234475392633828-separator_replacement" ;
-    tb:knime_key "separator_replacement" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-5187234475392633828_use_scientific_format a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value false ;
-    tb:key "5187234475392633828-use_scientific_format" ;
-    tb:knime_key "use_scientific_format" ;
-    tb:knime_path "model/advanced_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-6063513576421209041_create_missing_folders a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "6063513576421209041-create_missing_folders" ;
-    tb:knime_key "create_missing_folders" ;
-    tb:knime_path "model/settings/file_chooser_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-6063513576421209041_if_path_exists a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "fail" ;
-    tb:key "6063513576421209041-if_path_exists" ;
-    tb:knime_key "if_path_exists" ;
-    tb:knime_path "model/settings/file_chooser_settings" .
-
-cb:KNIME-implementation-knime_csv_writer-6101317396526985862_enabledstatus a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_default_value true ;
-    tb:key "6101317396526985862-EnabledStatus" ;
-    tb:knime_key "EnabledStatus" ;
-    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-6101317396526985862_settingsmodelid a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "SMID_FilterMode" ;
-    tb:key "6101317396526985862-SettingsModelID" ;
-    tb:knime_key "SettingsModelID" ;
-    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
-
-cb:KNIME-implementation-knime_csv_writer-6428085477937620720_character_set a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "windows-1252" ;
-    tb:key "6428085477937620720-character_set" ;
-    tb:knime_key "character_set" ;
-    tb:knime_path "model/encoding" .
-
-cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_file_system_type a tb:EngineParameter,
-        tb:EngineSpecificParameter ;
-    tb:engine "KNIME" ;
-    tb:has_datatype xsd:string ;
-    tb:has_default_value "LOCAL" ;
-    tb:key "-1549082366044309286-file_system_type" ;
+    tb:key "162408746214418688-file_system_type" ;
     tb:knime_key "file_system_type" ;
     tb:knime_path "model/settings/file_chooser_settings/path" .
 
-cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_location_present a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-162408746214418688_location_present a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "-1549082366044309286-location_present" ;
+    tb:key "162408746214418688-location_present" ;
     tb:knime_key "location_present" ;
     tb:knime_path "model/settings/file_chooser_settings/path" .
 
-cb:KNIME-implementation-knime_csv_writer-_1549082366044309286_path a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-162408746214418688_path a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_writer-output_path ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "./output.csv" ;
-    tb:key "-1549082366044309286-path" ;
+    tb:key "162408746214418688-path" ;
     tb:knime_key "path" ;
     tb:knime_path "model/settings/file_chooser_settings/path" .
 
-cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_enabledstatus a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_connected_fs a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "-4103310723755146452-EnabledStatus" ;
-    tb:knime_key "EnabledStatus" ;
-    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+    tb:key "2497959349302294485-connected_fs" ;
+    tb:knime_key "connected_fs" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-_4103310723755146452_settingsmodelid a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_convenience_fs_category a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
-    tb:has_default_value "SMID_WriterFileChooser" ;
-    tb:key "-4103310723755146452-SettingsModelID" ;
-    tb:knime_key "SettingsModelID" ;
-    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+    tb:has_default_value "LOCAL" ;
+    tb:key "2497959349302294485-convenience_fs_category" ;
+    tb:knime_key "convenience_fs_category" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_column_delimiter a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_custom_url_timeout a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:integer ;
+    tb:has_default_value 1000 ;
+    tb:key "2497959349302294485-custom_url_timeout" ;
+    tb:knime_key "custom_url_timeout" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_has_fs_port a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2497959349302294485-has_fs_port" ;
+    tb:knime_key "has_fs_port" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_mountpoint a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "LOCAL" ;
+    tb:key "2497959349302294485-mountpoint" ;
+    tb:knime_key "mountpoint" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_overwritten_by_variable a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2497959349302294485-overwritten_by_variable" ;
+    tb:knime_key "overwritten_by_variable" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_relative_to a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "knime.workflow.data" ;
+    tb:key "2497959349302294485-relative_to" ;
+    tb:knime_key "relative_to" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_spaceid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2497959349302294485-spaceId" ;
+    tb:knime_key "spaceId" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-2497959349302294485_spacename a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2497959349302294485-spaceName" ;
+    tb:knime_key "spaceName" ;
+    tb:knime_path "model/settings/file_chooser_settings/file_system_chooser__Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_column_delimiter a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value "," ;
-    tb:key "-7674164143472923331-column_delimiter" ;
+    tb:key "3548818576192462408-column_delimiter" ;
     tb:knime_key "column_delimiter" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_char a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_quote_char a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype cb:char ;
     tb:has_default_value "\"" ;
-    tb:key "-7674164143472923331-quote_char" ;
+    tb:key "3548818576192462408-quote_char" ;
     tb:knime_key "quote_char" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_quote_escape_char a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_quote_escape_char a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype cb:char ;
     tb:has_default_value "\"" ;
-    tb:key "-7674164143472923331-quote_escape_char" ;
+    tb:key "3548818576192462408-quote_escape_char" ;
     tb:knime_key "quote_escape_char" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_row_delimiter a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_row_delimiter a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "-7674164143472923331-row_delimiter" ;
+    tb:key "3548818576192462408-row_delimiter" ;
     tb:knime_key "row_delimiter" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_skip_column_header_on_append a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_skip_column_header_on_append a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "-7674164143472923331-skip_column_header_on_append" ;
+    tb:key "3548818576192462408-skip_column_header_on_append" ;
     tb:knime_key "skip_column_header_on_append" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_column_header a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_write_column_header a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value true ;
-    tb:key "-7674164143472923331-write_column_header" ;
+    tb:key "3548818576192462408-write_column_header" ;
     tb:knime_key "write_column_header" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_csv_writer-_7674164143472923331_write_row_header a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-3548818576192462408_write_row_header a tb:EngineParameter,
         tb:EngineSpecificParameter ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:boolean ;
     tb:has_default_value false ;
-    tb:key "-7674164143472923331-write_row_header" ;
+    tb:key "3548818576192462408-write_row_header" ;
     tb:knime_key "write_row_header" ;
     tb:knime_path "model/settings" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_class_column a tb:EngineParameter,
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_compress_with_gzip a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-1821622057107746265-compress_with_gzip" ;
+    tb:knime_key "compress_with_gzip" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_decimal_separator a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype cb:char ;
+    tb:has_default_value "." ;
+    tb:key "-1821622057107746265-decimal_separator" ;
+    tb:knime_key "decimal_separator" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_keep_trailing_zero_in_decimals a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-1821622057107746265-keep_trailing_zero_in_decimals" ;
+    tb:knime_key "keep_trailing_zero_in_decimals" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_missing_value_pattern a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "-1821622057107746265-missing_value_pattern" ;
+    tb:knime_key "missing_value_pattern" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_quote_mode a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "STRINGS_ONLY" ;
+    tb:key "-1821622057107746265-quote_mode" ;
+    tb:knime_key "quote_mode" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_separator_replacement a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "-1821622057107746265-separator_replacement" ;
+    tb:knime_key "separator_replacement" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_1821622057107746265_use_scientific_format a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-1821622057107746265-use_scientific_format" ;
+    tb:knime_key "use_scientific_format" ;
+    tb:knime_path "model/advanced_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_custom_text_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-3994215865668309508-add_custom_text_to_comment" ;
+    tb:knime_key "add_custom_text_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_table_name_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-3994215865668309508-add_table_name_to_comment" ;
+    tb:knime_key "add_table_name_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_time_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-3994215865668309508-add_time_to_comment" ;
+    tb:knime_key "add_time_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_add_user_to_comment a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "-3994215865668309508-add_user_to_comment" ;
+    tb:knime_key "add_user_to_comment" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_comment_indentation a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "%%00009" ;
+    tb:key "-3994215865668309508-comment_indentation" ;
+    tb:knime_key "comment_indentation" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_comment_line_marker a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "#" ;
+    tb:key "-3994215865668309508-comment_line_marker" ;
+    tb:knime_key "comment_line_marker" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_3994215865668309508_custom_comment_text a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "-3994215865668309508-custom_comment_text" ;
+    tb:knime_key "custom_comment_text" ;
+    tb:knime_path "model/comment_header_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_6151492507448492010_character_set a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "windows-1252" ;
+    tb:key "-6151492507448492010-character_set" ;
+    tb:knime_key "character_set" ;
+    tb:knime_path "model/encoding" .
+
+cb:KNIME-implementation-knime_csv_writer-_630386611074248453_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-630386611074248453-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-_630386611074248453_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_WriterFileChooser" ;
+    tb:key "-630386611074248453-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_chooser_settings_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-_7946851554217539911_create_missing_folders a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7946851554217539911-create_missing_folders" ;
+    tb:knime_key "create_missing_folders" ;
+    tb:knime_path "model/settings/file_chooser_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7946851554217539911_if_path_exists a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "fail" ;
+    tb:key "-7946851554217539911-if_path_exists" ;
+    tb:knime_key "if_path_exists" ;
+    tb:knime_path "model/settings/file_chooser_settings" .
+
+cb:KNIME-implementation-knime_csv_writer-_7992680041556289679_enabledstatus a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value true ;
+    tb:key "-7992680041556289679-EnabledStatus" ;
+    tb:knime_key "EnabledStatus" ;
+    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_csv_writer-_7992680041556289679_settingsmodelid a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "SMID_FilterMode" ;
+    tb:key "-7992680041556289679-SettingsModelID" ;
+    tb:knime_key "SettingsModelID" ;
+    tb:knime_path "model/settings/file_chooser_settings/filter_mode_Internals" .
+
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_class_column a tb:EngineParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-class_columns ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "7634015853554237322-class_column" ;
+    tb:key "2915400019425510226-class_column" ;
     tb:knime_key "class_column" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_count a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_count a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
@@ -2011,45 +2121,46 @@ cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_count a tb:D
     tb:engine "KNIME" ;
     tb:has_datatype xsd:int ;
     tb:has_default_value 100 ;
-    tb:key "7634015853554237322-count" ;
+    tb:key "2915400019425510226-count" ;
     tb:knime_key "count" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_fraction a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_fraction a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
-            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
-            tb:hasTerm1 cb:implementation-data_partitioning-fraction_\(relative_size\) ] ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#SUB" ;
+            tb:hasTerm1 1 ;
+            tb:hasTerm2 cb:implementation-data_partitioning-fraction_\(relative_size\) ] ;
     tb:engine "KNIME" ;
     tb:has_datatype xsd:double ;
     tb:has_default_value 8e-01 ;
-    tb:key "7634015853554237322-fraction" ;
+    tb:key "2915400019425510226-fraction" ;
     tb:knime_key "fraction" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method a tb:EngineParameter,
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method a tb:EngineParameter,
         tb:FactorParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-size_type ;
-    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Absolute,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Relative ;
+    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method-Absolute,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method-Relative ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "7634015853554237322-method" ;
+    tb:key "2915400019425510226-method" ;
     tb:knime_key "method" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Absolute a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method-Absolute a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-size_type-Absolute ;
     tb:hasValue "Absolute" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_method-Relative a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_method-Relative a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-size_type-Relative ;
     tb:hasValue "Relative" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_random_seed a tb:DerivedParameter,
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_random_seed a tb:DerivedParameter,
         tb:EngineParameter,
         tb:NumericParameter ;
     tb:derivedFrom [ a tb:AlgebraicExpression ;
@@ -2058,30 +2169,501 @@ cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_random_seed 
     tb:engine "KNIME" ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "7634015853554237322-random_seed" ;
+    tb:key "2915400019425510226-random_seed" ;
     tb:knime_key "random_seed" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod a tb:EngineParameter,
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod a tb:EngineParameter,
         tb:FactorParameter,
         tb:TextParameter ;
     tb:engine "KNIME" ;
     tb:hasBaseParameter cb:implementation-data_partitioning-sampling_method ;
-    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-First,
-        cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-Random ;
+    tb:hasLevel cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod-First,
+        cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod-Random ;
     tb:has_datatype xsd:string ;
     tb:has_default_value cb:NONE ;
-    tb:key "7634015853554237322-samplingMethod" ;
+    tb:key "2915400019425510226-samplingMethod" ;
     tb:knime_key "samplingMethod" ;
     tb:knime_path "model" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-First a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod-First a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-sampling_method-First ;
     tb:hasValue "First" .
 
-cb:KNIME-implementation-knime_data_partitioning-7634015853554237322_samplingmethod-Random a tb:FactorLevel ;
+cb:KNIME-implementation-knime_data_partitioning-2915400019425510226_samplingmethod-Random a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-data_partitioning-sampling_method-Random ;
     tb:hasValue "Random" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_booster a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-booster ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_booster-Linear ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Tree" ;
+    tb:key "1945387125781285858-booster" ;
+    tb:knime_key "booster" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_booster-Linear a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-booster-linear ;
+    tb:hasValue "Linear" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-feature_selector ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Cyclic,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Greedy,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Random,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Shuffle,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Thrifty ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Cyclic" ;
+    tb:key "1945387125781285858-featureSelector" ;
+    tb:knime_key "featureSelector" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Cyclic a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-feature_selector-cyclic ;
+    tb:hasValue "Cyclic" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Greedy a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-feature_selector-greedy ;
+    tb:hasValue "Greedy" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Random a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-feature_selector-random ;
+    tb:hasValue "Random" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Shuffle a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-feature_selector-shuffle ;
+    tb:hasValue "Shuffle" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_featureselector-Thrifty a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-feature_selector-thrifty ;
+    tb:hasValue "Thrifty" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_topk a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-top_k ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-topK" ;
+    tb:knime_key "topK" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-updater ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater-CoordDescent,
+        cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater-Shotgun ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "CoordDescent" ;
+    tb:key "1945387125781285858-updater" ;
+    tb:knime_key "updater" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater-CoordDescent a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-updater-CoordDescent ;
+    tb:hasValue "CoordDescent" .
+
+cb:KNIME-implementation-knime_xgboost_linear_learner-1945387125781285858_updater-Shotgun a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-updater-Shotgun ;
+    tb:hasValue "Shotgun" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_appendprobabilities a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2915400019425510226-appendProbabilities" ;
+    tb:knime_key "appendProbabilities" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_batchsize a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 10000 ;
+    tb:key "2915400019425510226-batchSize" ;
+    tb:knime_key "batchSize" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_changepredictioncolumnname a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2915400019425510226-changePredictionColumnName" ;
+    tb:knime_key "changePredictionColumnName" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_predictioncolumnname a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Prediction ($$LABEL$$)" ;
+    tb:key "2915400019425510226-predictionColumnName" ;
+    tb:knime_key "predictionColumnName" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_probabilitysuffix a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:key "2915400019425510226-probabilitySuffix" ;
+    tb:knime_key "probabilitySuffix" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_predictor-2915400019425510226_unknownasmissing a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "2915400019425510226-unknownAsMissing" ;
+    tb:knime_key "unknownAsMissing" ;
+    tb:knime_path "model" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-booster ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster-Dart,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster-Tree ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Tree" ;
+    tb:key "1945387125781285858-booster" ;
+    tb:knime_key "booster" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster-Dart a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-booster-dart ;
+    tb:hasValue "Dart" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_booster-Tree a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-booster-tree ;
+    tb:hasValue "Tree" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebylevel a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_level ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-colSampleByLevel" ;
+    tb:knime_key "colSampleByLevel" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebynode a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_node ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-colSampleByNode" ;
+    tb:knime_key "colSampleByNode" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_colsamplebytree a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-col_sample_by_tree ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-colSampleByTree" ;
+    tb:knime_key "colSampleByTree" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_eta a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-eta ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 3e-01 ;
+    tb:key "1945387125781285858-eta" ;
+    tb:knime_key "eta" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_gamma a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-gamma ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-gamma" ;
+    tb:knime_key "gamma" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-grow_policy ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy-DepthWise,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy-LossGuide ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "DepthWise" ;
+    tb:key "1945387125781285858-growPolicy" ;
+    tb:knime_key "growPolicy" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy-DepthWise a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-grow_policy-depthwise ;
+    tb:hasValue "DepthWise" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_growpolicy-LossGuide a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-grow_policy-lossguide ;
+    tb:hasValue "LossGuide" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxbin a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-max_bin ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 256 ;
+    tb:key "1945387125781285858-maxBin" ;
+    tb:knime_key "maxBin" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxdeltastep a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-max_delta_step ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-maxDeltaStep" ;
+    tb:knime_key "maxDeltaStep" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxdepth a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-max_depth ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 6 ;
+    tb:key "1945387125781285858-maxDepth" ;
+    tb:knime_key "maxDepth" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_maxleaves a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-max_leaves ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-maxLeaves" ;
+    tb:knime_key "maxLeaves" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_minchildweight a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-min_child_weight ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-minChildWeight" ;
+    tb:knime_key "minChildWeight" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-normalize_type ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype-Forest,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype-Tree ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Tree" ;
+    tb:key "1945387125781285858-normalizeType" ;
+    tb:knime_key "normalizeType" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype-Forest a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-normalize_type-forest ;
+    tb:hasValue "Forest" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_normalizetype-Tree a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-normalize_type-tree ;
+    tb:hasValue "Tree" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_onedrop a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-one_drop ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "1945387125781285858-oneDrop" ;
+    tb:knime_key "oneDrop" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_ratedrop a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-rate_drop ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-rateDrop" ;
+    tb:knime_key "rateDrop" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-sample_type ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype-Uniform,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype-Weighted ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Uniform" ;
+    tb:key "1945387125781285858-sampleType" ;
+    tb:knime_key "sampleType" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype-Uniform a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-sample_type-uniform ;
+    tb:hasValue "Uniform" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sampletype-Weighted a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-sample_type-weighted ;
+    tb:hasValue "Weighted" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_scaleposweight a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-scale_pos_weight ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-scalePosWeight" ;
+    tb:knime_key "scalePosWeight" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_sketcheps a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-sketch_eps ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 3e-02 ;
+    tb:key "1945387125781285858-sketchEps" ;
+    tb:knime_key "sketchEps" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_skipdrop a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-skip_drop ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 0 ;
+    tb:key "1945387125781285858-skipDrop" ;
+    tb:knime_key "skipDrop" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_subsample a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-subsample ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 1e+00 ;
+    tb:key "1945387125781285858-subsample" ;
+    tb:knime_key "subsample" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-tree_method ;
+    tb:hasLevel cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Approx,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Auto,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Exact,
+        cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Hist ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "Auto" ;
+    tb:key "1945387125781285858-treeMethod" ;
+    tb:knime_key "treeMethod" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Approx a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-tree_method-approx ;
+    tb:hasValue "Approx" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Auto a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-tree_method-auto ;
+    tb:hasValue "Auto" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Exact a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-tree_method-exact ;
+    tb:hasValue "Exact" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_treemethod-Hist a tb:FactorLevel ;
+    tb:equivalentTo cb:implementation-xgboost_learner-tree_method-hist ;
+    tb:hasValue "Hist" .
+
+<https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier-binary:logistic> a tb:FactorLevel ;
+    tb:equivalentTo <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic> ;
+    tb:hasValue "binary:logistic" .
+
+<https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier-multi:softprob> a tb:FactorLevel ;
+    tb:equivalentTo <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-multi:softprob> ;
+    tb:hasValue "multi:softprob" .
 
 cb:LabelColumnProperty sh:datatype xsd:boolean ;
     sh:hasValue true ;
@@ -2116,6 +2698,8 @@ cb:NormalizerModel rdfs:subClassOf cb:Model .
 cb:NumericCategoricalModel rdfs:subClassOf cb:Model .
 
 cb:PieChartVisualization rdfs:subClassOf cb:Visualization .
+
+cb:ProjectionModel rdfs:subClassOf cb:Model .
 
 cb:Python-implementation-python_data_partitioning-random_state a tb:DerivedParameter,
         tb:EngineParameter,
@@ -2289,6 +2873,24 @@ cb:Python-implementation-python_missing_value-numeric_strategy-drop a tb:FactorL
 cb:Python-implementation-python_missing_value-numeric_strategy-mean a tb:FactorLevel ;
     tb:equivalentTo cb:implementation-missing_value-numeric_strategy-MeanImputation ;
     tb:hasValue "mean" .
+
+cb:Python-implementation-python_numeric_projection_predictor-columns a tb:EngineParameter,
+        tb:TextParameter ;
+    tb:engine "Python" ;
+    tb:hasBaseParameter cb:implementation-numeric_projection_predictor-projected_columns ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "[]" ;
+    tb:isControlParameter false ;
+    tb:key "columns" .
+
+cb:Python-implementation-python_numeric_projection_predictor-target a tb:EngineParameter,
+        tb:TextParameter ;
+    tb:engine "Python" ;
+    tb:hasBaseParameter cb:implementation-numeric_projection_predictor-target_column ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "" ;
+    tb:isControlParameter true ;
+    tb:key "Target" .
 
 cb:Python-implementation-python_numerical_projection-columns a tb:EngineParameter,
         tb:TextParameter ;
@@ -2878,12 +3480,12 @@ cb:component-drop_rows_with_missing_values a tb:LearnerComponent ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
-            tb:relatedtoTask cb:Classification ],
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:DataVisualization ],
         [ a tb:Rule ;
             tb:has_rank 1 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoDatatag cb:LowMVTabularDatasetShape ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2954,13 +3556,13 @@ cb:component-mean_imputation a tb:LearnerComponent ;
     tb:hasApplier cb:component-missing_value_management_applier ;
     tb:hasImplementation cb:implementation-missing_value ;
     tb:hasRule [ a tb:Rule ;
-            tb:has_rank 2 ;
-            tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:Classification ],
-        [ a tb:Rule ;
             tb:has_rank 1 ;
             tb:relatedtoDatatag cb:TabularDataset ;
-            tb:relatedtoTask cb:DataVisualization ] ;
+            tb:relatedtoTask cb:DataVisualization ],
+        [ a tb:Rule ;
+            tb:has_rank 2 ;
+            tb:relatedtoDatatag cb:TabularDataset ;
+            tb:relatedtoTask cb:Classification ] ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
                 tb:copy_input 1 ;
                 tb:copy_output 1 ;
@@ -2992,15 +3594,15 @@ cb:component-projection_numerical_learner a tb:LearnerComponent ;
                 tb:transformation_query """
 DELETE {
     ?column ?predicate ?object.
-    $output1 dmop:hasColumn ?column.
-    $output1 dmop:numberOfColumns ?numCols.
+    $output0 dmop:hasColumn ?column.
+    $output0 dmop:numberOfColumns ?numCols.
 }
 INSERT {
-    $output1 dmop:numberOfColumns ?newNumCols.
+    $output0 dmop:numberOfColumns ?newNumCols.
 }
 WHERE {
     # Match non-numeric columns to delete
-    $output1 dmop:hasColumn ?column.
+    $output0 dmop:hasColumn ?column.
     ?column dmop:isFeature true ;
             dmop:hasDataPrimitiveTypeColumn ?type ;
             dmop:hasColumnName ?label ;
@@ -3020,23 +3622,23 @@ cb:component-projection_numerical_predictor a tb:ApplierComponent ;
     tb:hasImplementation cb:implementation-numeric_projection_predictor ;
     tb:hasLearner cb:component-projection_numerical_learner ;
     tb:hasTransformation ( [ a tb:CopyTransformation ;
-                tb:copy_input 2 ;
+                tb:copy_input 1 ;
                 tb:copy_output 1 ;
                 tb:transformation_language "COPY" ;
-                tb:transformation_query "COPY input 2 TO output 1" ] [ a tb:Transformation ;
+                tb:transformation_query "COPY input 1 TO output 1" ] [ a tb:Transformation ;
                 tb:transformation_language "SPARQL" ;
                 tb:transformation_query """
 DELETE {
     ?column ?predicate ?object.
-    $output1 dmop:hasColumn ?column.
-    $output1 dmop:numberOfColumns ?numCols.
+    $output0 dmop:hasColumn ?column.
+    $output0 dmop:numberOfColumns ?numCols.
 }
 INSERT {
-    $output1 dmop:numberOfColumns ?newNumCols.
+    $output0 dmop:numberOfColumns ?newNumCols.
 }
 WHERE {
     # Match non-numeric columns to delete
-    $output1 dmop:hasColumn ?column.
+    $output0 dmop:hasColumn ?column.
     ?column dmop:isFeature true ;
             dmop:hasDataPrimitiveTypeColumn ?type ;
             dmop:hasColumnName ?label ;
@@ -3273,20 +3875,6 @@ cb:implementation-xgboost_learner-numeric_columns a tb:Parameter ;
     tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
     tb:has_position 1 .
 
-cb:implementation-xgboost_learner-updater a tb:Parameter ;
-    rdfs:label "Updater" ;
-    tb:hasLevel cb:implementation-xgboost_learner-updater-CoordDescent,
-        cb:implementation-xgboost_learner-updater-Shotgun ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 11 .
-
-cb:implementation-xgboost_learner-updater-CoordDescent a tb:FactorLevel ;
-    tb:hasValue "CoordDescent" .
-
-cb:implementation-xgboost_learner-updater-Shotgun a tb:FactorLevel ;
-    tb:hasValue "Shotgun" .
-
 cb:integerTypeConstraint a sh:PropertyShape ;
     sh:hasValue dmop:Integer ;
     sh:path dmop:hasDataPrimitiveTypeColumn .
@@ -3327,6 +3915,206 @@ dmop:isFeature rdfs:subPropertyOf dmop:ColumnInfoProperty .
 cb:DropColumns a tb:Algorithm ;
     rdfs:label "DropColumns" ;
     tb:solves cb:DataManagement .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_alpha a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-alpha ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-alpha ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 3e-01 ;
+    tb:key "1945387125781285858-alpha" ;
+    tb:knime_key "alpha" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-1945387125781285858_lambda a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-lambda ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-lambda ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 3e-01 ;
+    tb:key "1945387125781285858-lambda" ;
+    tb:knime_key "lambda" ;
+    tb:knime_path "model/booster" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_basescore a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-base_score ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-base_score ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:double ;
+    tb:has_default_value 5e-01 ;
+    tb:key "4669888699709668756-baseScore" ;
+    tb:knime_key "baseScore" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_boostingrounds a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-boosting_rounds ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-boosting_rounds ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 100 ;
+    tb:key "4669888699709668756-boostingRounds" ;
+    tb:knime_key "boostingRounds" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_manualnumthreads a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#NEQ" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ;
+            tb:hasTerm2 4 ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#NEQ" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ;
+            tb:hasTerm2 4 ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "4669888699709668756-manualNumThreads" ;
+    tb:knime_key "manualNumThreads" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_numthreads a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 4 ;
+    tb:key "4669888699709668756-numThreads" ;
+    tb:knime_key "numThreads" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_staticseed a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-random_seed ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#COPY" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-random_seed ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:int ;
+    tb:has_default_value 0 ;
+    tb:key "4669888699709668756-staticSeed" ;
+    tb:knime_key "staticSeed" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_targetcolumn a tb:EngineParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-target_column ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "$$LABEL_CATEGORICAL$$" ;
+    tb:key "4669888699709668756-targetColumn" ;
+    tb:knime_key "targetColumn" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_usestaticseed a tb:DerivedParameter,
+        tb:EngineParameter,
+        tb:NumericParameter ;
+    tb:derivedFrom [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#NEQ" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ;
+            tb:hasTerm2 0 ],
+        [ a tb:AlgebraicExpression ;
+            tb:hasOperation "https://extremexp.eu/ontology/cbox#NEQ" ;
+            tb:hasTerm1 cb:implementation-xgboost_learner-number_of_threads ;
+            tb:hasTerm2 0 ] ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_default_value false ;
+    tb:key "4669888699709668756-useStaticSeed" ;
+    tb:knime_key "useStaticSeed" ;
+    tb:knime_path "model/options" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-4669888699709668756_weightcolumn a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value cb:NONE ;
+    tb:key "4669888699709668756-weightColumn" ;
+    tb:knime_key "weightColumn" ;
+    tb:knime_path "model/options" .
+
+<https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-8574683910163648986_$$skip$$> a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value cb:NONE ;
+    tb:key "8574683910163648986-$$SKIP$$" ;
+    tb:knime_key "$$SKIP$$" ;
+    tb:knime_path "model/options/featureFilter/excluded_names" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier a tb:EngineParameter,
+        tb:FactorParameter,
+        tb:TextParameter ;
+    tb:engine "KNIME" ;
+    tb:hasBaseParameter cb:implementation-xgboost_learner-objective ;
+    tb:hasLevel <https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier-binary:logistic>,
+        <https://extremexp.eu/ontology/cbox#KNIME-implementation-knime_xgboost_tree_learner-_6230901189217765417_identifier-multi:softprob> ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "multi:softprob" ;
+    tb:key "-6230901189217765417-identifier" ;
+    tb:knime_key "identifier" ;
+    tb:knime_path "model/options/objective" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_enforce_option a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "EnforceInclusion" ;
+    tb:key "-8768246665762342525-enforce_option" ;
+    tb:knime_key "enforce_option" ;
+    tb:knime_path "model/options/featureFilter" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_filter_type a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype xsd:string ;
+    tb:has_default_value "STANDARD" ;
+    tb:key "-8768246665762342525-filter-type" ;
+    tb:knime_key "filter-type" ;
+    tb:knime_path "model/options/featureFilter" .
+
+cb:KNIME-implementation-knime_xgboost_tree_learner-_8768246665762342525_included_names a tb:EngineParameter,
+        tb:EngineSpecificParameter ;
+    tb:engine "KNIME" ;
+    tb:has_datatype rdf:List ;
+    tb:has_default_value "$$NUMERIC_COLUMNS$$" ;
+    tb:key "-8768246665762342525-included_names" ;
+    tb:knime_key "included_names" ;
+    tb:knime_path "model/options/featureFilter" .
 
 cb:MissingValueRemoval a tb:Algorithm ;
     rdfs:label "MissingValueRemoval" ;
@@ -3592,14 +4380,14 @@ cb:implementation-missing_value_\(applier\) a tb:ApplierImplementation ;
     tb:implements cb:MissingValueRemoval ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:MissingValueModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
@@ -3617,14 +4405,14 @@ cb:implementation-nn_multidimensional_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTensorDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NNModel ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
+            tb:has_position 0 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTensorDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
@@ -3642,25 +4430,39 @@ cb:implementation-nn_predictor a tb:ApplierImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NNModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NNModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
+
+cb:implementation-numeric_projection_predictor-projected_columns a tb:Parameter ;
+    rdfs:label "Projected columns" ;
+    tb:has_condition "" ;
+    tb:has_datatype rdf:List ;
+    tb:has_defaultvalue "$$NUMERIC_COLUMNS$$" ;
+    tb:has_position 0 .
+
+cb:implementation-numeric_projection_predictor-target_column a tb:Parameter ;
+    rdfs:label "Target Column" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
+    tb:has_position 1 .
 
 cb:implementation-numerical_projection-projected_columns a tb:Parameter ;
     rdfs:label "Projected columns" ;
@@ -3689,6 +4491,9 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
@@ -3697,9 +4502,6 @@ cb:implementation-svm_learner a tb:LearnerImplementation ;
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericCategoricalTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -3766,14 +4568,6 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
     tb:implements cb:SVM ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:SVMModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NormalizedTabularDatasetShape ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
@@ -3781,224 +4575,21 @@ cb:implementation-svm_predictor a tb:ApplierImplementation ;
                     tb:hasImportanceLevel 1 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:SVMModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
-
-cb:implementation-xgboost_learner-alpha a tb:Parameter ;
-    rdfs:label "Alpha" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 10 .
-
-cb:implementation-xgboost_learner-base_score a tb:Parameter ;
-    rdfs:label "Base score" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 7 .
-
-cb:implementation-xgboost_learner-booster a tb:Parameter ;
-    rdfs:label "Booster" ;
-    tb:hasLevel cb:implementation-xgboost_learner-booster-dart,
-        cb:implementation-xgboost_learner-booster-linear,
-        cb:implementation-xgboost_learner-booster-tree ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 2 ;
-    tb:specifiedBy cb:component-xgboost_dart_learner-booster_dart_specification,
-        cb:component-xgboost_linear_learner-booster_linear_specification,
-        cb:component-xgboost_tree_learner-booster_tree_specification .
-
-cb:implementation-xgboost_learner-booster-dart a tb:FactorLevel ;
-    tb:hasValue "dart" .
-
-cb:implementation-xgboost_learner-booster-linear a tb:FactorLevel ;
-    tb:hasValue "linear" .
-
-cb:implementation-xgboost_learner-booster-tree a tb:FactorLevel ;
-    tb:hasValue "tree" .
-
-cb:implementation-xgboost_learner-boosting_rounds a tb:Parameter ;
-    rdfs:label "Boosting rounds" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 4 .
-
-cb:implementation-xgboost_learner-col_sample_by_level a tb:Parameter ;
-    rdfs:label "Col sample by level" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 21 .
-
-cb:implementation-xgboost_learner-col_sample_by_node a tb:Parameter ;
-    rdfs:label "Col sample by node" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 22 .
-
-cb:implementation-xgboost_learner-col_sample_by_tree a tb:Parameter ;
-    rdfs:label "Col sample by tree" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 20 .
-
-cb:implementation-xgboost_learner-eta a tb:Parameter ;
-    rdfs:label "Eta" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 14 .
-
-cb:implementation-xgboost_learner-feature_selector a tb:Parameter ;
-    rdfs:label "Feature selector" ;
-    tb:hasLevel cb:implementation-xgboost_learner-feature_selector-cyclic,
-        cb:implementation-xgboost_learner-feature_selector-greedy,
-        cb:implementation-xgboost_learner-feature_selector-random,
-        cb:implementation-xgboost_learner-feature_selector-shuffle,
-        cb:implementation-xgboost_learner-feature_selector-thrifty ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 12 .
-
-cb:implementation-xgboost_learner-feature_selector-cyclic a tb:FactorLevel ;
-    tb:hasValue "cyclic" .
-
-cb:implementation-xgboost_learner-feature_selector-greedy a tb:FactorLevel ;
-    tb:hasValue "greedy" .
-
-cb:implementation-xgboost_learner-feature_selector-random a tb:FactorLevel ;
-    tb:hasValue "random" .
-
-cb:implementation-xgboost_learner-feature_selector-shuffle a tb:FactorLevel ;
-    tb:hasValue "shuffle" .
-
-cb:implementation-xgboost_learner-feature_selector-thrifty a tb:FactorLevel ;
-    tb:hasValue "thrifty" .
-
-cb:implementation-xgboost_learner-gamma a tb:Parameter ;
-    rdfs:label "Gamma" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 15 .
-
-cb:implementation-xgboost_learner-grow_policy a tb:Parameter ;
-    rdfs:label "Grow policy" ;
-    tb:hasLevel cb:implementation-xgboost_learner-grow_policy-depthwise,
-        cb:implementation-xgboost_learner-grow_policy-lossguide ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 26 .
-
-cb:implementation-xgboost_learner-grow_policy-depthwise a tb:FactorLevel ;
-    tb:hasValue "depthwise" .
-
-cb:implementation-xgboost_learner-grow_policy-lossguide a tb:FactorLevel ;
-    tb:hasValue "lossguide" .
-
-cb:implementation-xgboost_learner-lambda a tb:Parameter ;
-    rdfs:label "Lambda" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 9 .
-
-cb:implementation-xgboost_learner-max_bin a tb:Parameter ;
-    rdfs:label "Max Bin" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 28 .
-
-cb:implementation-xgboost_learner-max_delta_step a tb:Parameter ;
-    rdfs:label "Max delta step" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 18 .
-
-cb:implementation-xgboost_learner-max_depth a tb:Parameter ;
-    rdfs:label "Max Depth" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 16 .
-
-cb:implementation-xgboost_learner-max_leaves a tb:Parameter ;
-    rdfs:label "Max Leaves" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 27 .
-
-cb:implementation-xgboost_learner-min_child_weight a tb:Parameter ;
-    rdfs:label "Min child weight" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 17 .
-
-cb:implementation-xgboost_learner-normalize_type a tb:Parameter ;
-    rdfs:label "Normalize type" ;
-    tb:hasLevel cb:implementation-xgboost_learner-normalize_type-forest,
-        cb:implementation-xgboost_learner-normalize_type-tree ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 30 .
-
-cb:implementation-xgboost_learner-normalize_type-forest a tb:FactorLevel ;
-    tb:hasValue "forest" .
-
-cb:implementation-xgboost_learner-normalize_type-tree a tb:FactorLevel ;
-    tb:hasValue "tree" .
-
-cb:implementation-xgboost_learner-number_of_threads a tb:Parameter ;
-    rdfs:label "Number of threads" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 5 .
-
-cb:implementation-xgboost_learner-objective a tb:Parameter ;
-    rdfs:label "Objective" ;
-    tb:hasLevel <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic>,
-        <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-multi:softprob> ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 8 .
-
-<https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic> a tb:FactorLevel ;
-    tb:hasValue "binary:logistic" .
-
-<https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-multi:softprob> a tb:FactorLevel ;
-    tb:hasValue "multi:softprob" .
-
-cb:implementation-xgboost_learner-one_drop a tb:Parameter ;
-    rdfs:label "One drop" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:boolean ;
-    tb:has_position 32 .
-
-cb:implementation-xgboost_learner-random_seed a tb:Parameter ;
-    rdfs:label "Random seed" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 6 .
-
-cb:implementation-xgboost_learner-rate_drop a tb:Parameter ;
-    rdfs:label "Rate drop" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 31 .
-
-cb:implementation-xgboost_learner-sample_type a tb:Parameter ;
-    rdfs:label "Sample type" ;
-    tb:hasLevel cb:implementation-xgboost_learner-sample_type-uniform,
-        cb:implementation-xgboost_learner-sample_type-weighted ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_position 29 .
-
-cb:implementation-xgboost_learner-sample_type-uniform a tb:FactorLevel ;
-    tb:hasValue "uniform" .
-
-cb:implementation-xgboost_learner-sample_type-weighted a tb:FactorLevel ;
-    tb:hasValue "weighted" .
 
 cb:implementation-xgboost_learner-sample_weight a tb:Parameter ;
     rdfs:label "Sample weight" ;
@@ -4006,57 +4597,19 @@ cb:implementation-xgboost_learner-sample_weight a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_position 3 .
 
-cb:implementation-xgboost_learner-scale_pos_weight a tb:Parameter ;
-    rdfs:label "Scale Pos Weight" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 25 .
-
-cb:implementation-xgboost_learner-sketch_eps a tb:Parameter ;
-    rdfs:label "Sketch Eps" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 24 .
-
-cb:implementation-xgboost_learner-skip_drop a tb:Parameter ;
-    rdfs:label "Skip drop" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 33 .
-
-cb:implementation-xgboost_learner-subsample a tb:Parameter ;
-    rdfs:label "Subsample" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:double ;
-    tb:has_position 19 .
-
-cb:implementation-xgboost_learner-top_k a tb:Parameter ;
-    rdfs:label "Top K" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:int ;
-    tb:has_position 13 .
-
-cb:implementation-xgboost_learner-tree_method a tb:Parameter ;
-    rdfs:label "Tree method" ;
-    tb:hasLevel cb:implementation-xgboost_learner-tree_method-approx,
-        cb:implementation-xgboost_learner-tree_method-auto,
-        cb:implementation-xgboost_learner-tree_method-exact,
-        cb:implementation-xgboost_learner-tree_method-hist ;
+cb:implementation-xgboost_learner-updater a tb:Parameter ;
+    rdfs:label "Updater" ;
+    tb:hasLevel cb:implementation-xgboost_learner-updater-CoordDescent,
+        cb:implementation-xgboost_learner-updater-Shotgun ;
     tb:has_condition "" ;
     tb:has_datatype xsd:string ;
-    tb:has_position 23 .
+    tb:has_position 11 .
 
-cb:implementation-xgboost_learner-tree_method-approx a tb:FactorLevel ;
-    tb:hasValue "approx" .
+cb:implementation-xgboost_learner-updater-CoordDescent a tb:FactorLevel ;
+    tb:hasValue "CoordDescent" .
 
-cb:implementation-xgboost_learner-tree_method-auto a tb:FactorLevel ;
-    tb:hasValue "auto" .
-
-cb:implementation-xgboost_learner-tree_method-exact a tb:FactorLevel ;
-    tb:hasValue "exact" .
-
-cb:implementation-xgboost_learner-tree_method-hist a tb:FactorLevel ;
-    tb:hasValue "hist" .
+cb:implementation-xgboost_learner-updater-Shotgun a tb:FactorLevel ;
+    tb:hasValue "Shotgun" .
 
 cb:isTestConstraint a sh:PropertyConstraintComponent ;
     sh:datatype xsd:boolean ;
@@ -4090,8 +4643,6 @@ cb:MissingValueModel rdfs:subClassOf cb:Model .
 
 cb:Normalization a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
-
-cb:ProjectionModel rdfs:subClassOf cb:Model .
 
 cb:SVMModel rdfs:subClassOf cb:Model .
 
@@ -4202,15 +4753,12 @@ cb:implementation-numeric_projection_predictor a tb:ApplierImplementation ;
     rdfs:label "Numeric projection Predictor" ;
     tb:engine "Simple" ;
     tb:hasLearner cb:implementation-numerical_projection ;
+    tb:hasParameter cb:implementation-numeric_projection_predictor-projected_columns,
+        cb:implementation-numeric_projection_predictor-target_column ;
     tb:implements cb:DropColumns ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ProjectionModel ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -4232,11 +4780,6 @@ cb:implementation-numerical_projection a tb:LearnerImplementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:ProjectionModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
@@ -4262,29 +4805,220 @@ cb:implementation-tensor_data_partitioning-random_seed a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_position 4 .
 
-cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
-    rdfs:label "XGBoost Predictor" ;
-    tb:engine "Simple" ;
-    tb:hasLearner cb:implementation-xgboost_learner ;
-    tb:implements cb:XGBoost ;
-    tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:XGBoostModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
+cb:implementation-xgboost_learner-booster-dart a tb:FactorLevel ;
+    tb:hasValue "dart" .
+
+cb:implementation-xgboost_learner-booster-linear a tb:FactorLevel ;
+    tb:hasValue "linear" .
+
+cb:implementation-xgboost_learner-booster-tree a tb:FactorLevel ;
+    tb:hasValue "tree" .
+
+cb:implementation-xgboost_learner-col_sample_by_level a tb:Parameter ;
+    rdfs:label "Col sample by level" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 21 .
+
+cb:implementation-xgboost_learner-col_sample_by_node a tb:Parameter ;
+    rdfs:label "Col sample by node" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 22 .
+
+cb:implementation-xgboost_learner-col_sample_by_tree a tb:Parameter ;
+    rdfs:label "Col sample by tree" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 20 .
+
+cb:implementation-xgboost_learner-eta a tb:Parameter ;
+    rdfs:label "Eta" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 14 .
+
+cb:implementation-xgboost_learner-feature_selector a tb:Parameter ;
+    rdfs:label "Feature selector" ;
+    tb:hasLevel cb:implementation-xgboost_learner-feature_selector-cyclic,
+        cb:implementation-xgboost_learner-feature_selector-greedy,
+        cb:implementation-xgboost_learner-feature_selector-random,
+        cb:implementation-xgboost_learner-feature_selector-shuffle,
+        cb:implementation-xgboost_learner-feature_selector-thrifty ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 12 .
+
+cb:implementation-xgboost_learner-feature_selector-cyclic a tb:FactorLevel ;
+    tb:hasValue "cyclic" .
+
+cb:implementation-xgboost_learner-feature_selector-greedy a tb:FactorLevel ;
+    tb:hasValue "greedy" .
+
+cb:implementation-xgboost_learner-feature_selector-random a tb:FactorLevel ;
+    tb:hasValue "random" .
+
+cb:implementation-xgboost_learner-feature_selector-shuffle a tb:FactorLevel ;
+    tb:hasValue "shuffle" .
+
+cb:implementation-xgboost_learner-feature_selector-thrifty a tb:FactorLevel ;
+    tb:hasValue "thrifty" .
+
+cb:implementation-xgboost_learner-gamma a tb:Parameter ;
+    rdfs:label "Gamma" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 15 .
+
+cb:implementation-xgboost_learner-grow_policy a tb:Parameter ;
+    rdfs:label "Grow policy" ;
+    tb:hasLevel cb:implementation-xgboost_learner-grow_policy-depthwise,
+        cb:implementation-xgboost_learner-grow_policy-lossguide ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 26 .
+
+cb:implementation-xgboost_learner-grow_policy-depthwise a tb:FactorLevel ;
+    tb:hasValue "depthwise" .
+
+cb:implementation-xgboost_learner-grow_policy-lossguide a tb:FactorLevel ;
+    tb:hasValue "lossguide" .
+
+cb:implementation-xgboost_learner-max_bin a tb:Parameter ;
+    rdfs:label "Max Bin" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 28 .
+
+cb:implementation-xgboost_learner-max_delta_step a tb:Parameter ;
+    rdfs:label "Max delta step" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 18 .
+
+cb:implementation-xgboost_learner-max_depth a tb:Parameter ;
+    rdfs:label "Max Depth" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 16 .
+
+cb:implementation-xgboost_learner-max_leaves a tb:Parameter ;
+    rdfs:label "Max Leaves" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 27 .
+
+cb:implementation-xgboost_learner-min_child_weight a tb:Parameter ;
+    rdfs:label "Min child weight" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 17 .
+
+cb:implementation-xgboost_learner-normalize_type a tb:Parameter ;
+    rdfs:label "Normalize type" ;
+    tb:hasLevel cb:implementation-xgboost_learner-normalize_type-forest,
+        cb:implementation-xgboost_learner-normalize_type-tree ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 30 .
+
+cb:implementation-xgboost_learner-normalize_type-forest a tb:FactorLevel ;
+    tb:hasValue "forest" .
+
+cb:implementation-xgboost_learner-normalize_type-tree a tb:FactorLevel ;
+    tb:hasValue "tree" .
+
+cb:implementation-xgboost_learner-objective a tb:Parameter ;
+    rdfs:label "Objective" ;
+    tb:hasLevel <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic>,
+        <https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-multi:softprob> ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 8 .
+
+<https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-binary:logistic> a tb:FactorLevel ;
+    tb:hasValue "binary:logistic" .
+
+<https://extremexp.eu/ontology/cbox#implementation-xgboost_learner-objective-multi:softprob> a tb:FactorLevel ;
+    tb:hasValue "multi:softprob" .
+
+cb:implementation-xgboost_learner-one_drop a tb:Parameter ;
+    rdfs:label "One drop" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:boolean ;
+    tb:has_position 32 .
+
+cb:implementation-xgboost_learner-rate_drop a tb:Parameter ;
+    rdfs:label "Rate drop" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 31 .
+
+cb:implementation-xgboost_learner-sample_type a tb:Parameter ;
+    rdfs:label "Sample type" ;
+    tb:hasLevel cb:implementation-xgboost_learner-sample_type-uniform,
+        cb:implementation-xgboost_learner-sample_type-weighted ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 29 .
+
+cb:implementation-xgboost_learner-sample_type-uniform a tb:FactorLevel ;
+    tb:hasValue "uniform" .
+
+cb:implementation-xgboost_learner-sample_type-weighted a tb:FactorLevel ;
+    tb:hasValue "weighted" .
+
+cb:implementation-xgboost_learner-scale_pos_weight a tb:Parameter ;
+    rdfs:label "Scale Pos Weight" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 25 .
+
+cb:implementation-xgboost_learner-sketch_eps a tb:Parameter ;
+    rdfs:label "Sketch Eps" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 24 .
+
+cb:implementation-xgboost_learner-skip_drop a tb:Parameter ;
+    rdfs:label "Skip drop" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 33 .
+
+cb:implementation-xgboost_learner-subsample a tb:Parameter ;
+    rdfs:label "Subsample" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 19 .
+
+cb:implementation-xgboost_learner-top_k a tb:Parameter ;
+    rdfs:label "Top K" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 13 .
+
+cb:implementation-xgboost_learner-tree_method a tb:Parameter ;
+    rdfs:label "Tree method" ;
+    tb:hasLevel cb:implementation-xgboost_learner-tree_method-approx,
+        cb:implementation-xgboost_learner-tree_method-auto,
+        cb:implementation-xgboost_learner-tree_method-exact,
+        cb:implementation-xgboost_learner-tree_method-hist ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 23 .
+
+cb:implementation-xgboost_learner-tree_method-approx a tb:FactorLevel ;
+    tb:hasValue "approx" .
+
+cb:implementation-xgboost_learner-tree_method-auto a tb:FactorLevel ;
+    tb:hasValue "auto" .
+
+cb:implementation-xgboost_learner-tree_method-exact a tb:FactorLevel ;
+    tb:hasValue "exact" .
+
+cb:implementation-xgboost_learner-tree_method-hist a tb:FactorLevel ;
+    tb:hasValue "hist" .
 
 dmop:hasDataPrimitiveTypeColumn rdfs:subPropertyOf dmop:ColumnInfoProperty .
 
@@ -4375,6 +5109,72 @@ cb:implementation-tensor_data_partitioning a tb:Implementation ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
+cb:implementation-xgboost_learner-alpha a tb:Parameter ;
+    rdfs:label "Alpha" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 10 .
+
+cb:implementation-xgboost_learner-base_score a tb:Parameter ;
+    rdfs:label "Base score" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 7 .
+
+cb:implementation-xgboost_learner-booster a tb:Parameter ;
+    rdfs:label "Booster" ;
+    tb:hasLevel cb:implementation-xgboost_learner-booster-dart,
+        cb:implementation-xgboost_learner-booster-linear,
+        cb:implementation-xgboost_learner-booster-tree ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_position 2 ;
+    tb:specifiedBy cb:component-xgboost_dart_learner-booster_dart_specification,
+        cb:component-xgboost_linear_learner-booster_linear_specification,
+        cb:component-xgboost_tree_learner-booster_tree_specification .
+
+cb:implementation-xgboost_learner-boosting_rounds a tb:Parameter ;
+    rdfs:label "Boosting rounds" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 4 .
+
+cb:implementation-xgboost_learner-lambda a tb:Parameter ;
+    rdfs:label "Lambda" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:double ;
+    tb:has_position 9 .
+
+cb:implementation-xgboost_learner-random_seed a tb:Parameter ;
+    rdfs:label "Random seed" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 6 .
+
+cb:implementation-xgboost_predictor a tb:ApplierImplementation ;
+    rdfs:label "XGBoost Predictor" ;
+    tb:engine "Simple" ;
+    tb:hasLearner cb:implementation-xgboost_learner ;
+    tb:implements cb:XGBoost ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:XGBoostModel ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
 cb:MissingValueManagement a tb:Task ;
     tb:subtaskOf cb:DataCleaning .
 
@@ -4415,16 +5215,16 @@ cb:implementation-nn_learner a tb:LearnerImplementation ;
     tb:implements cb:NN ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ],
-                [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:NormalizedTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ],
+                [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:NonNullTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
@@ -4468,6 +5268,58 @@ cb:implementation-nn_multidimensional_learner-label_array a tb:Parameter ;
     tb:has_defaultvalue "$$LABEL$$" ;
     tb:has_position 0 .
 
+cb:NonNullTabularDatasetShape a sh:NodeShape ;
+    sh:property [ sh:node cb:NonNullColumnShape ;
+            sh:path dmop:hasColumn ] ;
+    sh:targetClass dmop:TabularDataset .
+
+cb:Visualization rdfs:subClassOf tb:Data .
+
+cb:implementation-data_partitioning a tb:Implementation ;
+    rdfs:label "Data Partitioning" ;
+    tb:engine "Simple" ;
+    tb:hasParameter cb:implementation-data_partitioning-class_columns,
+        cb:implementation-data_partitioning-count_\(absolute_size\),
+        cb:implementation-data_partitioning-fraction_\(relative_size\),
+        cb:implementation-data_partitioning-random_seed,
+        cb:implementation-data_partitioning-sampling_method,
+        cb:implementation-data_partitioning-size_type ;
+    tb:implements cb:Partitioning ;
+    tb:specifiesInput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TestTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 1 ],
+        [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
+cb:implementation-xgboost_learner-target_column a tb:Parameter ;
+    rdfs:label "Target Column" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:string ;
+    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
+    tb:has_position 0 .
+
+cb:implementation-data_reader a tb:Implementation ;
+    rdfs:label "Data Reader" ;
+    tb:engine "Simple" ;
+    tb:hasParameter cb:implementation-data_reader-format,
+        cb:implementation-data_reader-reader_file ;
+    tb:implements cb:DataLoading ;
+    tb:specifiesOutput [ a tb:DataSpec ;
+            tb:hasSpecTag [ a tb:DataSpecTag ;
+                    tb:hasDatatag cb:TabularDataset ;
+                    tb:hasImportanceLevel 0 ] ;
+            tb:has_position 0 ] .
+
 cb:implementation-xgboost_learner a tb:LearnerImplementation ;
     rdfs:label "XGBoost Learner" ;
     tb:engine "Simple" ;
@@ -4509,70 +5361,18 @@ cb:implementation-xgboost_learner a tb:LearnerImplementation ;
     tb:implements cb:XGBoost ;
     tb:specifiesInput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
+                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:NumericOnlyTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ],
                 [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:LabeledTabularDatasetShape ;
+                    tb:hasDatatag cb:TrainTabularDatasetShape ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] ;
     tb:specifiesOutput [ a tb:DataSpec ;
             tb:hasSpecTag [ a tb:DataSpecTag ;
                     tb:hasDatatag cb:XGBoostModel ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
-
-cb:implementation-xgboost_learner-target_column a tb:Parameter ;
-    rdfs:label "Target Column" ;
-    tb:has_condition "" ;
-    tb:has_datatype xsd:string ;
-    tb:has_defaultvalue "$$LABEL_CATEGORICAL$$" ;
-    tb:has_position 0 .
-
-cb:NonNullTabularDatasetShape a sh:NodeShape ;
-    sh:property [ sh:node cb:NonNullColumnShape ;
-            sh:path dmop:hasColumn ] ;
-    sh:targetClass dmop:TabularDataset .
-
-cb:Visualization rdfs:subClassOf tb:Data .
-
-cb:implementation-data_partitioning a tb:Implementation ;
-    rdfs:label "Data Partitioning" ;
-    tb:engine "Simple" ;
-    tb:hasParameter cb:implementation-data_partitioning-class_columns,
-        cb:implementation-data_partitioning-count_\(absolute_size\),
-        cb:implementation-data_partitioning-fraction_\(relative_size\),
-        cb:implementation-data_partitioning-random_seed,
-        cb:implementation-data_partitioning-sampling_method,
-        cb:implementation-data_partitioning-size_type ;
-    tb:implements cb:Partitioning ;
-    tb:specifiesInput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TestTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 1 ],
-        [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TrainTabularDatasetShape ;
-                    tb:hasImportanceLevel 0 ] ;
-            tb:has_position 0 ] .
-
-cb:implementation-data_reader a tb:Implementation ;
-    rdfs:label "Data Reader" ;
-    tb:engine "Simple" ;
-    tb:hasParameter cb:implementation-data_reader-format,
-        cb:implementation-data_reader-reader_file ;
-    tb:implements cb:DataLoading ;
-    tb:specifiesOutput [ a tb:DataSpec ;
-            tb:hasSpecTag [ a tb:DataSpecTag ;
-                    tb:hasDatatag cb:TabularDataset ;
                     tb:hasImportanceLevel 0 ] ;
             tb:has_position 0 ] .
 
@@ -4587,6 +5387,12 @@ cb:implementation-data_reader-reader_file a tb:Parameter ;
     tb:has_datatype xsd:string ;
     tb:has_defaultvalue "$$PATH$$" ;
     tb:has_position 0 .
+
+cb:implementation-xgboost_learner-number_of_threads a tb:Parameter ;
+    rdfs:label "Number of threads" ;
+    tb:has_condition "" ;
+    tb:has_datatype xsd:int ;
+    tb:has_position 5 .
 
 cb:TabularDataset a sh:NodeShape,
         tb:DataTag ;

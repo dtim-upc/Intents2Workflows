@@ -1,195 +1,210 @@
 from common import *
-from .knime_implementation import KnimeImplementation, KnimeXGBoostBundle, KnimeParameter, KnimeXGBoostFeature
-from ..core import *
+from .knime_implementation import KnimeImplementation, KnimeXGBoostBundle, KnimeXGBoostFeature
+from .knime_parameter import KnimeFactorParameter, KnimeTextParameter, KnimeNumericParameter, KnimeSpecificParameter
+from ..simple.xgboost import xgboost_learner_implementation, xgboost_predictor_implementation
+from ..core.expression import AlgebraicExpression
+ 
+xgboost_common_parameters = [
+    KnimeTextParameter('targetColumn',
+                       base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Target Column"), None),
+                       default_value="$$LABEL_CATEGORICAL$$",path='model/options'),
+    KnimeSpecificParameter('weightColumn', XSD.string, None,path='model/options'),
+    KnimeNumericParameter('boostingRounds', XSD.int, 
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Boosting rounds"), None),
+                                                         None),
+                          default_value=100,path='model/options'),
+    KnimeNumericParameter('numThreads', XSD.int, 
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Number of threads"), None),
+                                                         None),
+                          default_value=4,path='model/options'),
+    KnimeNumericParameter('manualNumThreads', XSD.boolean,
+                          expression=AlgebraicExpression(cb.NEQ,
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Number of threads"), None),
+                                                         4),
+                          default_value=False,path='model/options'),
+    KnimeNumericParameter('useStaticSeed', XSD.boolean, 
+                          expression=AlgebraicExpression(cb.NEQ,
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Number of threads"), None),
+                                                         0),
+                          default_value=False,path='model/options'),
+    KnimeNumericParameter('staticSeed', XSD.int, 
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Random seed"), None),
+                                                         None),
+                          default_value=0, path='model/options'),
+    KnimeNumericParameter('baseScore', XSD.double,
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Base score"), None),
+                                                         None),
+                          default_value=0.5, path='model/options'),
+    KnimeFactorParameter("identifier", levels={"multi:softprob":"multi:softprob","binary:logistic":"binary:logistic"},
+                         base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Objective"), None),
+                         default_value="multi:softprob", path='model/options/objective' ),
+    KnimeSpecificParameter("filter-type", XSD.string, "STANDARD", path='model/options/featureFilter'),
+    KnimeSpecificParameter("enforce_option", XSD.string, "EnforceInclusion", path='model/options/featureFilter'),
+    KnimeSpecificParameter('included_names', RDF.List, '$$NUMERIC_COLUMNS$$', path='model/options/featureFilter'),
+    KnimeSpecificParameter('$$SKIP$$', XSD.string, None, path='model/options/featureFilter/excluded_names'),
+    KnimeNumericParameter("lambda", XSD.double,
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Lambda"), None),
+                                                         None),
+                          default_value=0.3,path='model/booster'),
+    KnimeNumericParameter("alpha", XSD.double,  
+                          expression=AlgebraicExpression(cb.COPY, 
+                                                         next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Alpha"), None),
+                                                         None),
+                          default_value=0.3, path='model/booster'),
 
-xgboost_linear_learner_implementation = KnimeImplementation(
-    name='XGBoost Linear Learner',
-    algorithm=cb.XGBoost,
+]
+
+knime_xgboost_linear_learner_implementation = KnimeImplementation(
+    name='KNIME XGBoost Linear Learner',
+    base_implementation=xgboost_learner_implementation,
     parameters=[
-        KnimeParameter("Target column", XSD.string, "$$LABEL_CATEGORICAL$$", 'targetColumn',path='model/options'),
-        KnimeParameter("Overlapping Penalty", XSD.string, None, 'weightColumn',path='model/options'),
-        KnimeParameter("Boosting rounds", XSD.int, 100, 'boostingRounds',path='model/options'),
-        KnimeParameter("Number of threads", XSD.int, 4, 'numThreads',path='model/options'),
-        KnimeParameter("Manual number of threads", XSD.boolean, False, 'manualNumThreads',path='model/options'),
-        KnimeParameter("Use static seed", XSD.boolean, False, 'useStaticSeed',path='model/options'),
-        KnimeParameter("Static seed", XSD.int, 0, 'staticSeed', path='model/options'),
-        KnimeParameter("BaseScore", XSD.double, 0.5, 'baseScore', path='model/options'),
-        KnimeParameter("Objective", XSD.string, "multi:softprob", "identifier", path='model/options/objective' ),
-        KnimeParameter("Filter type", XSD.string, "STANDARD", "filter-type", path='model/options/featureFilter'),
-        KnimeParameter("Enforce option", XSD.string, "EnforceInclusion", "enforce_option", path='model/options/featureFilter'),
-        KnimeParameter('Numeric columns', RDF.List, '$$NUMERIC_COLUMNS$$', 'included_names', path='model/options/featureFilter'),
-        KnimeParameter('Other columns', XSD.string, None, '$$SKIP$$', path='model/options/featureFilter/excluded_names'),
-        KnimeParameter("Lambda", XSD.double, 0.3, "lambda", path='model/booster'),
-        KnimeParameter("Alpha", XSD.double, 0.3, "alpha", path='model/booster'),
-        KnimeParameter("Updater", XSD.string, "CoordDescent", "updater", path='model/booster'),
-        KnimeParameter("Feature selector", XSD.string, "Greedy", "featureSelector", path='model/booster'),
-        KnimeParameter("Top K", XSD.int, 0, "topK", path='model/booster')
+        *xgboost_common_parameters,
+        KnimeFactorParameter('booster', levels={"Linear":"linear"}, 
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
+                             default_value="Tree" , path='model/booster'),
+        KnimeFactorParameter("updater", levels={'Shotgun':'Shotgun', "CoordDescent": "CoordDescent"},
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Updater"), None),
+                             default_value="CoordDescent",path='model/booster'),
+        KnimeFactorParameter("featureSelector", levels={'Cyclic':'cyclic', 'Shuffle':'shuffle', 'Random':'random', 'Greedy':'greedy', 'Thrifty':'thrifty'}, 
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Feature selector"), None),
+                             default_value="Cyclic", path='model/booster'),
+        KnimeNumericParameter("topK", XSD.int, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Top K"), None),
+                                                             None),
+                              default_value=0, path='model/booster'),
     ],
-    input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape],
-    ],
-    output=[
-        cb.XGBoostModel,
-    ],
-    implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.xgboost.base.nodes.learner.classification.XGBLinearClassificationLearnerNodeFactory2',
     knime_bundle=KnimeXGBoostBundle,
     knime_feature=KnimeXGBoostFeature
 )
 
-xgboost_linear_learner_component = Component(
-    name='XGBoost Linear Learner',
-    implementation=xgboost_linear_learner_implementation,
-    overriden_parameters=[
-    ],
-    exposed_parameters=[
-        next((param for param in xgboost_linear_learner_implementation.parameters.keys() if param.knime_key == 'targetColumn'), None),
-    ],
-    transformations=[
-        Transformation(
-            query='''
-INSERT {
-    $output1 cb:setsClassColumnName "Prediction (?label)" .
-}
-WHERE {
-    $input1 dmop:hasColumn ?column .
-    ?column dmop:isLabel true ;
-            dmop:hasColumnName ?label .
-}
-            ''',
-        ),
-    ],
-)
 
-
-xgboost_tree_learner_implementation = KnimeImplementation(
-    name='XGBoost Tree Learner',
-    algorithm=cb.XGBoost,
+knime_xgboost_tree_learner_implementation = KnimeImplementation(
+    name='KNIME XGBoost Tree Learner',
+    base_implementation=xgboost_learner_implementation,
     parameters=[
-        KnimeParameter("Target column", XSD.string, "$$LABEL_CATEGORICAL$$", 'targetColumn',path='model/options'),
-        KnimeParameter("Overlapping Penalty", XSD.string, None, 'weightColumn',path='model/options'),
-        KnimeParameter("Boosting rounds", XSD.int, 100, 'boostingRounds',path='model/options'),
-        KnimeParameter("Number of threads", XSD.int, 4, 'numThreads',path='model/options'),
-        KnimeParameter("Manual number of threads", XSD.boolean, False, 'manualNumThreads',path='model/options'),
-        KnimeParameter("Use static seed", XSD.boolean, False, 'useStaticSeed',path='model/options'),
-        KnimeParameter("Static seed", XSD.int, 0, 'staticSeed', path='model/options'),
-        KnimeParameter("BaseScore", XSD.double, 0.5, 'baseScore', path='model/options'),
-        KnimeParameter("Objective", XSD.string, "multi:softprob", "identifier", path='model/options/objective' ),
-        KnimeParameter("Filter type", XSD.string, "STANDARD", "filter-type", path='model/options/featureFilter'),
-        KnimeParameter("Enforce option", XSD.string, "EnforceInclusion", "enforce_option", path='model/options/featureFilter'),
-        KnimeParameter('Numeric columns', RDF.List, '$$NUMERIC_COLUMNS$$', 'included_names', path='model/options/featureFilter'),
-        KnimeParameter('Other columns', XSD.string, None, '$$SKIP$$', path='model/options/featureFilter/excluded_names'),
-        KnimeParameter('Booster', XSD.string, "Tree", 'booster', path='model/booster'),
-        KnimeParameter("Eta", XSD.double, 0.3, "eta", path='model/booster'),
-        KnimeParameter("Gamma", XSD.double, 0, "gamma", path='model/booster'),
-        KnimeParameter("Max Depth", XSD.int, 6, "maxDepth", path='model/booster'),
-        KnimeParameter("Min child weight", XSD.double, 1.0, "minChildWeight", path='model/booster'),
-        KnimeParameter("Max delta step", XSD.double, 0, "maxDeltaStep", path='model/booster'),
-        KnimeParameter("Subsample", XSD.double, 1.0, "subsample", path='model/booster'),
-        KnimeParameter("Col sample by tree", XSD.double, 1.0, "colSampleByTree", path='model/booster'),
-        KnimeParameter("Col sample by level", XSD.double, 1.0, "colSampleByLevel", path='model/booster'),
-        KnimeParameter("Col sample by node", XSD.double, 1.0, "colSampleByNode", path='model/booster'),
-        KnimeParameter("Lambda", XSD.double, 0.3, "lambda", path='model/booster'),
-        KnimeParameter("Alpha", XSD.double, 0.3, "alpha", path='model/booster'),
-        KnimeParameter("Tree method", XSD.string, "Auto", "treeMethod", path='model/booster'),
-        KnimeParameter("Sketch Eps", XSD.double, 0.03, "sketchEps", path='model/booster'),
-        KnimeParameter("Scale Pos Weight", XSD.double, 1.0, "scalePosWeight", path='model/booster'),
-        KnimeParameter("Grow policy", XSD.string, "DepthWise", "growPolicy", path='model/booster'),
-        KnimeParameter("Max Leaves", XSD.int, 0, "maxLeaves", path='model/booster'),
-        KnimeParameter("Max Bin", XSD.int, 256, "maxBin", path='model/booster'),
-        KnimeParameter('Sample type', XSD.string, "Uniform", 'sampleType', path='model/booster'),
-        KnimeParameter('Normalize type', XSD.string, "Tree", 'normalizeType', path='model/booster'),
-        KnimeParameter("Rate drop", XSD.double, 0, "rateDrop", path='model/booster'),
-        KnimeParameter("One drop", XSD.boolean, False, "oneDrop", path='model/booster'),
-        KnimeParameter("Skip drop", XSD.double, 0, "skipDrop", path='model/booster'),
+        *xgboost_common_parameters,
+        KnimeFactorParameter('booster', levels={"Tree":"tree", "Dart":"dart"}, 
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
+                             default_value="Tree" , path='model/booster'),
+        KnimeNumericParameter("eta", XSD.double,
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Eta"), None),
+                                                             None),
+                              default_value=0.3, path='model/booster'),
+        KnimeNumericParameter("gamma", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Gamma"), None),
+                                                             None),
+                              default_value=0, path='model/booster'),
+        KnimeNumericParameter("maxDepth", XSD.int, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Max Depth"), None),
+                                                             None),
+                              default_value=6, path='model/booster'),
+        KnimeNumericParameter("minChildWeight", XSD.double,
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Min child weight"), None),
+                                                             None), 
+                              default_value=1.0, path='model/booster'),
+        KnimeNumericParameter("maxDeltaStep", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Max delta step"), None),
+                                                             None),
+                              default_value=0, path='model/booster'),
+        KnimeNumericParameter("subsample", XSD.double,
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Subsample"), None),
+                                                             None), 
+                              default_value=1.0, path='model/booster'),
+        KnimeNumericParameter("colSampleByTree", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Col sample by tree"), None),
+                                                             None),
+                              default_value=1.0, path='model/booster'),
+        KnimeNumericParameter("colSampleByLevel", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY,
+                                                                next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Col sample by level"), None),
+                                                                None),
+                                default_value=1.0, path='model/booster'),
+        KnimeNumericParameter("colSampleByNode", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY,   
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Col sample by node"), None),
+                                                             None),
+                                default_value=1.0, path='model/booster'),
+        KnimeFactorParameter("treeMethod", levels={"Auto":"auto", "Exact":"exact", "Approx":"approx", "Hist":"hist"},
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Tree method"), None),
+                             default_value="Auto", path='model/booster'),
+        KnimeNumericParameter("sketchEps", XSD.double,
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Sketch Eps"), None),
+                                                             None), 
+                              default_value=0.03, path='model/booster'),
+        KnimeNumericParameter("scalePosWeight", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Scale Pos Weight"), None),
+                                                             None),
+                              default_value=1.0, path='model/booster'),
+        KnimeFactorParameter("growPolicy", levels={"DepthWise":"depthwise", "LossGuide":"lossguide"}, 
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Grow policy"), None),
+                             default_value="DepthWise", path='model/booster'),
+        KnimeNumericParameter("maxLeaves", XSD.int,
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                                 next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Max Leaves"), None),
+                                                                 None), 
+                              default_value=0, path='model/booster'),
+        KnimeNumericParameter("maxBin", XSD.int, 
+                               expression=AlgebraicExpression(cb.COPY, 
+                                                                 next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Max Bin"), None),
+                                                                 None),
+                              default_value=256, path='model/booster'),
+        KnimeFactorParameter('sampleType', levels={'Uniform':'uniform', 'Weighted':'weighted'},
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Sample type"), None),
+                             default_value="Uniform", path='model/booster'),
+        KnimeFactorParameter('normalizeType', levels={"Tree":"tree", "Forest":"forest"}, 
+                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Normalize type"), None),
+                             default_value="Tree", path='model/booster'),
+        KnimeNumericParameter("rateDrop", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Rate drop"), None),
+                                                             None),
+                              default_value=0, path='model/booster'),
+        KnimeNumericParameter("oneDrop", XSD.boolean, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "One drop"), None),
+                                                             None),
+                              default_value=False, path='model/booster'),
+        KnimeNumericParameter("skipDrop", XSD.double, 
+                              expression=AlgebraicExpression(cb.COPY, 
+                                                             next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Skip drop"), None),
+                                                             None),
+                              default_value=0, path='model/booster'),
     ],
-    input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)],
-    ],
-    output=[
-        cb.XGBoostModel,
-    ],
-    implementation_type=tb.LearnerImplementation,
     knime_node_factory='org.knime.xgboost.base.nodes.learner.classification.XGBTreeClassificationLearnerNodeFactory2',
     knime_bundle=KnimeXGBoostBundle,
     knime_feature=KnimeXGBoostFeature
 )
 
-xgboost_tree_learner_component = Component(
-    name='XGBoost Tree Learner',
-    implementation=xgboost_tree_learner_implementation,
-    overriden_parameters=[
-    ],
-    exposed_parameters=[
-        next((param for param in xgboost_tree_learner_implementation.parameters.keys() if param.knime_key == 'targetColumn'), None),
-    ],
-    transformations=[
-        Transformation(
-            query='''
-INSERT {
-    $output1 cb:setsClassColumnName "Prediction (?label)" .
-}
-WHERE {
-    $input1 dmop:hasColumn ?column .
-    ?column dmop:isLabel true ;
-            dmop:hasColumnName ?label .
-}
-            ''',
-        ),
-    ],
-)
 
 
-xgboost_predictor_implementation = KnimeImplementation(
-    name='XGBoost Predictor',
-    algorithm=cb.XGBoost,
+knime_xgboost_predictor_implementation = KnimeImplementation(
+    name='KNIME XGBoost Predictor',
+    base_implementation=xgboost_predictor_implementation,
     parameters=[
-        KnimeParameter("SVM Prediction column name", XSD.string, "Prediction ($$LABEL$$)", 'predictionColumnName'),
-        KnimeParameter("Change prediction", XSD.boolean, False, 'changePredictionColumnName'),
-        KnimeParameter("Add probabilities", XSD.boolean, False, 'appendProbabilities'),
-        KnimeParameter("Class probability suffix", XSD.string, "", 'probabilitySuffix'),
-        KnimeParameter("Unknown categorical as missing", XSD.boolean, False, 'unknownAsMissing'),
-        KnimeParameter('Batch size', XSD.int, 10000, "batchSize")
-    ],
-    input=[
-        cb.XGBoostModel,
-        [cb.TestTabularDatasetShape, (cb.NonNullTabularDatasetShape,2)]
-    ],
-    output=[
-        cb.TabularDatasetShape,
-    ],
-    implementation_type=tb.ApplierImplementation,
-    counterpart= [
-        xgboost_linear_learner_implementation,
-        xgboost_tree_learner_implementation,
+        KnimeSpecificParameter('predictionColumnName', XSD.string, "Prediction ($$LABEL$$)"),
+        KnimeSpecificParameter('changePredictionColumnName', XSD.boolean, False),
+        KnimeSpecificParameter('appendProbabilities', XSD.boolean, False),
+        KnimeSpecificParameter('probabilitySuffix', XSD.string, ""),
+        KnimeSpecificParameter('unknownAsMissing', XSD.boolean, False),
+        KnimeSpecificParameter("batchSize", XSD.int, 10000)
     ],
     knime_node_factory='org.knime.xgboost.base.nodes.predictor.XGBClassificationPredictorNodeFactory',
     knime_bundle=KnimeXGBoostBundle,
     knime_feature=KnimeXGBoostFeature,
 )
-
-xgboost_predictor_component = Component(
-    name='XGBoost Predictor',
-    implementation=xgboost_predictor_implementation,
-    transformations=[
-        CopyTransformation(2, 1),
-        Transformation(
-            query='''
-INSERT {
-    $output1 dmop:hasColumn _:labelColumn .
-    _:labelColumn a dmop:Column ;
-        dmop:isLabel true;
-      dmop:hasName $parameter1.
-}
-WHERE {
-    $input1 cb:setsClassColumnName ?classColumnName .
-}
-            ''',
-        ),
-    ],
-    counterpart=[
-        xgboost_linear_learner_component,
-        xgboost_tree_learner_component,
-    ],
-)
-

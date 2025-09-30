@@ -11,7 +11,7 @@ from .csv_io import *
 # from .scatter_plot import *
 # from .line_plot import *
 # from .heatmap import *
-# from .xgboost import *
+from .xgboost import *
 # from .categorical_to_number import *
 
 implementations = [
@@ -32,9 +32,9 @@ implementations = [
     #scatterplot_visualizer_implementation,
     #lineplot_visualizer_implementation,
     #heatmap_visualizer_implementation,
-    #xgboost_linear_learner_implementation,
-    #xgboost_tree_learner_implementation,
-    #xgboost_predictor_implementation,
+    knime_xgboost_linear_learner_implementation,
+    knime_xgboost_tree_learner_implementation,
+    knime_xgboost_predictor_implementation,
     #categorizer_implementation,
     #categorizer_applier_implementation,
 ]
