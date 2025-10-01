@@ -61,13 +61,15 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
         task = get_implementation_task(ontology, implementation).fragment
         if is_predictior(ontology, implementation):
             task += '_predictor'
-        python_step_parameters = translate_parameters(ontology, graph, step, implementation,'Python')
+
+        step_parameters = get_step_parameters_agnostic(graph, step)
+        engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, 'Python')
+        python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
         cp, function_params = split_parameters(ontology, python_step_parameters)
         control_params.update(cp)
         print("Control:",control_params) 
         #print("Function:",function_params)
 
-        engine_implementation = get_engine_implementation(ontology, implementation, python_step_parameters, 'Python')
         python_module = get_python_module(ontology, engine_implementation)
         python_function = get_python_function(ontology, engine_implementation)
         template = get_template(ontology, engine_implementation)

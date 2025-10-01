@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 import sys
 
 import rdflib
@@ -318,3 +318,16 @@ def get_engine_parameter(ontology: Graph, key: str, implementation:URIRef):
         return None
     
     return result[0]['param']
+
+def get_step_parameters_agnostic(workflow_graph: Graph, step: URIRef) -> Dict[URIRef,Literal]:
+
+    parameters = list(workflow_graph.objects(step, tb.usesParameter, True))
+ 
+    step_parameters = {}
+
+    for param in parameters:
+        spec = next(workflow_graph.objects(param, tb.specifiedBy, True))
+        value = next(workflow_graph.objects(spec, tb.hasValue, True))
+        step_parameters[param] = value
+
+    return step_parameters

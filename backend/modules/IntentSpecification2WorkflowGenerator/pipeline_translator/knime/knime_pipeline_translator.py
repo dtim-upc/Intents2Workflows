@@ -19,7 +19,7 @@ sys.path.append(root_dir)
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
 
 from ..core.translator_graph_queries import *
-from ..core.parameter_translator import translate_parameters, get_step_parameters_agnostic
+from ..core.parameter_translator import translate_parameters
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -116,11 +116,9 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
 
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
     
-    step_parameters = get_step_parameters_agnostic(ontology, workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
+    step_parameters = get_step_parameters_agnostic(workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
     engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine='KNIME')
-    knime_step_parameters = translate_parameters(ontology=ontology, workflow_graph=workflow_graph, step=step, engine_implementation=engine_implementation)
-    
-    
+    knime_step_parameters = translate_parameters(ontology=ontology, step_parameters=step_parameters, engine_implementation=engine_implementation)
     
     properties = get_knime_properties(ontology, engine_implementation)
     conf_params = get_config_parameters(ontology, engine_implementation, knime_step_parameters)

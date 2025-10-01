@@ -13,6 +13,7 @@ from .csv_io import *
 # from .heatmap import *
 from .xgboost import *
 # from .categorical_to_number import *
+from .projection import *
 
 implementations = [
     knime_partitioning_implementation,
@@ -37,6 +38,8 @@ implementations = [
     knime_xgboost_predictor_implementation,
     #categorizer_implementation,
     #categorizer_applier_implementation,
+    knime_projection_learner_implementation,
+    knime_projection_applier_implementation
 ]
 
 components = []

@@ -84,8 +84,17 @@ def get_component_parameters(ontology: Graph, component: URIRef) -> Dict[URIRef,
     return component_params
 
 
+def add_parameter_specification(inputs: List[URIRef], workflow_graph: Graph, parameter:URIRef, parameterSpecifcation: URIRef, value:Literal, intent_graph:Graph = None) -> None:
+    injected_value = inject_value(workflow_graph, inputs, value.value, intent_graph=intent_graph)
+    #print(f"Injecting value {injected_value} into value {value} for parameter {parameter}")
 
-def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, component: URIRef) -> Dict[URIRef, Tuple[URIRef, Literal]]:
+    workflow_graph.add((parameterSpecifcation, RDF.type, tb.ParameterSpecification))
+    workflow_graph.add((parameter, tb.specifiedBy, parameterSpecifcation))
+    workflow_graph.add((parameterSpecifcation, tb.hasValue, Literal(injected_value)))
+
+
+
+def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, component: URIRef, inputs:List[URIRef]) -> Dict[URIRef, Tuple[URIRef, Literal]]:
     paramspecs_query = f"""
 
         PREFIX tb:<{tb}>
@@ -101,17 +110,46 @@ def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, 
 
     overridden_paramspecs = {paramspec['parameterSpec']: (paramspec['parameter'], paramspec['parameterValue'], paramspec['position']) for paramspec in results}
 
+    
     for paramspec, paramval_tup in overridden_paramspecs.items():
         param, value, _ = paramval_tup
-        workflow_graph.add((paramspec, RDF.type, tb.ParameterSpecification))
-        workflow_graph.add((param, tb.specifiedBy, paramspec))
-        workflow_graph.add((paramspec, tb.hasValue, value))
+        add_parameter_specification(inputs, workflow_graph, param, paramspec, value)
+        
 
     return overridden_paramspecs
 
 
+def inject_value(graph:Graph, inputs: List[URIRef], value:str, intent_graph: Graph = None):
+    new_value = value
 
-def perform_param_substitution(graph: Graph, implementation: URIRef, parameters: Dict[URIRef, Tuple[Literal, Literal, Literal]],
+    if not isinstance(value, str):
+        return value
+
+    if '$$LABEL$$' in value:
+        new_value = value.replace('$$LABEL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
+    if '$$LABEL_CATEGORICAL$$' in value: #this allows target column to be defined without exposed parameters
+        new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
+    if '$$NUMERIC_COLUMNS$$' in value:
+        new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{graph_queries.get_inputs_numeric_columns(graph, inputs)}')
+    if '$$NUMERIC_AND_TARGET_COLUMNS$$' in value:
+        numeric_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
+        target = graph_queries.get_inputs_label_name(graph, inputs)
+        if not target is None and not numeric_cols is None:
+            numeric_cols.append(target.value)
+        new_value = value.replace('$$NUMERIC_AND_TARGET_COLUMNS$$', f'{numeric_cols}')
+    if '$$PATH$$' in value:
+        new_value = value.replace('$$PATH$$', f'{get_path(graph, inputs)}')
+    if '$$CATEGORICAL_COLUMNS$$' in value:
+        new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
+    if '$$DATA_RAW_FORMAT$$' in value:
+        new_value = value.replace('$$DATA_RAW_FORMAT$$', f'{graph_queries.get_intent_dataset_format(intent_graph=intent_graph,intent_iri=graph_queries.get_intent_iri(intent_graph))}')
+    if '&amp;' in value:
+        new_value = value.replace('&amp;', '&')
+    
+    return new_value
+
+
+def perform_param_substitution(graph: Graph, parameters: Dict[URIRef, Tuple[Literal, Literal, Literal]],
                                inputs: List[URIRef], intent_graph: Graph = None) -> Dict[URIRef, Tuple[Literal, Literal, Literal]]:
     
     parameter_keys = list(parameters.keys())
@@ -127,47 +165,7 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
         if parameter in intent_parameter_keys:
             intent_value = intent_parameters[parameter]
             updated_parameters[parameter] = (intent_value, position, condition)
-    
-    #tqdm.write(str(parameters))
-    #tqdm.write(str(updated_parameters))
-
-    parameters.update(updated_parameters)
-            
-
-    for param in parameter_keys:
-        value, order, condition = parameters[param]
-        if condition.value is not None and condition.value != '':
-            feature_types = graph_queries.get_inputs_feature_types(graph, inputs)
-            if condition.value == '$$INTEGER_COLUMN$$' and int not in feature_types:
-                parameters.pop(param)
-                continue
-            if condition.value == '$$STRING_COLUMN$$' and str not in feature_types:
-                parameters.pop(param)
-                continue
-            if condition.value == '$$FLOAT_COLUMN$$' and float not in feature_types:
-                parameters.pop(param)
-                continue
-        if isinstance(value.value, str) and '$$LABEL$$' in value.value:
-            new_value = value.replace('$$LABEL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$LABEL_CATEGORICAL$$' in value.value: #this allows target column to be defined without exposed parameters
-            new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$NUMERIC_COLUMNS$$' in value.value:
-            new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{graph_queries.get_inputs_numeric_columns(graph, inputs)}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$PATH$$' in value.value:
-            new_value = value.replace('$$PATH$$', f'{get_path(graph, inputs)}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$CATEGORICAL_COLUMNS$$' in value.value:
-            new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '$$DATA_RAW_FORMAT$$' in value.value:
-            new_value = value.replace('$$DATA_RAW_FORMAT$$', f'{graph_queries.get_intent_dataset_format(intent_graph=intent_graph,intent_iri=graph_queries.get_intent_iri(intent_graph))}')
-            parameters[param] = (Literal(new_value), order, condition)
-        if isinstance(value.value, str) and '&amp;' in value.value:
-            new_value = value.replace('&amp;', '&')
-            parameters[param] = (Literal(new_value), order, condition)
+        
         if isinstance(value.value, str) and value.value != '':
             if condition.value == '$$BAR_EXCLUDED$$':
                 possible_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
@@ -191,12 +189,33 @@ def perform_param_substitution(graph: Graph, implementation: URIRef, parameters:
                 included_cols = [ast.literal_eval(str(parameters[param][0])) for param in intent_parameters.keys() if 'included' in str(param)][0]
                 excluded_cols = list(set(possible_cols) - set(com_col) - set(included_cols))
                 parameters[param] = (Literal(excluded_cols), order, condition)
+    
+    #tqdm.write(str(parameters))
+    #tqdm.write(str(updated_parameters))
+
+    parameters.update(updated_parameters)
+            
+
+    for param in parameter_keys:
+        value, order, condition = parameters[param]
+        if condition.value is not None and condition.value != '':
+            feature_types = graph_queries.get_inputs_feature_types(graph, inputs)
+            if condition.value == '$$INTEGER_COLUMN$$' and int not in feature_types:
+                parameters.pop(param)
+                continue
+            if condition.value == '$$STRING_COLUMN$$' and str not in feature_types:
+                parameters.pop(param)
+                continue
+            if condition.value == '$$FLOAT_COLUMN$$' and float not in feature_types:
+                parameters.pop(param)
+                continue
+
 
     return parameters
 
 
-def assign_to_parameter_specs(graph: Graph,
-                              parameters: Dict[URIRef, Tuple[Literal, Literal, Literal]])-> Dict[URIRef, Tuple[URIRef, Literal]]:
+def assign_to_parameter_specs(inputs, graph: Graph,
+                              parameters: Dict[URIRef, Tuple[Literal, Literal, Literal]], intent_graph:Graph=None)-> Dict[URIRef, Tuple[URIRef, Literal]]:
     
     keys = list(parameters.keys())
     param_specs = {}
@@ -208,10 +227,8 @@ def assign_to_parameter_specs(graph: Graph,
         sanitized_value = quote(value, safe="-_")
         sanitized_uri = URIRef(f'{uri}_{sanitized_value}_specification'.replace(' ','_').lower())
         param_spec = ab.term(sanitized_uri)
-        graph.add((param_spec, RDF.type, tb.ParameterSpecification))
-        graph.add((param, tb.specifiedBy, param_spec))
-        graph.add((param_spec, tb.hasValue, value))
-
+        add_parameter_specification(inputs, graph, param, param_spec, value, intent_graph=intent_graph)
+  
         param_specs[param_spec] = (param, value, order)
     
     return param_specs
@@ -353,8 +370,8 @@ PREFIX dmop: <{dmop}>
                 query = query.replace(f'$param{order + 1}', f'{value.n3()}')
                 query = query.replace(f'$parameter{order + 1}', f'{value.n3()}')
             
-            tqdm.write("Query:")
-            tqdm.write(str(query))
+            #tqdm.write("Query:")
+            #tqdm.write(str(query))
             workflow_graph.update(query)
 
 
@@ -430,13 +447,13 @@ def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, da
     #loader_component = cb.term('component-csv_local_reader')
     loader_step_name = get_step_name(workflow.fragment, 0, loader_component)
     loader_parameters = get_component_parameters(ontology, loader_component)
-    print("loader_parameters", loader_parameters)
-    loader_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, loader_component)
-    print("loader_overriden_specs", loader_overridden_paramspecs)
-    loader_parameters = perform_param_substitution(workflow_graph, None, loader_parameters, [dataset_node])
-    loader_param_specs = assign_to_parameter_specs(workflow_graph, loader_parameters)
+    #print("loader_parameters", loader_parameters)
+    loader_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, loader_component, [dataset_node])
+    #print("loader_overriden_specs", loader_overridden_paramspecs)
+    loader_parameters = perform_param_substitution(workflow_graph, loader_parameters, [dataset_node])
+    loader_param_specs = assign_to_parameter_specs([dataset_node], workflow_graph, loader_parameters)
     loader_param_specs.update(loader_overridden_paramspecs)
-    print("loader_param_specs", loader_param_specs)
+    #print("loader_param_specs", loader_param_specs)
     return add_step(workflow_graph, workflow, loader_step_name, loader_component, loader_param_specs, 0, None, None,
                     [dataset_node])
 
@@ -445,10 +462,10 @@ def add_saver_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, tes
     #saver_component = cb.term('component-csv_local_writer')
     saver_step_name = get_step_name(workflow.fragment, task_order, saver_component)
     saver_parameters = get_component_parameters(ontology, saver_component)
-    saver_implementation = graph_queries.get_component_implementation(ontology, saver_component)
-    saver_parameters = perform_param_substitution(workflow_graph, saver_implementation, saver_parameters, [test_dataset_node])
-    saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component)
-    saver_param_specs = assign_to_parameter_specs(workflow_graph, saver_parameters)
+    #saver_implementation = graph_queries.get_component_implementation(ontology, saver_component)
+    saver_parameters = perform_param_substitution(workflow_graph, saver_parameters, [test_dataset_node])
+    saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component,[test_dataset_node])
+    saver_param_specs = assign_to_parameter_specs([test_dataset_node],workflow_graph, saver_parameters)
     saver_param_specs.update(saver_overridden_paramspecs)
     return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [])
 
@@ -481,15 +498,14 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     parameters = get_component_parameters(ontology, component)
  
 
-    overridden_parameters = get_component_overridden_paramspecs(ontology, workflow_graph, component)
+    overridden_parameters = get_component_overridden_paramspecs(ontology, workflow_graph, component, transformation_inputs)
     parameters = perform_param_substitution(graph=workflow_graph, parameters=parameters,
-                                                        implementation=component_implementation,
                                                         inputs=transformation_inputs,
                                                         intent_graph=intent_graph)
 
 
     
-    param_specs = assign_to_parameter_specs(workflow_graph, parameters)
+    param_specs = assign_to_parameter_specs(transformation_inputs, workflow_graph, parameters, intent_graph=intent_graph)
     param_specs.update(overridden_parameters)
 
 
@@ -697,7 +713,7 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
 def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):
     if isinstance(plan, URIRef):
         available_components = get_implementation_components_constrained(ontology, shape_graph, plan)
-        print(f"available_components of {plan}:",available_components)
+        #print(f"available_components of {plan}:",available_components)
         best_components = get_best_components(ontology, task, available_components, dataset, component_threshold)
         return [list(best_components.keys())], len(best_components.keys())
     else: #tuple

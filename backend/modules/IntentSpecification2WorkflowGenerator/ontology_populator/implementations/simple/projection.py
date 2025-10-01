@@ -1,11 +1,11 @@
 from common import *
 from ..core import *
 
-projection_numerical_learner_implementation = Implementation(
+projection_learner_implementation = Implementation(
     name='Numerical Projection',
     algorithm=cb.DropColumns,
     parameters=[
-        Parameter("Projected columns", RDF.List, default_value="$$NUMERIC_COLUMNS$$"),
+        Parameter("Projected columns", RDF.List),
         Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
     ],
     input=[
@@ -46,8 +46,9 @@ WHERE {
  
 projection_numerical_learner_component = Component(
     name='Projection numerical Learner',
-    implementation=projection_numerical_learner_implementation,
+    implementation=projection_learner_implementation,
     overriden_parameters=[
+        ParameterSpecification(next(p for p in projection_learner_implementation.parameters if p.label == "Projected columns"), "$$NUMERIC_AND_TARGET_COLUMNS$$"),
     ],
     exposed_parameters=[
     ],
@@ -58,11 +59,11 @@ projection_numerical_learner_component = Component(
         ],
 )
 
-projection_numerical_predictor_implementation = Implementation(
+projection_predictor_implementation = Implementation(
     name='Numeric projection Predictor',
     algorithm=cb.DropColumns,
     parameters=[
-        Parameter("Projected columns", RDF.List, default_value="$$NUMERIC_COLUMNS$$"),
+        Parameter("Projected columns", RDF.List),
         Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
     ],
     input=[
@@ -72,12 +73,17 @@ projection_numerical_predictor_implementation = Implementation(
         cb.NumericOnlyTabularDatasetShape,
     ],
     implementation_type=tb.ApplierImplementation,
-    counterpart=projection_numerical_learner_implementation,
+    counterpart=projection_learner_implementation,
 )
 
 projection_numerical_predictor_component = Component(
     name='Projection numerical Predictor',
-    implementation=projection_numerical_predictor_implementation,
+    implementation=projection_predictor_implementation,
+    overriden_parameters=[
+        ParameterSpecification(next(p for p in projection_predictor_implementation.parameters if p.label == "Projected columns"), "$$NUMERIC_AND_TARGET_COLUMNS$$"),
+    ],
+    exposed_parameters=[
+    ],
     transformations=[
         CopyTransformation(1, 1),
         Transformation(

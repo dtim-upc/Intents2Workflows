@@ -71,23 +71,9 @@ def get_engine_specific_params(ontology:Graph, implementation:URIRef):
         params[key] = value
     return params
 
-def get_step_parameters_agnostic(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
-
-    parameters = list(workflow_graph.objects(step, tb.usesParameter, True))
- 
-    step_parameters = {}
-
-    for param in parameters:
-        spec = next(workflow_graph.objects(param, tb.specifiedBy, True))
-        value = next(workflow_graph.objects(spec, tb.hasValue, True))
-        step_parameters[param] = value
-
-    return step_parameters
-
-def translate_parameters(ontology:Graph, workflow_graph: Graph, step:URIRef, engine_implementation:URIRef):
-    step_parameters = get_step_parameters_agnostic(ontology, workflow_graph, step)
-
+def translate_parameters(ontology:Graph, step_parameters:URIRef, engine_implementation:URIRef):
     text_params = translate_text_params(ontology, engine_implementation, step_parameters)
     numeric_params: Dict = translate_numeric_params(ontology, engine_implementation, step_parameters)
     specific_params = get_engine_specific_params(ontology,engine_implementation)
+    
     return text_params | numeric_params | specific_params
