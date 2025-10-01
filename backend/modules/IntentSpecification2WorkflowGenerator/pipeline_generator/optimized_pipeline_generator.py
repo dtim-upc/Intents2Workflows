@@ -194,7 +194,7 @@ def perform_param_substitution(graph: Graph, parameters: Dict[URIRef, Tuple[Lite
     #tqdm.write(str(updated_parameters))
 
     parameters.update(updated_parameters)
-            
+
 
     for param in parameter_keys:
         value, order, condition = parameters[param]
@@ -209,7 +209,6 @@ def perform_param_substitution(graph: Graph, parameters: Dict[URIRef, Tuple[Lite
             if condition.value == '$$FLOAT_COLUMN$$' and float not in feature_types:
                 parameters.pop(param)
                 continue
-
 
     return parameters
 
@@ -270,8 +269,6 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
     return step
 
 
-
-
 def get_path(graph: Graph, inputs: List[URIRef]) -> str:
     data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
     path = next(graph.objects(data_input, dmop.path), True)
@@ -306,9 +303,7 @@ def copy_subgraph(source_graph: Graph, source_node: URIRef, destination_graph: G
 def annotate_io_with_spec(ontology: Graph, workflow_graph: Graph, io: URIRef, io_spec: List[URIRef]) -> None:
     
     for spec in io_spec:
-
         io_spec_class = next(ontology.objects(spec, SH.targetClass, True), None)
-
         if io_spec_class is None or (io, RDF.type, io_spec_class) in workflow_graph:
             continue
 
@@ -474,7 +469,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
 
     step_name = get_step_name(workflow_name, task_order, component)
     component_implementation = graph_queries.get_component_implementation(ontology, component)
-    engine = graph_queries.get_engine(ontology, component_implementation)
+    engine_compatibility = graph_queries.get_implementation_engine_compatibility(ontology, component_implementation)
     input_specs = graph_queries.get_implementation_input_specs(ontology,component_implementation,max_imp_level)
     input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
     input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
@@ -539,7 +534,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
         if not output_data_index is None:
             train_dataset_node = transformation_outputs[output_data_index]
     
-    return step, train_dataset_node, test_dataset_node, model_node, engine
+    return step, train_dataset_node, test_dataset_node, model_node, engine_compatibility
 
 
 
@@ -585,18 +580,20 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     dataset_node = dataset_node
     test_dataset_node = None
 
+    compatibility = set(graph_queries.get_engines(ontology))
+
 
     for train_component in [*transformations, main_component]:
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
         same = train_component == test_component
 
-        step, dataset_node, output_test_dataset_node, model_node, engine = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, train_component, 
+        step, dataset_node, output_test_dataset_node, model_node, engine_compatibility = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, train_component, 
                              task_order, previous_train_step, dataset_node, None)
         previous_train_step = step
         if not output_test_dataset_node is None:
             test_dataset_node = output_test_dataset_node
 
-        #knime_compatible = knime_compatible & (engine == Literal('KNIME'))
+        compatibility = compatibility & engine_compatibility
 
         task_order += 1
          
@@ -604,11 +601,11 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         if test_component:
             previous_test_steps = [previous_test_step, step] if not same else [previous_test_step]
 
-            test_step, test_dataset_node, _, _,engine  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
+            test_step, test_dataset_node, _, _,engine_compatibility  = add_component(ontology, intent_graph, workflow_graph, workflow, workflow_name, max_imp_level, test_component,
                             task_order, previous_test_steps, test_dataset_node, model_node)
             previous_test_step = test_step
 
-            #knime_compatible = knime_compatible & (engine == Literal('KNIME'))
+            compatibility = compatibility & engine_compatibility
 
             task_order += 1
         else:
@@ -617,7 +614,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     if test_dataset_node is not None:
         add_saver_step(ontology, workflow_graph, workflow, test_dataset_node, previous_test_step, task_order, saver_component)
         
-        
+    for engine in compatibility:
+        workflow_graph.add((workflow, tb.compatibleWith, engine))  
     #workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
                 
     return workflow_graph, workflow
@@ -708,6 +706,7 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
         total_num_comb = 1
     
     transformation_combinations_constrained = transformation_combinations 
+    #print("Retornant: ", transformation_combinations, total_num_comb)
     return transformation_combinations_constrained, total_num_comb
     
 def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):

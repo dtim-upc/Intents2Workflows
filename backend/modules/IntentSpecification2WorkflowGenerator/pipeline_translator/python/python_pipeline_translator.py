@@ -63,7 +63,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
             task += '_predictor'
 
         step_parameters = get_step_parameters_agnostic(graph, step)
-        engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, 'Python')
+        engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, cb.Python)
         python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
         cp, function_params = split_parameters(ontology, python_step_parameters)
         control_params.update(cp)

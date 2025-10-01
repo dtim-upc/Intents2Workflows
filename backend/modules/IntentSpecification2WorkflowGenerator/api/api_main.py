@@ -161,20 +161,23 @@ def run_logical_planner():
 
 @app.post('/workflow_plans/knime')
 def download_knime():
-    print(request.json.keys())
+    
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     
     plan_id = request.json.get('plan_id', uuid.uuid4())
-    intent_name = get_intent_name(plan_graph)
 
-    file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
-    plan_graph.serialize(file_path, format='turtle')
+    if getCompatibility(plan_graph, cb.KNIME):
+        intent_name = get_intent_name(plan_graph)
 
-    knime_file_path = file_path[:-4] + '.knwf'
-    knime_pipeline_translator.translate_graph(ontology, file_path, knime_file_path)
+        file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
+        plan_graph.serialize(file_path, format='turtle')
 
-    return send_file(knime_file_path, as_attachment=True)
+        knime_file_path = file_path[:-4] + '.knwf'
+        knime_pipeline_translator.translate_graph(ontology, file_path, knime_file_path)
+
+        return send_file(knime_file_path, as_attachment=True)
+    abort(403)
 
 
 @app.post('/workflow_plans/knime/all')
@@ -195,7 +198,7 @@ def download_all_knime():
     for graph_id, graph_content in graphs.items():
         graph = Graph().parse(data=graph_content, format='turtle')
         file_path = os.path.join(folder, f'{graph_id}.ttl')
-        compatible = True #getKnimeCompatibility(graph)
+        compatible = getCompatibility(graph, cb.KNIME)
         if compatible:
             graph.serialize(file_path, format='turtle')
 
@@ -235,16 +238,19 @@ def download_python():
     plan_graph = Graph().parse(data=request.json.get("graph", ""), format='turtle')
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     
-    plan_id = request.json.get('plan_id', uuid.uuid4())
-    intent_name = get_intent_name(plan_graph)
+    if getCompatibility(plan_graph, cb.Python):
+        plan_id = request.json.get('plan_id', uuid.uuid4())
+        intent_name = get_intent_name(plan_graph)
 
-    file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
-    plan_graph.serialize(file_path, format='turtle')
+        file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
+        plan_graph.serialize(file_path, format='turtle')
 
-    python_file_path = file_path[:-4]
-    python_pipeline_translator.translate_graph(ontology, file_path, python_file_path)
+        python_file_path = file_path[:-4]
+        python_pipeline_translator.translate_graph(ontology, file_path, python_file_path)
 
-    return send_file(python_file_path, as_attachment=True)
+        return send_file(python_file_path, as_attachment=True)
+    
+    abort(403)
 
 ################################# INTEGRATION FUNCTIONS
 

@@ -79,6 +79,9 @@ dmop:skipInitialSpace rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
 tb: a owl:Ontology ;
     rdfs:label "ExtremeXP Ontology TBox" .
 
+tb:EngineParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter .
+
 tb:LoaderTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
@@ -111,6 +114,11 @@ tb:defines a owl:ObjectProperty ;
 tb:derivedFrom a owl:ObjectProperty ;
     rdfs:domain tb:DerivedParameter ;
     rdfs:range tb:AlgebraicExpression .
+
+tb:engine a owl:ObjectProperty ;
+    rdfs:domain tb:EngineImplementation,
+        tb:compatibleWith ;
+    rdfs:range tb:Engine .
 
 tb:exposesParameter a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
@@ -363,6 +371,10 @@ tb:BaseParameter a owl:Class ;
     owl:disjointWith tb:DerivedParameter .
 
 tb:DataTag a owl:Class .
+
+tb:Engine a owl:Class .
+
+tb:EngineImplementation a owl:Class .
 
 tb:FactorLevel a owl:Class .
 

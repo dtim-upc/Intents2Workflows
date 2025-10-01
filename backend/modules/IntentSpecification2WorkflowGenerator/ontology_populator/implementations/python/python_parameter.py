@@ -6,7 +6,7 @@ from ontology_populator.implementations.core.engine_parameter import EngineParam
 
 class PythonParameter:
     def __init__(self, control_parameter=False, **kwargs):
-        super().__init__(engine="Python", **kwargs)
+        super().__init__(engine=cb.Python, **kwargs)
         self.is_control_parameter = control_parameter #Indicates if the parameter tunes the function or is used to render the template
 
 class PythonNumericParameter(PythonParameter, EngineNumericParameter):

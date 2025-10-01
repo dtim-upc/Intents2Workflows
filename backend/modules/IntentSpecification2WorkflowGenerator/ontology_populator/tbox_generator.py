@@ -109,6 +109,9 @@ def add_classes(ontology: Graph):
         tb.BaseParameter,
         tb.DerivedParameter,
         tb.FactorLevel,
+        tb.Engine,
+        tb.EngineImplementation,
+        tb.EngineParameter,
     ]
     add_class(ontology, classes)
 
@@ -141,6 +144,8 @@ def add_classes(ontology: Graph):
     ontology.add((tb.DerivedParameter, RDFS.subClassOf, tb.Parameter))
     ontology.add((tb.FactorParameter, OWL.disjointWith, tb.NumericParameter))
     ontology.add((tb.BaseParameter, OWL.disjointWith, tb.DerivedParameter))
+
+    ontology.add((tb.EngineParameter, RDFS.subClassOf, tb.Parameter))
 
 def add_properties(ontology: Graph):
     properties = [
@@ -200,6 +205,10 @@ def add_properties(ontology: Graph):
         (tb.hasLearner, tb.VisualizerImplementation, tb.LearnerImplementation),
         (tb.specifiesInput, tb.Implementation, tb.DataSpec),
         (tb.specifiesOutput, tb.Implementation, tb.DataSpec),
+        (tb.has_engine, tb.EngineImplementation, tb.Engine),
+        (tb.compatibleWith, tb.Implementation, tb.Engine),
+        # Engine Implementation
+        #TODO: to be defined
         # Component
         (tb.hasTransformation, tb.Component, RDF.List),
         (tb.hasImplementation, tb.Component, tb.Implementation),
@@ -232,6 +241,9 @@ def add_properties(ontology: Graph):
         #(tb.hasTerm2, tb.AlgebraicExpression, tb.AlgebraicOperation),
         #(tb.hasTerm2, tb.AlgebraicExpression, XSD.numeric),
         (tb.hasOperation, tb.AlgebraicExpression, tb.Operation),
+
+        #Engine parameter
+        #TODO: to be defined
 
         # Hyperparameter Specification
         (tb.hasValue, tb.ParameterSpecification, None),

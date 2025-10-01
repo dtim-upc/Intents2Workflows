@@ -11,7 +11,7 @@ class KnimeParameter:
         self.knime_key = kwargs.get('key')
         knime_key_clean = self.knime_key.replace("$", "")
         kwargs['key'] = f"{hash(self.knime_path)}-{knime_key_clean}" #to ensure unique URIs for parameters with same key but different path
-        super().__init__(engine="KNIME", **kwargs)
+        super().__init__(engine=cb.KNIME, **kwargs)
 
 class KnimeSpecificParameter(KnimeParameter,EngineSpecificParameter):
     def __init__(self, key:str, datatype:URIRef, default_value:Union[URIRef, LiteralValue], path: str = 'model'):

@@ -28,10 +28,10 @@
                             <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadRDF(plan)" label="RDF" style="font-size: 14px;"/>
                           </q-item-section>
                           <q-item-section avatar>
-                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadKNIME(plan)" label="KNIME" style="font-size: 14px;" :disabled="!plan.knimeCompatible"/>
+                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadKNIME(plan)" label="KNIME" style="font-size: 14px;" :disabled="!plan.KNIMECompatible"/>
                           </q-item-section>
                           <q-item-section avatar>
-                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadPython(plan)" label="Python" style="font-size: 14px;"/>
+                            <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadPython(plan)" label="Python" style="font-size: 14px;" :disabled="!plan.PythonCompatible"/>
                           </q-item-section>
                           <q-item-section avatar>
                             <q-btn color="primary" icon="mdi-download" size="10px" @click="intentsStore.downloadProactive(plan)" label="Proactive" style="font-size: 14px;" />

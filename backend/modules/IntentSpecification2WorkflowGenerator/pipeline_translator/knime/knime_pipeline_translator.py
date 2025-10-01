@@ -117,7 +117,7 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
     
     step_parameters = get_step_parameters_agnostic(workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
-    engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine='KNIME')
+    engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine=cb.KNIME)
     knime_step_parameters = translate_parameters(ontology=ontology, step_parameters=step_parameters, engine_implementation=engine_implementation)
     
     properties = get_knime_properties(ontology, engine_implementation)

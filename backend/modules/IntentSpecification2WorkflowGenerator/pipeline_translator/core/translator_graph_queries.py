@@ -271,13 +271,14 @@ def get_translation_condition(ontology: Graph, implementation:URIRef):
         return None
     return result[0]['condition']
 
-def get_engine_implementation(ontology: Graph, base_implementation:URIRef, parameters:dict, engine:str):
+def get_engine_implementation(ontology: Graph, base_implementation:URIRef, parameters:dict, engine:URIRef):
+    print(engine)
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?impl
     WHERE {{
         ?impl a tb:EngineImplementation ;
-            tb:engine "{engine}" ;
+            tb:has_engine {engine.n3()} ;
             tb:hasBaseImplementation {base_implementation.n3()} .          
     }}
     '''

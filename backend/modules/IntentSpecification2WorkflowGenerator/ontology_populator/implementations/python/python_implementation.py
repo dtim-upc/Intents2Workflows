@@ -11,11 +11,11 @@ class PythonImplementation(EngineImplementation):
     def __init__(self, name: str, baseImplementation: Implementation, parameters: List[EngineParameter],
                  python_module, module_version, python_function, template, translation_condition = None, namespace: Namespace = cb) -> None:
         
-        super().__init__(name,"Python",baseImplementation, parameters, translation_condition, namespace)
+        super().__init__(name,cb.Python,baseImplementation, parameters, translation_condition, namespace)
         self.python_module = python_module
         self.python_module_version = module_version
         self.python_function = python_function
-        self.template = template
+        self.template = template 
 
     def add_to_graph(self, g: Graph):
 

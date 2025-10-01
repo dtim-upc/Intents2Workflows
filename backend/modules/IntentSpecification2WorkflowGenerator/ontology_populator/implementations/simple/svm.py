@@ -47,11 +47,11 @@ WHERE {
     ],
 )
 
-hypertangent_svm_learner_component = Component(
-    name='HyperTangent SVM Learner',
+sigmoid_svm_learner_component = Component(
+    name='Sigmoid SVM Learner',
     implementation=svm_learner_implementation,
     overriden_parameters=[
-        ParameterSpecification(next((param for param in svm_learner_implementation.parameters.keys() if param.label == 'Kernel type'), None), 'HyperTangent'),
+        ParameterSpecification(next((param for param in svm_learner_implementation.parameters.keys() if param.label == 'Kernel type'), None), 'Sigmoid'),
     ],
     exposed_parameters=[
         next((param for param in svm_learner_implementation.parameters.keys() if param.label == 'SVM Class column'), None),
@@ -124,7 +124,7 @@ WHERE {
     ],
     counterpart=[
         polynomial_svm_learner_component,
-        hypertangent_svm_learner_component,
+        sigmoid_svm_learner_component,
         rbf_svm_learner_component,
     ],
 )

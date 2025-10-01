@@ -50,7 +50,7 @@ class Implementation:
         g.add((self.uri_ref, RDF.type, self.implementation_type))
         g.add((self.uri_ref, RDFS.label, Literal(self.name)))
         g.add((self.uri_ref, tb.implements, self.algorithm))
-        g.add((self.uri_ref, tb.engine, Literal('Simple')))
+        #g.add((self.uri_ref, tb.engine, Literal('Simple')))
 
 
         def add_dataspectag_node(shape, dataspec_node):

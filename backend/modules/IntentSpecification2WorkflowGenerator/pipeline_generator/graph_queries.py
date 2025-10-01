@@ -612,4 +612,12 @@ def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
 
 
 def get_engine(graph: Graph, implementation:URIRef):
-    return next(graph.objects(implementation, tb.engine, unique=True),None)
+    return next(graph.objects(implementation, tb.has_engine, unique=True),None)
+
+
+def get_implementation_engine_compatibility(ontology:Graph, implementation: URIRef):
+    return set(ontology.objects(implementation, tb.compatibleWith))
+
+
+def get_engines(ontology: Graph):
+    return set(ontology.subjects(RDF.type, tb.Engine)) # Repetitions here make no sense, so using set

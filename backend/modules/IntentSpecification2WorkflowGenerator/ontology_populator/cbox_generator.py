@@ -38,6 +38,14 @@ def add_operations(cbox):
     for o in operations:
         cbox.add((o, RDF.type, tb.Operation))
 
+def add_engines(cbox):
+    engines = [
+        cb.KNIME,
+        cb.Python,
+    ]
+
+    for engine in engines:
+        cbox.add((engine, RDF.type, tb.Engine))
 
 def add_problems(cbox):
     problems = [
@@ -614,6 +622,7 @@ def add_constraints(cbox):
 def main(dest='../ontologies/cbox.ttl'):
     cbox = init_cbox()
     add_operations(cbox)
+    add_engines(cbox)
     add_problems(cbox)
     add_algorithms(cbox)
     add_implementations(cbox)

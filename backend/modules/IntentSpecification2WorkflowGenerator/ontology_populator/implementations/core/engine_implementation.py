@@ -8,14 +8,14 @@ from .expression import AlgebraicExpression
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
-class EngineImplementation(Implementation):
-    def __init__(self, name: str, engine: str, baseImplementation: Implementation, parameters: List[EngineParameter], translation_condition: AlgebraicExpression = None, namespace: Namespace = cb) -> None:
+class EngineImplementation():
+    def __init__(self, name: str, engine: URIRef, baseImplementation: Implementation, parameters: List[EngineParameter], translation_condition: AlgebraicExpression = None, namespace: Namespace = cb) -> None:
         self.parameters = parameters
         self.baseImplementation = baseImplementation
         self.name = name
         self.engine = engine
 
-        self.url_name = f'{self.engine}-implementation-{self.name.replace(" ", "_").replace("-", "_").lower()}'
+        self.url_name = f'{self.engine.fragment}-implementation-{self.name.replace(" ", "_").replace("-", "_").lower()}'
         self.namespace = namespace
         self.uri_ref = self.namespace[self.url_name]
 
@@ -27,7 +27,7 @@ class EngineImplementation(Implementation):
     def add_to_graph(self, g: Graph):
         g.add((self.uri_ref, RDF.type, tb.EngineImplementation))
 
-        g.add((self.uri_ref, tb.engine, Literal(self.engine)))
+        g.add((self.uri_ref, tb.has_engine, self.engine))
 
         g.add((self.uri_ref, tb.term('name'), Literal(self.name)))
 
@@ -77,13 +77,14 @@ class EngineImplementation(Implementation):
 
                 g.add((parameter.uri_ref, tb.key, Literal(parameter.label)))
                 g.add((parameter.uri_ref, tb.has_datatype, parameter.datatype))
-                g.add((parameter.uri_ref, tb.engine, Literal(parameter.engine)))
+                #g.add((parameter.uri_ref, tb.has_engine, parameter.engine))
 
                 g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
                 g.add((parameter.uri_ref, RDF.type, tb.EngineParameter)) #TODO propper subclassing
 
         # Base implementation
         g.add((self.uri_ref, tb.hasBaseImplementation, self.baseImplementation.uri_ref))
+        g.add((self.baseImplementation.uri_ref, tb.compatibleWith, self.engine)) 
 
         return self.uri_ref
     
