@@ -5,10 +5,13 @@ from common import *
 
 
 class AlgebraicExpression:
-    def __init__(self, operation: URIRef, term1: Union[Parameter, 'AlgebraicExpression', LiteralValue], term2:  Union[Parameter, 'AlgebraicExpression', LiteralValue] = None):
-        self.operation = Literal(operation)
+    def __init__(self, operation: URIRef, term1: Union[Parameter, 'AlgebraicExpression', LiteralValue], 
+                 term2:  Union[Parameter, 'AlgebraicExpression', LiteralValue] = None, namespace: Namespace = cb):
+        self.operation = operation
         self.term1 = term1
         self.term2 = term2
+        urlname = f"algebraic-expression-{hash(self.term1)}-{hash(self.term2)}-{self.operation.fragment}"
+        self.uri_ref = namespace[urlname]
 
     def add_to_graph(self, g: Graph):
 
@@ -26,7 +29,7 @@ class AlgebraicExpression:
                 print(term)
                 raise Exception("invalid term type")
 
-        expr = BNode()
+        expr = self.uri_ref
         g.add((expr,RDF.type,tb.AlgebraicExpression))
         g.add((expr, tb.hasOperation, self.operation))
         

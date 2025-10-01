@@ -44,7 +44,9 @@ xgboost_common_parameters = [
                          default_value="multi:softprob", path='model/options/objective' ),
     KnimeSpecificParameter("filter-type", XSD.string, "STANDARD", path='model/options/featureFilter'),
     KnimeSpecificParameter("enforce_option", XSD.string, "EnforceInclusion", path='model/options/featureFilter'),
-    KnimeSpecificParameter('included_names', RDF.List, '$$NUMERIC_COLUMNS$$', path='model/options/featureFilter'),
+    KnimeTextParameter('included_names', 
+                       base_parameter= next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == 'Numeric columns'), None),
+                       default_value="[]", path='model/options/featureFilter', datatype=RDF.List),
     KnimeSpecificParameter('$$SKIP$$', XSD.string, None, path='model/options/featureFilter/excluded_names'),
     KnimeNumericParameter("lambda", XSD.double,
                           expression=AlgebraicExpression(cb.COPY, 
@@ -64,9 +66,6 @@ knime_xgboost_linear_learner_implementation = KnimeImplementation(
     base_implementation=xgboost_learner_implementation,
     parameters=[
         *xgboost_common_parameters,
-        KnimeFactorParameter('booster', levels={"Linear":"linear"}, 
-                             base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
-                             default_value="Tree" , path='model/booster'),
         KnimeFactorParameter("updater", levels={'Shotgun':'Shotgun', "CoordDescent": "CoordDescent"},
                              base_parameter=next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Updater"), None),
                              default_value="CoordDescent",path='model/booster'),
@@ -81,7 +80,10 @@ knime_xgboost_linear_learner_implementation = KnimeImplementation(
     ],
     knime_node_factory='org.knime.xgboost.base.nodes.learner.classification.XGBLinearClassificationLearnerNodeFactory2',
     knime_bundle=KnimeXGBoostBundle,
-    knime_feature=KnimeXGBoostFeature
+    knime_feature=KnimeXGBoostFeature,
+    condition=AlgebraicExpression(cb.EQ,
+                                  next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
+                                 "linear"),
 )
 
 
@@ -188,7 +190,14 @@ knime_xgboost_tree_learner_implementation = KnimeImplementation(
     ],
     knime_node_factory='org.knime.xgboost.base.nodes.learner.classification.XGBTreeClassificationLearnerNodeFactory2',
     knime_bundle=KnimeXGBoostBundle,
-    knime_feature=KnimeXGBoostFeature
+    knime_feature=KnimeXGBoostFeature,
+    condition=AlgebraicExpression(cb.SUM,
+                                  AlgebraicExpression(  cb.EQ,
+                                                        next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
+                                                        "tree"),
+                                  AlgebraicExpression(  cb.EQ,
+                                                        next((param for param in xgboost_learner_implementation.parameters.keys() if param.label == "Booster"), None),
+                                                        "dart"))
 )
 
 

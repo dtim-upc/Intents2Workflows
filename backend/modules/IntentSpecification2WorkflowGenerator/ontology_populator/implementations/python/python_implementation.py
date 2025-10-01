@@ -9,9 +9,9 @@ from ontology_populator.implementations.core.engine_implementation import Engine
 class PythonImplementation(EngineImplementation):
 
     def __init__(self, name: str, baseImplementation: Implementation, parameters: List[EngineParameter],
-                 python_module, module_version, python_function, template, namespace: Namespace = cb) -> None:
+                 python_module, module_version, python_function, template, translation_condition = None, namespace: Namespace = cb) -> None:
         
-        super().__init__(name,"Python",baseImplementation, parameters, namespace)
+        super().__init__(name,"Python",baseImplementation, parameters, translation_condition, namespace)
         self.python_module = python_module
         self.python_module_version = module_version
         self.python_function = python_function
@@ -28,4 +28,4 @@ class PythonImplementation(EngineImplementation):
             g.add((p.uri_ref, tb.isControlParameter, Literal(p.is_control_parameter)))
 
         return super().add_to_graph(g)
- 
+  

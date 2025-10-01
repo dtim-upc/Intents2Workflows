@@ -23,8 +23,8 @@ class EngineNumericParameter(EngineParameter):
 
 class EngineTextParameter(EngineParameter):
     def __init__(self, engine:str, key: str, base_parameter: Parameter, 
-                 default_value: Union[URIRef, LiteralValue]) -> None:
-        super().__init__(engine=engine, key=key, datatype=XSD.string,  default_value=default_value)
+                 default_value: Union[URIRef, LiteralValue], datatype = XSD.string) -> None:
+        super().__init__(engine=engine, key=key, datatype=datatype,  default_value=default_value)
         self.base_parameter = base_parameter #Textual parameters are assumed (for now) to have a one by one mapping to a base parameter
 
 class EngineFactorParameter(EngineTextParameter):

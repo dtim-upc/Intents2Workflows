@@ -4,12 +4,12 @@ import os
 import sys
 from .engine_parameter import EngineParameter, EngineNumericParameter, EngineTextParameter, EngineFactorParameter, EngineSpecificParameter
 from .implementation import Implementation
-from .parameter import FactorParameter
+from .expression import AlgebraicExpression
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
 class EngineImplementation(Implementation):
-    def __init__(self, name: str, engine: str, baseImplementation: Implementation, parameters: List[EngineParameter], namespace: Namespace = cb) -> None:
+    def __init__(self, name: str, engine: str, baseImplementation: Implementation, parameters: List[EngineParameter], translation_condition: AlgebraicExpression = None, namespace: Namespace = cb) -> None:
         self.parameters = parameters
         self.baseImplementation = baseImplementation
         self.name = name
@@ -19,15 +19,23 @@ class EngineImplementation(Implementation):
         self.namespace = namespace
         self.uri_ref = self.namespace[self.url_name]
 
+        self.translation_condition = translation_condition
+
         for parameter in self.parameters:
             parameter.uri_ref = self.namespace[f'{self.url_name}-{parameter.url_name}']
-
+ 
     def add_to_graph(self, g: Graph):
         g.add((self.uri_ref, RDF.type, tb.EngineImplementation))
 
         g.add((self.uri_ref, tb.engine, Literal(self.engine)))
 
         g.add((self.uri_ref, tb.term('name'), Literal(self.name)))
+
+
+        if self.translation_condition is not None:
+            print(self.translation_condition)
+            condtion_uri = self.translation_condition.add_to_graph(g)
+            g.add((self.uri_ref, tb.has_translation_condition, condtion_uri))
  
         # Parameters
         for parameter in self.parameters:

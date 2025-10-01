@@ -19,7 +19,7 @@ sys.path.append(root_dir)
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
 
 from ..core.translator_graph_queries import *
-from ..core.parameter_translator import translate_parameters
+from ..core.parameter_translator import translate_parameters, get_step_parameters_agnostic
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -32,11 +32,14 @@ except ImportError:
 
 def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, str]:
     results = {}
-    print(f"Getting KNIME properties for implementation {implementation}")
+    #print(f"Getting KNIME properties for implementation {implementation}")
     for p, o in ontology.predicate_objects(implementation):
-        print(f"Property: {p}, Object: {o}")
+        #print(f"Property: {p}, Object: {o}")
         if p.fragment.startswith('knime'):
-            results[p.fragment[6:]] = o.value
+            if o == cb.NONE:
+                results[p.fragment[6:]] = None
+            else:
+                results[p.fragment[6:]] = o.value
             # print(f"THIS: {p.fragment[6:]} ---> {o.value}")
     return results
 
@@ -63,7 +66,7 @@ def update_param_hierarchy(param_dict:Dict, path: List[str], element):
     return param_dict
 
 
-def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef, implementation: URIRef, engine_implementation: URIRef):
+def get_config_parameters(ontology: Graph, engine_implementation: URIRef, parameters:Dict):
     types = {
         XSD.string: 'xstring',
         cb.term('char'): 'xchar',
@@ -75,43 +78,52 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef, 
         XSD.boolean: 'xboolean',
         RDF.List: ''
     }
-
-    parameters = translate_parameters(ontology=ontology, workflow_graph=workflow_graph, step=step,implementation=implementation, engine="KNIME")#get_step_parameters(ontology, workflow_graph, step)
     param_dict = {'folders': {},
                   'elements': []}
-     
+    
+
 
     for key, value in parameters.items():
         param_uri = get_engine_parameter(ontology, key, engine_implementation)
         value_type=get_parameter_datatype(ontology, param_uri)
         knime_key = next(ontology.objects(param_uri, tb.knime_key, unique=True), '')
         knime_path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
-        print(f"Key: {key}, knime_key: {knime_key}, Value: {value}, Type: {value_type}, Path: {knime_path}, Param URI: {param_uri}")
+        #print(f"Key: {key}, knime_key: {knime_key}, Value: {value}, Type: {value_type}, Path: {knime_path}, Param URI: {param_uri}")
+        param_list = []
 
         if value_type == RDF.List:
+            
             param_value = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
-            arrayPath = knime_path+'/'+ knime_key
-            parameters.append( ("array-size", str(len(param_value)), arrayPath, XSD.int) )
+            knime_path = knime_path+'/'+ knime_key
+            param_list.append( ("array-size", str(len(param_value)), types[XSD.int]) )
             for i,param in enumerate(param_value):
-                parameters.append((str(i),param,arrayPath,XSD.string))
+                param_list.append((str(i),param, types[XSD.string]))      
         else:
             if value is None or (isinstance(value, str) and value.lower() == 'none') or value == cb.NONE:
                 param_value = None
             else:
                 param_value = value
+            
+            param_list.append((str(knime_key),param_value,types[value_type]))
 
-            param_dict = update_param_hierarchy(param_dict, knime_path.split('/'),(str(knime_key),param_value,types[value_type]))
+        for param in param_list:    
+            param_dict = update_param_hierarchy(param_dict, knime_path.split('/'), param)
+
     return param_dict
 
 
 def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folder, iterator: int) -> str:
 
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
-    engine_implementation = get_engine_implementation(ontology, implementation, 'KNIME')
-    properties = get_knime_properties(ontology, engine_implementation)
-
     
-    conf_params = get_config_parameters(ontology, workflow_graph, step, implementation, engine_implementation)
+    step_parameters = get_step_parameters_agnostic(ontology, workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
+    engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine='KNIME')
+    knime_step_parameters = translate_parameters(ontology=ontology, workflow_graph=workflow_graph, step=step, engine_implementation=engine_implementation)
+    
+    
+    
+    properties = get_knime_properties(ontology, engine_implementation)
+    conf_params = get_config_parameters(ontology, engine_implementation, knime_step_parameters)
     num_ports = get_number_of_output_ports(ontology, workflow_graph, step)
 
     step_template = environment.get_template("step.py.jinja")

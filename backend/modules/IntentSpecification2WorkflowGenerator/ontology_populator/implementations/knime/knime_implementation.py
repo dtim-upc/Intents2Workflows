@@ -10,9 +10,9 @@ from .knime_parameter import KnimeParameter
 class KnimeImplementation(EngineImplementation):
 
     def __init__(self, name: str, base_implementation: Implementation, parameters: List[KnimeParameter],
-                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature', namespace = cb) -> None:
+                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature', condition = None, namespace = cb) -> None:
         
-        super().__init__(name, "KNIME", base_implementation, parameters, namespace)
+        super().__init__(name, "KNIME", base_implementation, parameters, condition, namespace)
         self.knime_node_factory = knime_node_factory
         self.knime_bundle = knime_bundle
         self.knime_feature = knime_feature

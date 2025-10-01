@@ -9,6 +9,7 @@ sys.path.append(root_dir)
 
 from common import *
 from pipeline_generator.graph_queries import get_implementation_input_specs
+from .algebraic_expression_computation import compute_algebraic_expression
 
 def get_ontology() -> Graph:
     cwd = os.getcwd()
@@ -161,14 +162,12 @@ def get_workflow_connections(workflow_graph: Graph) -> List[Tuple[URIRef, URIRef
     return [(r['source'], r['destination'], r['sourcePort'], r['destinationPort']) for r in results]
 
 
-def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
+def get_text_params(ontology:Graph, implementation:URIRef):
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?param
     WHERE {{
-        {implementation.n3()} a tb:Implementation .
-        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
-                tb:engine "{engine}" ;
+        {implementation.n3()} a tb:Implementation ;
                 tb:hasParameter ?param .
         ?param a tb:TextParameter .
                 
@@ -177,14 +176,12 @@ def get_engine_text_params(ontology:Graph, implementation:URIRef, engine:str):
     results = ontology.query(query).bindings
     return [r['param'] for r in results]
 
-def get_engine_specific_params(ontology:Graph, implementation:URIRef, engine:str):
+def get_engine_specific_params(ontology:Graph, implementation:URIRef): #TODO: merge with get_engine_specific_params with get_text_params and get_numerc_params
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?param
     WHERE {{
-        {implementation.n3()} a tb:Implementation .
-        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
-                tb:engine "{engine}" ;
+        {implementation.n3()} a tb:Implementation ;
                 tb:hasParameter ?param .
         ?param a tb:EngineSpecificParameter .
                 
@@ -192,19 +189,6 @@ def get_engine_specific_params(ontology:Graph, implementation:URIRef, engine:str
     '''
     results = ontology.query(query).bindings
     return [r['param'] for r in results]
-
-
-def is_parameter(ontology:Graph, uri:URIRef):
-    query = f'''
-    PREFIX tb: <{tb}>
-    ASK {{
-        {uri.n3()} a tb:Parameter .
-    }} 
-    '''
-
-    #print(query,ontology.query(query).askAnswer)
-    return ontology.query(query).askAnswer
-
 
 def is_factor(ontology:Graph, parameter:URIRef):
     query = f'''
@@ -216,24 +200,13 @@ def is_factor(ontology:Graph, parameter:URIRef):
 
     return ontology.query(query).askAnswer
 
-def is_expression(ontology:Graph, uri:URIRef):
-    query = f'''
-    PREFIX tb: <{tb}>
-    ASK {{
-        {uri.n3()} a tb:AlgebraicExpression .
-    }}
-    '''
-    return ontology.query(query).askAnswer
 
-
-def get_engine_numeric_params(ontology: Graph, implementation: URIRef, engine:str):
+def get_numeric_params(ontology: Graph, implementation: URIRef):
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?param
     WHERE {{
-        {implementation.n3()} a tb:Implementation .
-        ?engineImpl tb:hasBaseImplementation {implementation.n3()} ;
-                tb:engine "{engine}" ;
+        {implementation.n3()} a tb:Implementation ;
                 tb:hasParameter ?param .
         ?param a tb:NumericParameter .
                 
@@ -263,6 +236,7 @@ def translate_factor_level(ontology:Graph, base_param:URIRef, base_level:str, en
     }}
     '''
     result = ontology.query(query).bindings
+    #print(query, result)
     return result[0]['value']
 
 def get_default_value(ontology: Graph, parameter:URIRef):
@@ -282,13 +256,22 @@ def get_algebraic_expression(ontology:Graph, param:URIRef):
     result = ontology.query(query).bindings
     return result[0]['expr'] 
 
-def unpack_expression(ontology:Graph,alg_expr:URIRef):
-    term1 = next(ontology.objects(alg_expr,tb.hasTerm1,unique=True),None)
-    term2 = next(ontology.objects(alg_expr,tb.hasTerm2,unique=True),None)
-    operation = next(ontology.objects(alg_expr,tb.hasOperation,unique=True),None)
-    return term1, term2, operation
+def get_translation_condition(ontology: Graph, implementation:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?condition
+    WHERE {{
+        {implementation.n3()} tb:has_translation_condition ?condition .
+        ?condition a tb:AlgebraicExpression .
+                
+    }}
+    '''
+    result = ontology.query(query).bindings
+    if len(result) == 0:
+        return None
+    return result[0]['condition']
 
-def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engine:str):
+def get_engine_implementation(ontology: Graph, base_implementation:URIRef, parameters:dict, engine:str):
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?impl
@@ -301,7 +284,16 @@ def get_engine_implementation(ontology: Graph, base_implementation:URIRef, engin
     result = ontology.query(query).bindings
     
     if len(result) > 1:
-        print(f"WARNING: More than one engine implementations found for {base_implementation} in {engine} engine. Only one of them (chosen randomly) will be used")
+        for r in result:
+            implementation = r['impl']
+            cond = get_translation_condition(ontology, implementation)
+            print("Condition:", cond, "parameters:", parameters, implementation)
+            #print(compute_algebraic_expression(ontology, cond, parameters))
+            if compute_algebraic_expression(ontology, cond, parameters):
+                return implementation
+        print(f"ERROR: No translation condition matched for {base_implementation} in {engine} engine.")
+        return None
+        #print(f"WARNING: More than one engine implementations found for {base_implementation} in {engine} engine. Only one of them (chosen randomly) will be used")
     elif len(result) <= 0:
         return None
     
