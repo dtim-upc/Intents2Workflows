@@ -7,7 +7,7 @@ from .partitioning import partitioning_implementation, top_absolute_train_test_s
 from .missing_values import missing_value_applier_component, missing_value_implementation, missing_value_applier_implementation, drop_rows_component, mean_imputation_component
 from .xgboost import xgboost_learner_implementation, xgboost_predictor_implementation, xgboost_predictor_component, xgboost_linear_learner_component, xgboost_dart_learner_component, xgboost_tree_learner_component
 from .projection import projection_learner_implementation, projection_numerical_learner_component, projection_numerical_predictor_component, projection_predictor_implementation
-
+from .dbscan import dbscan_implementation, dbscan_component
 
 implementations = [
     nn_learner_implementation,
@@ -25,7 +25,8 @@ implementations = [
     xgboost_learner_implementation,
     xgboost_predictor_implementation,
     projection_learner_implementation,
-    projection_predictor_implementation
+    projection_predictor_implementation,
+    dbscan_implementation
 ]
 
 components = [
@@ -61,5 +62,6 @@ components = [
     rbf_svm_learner_component,
     sigmoid_svm_learner_component,
     polynomial_svm_learner_component,
-    svm_predictor_component
+    svm_predictor_component,
+    dbscan_component,
 ]

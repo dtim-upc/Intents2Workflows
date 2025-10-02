@@ -1,7 +1,7 @@
 from common import *
 from ontology_populator.implementations.core import *
 
-FORMATS = ["CSV", "Parquet", "ZIP", "Folder", "NumpyZip"] #TODO automatically get this list
+FORMATS = ["CSV", "Parquet", "ZIP", "Folder", "NumpyZip", "Lidar_point_cloud"] #TODO automatically get this list
 data_reader_implementation = Implementation(
     name='Data Reader',
     algorithm=cb.DataLoading,

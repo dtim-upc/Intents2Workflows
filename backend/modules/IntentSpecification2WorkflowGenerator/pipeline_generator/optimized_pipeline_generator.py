@@ -410,7 +410,6 @@ def get_best_components(graph: Graph, task: URIRef, components: List[URIRef], da
 def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination: List[URIRef]) -> bool:
         
         temporal_graph = ontology #WARNING: temporal_graph is just an alias. Ontology is modified.
-        combinations_constrained = []
 
         main_component:URIRef = combination[-1]
         workflow_name = f'workflow_{main_component.fragment}'
@@ -557,19 +556,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
 
     format:str = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
 
-    #knime_compatible = True
-
     loader_component = cb.term(f'component-{format.lower()}_reader_component')
     saver_component = cb.term(f'component-data_writer_component')
-
-    """if format == "CSV":
-        #loader_component = cb.term('component-csv_local_reader')
-        saver_component = cb.term('component-csv_local_writer')
-    else:
-        #loader_component = cb.term('component-data_reader_component')
-        saver_component = cb.term('component-data_writer_component')
-        knime_compatible = False"""
-    
 
     loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node,loader_component)
     task_order += 1
@@ -705,9 +693,7 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
         transformation_combinations = [implementation]
         total_num_comb = 1
     
-    transformation_combinations_constrained = transformation_combinations 
-    #print("Retornant: ", transformation_combinations, total_num_comb)
-    return transformation_combinations_constrained, total_num_comb
+    return transformation_combinations, total_num_comb
     
 def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):
     if isinstance(plan, URIRef):

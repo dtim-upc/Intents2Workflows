@@ -4,6 +4,9 @@ from .io import python_reader_implementation, python_writer_implementation
 from .missing_values import python_missing_value_implementation, python_missing_value_applier_implementation
 from .xgboost import python_xgboost_learner_implementation, python_xgboost_predictor_implementation
 from .projection import python_projection_learner_implementation, python_projection_predictor_implementation
+from .dbscan import python_dbscan_implementation
+
+
 implementations = [
     python_svm_learner_implementation,
     python_svm_predictor_implementation,
@@ -16,6 +19,7 @@ implementations = [
     python_xgboost_learner_implementation,
     python_projection_learner_implementation,
     python_projection_predictor_implementation,
+    python_dbscan_implementation,
 ] 
 
  
