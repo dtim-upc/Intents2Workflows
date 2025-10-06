@@ -53,6 +53,18 @@ def get_intent_dataset_task(intent_graph: Graph, intent_iri: URIRef) -> Tuple[UR
     result = intent_graph.query(dataset_task_query).bindings[0]
     return result['dataset'], result['task'], result.get('algorithm', None)
 
+def get_intent_task(intent_graph: Graph, intent_iri: URIRef) -> URIRef:
+    dataset_task_query = f"""
+    PREFIX tb: <{tb}>
+    SELECT ?dataset ?task ?algorithm
+    WHERE {{
+        {intent_iri.n3()} a tb:Intent .
+        ?task tb:tackles {intent_iri.n3()} .
+    }}
+"""
+    result = intent_graph.query(dataset_task_query).bindings[0]
+    return result['task']
+
 def get_intent_dataset_format(intent_graph: Graph, intent_iri: URIRef) -> Tuple[URIRef, URIRef, URIRef]:
     dataset_task_query = f"""
     PREFIX tb: <{tb}>

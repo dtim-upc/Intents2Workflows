@@ -1,0 +1,9 @@
+
+import {{module}}
+
+def {{step_name}}({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %}):
+    model={{module}}.{{function}}(
+{%- for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
+    return model.fit_predict({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %})
+
+

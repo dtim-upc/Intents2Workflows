@@ -548,6 +548,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     task_order = 0
 
     intent_iri = graph_queries.get_intent_iri(intent_graph)
+    task = graph_queries.get_intent_task(intent_graph, intent_iri)
     max_imp_level = int(next(intent_graph.objects(intent_iri, tb.has_complexity), None))
 
     dataset_node = ab.term(f'{workflow_name}-original_dataset')
@@ -601,6 +602,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     
     if test_dataset_node is not None:
         add_saver_step(ontology, workflow_graph, workflow, test_dataset_node, previous_test_step, task_order, saver_component)
+    elif task == cb.Clustering:
+        add_saver_step(ontology, workflow_graph, workflow, dataset_node, previous_train_step, task_order,saver_component)
         
     for engine in compatibility:
         workflow_graph.add((workflow, tb.compatibleWith, engine))  
