@@ -35,7 +35,7 @@ mean_imputation_component = Component(
                                'MeanImputation'),
         ParameterSpecification(next((param for param in missing_value_implementation.parameters.keys()
                                      if param.label == 'Factor strategy'), None),
-                               'MostFrecuent'),
+                               'MostFrequent'),
     ],
     exposed_parameters=[],
     rules={

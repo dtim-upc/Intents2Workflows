@@ -4,7 +4,7 @@ from .knime_parameter import KnimeNumericParameter, KnimeFactorParameter, KnimeT
 from ..core.expression import AlgebraicExpression
 from ..simple.svm import svm_learner_implementation, svm_predictor_implementation
 
-svm_learner_implementation = KnimeImplementation(
+knime_svm_learner_implementation = KnimeImplementation(
     name='SVM Learner',
     base_implementation=svm_learner_implementation,
     parameters=[
@@ -49,7 +49,7 @@ svm_learner_implementation = KnimeImplementation(
     knime_feature=KnimeDefaultFeature
 ) 
 
-svm_predictor_implementation = KnimeImplementation(
+knime_svm_predictor_implementation = KnimeImplementation(
     name='SVM Predictor',
     base_implementation=svm_predictor_implementation,
     parameters=[

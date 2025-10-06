@@ -3,7 +3,7 @@ from .partitioning import *
 # from .normalization import *
 # from .decision_tree import *
 from .svm import *
-# from .missing_values import *
+from .missing_values import *
 from .csv_io import *
 # from .pie_chart import *
 # from .bar_chart import *
@@ -21,10 +21,10 @@ implementations = [
     #decision_tree_predictor_implementation,
     #normalizer_implementation,
     #normalizer_applier_implementation,
-    svm_learner_implementation,
-    svm_predictor_implementation,
-    #missing_value_implementation,
-    #missing_value_applier_implementation,
+    knime_svm_learner_implementation,
+    knime_svm_predictor_implementation,
+    knime_missing_value_implementation,
+    knime_missing_value_applier_implementation,
     knime_csv_reader_implementation,
     knime_csv_writer_implementation,
     #piechart_visualizer_implementation,
