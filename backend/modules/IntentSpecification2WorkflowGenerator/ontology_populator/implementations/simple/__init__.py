@@ -8,6 +8,7 @@ from .missing_values import missing_value_applier_component, missing_value_imple
 from .xgboost import xgboost_learner_implementation, xgboost_predictor_implementation, xgboost_predictor_component, xgboost_linear_learner_component, xgboost_dart_learner_component, xgboost_tree_learner_component
 from .projection import projection_learner_implementation, projection_numerical_learner_component, projection_numerical_predictor_component, projection_predictor_implementation
 from .dbscan import dbscan_implementation, dbscan_component
+from .decision_tree import *
 
 implementations = [
     nn_learner_implementation,
@@ -26,7 +27,9 @@ implementations = [
     xgboost_predictor_implementation,
     projection_learner_implementation,
     projection_predictor_implementation,
-    dbscan_implementation
+    dbscan_implementation,
+    decision_tree_learner_implementation,
+    decision_tree_predictor_implementation,
 ]
 
 components = [
@@ -64,4 +67,6 @@ components = [
     polynomial_svm_learner_component,
     svm_predictor_component,
     dbscan_component,
+    decision_tree_predictor_component,
+    binary_decision_tree_learner_component,
 ]

@@ -1,7 +1,7 @@
 from .partitioning import *
 # from .decision_tree import *
 # from .normalization import *
-# from .decision_tree import *
+from .decision_tree import *
 from .svm import *
 from .missing_values import *
 from .csv_io import *
@@ -17,8 +17,8 @@ from .projection import *
 
 implementations = [
     knime_partitioning_implementation,
-    #decision_tree_learner_implementation,
-    #decision_tree_predictor_implementation,
+    knime_decision_tree_learner_implementation,
+    knime_decision_tree_predictor_implementation,
     #normalizer_implementation,
     #normalizer_applier_implementation,
     knime_svm_learner_implementation,

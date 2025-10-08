@@ -5,6 +5,7 @@ from .missing_values import python_missing_value_implementation, python_missing_
 from .xgboost import python_xgboost_learner_implementation, python_xgboost_predictor_implementation
 from .projection import python_projection_learner_implementation, python_projection_predictor_implementation
 from .dbscan import python_dbscan_implementation
+from .decision_tree import python_decision_tree_implementation, python_decision_tree_predictor_implementation
 
 
 implementations = [
@@ -20,6 +21,8 @@ implementations = [
     python_projection_learner_implementation,
     python_projection_predictor_implementation,
     python_dbscan_implementation,
+    python_decision_tree_implementation,
+    python_decision_tree_predictor_implementation
 ] 
 
  

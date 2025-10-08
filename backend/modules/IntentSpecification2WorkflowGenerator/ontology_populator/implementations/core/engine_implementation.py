@@ -50,7 +50,7 @@ class EngineImplementation():
         
                         for key, value in parameter.levels_dict.items():
                             assert value in parameter.base_parameter.levels, f"Level {value} not in base parameter levels {parameter.base_parameter.levels}"
-                            level_uri = parameter.uri_ref + '-'+ key
+                            level_uri = parameter.uri_ref + '-'+ key.replace(' ','')
                             base_level_uri = parameter.base_parameter.uri_ref + '-' + value
                             g.add((level_uri, RDF.type, tb.FactorLevel))
                             g.add((level_uri, tb.hasValue, Literal(key)))
