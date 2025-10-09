@@ -3,19 +3,31 @@ from typing import List, Union, Optional
 from common import *
 from ontology_populator.implementations.core.engine_implementation import EngineImplementation
 from ontology_populator.implementations.core.implementation import Implementation
+from ..core.iospec import InputIOSpec, OutputIOSpec
 
 from .knime_parameter import KnimeParameter
 
 
 class KnimeImplementation(EngineImplementation):
 
-    def __init__(self, name: str, base_implementation: Implementation, parameters: List[KnimeParameter],
-                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature', condition = None, namespace = cb) -> None:
+    def __init__(self, name: str, base_implementation: Implementation, parameters: List[KnimeParameter], 
+                 knime_node_factory: str, knime_bundle: 'KnimeBundle', knime_feature: 'KnimeFeature', 
+                 input_ports: List[InputIOSpec] = None, output_ports: List[OutputIOSpec] = None, condition = None, namespace = cb) -> None:
         
         super().__init__(name, cb.KNIME, base_implementation, parameters, condition, namespace)
         self.knime_node_factory = knime_node_factory
         self.knime_bundle = knime_bundle
         self.knime_feature = knime_feature
+
+        if input_ports is None:
+            self.input_ports = base_implementation.input #Assuming the original port order is fine if no mapping specified
+        else:
+            self.input_ports = input_ports
+        
+        if output_ports is None:
+            self.output_ports = base_implementation.output
+        else:
+            self.output_ports = output_ports
 
     def add_to_graph(self, g: Graph):
         g.add((self.uri_ref, tb.term('knime-node-name'), Literal(self.name)))
@@ -41,6 +53,19 @@ class KnimeImplementation(EngineImplementation):
                 path_value = Literal(parameter.knime_path) if parameter.knime_path is not None else cb.NONE
                 g.add((parameter.uri_ref, tb.knime_path, path_value))
                 g.add((parameter.uri_ref, tb.knime_key, Literal(parameter.knime_key)))
+
+        #Ports
+        for i, port in enumerate(self.input_ports):
+            knime_port = BNode()
+            g.add((knime_port, tb.hasSpec, port.uri))
+            g.add((knime_port, tb.hasOrder, Literal(i)))
+            g.add((self.uri_ref, tb.knime_input_port, knime_port))
+
+        for i, port in enumerate(self.output_ports):
+            knime_port = BNode()
+            g.add((knime_port, tb.hasSpec, port.uri))
+            g.add((knime_port, tb.hasOrder, Literal(i)))
+            g.add((self.uri_ref, tb.knime_output_port, knime_port))
 
         return super().add_to_graph(g)
 

@@ -1,5 +1,9 @@
 from common import *
-from ..core import *
+from ..core.implementation import Implementation
+from ..core.parameter import Parameter
+from ..core.component import Component
+from ..core.transformation import *
+from ..core.iospec import InputIOSpec, OutputIOSpec, IOSpecTag
 
 
 dbscan_implementation = Implementation(
@@ -10,10 +14,11 @@ dbscan_implementation = Implementation(
         Parameter("minimum samples", XSD.int)
     ],
     input = [
-        cb.TabularDataset,
+        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        
     ],
     output=[
-        cb.TabularDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
 ) 
 

@@ -3,6 +3,7 @@ from .implementation import Implementation
 from .parameter import Parameter, FactorParameter
 from .parameter_specification import ParameterSpecification
 from .transformation import Transformation, CopyTransformation, LoaderTransformation
+from .iospec import InputIOSpec, OutputIOSpec, IOSpecTag
 
 __all__ = [
     'Component',
@@ -12,5 +13,8 @@ __all__ = [
     'ParameterSpecification',
     'Transformation',
     'CopyTransformation',
-    'LoaderTransformation'
+    'LoaderTransformation',
+    'InputIOSpec',
+    'OutputIOSpec',
+    'IOSpecTag'
 ]

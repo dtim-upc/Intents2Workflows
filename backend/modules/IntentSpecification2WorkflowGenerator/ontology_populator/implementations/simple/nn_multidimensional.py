@@ -9,10 +9,10 @@ nn_multi_learner_implementation = Implementation(
         Parameter("NN type", XSD.string, None),
     ],
     input=[
-        [cb.LabeledTensorDatasetShape, cb.TrainTensorDatasetShape],
+        InputIOSpec([IOSpecTag(cb.LabeledTensorDatasetShape), IOSpecTag(cb.TrainTensorDatasetShape)]),
     ],
     output=[
-        cb.NNModel,
+        OutputIOSpec([IOSpecTag(cb.NNModel)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -79,11 +79,11 @@ nn_multi_predictor_implementation = Implementation(
         Parameter("Class probability suffix", XSD.string, "", 'class probability suffix'),
     ],
     input=[
-        cb.NNModel,
-        [cb.TestTensorDatasetShape]
+        InputIOSpec([IOSpecTag(cb.NNModel)]),
+        InputIOSpec([IOSpecTag(cb.TestTensorDatasetShape)])
     ],
     output=[
-        cb.TabularDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=nn_multi_learner_implementation,

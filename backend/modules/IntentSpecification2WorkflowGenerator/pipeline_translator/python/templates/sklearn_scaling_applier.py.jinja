@@ -1,0 +1,7 @@
+import {{module}}
+
+def {{step_name}}(trained_model, data):
+    data_to_scale = data[{{control["columns"]}}]
+    data[{{control["columns"]}}] = pd.DataFrame(trained_model.transform(data_to_scale))
+    return data
+

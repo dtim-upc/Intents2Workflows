@@ -38,6 +38,10 @@ def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, s
         if p.fragment.startswith('knime'):
             if o == cb.NONE:
                 results[p.fragment[6:]] = None
+            elif p.fragment == "knime_input_port":
+                continue
+            elif p.fragment == "knime_output_port":
+                continue
             else:
                 results[p.fragment[6:]] = o.value
             # print(f"THIS: {p.fragment[6:]} ---> {o.value}")
@@ -83,9 +87,9 @@ def get_config_parameters(ontology: Graph, engine_implementation: URIRef, parame
     
 
 
-    for key, value in parameters.items():
-        param_uri = get_engine_parameter(ontology, key, engine_implementation)
+    for param_uri, param_data in parameters.items():
         value_type=get_parameter_datatype(ontology, param_uri)
+        knime_key, value = param_data
         knime_key = next(ontology.objects(param_uri, tb.knime_key, unique=True), '')
         knime_path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
         #print(f"Key: {key}, knime_key: {knime_key}, Value: {value}, Type: {value_type}, Path: {knime_path}, Param URI: {param_uri}")
@@ -164,6 +168,8 @@ def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
     with open(os.path.join(folder, 'workflowset.meta'), 'w') as f:
         f.write(workflow_metadata_file)
 
+
+
 def get_connections_config(workflow_graph: Graph, steps: List[URIRef]):
     connections = get_workflow_connections(workflow_graph)
     connections_ids = []
@@ -176,7 +182,7 @@ def get_connections_config(workflow_graph: Graph, steps: List[URIRef]):
 def create_workflow_file(ontology:Graph, workflow_graph: Graph, steps: List[URIRef], step_paths: List[str],
                          folder: str) -> None:
     
-    is_applier = [ is_applier_step(ontology, workflow_graph, step) for step in steps]
+    is_applier = [is_applier_step(ontology, workflow_graph, step) for step in steps]
     connections = get_connections_config(workflow_graph, steps)
     metadata_template = environment.get_template("workflow.py.jinja")
     workflow_file = metadata_template.render(steps = zip(step_paths,is_applier),

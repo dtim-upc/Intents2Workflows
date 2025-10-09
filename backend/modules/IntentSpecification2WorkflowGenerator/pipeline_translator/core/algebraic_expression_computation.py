@@ -94,4 +94,9 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
     value_2 = compute_term_value(term2)
     print("Value 2:", value_2)
 
-    return calculate(value_1, value_2, operation)
+    result = calculate(value_1, value_2, operation)
+    print("Result:",result)
+
+    if type(result) == float and result.is_integer():
+        return int(result) #Always returns the result as integer when possible
+    return result

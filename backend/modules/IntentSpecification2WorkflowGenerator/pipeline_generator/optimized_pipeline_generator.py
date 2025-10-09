@@ -470,6 +470,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     component_implementation = graph_queries.get_component_implementation(ontology, component)
     engine_compatibility = graph_queries.get_implementation_engine_compatibility(ontology, component_implementation)
     input_specs = graph_queries.get_implementation_input_specs(ontology,component_implementation,max_imp_level)
+    print("Input specs",input_specs)
     input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
     input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
 

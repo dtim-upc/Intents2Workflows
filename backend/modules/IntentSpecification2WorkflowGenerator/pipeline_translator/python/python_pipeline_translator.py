@@ -36,8 +36,9 @@ def get_template(ontology: Graph, implementation: URIRef):
 def split_parameters(ontology: Graph, params: Dict[str,str]):
     control_params = {}
     function_params = {}
-    for key, value in params.items():
-        param_uri = next(ontology.subjects(tb.key, Literal(key)), None)
+    for param_uri, param_data in params.items():
+        key, value = param_data
+        print(list(ontology.objects(param_uri, tb.isControlParameter,unique=True)))
         if next(ontology.objects(param_uri, tb.isControlParameter,unique=True),False):
             control_params[key.toPython()] = value
         else:

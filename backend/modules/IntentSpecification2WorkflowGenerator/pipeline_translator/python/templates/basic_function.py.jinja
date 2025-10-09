@@ -8,3 +8,4 @@ def {{step_name}}({% for input in inputs%}input{{input}}{% if not loop.last %}, 
 {%- for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
     {% if outputs|length > 0%}return  {% for output in outputs %}output{{output}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}
 
+

@@ -37,8 +37,7 @@ def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters
         value = literal_to_raw_datatype(value)
         key = next(ontology.objects(param, tb.key, unique=True))
         
-        print(key, value)
-        python_params[key] = value
+        python_params[param] = (key,value)
     return python_params
 
 
@@ -49,6 +48,7 @@ def translate_numeric_params(ontology:Graph, implementation:URIRef, step_paramet
     for param in numeric_params:
         alg_expression = queries.get_algebraic_expression(ontology, param)
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
+        print("VALÖ",value, type(value))
  
         if value is None:
             value = queries.get_default_value(ontology, param)
@@ -56,7 +56,7 @@ def translate_numeric_params(ontology:Graph, implementation:URIRef, step_paramet
         value = literal_to_raw_datatype(value)
 
         key = next(ontology.objects(param, tb.key, unique=True))
-        python_params[key] = value
+        python_params[param] = (key,value)
     return python_params
 
 def get_engine_specific_params(ontology:Graph, implementation:URIRef):
@@ -68,7 +68,7 @@ def get_engine_specific_params(ontology:Graph, implementation:URIRef):
         value = literal_to_raw_datatype(value)
 
         key = next(ontology.objects(param, tb.key, unique=True))
-        params[key] = value
+        params[param] = (key,value)
     return params
 
 def translate_parameters(ontology:Graph, step_parameters:URIRef, engine_implementation:URIRef):

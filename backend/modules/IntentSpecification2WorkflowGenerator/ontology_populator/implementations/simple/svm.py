@@ -13,11 +13,11 @@ svm_learner_implementation = Implementation(
         FactorParameter("Kernel type", ['Polynomial', 'Sigmoid', 'RBF']),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NonNullTabularDatasetShape, 
-         (cb.NormalizedTabularDatasetShape,1), (cb.NumericCategoricalTabularDatasetShape,1)],
+        InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape), 
+         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]),
     ],
-    output=[
-        cb.SVMModel,
+    output=[ 
+        OutputIOSpec([IOSpecTag(cb.SVMModel)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -93,11 +93,12 @@ svm_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        cb.SVMModel,
-        [cb.TestTabularDatasetShape, cb.NonNullTabularDatasetShape, (cb.NormalizedTabularDatasetShape,1), (cb.NumericCategoricalTabularDatasetShape,1)]
+        InputIOSpec([IOSpecTag(cb.SVMModel)]),
+        InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape), 
+         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]),
     ],
     output=[
-        cb.TabularDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=svm_learner_implementation,

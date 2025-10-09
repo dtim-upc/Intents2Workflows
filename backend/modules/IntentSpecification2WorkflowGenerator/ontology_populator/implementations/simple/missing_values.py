@@ -17,11 +17,11 @@ missing_value_implementation = Implementation(
 
     ],
     input=[
-        cb.TabularDataset,
+        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
     ],
     output=[
-        cb.NonNullTabularDatasetShape,
-        cb.MissingValueModel,
+        OutputIOSpec([IOSpecTag(cb.NonNullTabularDatasetShape)]),
+        OutputIOSpec([IOSpecTag(cb.MissingValueModel)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -120,11 +120,11 @@ missing_value_applier_implementation = Implementation(
     parameters=[
     ],
     input=[
-        cb.MissingValueModel,
-        cb.TestTabularDatasetShape,
+        InputIOSpec([IOSpecTag(cb.MissingValueModel)]),
+        InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
     output=[
-        cb.NonNullTabularDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.NonNullTabularDatasetShape)]),
     ],
     implementation_type=tb.ApplierImplementation,
 

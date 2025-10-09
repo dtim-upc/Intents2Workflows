@@ -1,0 +1,10 @@
+import {{module}}
+
+def {{step_name}}(data):
+    data_to_scale = data[{{control["columns"]}}]
+    model={{module}}.{{function}}(
+{%- for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
+    trained_model= model.fit(data_to_scale)
+    data[{{control["columns"]}}] = pd.DataFrame(trained_model.transform(data_to_scale))
+    return data, trained_model
+

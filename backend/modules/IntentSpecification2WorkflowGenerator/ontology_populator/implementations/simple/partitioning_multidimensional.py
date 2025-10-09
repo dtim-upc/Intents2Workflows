@@ -13,11 +13,11 @@ tensor_partitioning_implementation = Implementation(
         Parameter("Class columns", XSD.string, None),
     ],
     input=[
-        cb.TensorDataset,
+        InputIOSpec([IOSpecTag(cb.TensorDataset)]),
     ],
     output=[
-        cb.TrainTensorDatasetShape,
-        cb.TestTensorDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.TrainTensorDatasetShape)]),
+        OutputIOSpec([IOSpecTag(cb.TestTensorDatasetShape)]),
     ],
 
 )

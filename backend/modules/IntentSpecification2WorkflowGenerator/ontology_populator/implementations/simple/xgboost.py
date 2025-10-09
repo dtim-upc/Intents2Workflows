@@ -41,10 +41,10 @@ xgboost_learner_implementation = Implementation(
         Parameter("Skip drop", XSD.double),
     ],
     input=[
-        [cb.LabeledTabularDatasetShape, cb.TrainTabularDatasetShape, cb.NumericOnlyTabularDatasetShape],
+        InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),
     ],
     output=[
-        cb.XGBoostModel, 
+        OutputIOSpec([IOSpecTag(cb.XGBoostModel)]), 
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -132,11 +132,11 @@ xgboost_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        cb.XGBoostModel,
-        [cb.TestTabularDatasetShape, cb.NumericOnlyTabularDatasetShape]
+        InputIOSpec([IOSpecTag(cb.XGBoostModel)]),
+        InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),
     ],
     output=[
-        cb.TabularDatasetShape,
+        OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart= [

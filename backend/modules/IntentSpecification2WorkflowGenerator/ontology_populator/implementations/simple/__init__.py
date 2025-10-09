@@ -9,6 +9,7 @@ from .xgboost import xgboost_learner_implementation, xgboost_predictor_implement
 from .projection import projection_learner_implementation, projection_numerical_learner_component, projection_numerical_predictor_component, projection_predictor_implementation
 from .dbscan import dbscan_implementation, dbscan_component
 from .decision_tree import *
+from .scaling import scaling_learner_implementation, scaling_applier_implementation, z_score_scaling_component, min_max_scaling_component, decimal_scaling_component, scaling_applier_component
 
 implementations = [
     nn_learner_implementation,
@@ -30,6 +31,8 @@ implementations = [
     dbscan_implementation,
     decision_tree_learner_implementation,
     decision_tree_predictor_implementation,
+    scaling_learner_implementation,
+    scaling_applier_implementation
 ]
 
 components = [
@@ -69,4 +72,8 @@ components = [
     dbscan_component,
     decision_tree_predictor_component,
     binary_decision_tree_learner_component,
+    min_max_scaling_component,
+    z_score_scaling_component,
+    decimal_scaling_component,
+    scaling_applier_component
 ]
