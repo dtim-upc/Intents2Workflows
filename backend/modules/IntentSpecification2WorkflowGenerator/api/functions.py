@@ -77,7 +77,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         alg = next(ontology.objects(impl, tb.implements)), 
         (impl, RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl, RDF.type))
 
-        input_specs = get_implementation_input_specs(ontology, impl)
+        input_specs = get_implementation_io_specs(ontology, impl, "Input")
         if len(input_specs) > 0:
             algs_shapes[alg[0]] = input_specs[0] #assuming data shapes is on input 0 
         else:

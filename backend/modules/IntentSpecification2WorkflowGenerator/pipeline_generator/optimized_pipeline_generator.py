@@ -235,27 +235,36 @@ def assign_to_parameter_specs(inputs, graph: Graph,
 
 def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
              parameter_specs: Dict[URIRef, Tuple[URIRef, Literal]],
-             order: int, previous_task: Union[None, list, URIRef] = None, inputs: Optional[List[URIRef]] = None,
-             outputs: Optional[List[URIRef]] = None) -> URIRef:
+             order: int, previous_task: Union[None, list, URIRef] = None, inputs: Optional[List[URIRef]] = None, input_specs:Optional[List[URIRef]] = None,
+             outputs: Optional[List[URIRef]] = None, output_specs:Optional[List[URIRef]] = None) -> URIRef:
     if outputs is None:
         outputs = []
+        output_specs = []
     if inputs is None:
         inputs = []
+        input_specs = []
+
     step = ab.term(task_name)
     graph.add((pipeline, tb.hasStep, step))
     graph.add((step, RDF.type, tb.Step))
     graph.add((step, tb.runs, component))
     graph.add((step, tb.has_position, Literal(order)))
+    print("Inputt", inputs)
     for i, input in enumerate(inputs):
         in_node = BNode()
         graph.add((in_node, RDF.type, tb.Data))
         graph.add((in_node, tb.has_data, input))
+        graph.add((in_node, tb.has_spec, input_specs[i][0]))
         graph.add((in_node, tb.has_position, Literal(i)))
         graph.add((step, tb.hasInput, in_node))
+
+    
     for o, output in enumerate(outputs):
         out_node = BNode()
         graph.add((out_node, RDF.type, tb.Data))
         graph.add((out_node, tb.has_data, output))
+        print("OUTPUT SPECSSS:",output_specs[o])
+        graph.add((out_node, tb.has_spec, output_specs[o][0]))
         graph.add((out_node, tb.has_position, Literal(o)))
         graph.add((step, tb.hasOutput, out_node))
     for param, *_ in parameter_specs.values():
@@ -314,7 +323,7 @@ def annotate_ios_with_specs(ontology: Graph, workflow_graph: Graph, data_io: Lis
                             specs: List[List[URIRef]]) -> None:
     assert len(data_io) == len(specs), 'Number of IOs and specs must be the same'
     for io, spec in zip(data_io, specs):
-        annotate_io_with_spec(ontology, workflow_graph, io, spec)
+        annotate_io_with_spec(ontology, workflow_graph, io, spec[1])
 
 
 def run_copy_transformation(ontology: Graph, workflow_graph: Graph, transformation: URIRef, inputs: List[URIRef],
@@ -449,7 +458,7 @@ def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, da
     loader_param_specs.update(loader_overridden_paramspecs)
     #print("loader_param_specs", loader_param_specs)
     return add_step(workflow_graph, workflow, loader_step_name, loader_component, loader_param_specs, 0, None, None,
-                    [dataset_node])
+                    outputs=[dataset_node], output_specs=[(cb["implementation-data_reader-OutputSpec-TabularDataset"], None)]) #TODO obtain this rather than hardcoding
 
 def add_saver_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, test_dataset_node: URIRef, previous_test_step:URIRef, 
                    task_order, saver_component:URIRef) -> URIRef:
@@ -461,7 +470,7 @@ def add_saver_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, tes
     saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component,[test_dataset_node])
     saver_param_specs = assign_to_parameter_specs([test_dataset_node],workflow_graph, saver_parameters)
     saver_param_specs.update(saver_overridden_paramspecs)
-    return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [])
+    return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [(cb["implementation-data_writer-InputSpec-TabularDatasetShape"], None)])
 
 def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, workflow: URIRef, workflow_name: str, 
                   max_imp_level: int, component:URIRef, task_order: int, previous_step: URIRef, input_data: URIRef, input_model: URIRef):
@@ -469,8 +478,8 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     step_name = get_step_name(workflow_name, task_order, component)
     component_implementation = graph_queries.get_component_implementation(ontology, component)
     engine_compatibility = graph_queries.get_implementation_engine_compatibility(ontology, component_implementation)
-    input_specs = graph_queries.get_implementation_input_specs(ontology,component_implementation,max_imp_level)
-    print("Input specs",input_specs)
+    input_specs = graph_queries.get_implementation_io_specs(ontology,component_implementation,"Input",max_imp_level)
+    print("Input specs",input_specs) 
     input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
     input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
 
@@ -486,7 +495,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     annotate_ios_with_specs(ontology, workflow_graph, transformation_inputs,
                             input_specs)
     
-    output_specs = graph_queries.get_implementation_output_specs(ontology,component_implementation)
+    output_specs = graph_queries.get_implementation_io_specs(ontology,component_implementation, "Output")
     transformation_outputs = [ab[f'{step_name}-output_{i}'] for i in range(len(output_specs))]
     annotate_ios_with_specs(ontology, workflow_graph, transformation_outputs,output_specs)
     
@@ -503,14 +512,16 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     param_specs = assign_to_parameter_specs(transformation_inputs, workflow_graph, parameters, intent_graph=intent_graph)
     param_specs.update(overridden_parameters)
 
-
+    print("Step", step_name, "Transf_inputs", transformation_inputs)
     step = add_step(workflow_graph, workflow,
                         step_name,
                         component,
                         param_specs,
                         task_order, previous_step,
                         transformation_inputs,
-                        transformation_outputs)
+                        input_specs,
+                        transformation_outputs,
+                        output_specs)
     run_component_transformation(ontology, workflow_graph, component,
                                     transformation_inputs, transformation_outputs, param_specs)
     
@@ -571,6 +582,8 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     test_dataset_node = None
 
     compatibility = set(graph_queries.get_engines(ontology))
+
+    print("Transfs:", *transformations)
 
 
     for train_component in [*transformations, main_component]:
@@ -637,13 +650,12 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dataset
     if log:
         tqdm.write("Recursive: " + str(implementation))
     
-    inputs = graph_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
+    inputs = graph_queries.get_implementation_io_specs(ontology, implementation, "Input", max_imp_level)
 
     shapes_to_satisfy = graph_queries.identify_data_io(ontology, inputs)
 
     if shapes_to_satisfy is None:
         shapes_to_satisfy = {}
-
     
     if log:
         tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')

@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Type, Union
+from typing import Dict, List, Set, Tuple, Type, Union, Literal as Lit
 from rdflib import Graph, URIRef
 
 
@@ -135,12 +135,15 @@ def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
     result = ontology.query(expparams_query).bindings
     return result 
 
-def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxImportanceLevel: int = 3) -> List[List[URIRef]]:
+def get_implementation_io_specs(ontology: Graph, implementation: URIRef, type = Lit["Input", "Output"], maxImportanceLevel: int = 3) -> List[List[URIRef]]:
+    
+    assert type in ["Input", "Output"], f"invalid type {type}"
+    
     input_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
+        SELECT ?position ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
-            {implementation.n3()} tb:specifiesInput ?spec .
+            {implementation.n3()} tb:specifies{type} ?spec .
             ?spec a tb:DataSpec ;
                 tb:hasSpecTag ?sptg ;
                 tb:has_position ?position .
@@ -150,37 +153,18 @@ def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxI
             FILTER(?imp <= {int(maxImportanceLevel)}) .
 
         }}
-		GROUP BY ?position
+		GROUP BY ?position ?spec
         ORDER BY ?position
     """ #TODO check shape type datatag
     results = ontology.query(input_spec_query).bindings
+    print(results)
+    #assert 3 == 2
 
     if results == [{}]:
         return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
+    shapes = [(result['spec'],unpack_shapes(result['shapes'])) for result in results]
     return shapes
 
-
-def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
-    output_spec_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
-        WHERE {{
-            {implementation.n3()} tb:specifiesOutput ?spec .
-            ?spec a tb:DataSpec ;
-                tb:hasSpecTag ?sptg ;
-                tb:has_position ?position .
-            ?sptg tb:hasDatatag ?shape . 
-        }}
-		GROUP BY ?position
-        ORDER BY ?position
-    """ #TODO check shape type datatag
-
-    results = ontology.query(output_spec_query).bindings
-    if results == [{}]:
-        return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
-    return shapes
 
 def unpack_shapes(shapes:str) -> List[URIRef]:
     spec_shapes = shapes.split(',')
@@ -200,29 +184,6 @@ def unpack_shapes(shapes:str) -> List[URIRef]:
     if cb.TestTensorDatasetShape in spec_shapes_uris:
         shape_to_top(cb.TestTensorDatasetShape, spec_shapes_uris)
     return spec_shapes_uris
-
-
-# def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm: URIRef = None) -> \
-#         List[Tuple[URIRef, List[URIRef]]]:
-#     main_implementation_query = f"""
-#     PREFIX tb: <{tb}>
-#     SELECT DISTINCT ?implementation
-#     WHERE {{
-#         ?implementation a tb:Implementation ;
-#             tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
-#         ?algorithm a tb:Algorithm ;
-#             tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
-#         ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
-#     }}
-# """
-#     results = ontology.query(main_implementation_query).bindings
-#     implementations = [result['implementation'] for result in results]
-
-#     implementations_with_shapes = [
-#         (implementation, get_implementation_input_specs(ontology, implementation))
-#         for implementation in implementations]
-
-#     return implementations_with_shapes
 
 def get_potential_implementations(ontology: Graph, algorithm: URIRef, exclude_appliers=True) -> \
         List[URIRef]:
@@ -311,8 +272,8 @@ def targets_dataset(ontology:Graph, shape:URIRef):
     return ontology.query(query).askAnswer
 
 
-def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
+def identify_data_io(ontology: Graph, ios: List[Tuple[URIRef,List[URIRef]]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
+    for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
             if (targets_dataset(ontology, io_shape) 
                 or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
@@ -367,8 +328,8 @@ def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = Fal
                 if not train and not test:
                     return i if return_index else io_shapes
             
-def identify_model_io(ontology: Graph, ios: List[List[URIRef]], return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
+def identify_model_io(ontology: Graph, ios:List[Tuple[URIRef,List[URIRef]]], return_index: bool = False) -> Union[int, List[URIRef]]:
+    for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
             query = f'''
     PREFIX sh: <{SH}>

@@ -26,5 +26,5 @@ class KnimeTextParameter(KnimeParameter, EngineTextParameter):
         super().__init__(key=key, base_parameter=base_parameter, default_value=default_value, path=path, datatype=datatype)
 
 class KnimeFactorParameter(KnimeParameter, EngineFactorParameter):
-    def __init__(self, key:str, levels: dict[str,str], base_parameter:URIRef, default_value:Union[URIRef, LiteralValue], path: str = 'model'):
-        super().__init__(key=key, levels=levels, base_parameter=base_parameter, default_value=default_value, path=path)
+    def __init__(self, key:str, levels: dict[str,str], base_parameter:URIRef, default_value:Union[URIRef, LiteralValue], datatype=XSD.string, path: str = 'model'):
+        super().__init__(key=key, levels=levels, base_parameter=base_parameter, default_value=default_value, path=path, datatype=datatype)

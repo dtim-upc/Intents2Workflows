@@ -114,6 +114,7 @@ INSERT DATA {
 )
 
 
+missing_value_applier_implementation_output_port = OutputIOSpec([IOSpecTag(cb.NonNullTabularDatasetShape)])
 missing_value_applier_implementation = Implementation(
     name='Missing Value (Applier)',
     algorithm=cb.MissingValueRemoval,
@@ -124,7 +125,7 @@ missing_value_applier_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.NonNullTabularDatasetShape)]),
+        missing_value_applier_implementation_output_port
     ],
     implementation_type=tb.ApplierImplementation,
 

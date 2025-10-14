@@ -1,6 +1,6 @@
 from .knime_implementation import KnimeImplementation, KnimeBaseBundle, KnimeDefaultFeature
 from .knime_parameter import KnimeFactorParameter, KnimeSpecificParameter, KnimeTextParameter
-from ..simple.missing_values import missing_value_implementation, missing_value_applier_implementation
+from ..simple.missing_values import missing_value_implementation, missing_value_applier_implementation, missing_value_applier_implementation_output_port
 from ..core import *
 from common import *
 
@@ -15,7 +15,7 @@ string_levels = {
 }
 
 knime_missing_value_implementation = KnimeImplementation(
-    name='Missing Value',
+    name='Knime Missing Value',
     base_implementation=missing_value_implementation,
     parameters=[
         KnimeFactorParameter('factoryID', levels=numeric_levels,
@@ -43,11 +43,15 @@ knime_missing_value_implementation = KnimeImplementation(
 )
 
 knime_missing_value_applier_implementation = KnimeImplementation(
-    name='Missing Value (Applier)',
+    name='Knime Missing Value (Applier)',
     base_implementation=missing_value_applier_implementation,
     parameters=[
     ],
     knime_node_factory='org.knime.base.node.preproc.pmml.missingval.apply.MissingValueApplyNodeFactory',
     knime_bundle=KnimeBaseBundle,
     knime_feature=KnimeDefaultFeature,
+    output_ports=[
+        cb.NONE,
+        missing_value_applier_implementation_output_port.get_uri(missing_value_applier_implementation.uri_ref)
+    ]
 )

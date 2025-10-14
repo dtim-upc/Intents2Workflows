@@ -46,7 +46,6 @@ class Implementation:
             parameter.uri_ref = self.namespace[f'{self.url_name}-{parameter.url_name}']
 
     def add_to_graph(self, g: Graph):
-
         # Base triples
         g.add((self.uri_ref, RDF.type, self.implementation_type))
         g.add((self.uri_ref, RDFS.label, Literal(self.name)))
@@ -56,13 +55,13 @@ class Implementation:
 
         # Input triples
         for i,input_tag in enumerate(self.input):  
-            input_uri = input_tag.add_to_graph(g)
+            input_uri = input_tag.add_to_graph(g, self.uri_ref)
             g.add((self.uri_ref, tb.specifiesInput, input_uri))  
             g.add((input_uri, tb.has_position, Literal(i))) 
 
         # Output triples
         for i,output_tag in enumerate(self.output):
-            output_uri = output_tag.add_to_graph(g)
+            output_uri = output_tag.add_to_graph(g, self.uri_ref)
             g.add((self.uri_ref, tb.specifiesOutput, output_uri))
             g.add((output_uri, tb.has_position, Literal(i))) 
 

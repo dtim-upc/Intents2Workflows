@@ -10,8 +10,8 @@ from ontology_populator.implementations.knime import implementations as implemen
 from ontology_populator.implementations.simple import implementations as implementations_s, components as components_s
 from ontology_populator.implementations.python import implementations as implementations_p
 
-implementations = implementations_k + implementations_s + implementations_p
-components = components_k + components_s
+implementations = implementations_s + implementations_k + implementations_p
+components = components_s
 
 
 def init_cbox() -> Graph:

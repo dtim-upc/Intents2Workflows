@@ -190,6 +190,7 @@ INSERT DATA {
     ],
 )
 
+scailing_applier_output_data = OutputIOSpec([IOSpecTag(cb.NormalizedTabularDatasetShape)])
 scaling_applier_implementation = Implementation(
     name="Scaling (applier)",
     algorithm=cb.Normalization,
@@ -200,7 +201,7 @@ scaling_applier_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.NormalizedTabularDatasetShape)]), 
+        scailing_applier_output_data, 
     ],
     implementation_type=tb.ApplierImplementation,
     counterpart=scaling_learner_implementation

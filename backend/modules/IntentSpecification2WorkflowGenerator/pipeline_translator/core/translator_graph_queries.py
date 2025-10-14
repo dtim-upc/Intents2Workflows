@@ -8,7 +8,7 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 from common import *
-from pipeline_generator.graph_queries import get_implementation_input_specs
+from pipeline_generator.graph_queries import get_implementation_io_specs
 from .algebraic_expression_computation import compute_algebraic_expression
 
 def get_ontology() -> Graph:
@@ -20,7 +20,7 @@ def get_ontology() -> Graph:
     
 
 def get_input_specs(ontology, implementation):
-    return get_implementation_input_specs(ontology, implementation)
+    return get_implementation_io_specs(ontology, implementation, "Input")
 
 
 def is_predictior(ontology: Graph, implementation: URIRef):
@@ -68,11 +68,7 @@ def get_workflow_steps(graph: Graph) -> List[URIRef]:
 def get_step_component_implementation(ontology: Graph, workflow_graph: Graph, step: URIRef) -> Tuple[URIRef, URIRef]:
     component = next(workflow_graph.objects(step, tb.runs, True))
     implementation = next(ontology.objects(component, tb.hasImplementation, True))
-    return component, implementation
-
-def get_number_of_output_ports(ontology: Graph, workflow_graph: Graph, step: URIRef) -> int:
-    _, implementation = get_step_component_implementation(ontology, workflow_graph, step)
-    return sum(1 for _ in ontology.objects(implementation, tb.specifiesOutput))
+    return component, implementation 
 
 def get_step_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
     # print(f'STEP: {step}')
@@ -92,6 +88,25 @@ def get_step_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef) ->
 
 def get_parameter_datatype(ontology: Graph, parameter: URIRef):
     return next(ontology.objects(parameter, tb.has_datatype, True), None)
+
+def get_step_io_specs(workflow_graph:Graph, step:URIRef, type:str):
+    query = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
+                SELECT ?pos ?spec
+                WHERE {{ 
+                    {step.n3()} tb:has{type} ?inp .
+                    ?inp tb:has_spec ?spec ;
+                        tb:has_position ?pos .       
+                }} 
+                ORDER BY ?pos
+            """
+    results = workflow_graph.query(query).bindings
+    return [result['spec'] for result in results]
+
+def get_step_input_specs(workflow_graph:Graph, step:URIRef):
+    return get_step_io_specs(workflow_graph, step, 'Input')
+
+def get_step_output_specs(workflow_graph:Graph, step:URIRef):
+    return get_step_io_specs(workflow_graph, step, 'Output')
 
 def get_step_inputs(workflow_graph:Graph, step:URIRef):
     query = f"""PREFIX tb: <https://extremexp.eu/ontology/tbox#>
