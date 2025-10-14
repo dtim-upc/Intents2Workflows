@@ -68,7 +68,7 @@ def get_workflow_steps(graph: Graph) -> List[URIRef]:
 def get_step_component_implementation(ontology: Graph, workflow_graph: Graph, step: URIRef) -> Tuple[URIRef, URIRef]:
     component = next(workflow_graph.objects(step, tb.runs, True))
     implementation = next(ontology.objects(component, tb.hasImplementation, True))
-    return component, implementation 
+    return component, implementation
 
 def get_step_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef) -> List[Tuple[str, str, str, URIRef]]:
     # print(f'STEP: {step}')

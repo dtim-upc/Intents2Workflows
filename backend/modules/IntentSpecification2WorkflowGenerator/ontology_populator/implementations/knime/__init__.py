@@ -11,7 +11,7 @@ from .csv_io import *
 # from .line_plot import *
 # from .heatmap import *
 from .xgboost import *
-# from .categorical_to_number import *
+from .categorical_to_number import *
 from .projection import *
 
 implementations = [
@@ -35,8 +35,8 @@ implementations = [
     knime_xgboost_linear_learner_implementation,
     knime_xgboost_tree_learner_implementation,
     knime_xgboost_predictor_implementation,
-    #categorizer_implementation,
-    #categorizer_applier_implementation,
+    knime_categorizer_implementation,
+    knime_categorizer_applier_implementation,
     knime_projection_learner_implementation,
     knime_projection_applier_implementation
 ]

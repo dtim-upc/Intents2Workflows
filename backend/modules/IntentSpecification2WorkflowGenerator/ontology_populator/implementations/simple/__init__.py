@@ -10,6 +10,7 @@ from .projection import projection_learner_implementation, projection_numerical_
 from .dbscan import dbscan_implementation, dbscan_component
 from .decision_tree import *
 from .scaling import scaling_learner_implementation, scaling_applier_implementation, z_score_scaling_component, min_max_scaling_component, decimal_scaling_component, scaling_applier_component
+from .factorizer import factorizer_component, factorizer_applier_component, factorizer_applier_implementation, factorizer_implemenation
 
 implementations = [
     nn_learner_implementation,
@@ -32,7 +33,9 @@ implementations = [
     decision_tree_learner_implementation,
     decision_tree_predictor_implementation,
     scaling_learner_implementation,
-    scaling_applier_implementation
+    scaling_applier_implementation,
+    factorizer_implemenation,
+    factorizer_applier_implementation,
 ]
 
 components = [
@@ -75,5 +78,7 @@ components = [
     min_max_scaling_component,
     z_score_scaling_component,
     decimal_scaling_component,
-    scaling_applier_component
+    scaling_applier_component,
+    factorizer_component,
+    factorizer_applier_component,
 ]

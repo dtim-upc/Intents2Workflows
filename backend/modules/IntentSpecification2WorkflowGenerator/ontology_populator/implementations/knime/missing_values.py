@@ -50,8 +50,4 @@ knime_missing_value_applier_implementation = KnimeImplementation(
     knime_node_factory='org.knime.base.node.preproc.pmml.missingval.apply.MissingValueApplyNodeFactory',
     knime_bundle=KnimeBaseBundle,
     knime_feature=KnimeDefaultFeature,
-    output_ports=[
-        cb.NONE,
-        missing_value_applier_implementation_output_port.get_uri(missing_value_applier_implementation.uri_ref)
-    ]
 )

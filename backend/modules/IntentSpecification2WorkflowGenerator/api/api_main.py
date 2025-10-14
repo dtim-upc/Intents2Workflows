@@ -46,7 +46,7 @@ def run_abstract_planner():
     exposed_parameters = data.get('exposed_parameters', '') # The main interface does not query any exposed parameter right now.
     experiment_constraints = data.get('experiment_constraints',{}) # TODO: Provide performance constraints to the main interface
     percentage = data.get('preprocessing_percentage', 1.0) # Default value 100%. TODO: Get percentage through exposed parameters rather than hardcoding it
-    complexity = data.get('workflow_complexity', 0) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
+    complexity = data.get('workflow_complexity', 1) #Values: [0, 1, 2]. More complexity, more components, better results. Less complexity, less components, worse results.
     # TODO: make complexity tunable in the frontend
     
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
