@@ -36,13 +36,15 @@ python_zscore_scaling_implementation = PythonImplementation(
     python_function='StandardScaler',
     template='sklearn_scaling',
     translation_condition=AlgebraicExpression(cb.EQ, mode, "ZScore")
-)
+) 
 
 
 python_scaling_applier_implementation = PythonImplementation(
     name= "Python scaler (applier)",
     baseImplementation=scaling_applier_implementation,
-    parameters=[],
+    parameters=[
+        python_cols
+    ],
     python_module='sklearn.preprocessing',
     module_version='1.7.2',
     python_function='Scaler', #does not matter in this case

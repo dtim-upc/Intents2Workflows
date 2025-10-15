@@ -95,7 +95,9 @@ svm_predictor_implementation = Implementation(
     input=[
         InputIOSpec([IOSpecTag(cb.SVMModel)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape), 
-         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]),
+         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]), 
+         #TODO add spec to filter out textual columns
+         #TODO maybe each columns should be validated against "each" shape to decide what columns need each transformation. Not easy to implement (maybe in the future)
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),

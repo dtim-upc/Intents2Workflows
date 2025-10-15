@@ -1,6 +1,9 @@
 from ..core import *
 from common import *
 
+num_param = Parameter('Numeric columns', XSD.string,"$$NUMERIC_COLUMNS$$")
+factor_param = Parameter('Categorical columns', XSD.string,"$$CATEGORICAL_COLUMNS$$")
+
 missing_value_implementation = Implementation(
     name='Missing Value',
     algorithm=cb.MissingValueRemoval,
@@ -9,8 +12,8 @@ missing_value_implementation = Implementation(
         Parameter('String', XSD.string, None, condition='$$STRING_COLUMN$$'),
         Parameter('Float', XSD.string, None, condition='$$FLOAT_COLUMN$$'),
 
-        Parameter('Numeric columns', XSD.string,"$$NUMERIC_COLUMNS$$"),
-        Parameter('Categorical columns', XSD.string,"$$CATEGORICAL_COLUMNS$$"),
+        num_param,
+        factor_param,
 
         FactorParameter('Numeric strategy', ["MeanImputation", "Drop"]),
         FactorParameter('Factor strategy', ["MostFrequent","Drop"]),
@@ -119,6 +122,8 @@ missing_value_applier_implementation = Implementation(
     name='Missing Value (Applier)',
     algorithm=cb.MissingValueRemoval,
     parameters=[
+        num_param,
+        factor_param
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.MissingValueModel)]),

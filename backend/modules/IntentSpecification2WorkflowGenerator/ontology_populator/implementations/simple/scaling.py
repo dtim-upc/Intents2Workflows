@@ -195,6 +195,7 @@ scaling_applier_implementation = Implementation(
     name="Scaling (applier)",
     algorithm=cb.Normalization,
     parameters=[
+        cols
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.NormalizerModel)]),

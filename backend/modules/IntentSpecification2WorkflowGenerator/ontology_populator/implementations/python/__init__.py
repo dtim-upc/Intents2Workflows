@@ -7,6 +7,7 @@ from .projection import python_projection_learner_implementation, python_project
 from .dbscan import python_dbscan_implementation
 from .decision_tree import python_decision_tree_implementation, python_decision_tree_predictor_implementation
 from .scaling import python_minmax_scaling_implementation, python_zscore_scaling_implementation, python_scaling_applier_implementation
+from .factorizer import python_factorizer_implementation, python_factorizer_applier_implementation
 
 
 implementations = [
@@ -26,7 +27,9 @@ implementations = [
     python_decision_tree_predictor_implementation,
     python_minmax_scaling_implementation,
     python_zscore_scaling_implementation,
-    python_scaling_applier_implementation
+    python_scaling_applier_implementation,
+    python_factorizer_implementation,
+    python_factorizer_applier_implementation,
 ] 
 
  

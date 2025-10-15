@@ -1,0 +1,19 @@
+import {{module}}
+
+def {{step_name}}(data):
+    numeric_cols = {{control["numeric_columns"]}}
+    factor_cols = {{control["categorical_columns"]}}
+    numeric_data = data[numeric_cols]
+    factor_data = data[factor_cols]
+
+    numeric_model={{module}}.{{function}}(strategy="{{control["Numeric strategy"]}}")
+    factor_model ={{module}}.{{function}}(strategy="{{control["Factor strategy"]}}")
+
+    numeric_trained_model= numeric_model.fit(numeric_data)
+    factor_trained_model = factor_model.fit(factor_data)
+
+    data[numeric_cols] = pd.DataFrame(numeric_trained_model.transform(numeric_data),index=data.index)
+    data[factor_cols] = pd.DataFrame(factor_trained_model.transform(factor_data),index=data.index)
+
+    return data, (numeric_trained_model, factor_trained_model)
+
