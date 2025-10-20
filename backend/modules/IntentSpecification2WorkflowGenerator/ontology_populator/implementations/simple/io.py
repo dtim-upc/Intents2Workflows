@@ -9,7 +9,9 @@ data_reader_implementation = Implementation(
         Parameter("Reader File", XSD.string, '$$PATH$$'),
         FactorParameter("Format", levels=FORMATS,  default_value = '$$DATA_RAW_FORMAT$$')
     ],
-    input=[],
+    input=[
+        InputIOSpec([IOSpecTag(cb.UnsatisfiableShape)]),
+    ],
     output=[
         OutputIOSpec([IOSpecTag(cb.TabularDataset)]),
     ],
@@ -37,7 +39,7 @@ data_writer_implementation = Implementation(
     parameters=[
         Parameter('Output path', XSD.string, r"./output.csv"),
     ],
-    input=[InputIOSpec([IOSpecTag(cb.TabularDatasetShape)])],
+    input=[InputIOSpec([IOSpecTag(cb.TabularDataset)])],
     output=[],
 )
 

@@ -93,7 +93,6 @@ def add_parameter_specification(inputs: List[URIRef], workflow_graph: Graph, par
     workflow_graph.add((parameterSpecifcation, tb.hasValue, Literal(injected_value)))
 
 
-
 def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, component: URIRef, inputs:List[URIRef]) -> Dict[URIRef, Tuple[URIRef, Literal]]:
     paramspecs_query = f"""
 
@@ -110,7 +109,6 @@ def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, 
 
     overridden_paramspecs = {paramspec['parameterSpec']: (paramspec['parameter'], paramspec['parameterValue'], paramspec['position']) for paramspec in results}
 
-    
     for paramspec, paramval_tup in overridden_paramspecs.items():
         param, value, _ = paramval_tup
         add_parameter_specification(inputs, workflow_graph, param, paramspec, value)
@@ -138,7 +136,7 @@ def inject_value(graph:Graph, inputs: List[URIRef], value:str, intent_graph: Gra
             numeric_cols.append(target.value)
         new_value = value.replace('$$NUMERIC_AND_TARGET_COLUMNS$$', f'{numeric_cols}')
     if '$$PATH$$' in value:
-        new_value = value.replace('$$PATH$$', f'{get_path(graph, inputs)}')
+        new_value = value.replace('$$PATH$$', f'{get_path_from_inputs(graph, inputs)}')
     if '$$CATEGORICAL_COLUMNS$$' in value:
         new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
     if '$$DATA_RAW_FORMAT$$' in value:
@@ -277,11 +275,26 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
             graph.add((previous_task, tb.followedBy, step))
     return step
 
+def get_path(data_graph:Graph, input:URIRef) -> str:
+    query = f"""
+        PREFIX tb: <{tb}>
+        SELECT ?path
+        WHERE {{
+            {input.n3()} a tb:Dataset ;
+                dmop:path ?path .
+        }}
+    """ 
+    results = data_graph.query(query).bindings
+    return results[0]['path'] if len(results) >= 1 else None
 
-def get_path(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = next(i for i in inputs if (i, RDF.type, dmop.TabularDataset) in graph)
-    path = next(graph.objects(data_input, dmop.path), True)
-    return path.value
+def get_path_from_inputs(graph: Graph, inputs: List[URIRef]) -> str:
+    
+    for i in inputs:
+        path = get_path(graph, i)
+        if not path is None:
+            return path.value
+    
+    return ""
 
 
 def copy_subgraph(source_graph: Graph, source_node: URIRef, destination_graph: Graph, destination_node: URIRef,
@@ -568,8 +581,11 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     copy_subgraph(ontology, dataset, workflow_graph, dataset_node)
 
     format:str = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
+    dataset_type = next(workflow_graph.objects(dataset_node,RDF.type))
 
-    loader_component = cb.term(f'component-{format.lower()}_reader_component')
+    tensor = '_(tensor)' if dataset_type == dmop.TensorDataset else ''
+
+    loader_component = cb.term(f'component-{format.lower()}_reader_component{tensor}') #TODO dynameically choose the reader component
     saver_component = cb.term(f'component-data_writer_component')
 
     loader_step = add_loader_step(ontology, workflow_graph, workflow, dataset_node,loader_component)

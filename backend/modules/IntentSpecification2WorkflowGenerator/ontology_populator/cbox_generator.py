@@ -246,6 +246,20 @@ def add_subproperties(cbox):
 
 
 def add_shapes(cbox):
+
+    #UnsatisfiableShape
+    dummy_property = BNode()
+    cbox.add((dummy_property, RDF.type, SH.PropertyShape))
+    cbox.add((dummy_property, SH.minCount, Literal(1)))
+    cbox.add((dummy_property, SH.maxCount, Literal(0)))
+    cbox.add((dummy_property, SH.path, cb.Something))
+
+    unsatisfiable_shape=cb.UnsatisfiableShape
+    cbox.add((unsatisfiable_shape, RDF.type, SH.NodeShape))
+    cbox.add((unsatisfiable_shape, SH.targetClass, OWL.Thing))
+    cbox.add((unsatisfiable_shape, SH.property, dummy_property))
+
+
     # NonNullNumericFeatureColumnShape
     column_shape = cb.NonNullNumericFeatureColumnShape
     # column_shape = BNode()

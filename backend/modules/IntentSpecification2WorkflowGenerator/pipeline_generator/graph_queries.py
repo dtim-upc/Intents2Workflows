@@ -157,8 +157,6 @@ def get_implementation_io_specs(ontology: Graph, implementation: URIRef, type = 
         ORDER BY ?position
     """ #TODO check shape type datatag
     results = ontology.query(input_spec_query).bindings
-    print(results)
-    #assert 3 == 2
 
     if results == [{}]:
         return []
@@ -226,6 +224,7 @@ def get_implementation_components(ontology: Graph, implementation: URIRef) -> Li
     results = ontology.query(components_query).bindings
     return [result['component'] for result in results]
 
+
 def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
     implementation_query = f"""
         PREFIX tb: <{tb}>
@@ -272,12 +271,16 @@ def targets_dataset(ontology:Graph, shape:URIRef):
     return ontology.query(query).askAnswer
 
 
+#TODO: this function is a monster. Refactoring would be nice
 def identify_data_io(ontology: Graph, ios: List[Tuple[URIRef,List[URIRef]]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
     for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
+            print(io_shape, "evaluation:")
             if (targets_dataset(ontology, io_shape) 
                 or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
-                or io_shape.fragment == "TabularDatasetShape"):
+                or io_shape.fragment == "TabularDatasetShape") or True:
+
+                print(io_shape, "pass")
 
                 if test:
                     test_query = f'''
