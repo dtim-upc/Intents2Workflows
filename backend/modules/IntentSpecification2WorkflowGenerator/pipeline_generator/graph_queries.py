@@ -275,12 +275,9 @@ def targets_dataset(ontology:Graph, shape:URIRef):
 def identify_data_io(ontology: Graph, ios: List[Tuple[URIRef,List[URIRef]]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
     for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
-            print(io_shape, "evaluation:")
             if (targets_dataset(ontology, io_shape) 
                 or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
                 or io_shape.fragment == "TabularDatasetShape") or True:
-
-                print(io_shape, "pass")
 
                 if test:
                     test_query = f'''

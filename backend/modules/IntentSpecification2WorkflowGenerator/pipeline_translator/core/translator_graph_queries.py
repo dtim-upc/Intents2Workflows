@@ -287,7 +287,7 @@ def get_translation_condition(ontology: Graph, implementation:URIRef):
     return result[0]['condition']
 
 def get_engine_implementation(ontology: Graph, base_implementation:URIRef, parameters:dict, engine:URIRef):
-    print(engine)
+
     query = f'''
     PREFIX tb: <{tb}>
     SELECT ?impl
@@ -303,8 +303,6 @@ def get_engine_implementation(ontology: Graph, base_implementation:URIRef, param
         for r in result:
             implementation = r['impl']
             cond = get_translation_condition(ontology, implementation)
-            print("Condition:", cond, "parameters:", parameters, implementation)
-            #print(compute_algebraic_expression(ontology, cond, parameters))
             if compute_algebraic_expression(ontology, cond, parameters):
                 return implementation
         print(f"ERROR: No translation condition matched for {base_implementation} in {engine} engine.")

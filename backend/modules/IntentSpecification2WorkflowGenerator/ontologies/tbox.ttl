@@ -91,6 +91,10 @@ tb:PlotType a owl:Class .
 
 tb:WorkflowCharacteristics a owl:Class .
 
+tb:compatibleWith a owl:ObjectProperty ;
+    rdfs:domain tb:Implementation ;
+    rdfs:range tb:Engine .
+
 tb:constrainedBy a owl:ObjectProperty ;
     rdfs:domain tb:Intent ;
     rdfs:range tb:ExperimentConstraint .
@@ -114,11 +118,6 @@ tb:defines a owl:ObjectProperty ;
 tb:derivedFrom a owl:ObjectProperty ;
     rdfs:domain tb:DerivedParameter ;
     rdfs:range tb:AlgebraicExpression .
-
-tb:engine a owl:ObjectProperty ;
-    rdfs:domain tb:EngineImplementation,
-        tb:compatibleWith ;
-    rdfs:range tb:Engine .
 
 tb:exposesParameter a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
@@ -277,6 +276,10 @@ tb:has_datatype a owl:ObjectProperty ;
 tb:has_defaultvalue a owl:ObjectProperty ;
     rdfs:domain tb:Parameter .
 
+tb:has_engine a owl:ObjectProperty ;
+    rdfs:domain tb:EngineImplementation ;
+    rdfs:range tb:Engine .
+
 tb:has_position a owl:DatatypeProperty ;
     rdfs:domain [ owl:unionOf ( tb:Data tb:DataSpec tb:Step tb:Parameter ) ] ;
     rdfs:range xsd:integer .
@@ -372,8 +375,6 @@ tb:BaseParameter a owl:Class ;
 
 tb:DataTag a owl:Class .
 
-tb:Engine a owl:Class .
-
 tb:EngineImplementation a owl:Class .
 
 tb:FactorLevel a owl:Class .
@@ -409,6 +410,8 @@ tb:Dataset a owl:Class .
 
 tb:DerivedParameter a owl:Class ;
     rdfs:subClassOf tb:Parameter .
+
+tb:Engine a owl:Class .
 
 tb:Metric a owl:Class .
 
@@ -469,9 +472,9 @@ tb:Task a owl:Class .
 
 tb:Workflow a owl:Class .
 
-tb:Implementation a owl:Class .
-
 tb:Step a owl:Class .
+
+tb:Implementation a owl:Class .
 
 tb:Component a owl:Class .
 

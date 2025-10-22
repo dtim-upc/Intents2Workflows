@@ -132,7 +132,6 @@ tensor_top_relative_train_test_split_component = Component(
         ParameterSpecification(list(implementation_parameters.keys())[1], "First"),
     ],
     exposed_parameters=[
-        next((param for param in tensor_partitioning_implementation.parameters.keys() if param.label == 'Fraction (Relative size)'), None),
     ],
     rules={
         (cb.Classification, 1):[

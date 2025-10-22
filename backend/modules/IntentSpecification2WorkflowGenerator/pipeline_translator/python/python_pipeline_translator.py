@@ -38,7 +38,6 @@ def split_parameters(ontology: Graph, params: Dict[str,str]):
     function_params = {}
     for param_uri, param_data in params.items():
         key, value = param_data
-        print(list(ontology.objects(param_uri, tb.isControlParameter,unique=True)))
         if next(ontology.objects(param_uri, tb.isControlParameter,unique=True),False):
             control_params[key.toPython()] = value
         else:
@@ -68,7 +67,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
         python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
         cp, function_params = split_parameters(ontology, python_step_parameters)
         control_params.update(cp)
-        print("Control:",control_params) 
+        #print("Control:",control_params) 
         #print("Function:",function_params)
 
         python_module = get_python_module(ontology, engine_implementation)

@@ -64,7 +64,7 @@ def is_expression(ontology:Graph, uri:URIRef):
 def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_parameters:URIRef):
     term1, term2, operation = unpack_expression(ontology,expression)
 
-    print("Computing expression:", term1, term2, operation)
+    #print("Computing expression:", term1, term2, operation)
 
     assert not term1 is None and not operation is None
     operation = URIRef(operation).fragment
@@ -90,12 +90,12 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
         return value
     
     value_1 = compute_term_value(term1)
-    print("Value 1:", value_1)
+    #print("Value 1:", value_1)
     value_2 = compute_term_value(term2)
-    print("Value 2:", value_2)
+    #print("Value 2:", value_2)
 
     result = calculate(value_1, value_2, operation)
-    print("Result:",result)
+    #print("Result:",result)
 
     if type(result) == float and result.is_integer():
         return int(result) #Always returns the result as integer when possible

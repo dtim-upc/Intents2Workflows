@@ -247,7 +247,6 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
     graph.add((step, RDF.type, tb.Step))
     graph.add((step, tb.runs, component))
     graph.add((step, tb.has_position, Literal(order)))
-    print("Inputt", inputs)
     for i, input in enumerate(inputs):
         in_node = BNode()
         graph.add((in_node, RDF.type, tb.Data))
@@ -261,7 +260,6 @@ def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
         out_node = BNode()
         graph.add((out_node, RDF.type, tb.Data))
         graph.add((out_node, tb.has_data, output))
-        print("OUTPUT SPECSSS:",output_specs[o])
         graph.add((out_node, tb.has_spec, output_specs[o][0]))
         graph.add((out_node, tb.has_position, Literal(o)))
         graph.add((step, tb.hasOutput, out_node))
@@ -439,9 +437,8 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
         temporal_graph.add((workflow, RDF.type, tb.Workflow))
         
         triples_to_add = []
-        triples_to_add.append((workflow, tb.hasComponent, main_component, temporal_graph))
 
-        for component in combination[:-1]:
+        for component in combination:
             triples_to_add.append((workflow, tb.hasComponent, component, temporal_graph))  
         
         temporal_graph.addN(triples_to_add)
@@ -483,7 +480,7 @@ def add_saver_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, tes
     saver_overridden_paramspecs = get_component_overridden_paramspecs(ontology, workflow_graph, saver_component,[test_dataset_node])
     saver_param_specs = assign_to_parameter_specs([test_dataset_node],workflow_graph, saver_parameters)
     saver_param_specs.update(saver_overridden_paramspecs)
-    return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [(cb["implementation-data_writer-InputSpec-TabularDatasetShape"], None)])
+    return add_step(workflow_graph, workflow, saver_step_name, saver_component, saver_param_specs,task_order, previous_test_step, [test_dataset_node], [(cb["implementation-data_writer-InputSpec-TabularDataset"], None)])
 
 def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, workflow: URIRef, workflow_name: str, 
                   max_imp_level: int, component:URIRef, task_order: int, previous_step: URIRef, input_data: URIRef, input_model: URIRef):
@@ -492,7 +489,6 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     component_implementation = graph_queries.get_component_implementation(ontology, component)
     engine_compatibility = graph_queries.get_implementation_engine_compatibility(ontology, component_implementation)
     input_specs = graph_queries.get_implementation_io_specs(ontology,component_implementation,"Input",max_imp_level)
-    print("Input specs",input_specs) 
     input_data_index = graph_queries.identify_data_io(ontology, input_specs, return_index=True)
     input_model_index = graph_queries.identify_model_io(ontology, input_specs, return_index=True)
 
@@ -525,7 +521,6 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
     param_specs = assign_to_parameter_specs(transformation_inputs, workflow_graph, parameters, intent_graph=intent_graph)
     param_specs.update(overridden_parameters)
 
-    print("Step", step_name, "Transf_inputs", transformation_inputs)
     step = add_step(workflow_graph, workflow,
                         step_name,
                         component,
@@ -535,8 +530,7 @@ def add_component(ontology: Graph, intent_graph:Graph, workflow_graph: Graph, wo
                         input_specs,
                         transformation_outputs,
                         output_specs)
-    run_component_transformation(ontology, workflow_graph, component,
-                                    transformation_inputs, transformation_outputs, param_specs)
+    run_component_transformation(ontology, workflow_graph, component, transformation_inputs, transformation_outputs, param_specs)
     
 
     train_dataset_index = graph_queries.identify_data_io(ontology, output_specs, train=True, return_index=True)
@@ -581,7 +575,7 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     copy_subgraph(ontology, dataset, workflow_graph, dataset_node)
 
     format:str = next(workflow_graph.objects(dataset_node,dmop.fileFormat,unique=True),Literal("unknown")).value
-    dataset_type = next(workflow_graph.objects(dataset_node,RDF.type))
+    dataset_type = next(workflow_graph.objects(dataset_node,RDF.type)) #TODO do it once (not for every workflow generation)
 
     tensor = '_(tensor)' if dataset_type == dmop.TensorDataset else ''
 
@@ -598,9 +592,6 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
     test_dataset_node = None
 
     compatibility = set(graph_queries.get_engines(ontology))
-
-    print("Transfs:", *transformations)
-
 
     for train_component in [*transformations, main_component]:
         test_component = next(ontology.objects(train_component, tb.hasApplier, True), None)
@@ -637,7 +628,6 @@ def build_general_workflow(workflow_name: str, ontology: Graph, dataset: URIRef,
         
     for engine in compatibility:
         workflow_graph.add((workflow, tb.compatibleWith, engine))  
-    #workflow_graph.add((workflow,tb.knimeCompatible,Literal(knime_compatible)))
                 
     return workflow_graph, workflow
 
@@ -741,7 +731,8 @@ def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, pla
             elms.extend(comp_list)
             total_comb = total_comb * num_comb
         return elms, total_comb
-    
+
+import time   
 def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, pot_impls, log: bool = False) -> List[Graph]:
 
     dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
@@ -766,6 +757,8 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
     workflows = []
     t_comb = 0
 
+    t = time.time()
+
     for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0,
                                                 leave=False):
         #tqdm.write(str(workflow_order))
@@ -780,7 +773,7 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
         for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1,
                                                 leave=False):
 
-            if is_valid_workflow_combination(ontology, shape_graph, component_combination):
+            if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
                 workflow_name = f'workflow_{workflow_order}_{intent_iri.fragment}_{uuid.uuid4()}'.replace('-', '_')
             
                 wg, w = build_general_workflow(workflow_name, ontology, dataset, component_combination[-1],
@@ -795,5 +788,7 @@ def build_workflows(ontology: Graph, shape_graph: Graph, intent_graph: Graph, po
                 workflows.append(wg)
                 workflow_order += 1
 
+    t2 = time.time()
+    print("Temps total",t2-t)
     return workflows
     

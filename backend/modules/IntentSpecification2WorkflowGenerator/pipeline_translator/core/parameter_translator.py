@@ -48,7 +48,6 @@ def translate_numeric_params(ontology:Graph, implementation:URIRef, step_paramet
     for param in numeric_params:
         alg_expression = queries.get_algebraic_expression(ontology, param)
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
-        print("VALÖ",value, type(value))
  
         if value is None:
             value = queries.get_default_value(ontology, param)

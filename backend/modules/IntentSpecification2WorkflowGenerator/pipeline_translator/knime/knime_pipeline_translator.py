@@ -45,7 +45,6 @@ def get_knime_port(ontology_Graph:Graph, implementation:URIRef, step_spec:URIRef
                     tb:hasSpec {step_spec.n3()} .
     }}
     """
-    print(query)
 
     result = ontology_Graph.query(query).bindings
 
@@ -140,7 +139,7 @@ def get_config_parameters(ontology: Graph, engine_implementation: URIRef, parame
     return param_dict
 
 def get_number_of_knime_output_ports(ontology:Graph, engine_implementation:URIRef) -> int:
-    print("Ports", list(ontology.objects(engine_implementation, tb.knime_output_port)), engine_implementation.fragment)
+    #print("Ports", list(ontology.objects(engine_implementation, tb.knime_output_port)), engine_implementation.fragment)
     return sum(1 for _ in ontology.objects(engine_implementation, tb.knime_output_port))
 
 
@@ -155,7 +154,6 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
     properties = get_knime_properties(ontology, engine_implementation)
     conf_params = get_config_parameters(ontology, engine_implementation, knime_step_parameters)
     num_ports = get_number_of_knime_output_ports(ontology, engine_implementation)
-    print("number of output ports", num_ports, "for", step.fragment)
 
     step_template = environment.get_template("step.py.jinja")
     step_file = step_template.render(properties = properties,
