@@ -12,16 +12,16 @@ The supported operations are:
 $operand1 + operand2$
 
 * **cb.SUB:**
-$ operand1 - operand2$
+$operand1 - operand2$
 
 * **cb.MUL:**
-$ operand1 \cdot operand2 $
+$operand1 \cdot operand2 $
 
 * **cb.DIV:**
-$ \frac{operand1}{operand2} $
+$\frac{operand1}{operand2} $
 
 * **cb.POW:**
-$ operand1^{operand2} $
+$operand1^{operand2} $
 
 * **cb.SQRT:**
 $\sqrt{operand1}$ (operand2 is ignored)
