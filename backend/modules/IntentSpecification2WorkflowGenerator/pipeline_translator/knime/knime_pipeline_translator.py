@@ -1,3 +1,4 @@
+import enum
 import os
 import sys
 import tempfile
@@ -5,7 +6,7 @@ import zipfile
 import shutil
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-from typing import Tuple, Dict, List
+from typing import Literal as Lit, Dict, List
 import jinja2
 
 from tqdm import tqdm
@@ -17,7 +18,9 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
-from pipeline_translator.core.translator_common_functions import *
+
+from ..core.translator_graph_queries import *
+from ..core.parameter_translator import translate_parameters
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -27,17 +30,55 @@ except ImportError:
     easygui = None
 
 
+def get_knime_port(ontology_Graph:Graph, implementation:URIRef, step_spec:URIRef, type:Lit["input", "output"]):
+
+    assert type in ["input", "output"], "invalid port type"
+
+    query= f"""
+    PREFIX tb: <{tb}>
+    SELECT ?knime_port_order
+    WHERE {{
+        {implementation.n3()} a tb:EngineImplementation ;
+                tb:has_engine cb:KNIME ;
+                tb:knime_{type}_port ?knime_port .
+        ?knime_port tb:hasOrder ?knime_port_order ;
+                    tb:hasSpec {step_spec.n3()} .
+    }}
+    """
+
+    result = ontology_Graph.query(query).bindings
+
+    assert len(result) == 1, result
+
+    return result[0]['knime_port_order']
+
+
 
 def get_knime_properties(ontology: Graph, implementation: URIRef) -> Dict[str, str]:
     results = {}
+    #print(f"Getting KNIME properties for implementation {implementation}")
     for p, o in ontology.predicate_objects(implementation):
+        #print(f"Property: {p}, Object: {o}")
         if p.fragment.startswith('knime'):
-            results[p.fragment[6:]] = o.value
+            if o == cb.NONE:
+                results[p.fragment[6:]] = None
+            elif p.fragment == "knime_input_port":
+                continue
+            elif p.fragment == "knime_output_port":
+                continue
+            else:
+                results[p.fragment[6:]] = o.value
             # print(f"THIS: {p.fragment[6:]} ---> {o.value}")
     return results
 
-def update_param_hierarchy(param_dict:Dict, path: List[str], element):
 
+def update_param_hierarchy(param_dict:Dict, path: List[str], element):
+    #print(f"Updating param hierarchy. path: {path}, element: {element}")
+
+    if path == cb.NONE:
+        print("Path is NONE for parameter ", element)
+        return param_dict
+    
     if len(path) == 0:
         if element[0] != "$$SKIP$$":
             param_dict['elements'].append(element)
@@ -46,14 +87,14 @@ def update_param_hierarchy(param_dict:Dict, path: List[str], element):
         if level not in param_dict['folders']:
             param_dict['folders'][level] = {
                 'folders': {},
-                'elements': []
+                'elements': [] 
             }
         param_dict[level] = update_param_hierarchy(param_dict['folders'][level], path, element)
     
     return param_dict
 
 
-def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
+def get_config_parameters(ontology: Graph, engine_implementation: URIRef, parameters:Dict):
     types = {
         XSD.string: 'xstring',
         cb.term('char'): 'xchar',
@@ -65,42 +106,61 @@ def get_config_parameters(ontology: Graph, workflow_graph: Graph, step: URIRef):
         XSD.boolean: 'xboolean',
         RDF.List: ''
     }
-
-    parameters = get_step_parameters(ontology, workflow_graph, step)
     param_dict = {'folders': {},
                   'elements': []}
     
 
-    for key, value, path, value_type in parameters:
+
+    for param_uri, param_data in parameters.items():
+        value_type=get_parameter_datatype(ontology, param_uri)
+        knime_key, value = param_data
+        knime_key = next(ontology.objects(param_uri, tb.knime_key, unique=True), '')
+        knime_path = next(ontology.objects(param_uri, tb.knime_path, unique=True), '')
+        #print(f"Key: {key}, knime_key: {knime_key}, Value: {value}, Type: {value_type}, Path: {knime_path}, Param URI: {param_uri}")
+        param_list = []
+
         if value_type == RDF.List:
             param_value = value.replace("[", "").replace("]", "").replace("\'", "").replace(" ","").split(',')
-            arrayPath = path+'/'+key
-            parameters.append( ("array-size", str(len(param_value)), arrayPath, XSD.int) )
+            knime_path = knime_path+'/'+ knime_key
+            param_list.append( ("array-size", str(len(param_value)), types[XSD.int]) )
             for i,param in enumerate(param_value):
-                parameters.append((str(i),param,arrayPath,XSD.string))
+                param_list.append((str(i),param, types[XSD.string]))      
         else:
-            if value is None or (isinstance(value, str) and value.lower() == 'none'):
+            if value is None or (isinstance(value, str) and value.lower() == 'none') or value == cb.NONE:
                 param_value = None
             else:
                 param_value = value
+            
+            param_list.append((str(knime_key),param_value,types[value_type]))
 
-            param_dict = update_param_hierarchy(param_dict, path.split('/'),(str(key),param_value,types[value_type]))
+        for param in param_list:    
+            param_dict = update_param_hierarchy(param_dict, knime_path.split('/'), param)
+
     return param_dict
+
+def get_number_of_knime_output_ports(ontology:Graph, engine_implementation:URIRef) -> int:
+    #print("Ports", list(ontology.objects(engine_implementation, tb.knime_output_port)), engine_implementation.fragment)
+    return sum(1 for _ in ontology.objects(engine_implementation, tb.knime_output_port))
 
 
 def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folder, iterator: int) -> str:
 
     component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
-    properties = get_knime_properties(ontology, implementation)
-
     
-    conf_params = get_config_parameters(ontology, workflow_graph, step)
-    num_ports = get_number_of_output_ports(ontology, workflow_graph, step)
+    step_parameters = get_step_parameters_agnostic(workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
+    engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine=cb.KNIME)
+    knime_step_parameters = translate_parameters(ontology=ontology, step_parameters=step_parameters, engine_implementation=engine_implementation)
+    
+    properties = get_knime_properties(ontology, engine_implementation)
+    conf_params = get_config_parameters(ontology, engine_implementation, knime_step_parameters)
+    num_ports = get_number_of_knime_output_ports(ontology, engine_implementation)
 
     step_template = environment.get_template("step.py.jinja")
     step_file = step_template.render(properties = properties,
-                                     parameters = conf_params,
+                                     parameters = conf_params,  
                                      num_ports = num_ports)
+    
+    #print("Properties:", properties)
     
     path_name = properties["node-name"].replace('(', '_').replace(')', '_')
     
@@ -111,7 +171,13 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
     with open(os.path.join(subfolder, 'settings.xml'), encoding='UTF-8', mode='w') as file:
         file.write(step_file)
 
-    return subfolder_name
+    ports = {
+        "Input":get_step_input_specs(workflow_graph, step),
+        "Output":get_step_output_specs(workflow_graph,step),
+        "EngineImpl":engine_implementation
+    }
+
+    return subfolder_name, ports
 
 
 def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
@@ -135,20 +201,25 @@ def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
     with open(os.path.join(folder, 'workflowset.meta'), 'w') as f:
         f.write(workflow_metadata_file)
 
-def get_connections_config(workflow_graph: Graph, steps: List[URIRef]):
+
+def get_connections_config(ontology: Graph, workflow_graph: Graph, steps:List[URIRef],steps_info: dict):
     connections = get_workflow_connections(workflow_graph)
     connections_ids = []
     for source, destination, source_port, destination_port in connections:
-        connections_ids.append((steps.index(source), steps.index(destination), source_port+1, destination_port+1))
+        s_spec = steps_info[source.fragment]["Output"][int(source_port)]
+        d_spec = steps_info[destination.fragment]["Input"][int(destination_port)]
+        connections_ids.append((steps.index(source), steps.index(destination), 
+                                get_knime_port(ontology, steps_info[source.fragment]["EngineImpl"], s_spec, 'output')+1, 
+                                get_knime_port(ontology, steps_info[destination.fragment]["EngineImpl"], d_spec, 'input')+1))
     
     return connections_ids
 
 
-def create_workflow_file(ontology:Graph, workflow_graph: Graph, steps: List[URIRef], step_paths: List[str],
+def create_workflow_file(ontology:Graph, workflow_graph: Graph, steps:List[URIRef], steps_info: dict, step_paths: List[str],
                          folder: str) -> None:
     
-    is_applier = [ is_applier_step(ontology, workflow_graph, step) for step in steps]
-    connections = get_connections_config(workflow_graph, steps)
+    is_applier = [is_applier_step(ontology, workflow_graph, step) for step in steps]
+    connections = get_connections_config(ontology,workflow_graph, steps, steps_info)
     metadata_template = environment.get_template("workflow.py.jinja")
     workflow_file = metadata_template.render(steps = zip(step_paths,is_applier),
                                              connections = connections,
@@ -186,11 +257,14 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str, ke
     tqdm.write('\tBuilding steps')
     steps = get_workflow_steps(graph)
     step_paths = []
+    step_info = {}
     for i, step in enumerate(steps):
-        step_paths.append(create_step_file(ontology, graph, step, temp_folder, i))
+        subfloder, ports = create_step_file(ontology, graph, step, temp_folder, i)
+        step_paths.append(subfloder)
+        step_info[step.fragment] = ports
 
     tqdm.write('\tCreating workflow file')
-    create_workflow_file(ontology, graph, steps, step_paths, temp_folder)
+    create_workflow_file(ontology, graph, steps, step_info, step_paths, temp_folder)
 
     tqdm.write('\tCreating zip file')
     package_workflow(temp_folder, destination_path)

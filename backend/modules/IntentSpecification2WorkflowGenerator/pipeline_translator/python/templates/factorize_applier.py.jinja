@@ -1,0 +1,10 @@
+import {{module}}
+
+def {{step_name}}({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %}):
+    columns_to_factorize = {{control["columns"]}}
+
+    stacked = input1[columns_to_factorize].stack()
+    input1[columns_to_factorize] = pd.Series(stacked.factorize()[0], index=stacked.index).unstack()
+
+    return input1
+

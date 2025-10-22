@@ -1,0 +1,5 @@
+{% for step in steps %}
+{%- for output in step_files[step]['outputs'] %}output{{output}}{% if not loop.last %}, {% endif -%}{% endfor -%}
+{%- if step_files[step]['outputs']|length > 0%} = {% endif %}{{step_files[step]['task']}}(
+{%- for input in step_files[step]['inputs'] %}output{{input}}{% if not loop.last %}, {% endif -%}{% endfor %}) 
+{% endfor %}

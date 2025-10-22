@@ -1,0 +1,15 @@
+import {{module}}
+
+def {{step_name}}(trained_models, data):
+    numeric_trained_model, factor_trained_model = trained_models
+
+    numeric_cols = {{control["numeric_columns"]}}
+    factor_cols = {{control["categorical_columns"]}}
+    numeric_data = data[numeric_cols]
+    factor_data = data[factor_cols]
+
+    data[numeric_cols] = pd.DataFrame(numeric_trained_model.transform(numeric_data),index=data.index)
+    data[factor_cols] = pd.DataFrame(factor_trained_model.transform(factor_data),index=data.index)
+
+    return data
+

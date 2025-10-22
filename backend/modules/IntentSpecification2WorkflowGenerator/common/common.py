@@ -25,8 +25,8 @@ def get_ontology_graph():
         r'ontologies/cbox.ttl',
         r'ontologies/abox.ttl',
         # r'dataset_annotator/penguins_annotated.ttl',
-        r'dataset_annotator/annotated_datasets/titanic_annotated.ttl',
-        r'dataset_annotator/annotated_datasets/diabetes_annotated.ttl',
+        #r'dataset_annotator/annotated_datasets/titanic_annotated.ttl',
+        #r'dataset_annotator/annotated_datasets/diabetes_annotated.ttl',
     ]
     for o in ontologies:
         graph.parse(o, format="turtle")

@@ -2,7 +2,6 @@ from typing import Union
 
 import os 
 import sys
-from .parameter_specification import ParameterSpecification
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
@@ -10,8 +9,8 @@ LiteralValue = Union[str, bool, int, float, None]
 
 
 class Parameter:
-    def __init__(self, label: str, datatype: URIRef, default_value: Union[URIRef, LiteralValue],
-                 condition: str = '') -> None:
+    def __init__(self, label: str, datatype: URIRef, default_value: Union[URIRef, LiteralValue]=None,
+                 condition: str = '', engine='Simple') -> None:
         super().__init__()
         self.label = label
         self.datatype = datatype
@@ -21,3 +20,10 @@ class Parameter:
         self.url_name = self.label.replace(' ', '_').replace('-', '_').lower()
 
         self.uri_ref = None
+        self.engine = engine
+
+class FactorParameter(Parameter):
+    def __init__(self, label:str, levels: list[str], default_value = None) -> None:
+        super().__init__(label, XSD.string, default_value) #at dthe moment no XSD.enumeration
+        self.levels = levels
+

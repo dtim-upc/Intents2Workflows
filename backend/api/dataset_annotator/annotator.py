@@ -15,9 +15,11 @@ def add_dataset_info(dataset_path, graph, label):
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
     add_metadata_info(data_loader.getFileMetadata(), dataset_node, graph)
 
-    if data_loader.fileFormat == "NumpyZip":
+    if data_loader.fileFormat in ["NumpyZip"]:
+        print('Adding tensor info ... ')
         add_tensor_info(data_loader.getDataFrame(), dataset_node, graph)
     else:
+        print('Adding dataframe info ... ')
         add_dataframe_info(data_loader.getDataFrame(), dataset_node, graph, label)
     return dataset_node
 

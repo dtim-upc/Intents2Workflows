@@ -1,6 +1,9 @@
 build
 .gradle
 .idea
+.vscode
+.venv
+
 api/dbFiles
 
 *.bpt

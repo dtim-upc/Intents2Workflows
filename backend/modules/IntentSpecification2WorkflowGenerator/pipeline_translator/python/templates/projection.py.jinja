@@ -1,0 +1,6 @@
+
+def {{step_name}}(data):
+    columns = {%for p, v in parameters%}{{v}}{%endfor%}
+    return data[columns]
+
+

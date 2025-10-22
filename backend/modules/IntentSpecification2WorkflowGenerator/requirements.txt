@@ -9,6 +9,8 @@ rdflib-jsonld
 pandas
 scipy
 fastparquet
+laspy
+numpy
 
 # dsl translator
 Jinja2

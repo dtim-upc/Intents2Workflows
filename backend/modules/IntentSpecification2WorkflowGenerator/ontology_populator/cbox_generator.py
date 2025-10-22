@@ -8,9 +8,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import *
 from ontology_populator.implementations.knime import implementations as implementations_k, components as components_k
 from ontology_populator.implementations.simple import implementations as implementations_s, components as components_s
+from ontology_populator.implementations.python import implementations as implementations_p
 
-implementations = implementations_k + implementations_s
-components = components_k + components_s
+implementations = implementations_s + implementations_k + implementations_p
+components = components_s
 
 
 def init_cbox() -> Graph:
@@ -21,6 +22,30 @@ def init_cbox() -> Graph:
 
     return cbox
 
+def add_operations(cbox):
+    operations = [
+        cb.SUM,
+        cb.SUB,
+        cb.MUL,
+        cb.DIV,
+        cb.POW,
+        cb.SQRT,
+        cb.EQ,
+        cb.NEQ,
+        cb.COPY,
+    ]
+
+    for o in operations:
+        cbox.add((o, RDF.type, tb.Operation))
+
+def add_engines(cbox):
+    engines = [
+        cb.KNIME,
+        cb.Python,
+    ]
+
+    for engine in engines:
+        cbox.add((engine, RDF.type, tb.Engine))
 
 def add_problems(cbox):
     problems = [
@@ -93,6 +118,7 @@ def add_algorithms(cbox):
         # Data Management
         (cb.Partitioning, cb.DataManagement),
         (cb.LabelExtraction, cb.DataManagement),
+        (cb.DropColumns, cb.DataManagement),
 
         # Data Visualization
         (cb.PieChart, cb.DataVisualization),
@@ -142,6 +168,7 @@ def add_models(cbox):
         'XGBoostModel',
         'NNModel',
         'NumericCategoricalModel',
+        'ProjectionModel',
     ]
 
     cbox.add((cb.Model, RDFS.subClassOf, tb.Data))
@@ -219,6 +246,20 @@ def add_subproperties(cbox):
 
 
 def add_shapes(cbox):
+
+    #UnsatisfiableShape
+    dummy_property = BNode()
+    cbox.add((dummy_property, RDF.type, SH.PropertyShape))
+    cbox.add((dummy_property, SH.minCount, Literal(1)))
+    cbox.add((dummy_property, SH.maxCount, Literal(0)))
+    cbox.add((dummy_property, SH.path, cb.Something))
+
+    unsatisfiable_shape=cb.UnsatisfiableShape
+    cbox.add((unsatisfiable_shape, RDF.type, SH.NodeShape))
+    cbox.add((unsatisfiable_shape, SH.targetClass, OWL.Thing))
+    cbox.add((unsatisfiable_shape, SH.property, dummy_property))
+
+
     # NonNullNumericFeatureColumnShape
     column_shape = cb.NonNullNumericFeatureColumnShape
     # column_shape = BNode()
@@ -349,6 +390,8 @@ def add_shapes(cbox):
     cbox.add((numeric_column_shape, SH.targetClass, dmop.Column))
     cbox.add((numeric_column_shape, SH.property, numeric_column_property))
 
+
+    #NumericTabularDatasetShape
     bnode = BNode()
     cbox.add((bnode, SH.path, dmop.hasColumn))
     cbox.add((bnode, SH.node, numeric_column_shape))
@@ -357,6 +400,30 @@ def add_shapes(cbox):
     cbox.add((numeric_tabular_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((numeric_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
     cbox.add((numeric_tabular_dataset_shape, SH.property, bnode))
+
+    #NumercOnlyTabularDatasetShape
+
+    labelnode = BNode()
+    cbox.add((labelnode, SH.path, dmop.isLabel))
+    cbox.add((labelnode, SH.hasValue, Literal(True)))
+
+    or_list = BNode()
+    constraint_list = Collection(cbox, or_list)
+    constraint_list.append(numeric_column_shape)
+    constraint_list.append(labelnode)
+
+    bnode = BNode() 
+    cbox.add((bnode, SH["or"], or_list))
+    numericonly_tabular_dataset_shape = cb.NumericOnlyTabularDatasetShape
+    cbox.add((numericonly_tabular_dataset_shape, RDF.type, SH.NodeShape))
+    cbox.add((numericonly_tabular_dataset_shape, SH.targetObjectsOf, dmop.hasColumn))
+
+    property_bnode = BNode()
+    cbox.add((property_bnode, SH.node, bnode))
+    cbox.add((property_bnode, SH.path, dmop.hasColumn))
+    cbox.add((numericonly_tabular_dataset_shape, SH.property, property_bnode))
+    cbox.add((numericonly_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
+
 
     # NormalizedTabularDatasetShape 
     cbox.add((cb.isNormalizedConstraint, RDF.type, SH.PropertyConstraintComponent))
@@ -568,6 +635,8 @@ def add_constraints(cbox):
 
 def main(dest='../ontologies/cbox.ttl'):
     cbox = init_cbox()
+    add_operations(cbox)
+    add_engines(cbox)
     add_problems(cbox)
     add_algorithms(cbox)
     add_implementations(cbox)

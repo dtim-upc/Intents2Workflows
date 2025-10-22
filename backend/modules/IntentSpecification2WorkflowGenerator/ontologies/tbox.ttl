@@ -79,6 +79,9 @@ dmop:skipInitialSpace rdfs:subPropertyOf dmop:DatasetPhysicalProperty .
 tb: a owl:Ontology ;
     rdfs:label "ExtremeXP Ontology TBox" .
 
+tb:EngineParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter .
+
 tb:LoaderTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
@@ -87,6 +90,14 @@ tb:PlotProperties a owl:Class .
 tb:PlotType a owl:Class .
 
 tb:WorkflowCharacteristics a owl:Class .
+
+tb:compatibleWith a owl:ObjectProperty ;
+    rdfs:domain tb:Implementation ;
+    rdfs:range tb:Engine .
+
+tb:constrainedBy a owl:ObjectProperty ;
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:ExperimentConstraint .
 
 tb:constraintType a owl:ObjectProperty ;
     rdfs:domain tb:ExperimentConstraint ;
@@ -103,6 +114,10 @@ tb:copy_output a owl:DatatypeProperty ;
 tb:defines a owl:ObjectProperty ;
     rdfs:domain tb:User ;
     rdfs:range tb:Intent .
+
+tb:derivedFrom a owl:ObjectProperty ;
+    rdfs:domain tb:DerivedParameter ;
+    rdfs:range tb:AlgebraicExpression .
 
 tb:exposesParameter a owl:ObjectProperty ;
     rdfs:domain tb:Component ;
@@ -174,6 +189,10 @@ tb:hasLearner a owl:ObjectProperty ;
     rdfs:range tb:LearnerComponent,
         tb:LearnerImplementation .
 
+tb:hasLevel a owl:ObjectProperty ;
+    rdfs:domain tb:FactorParameter ;
+    rdfs:range tb:FactorLevel .
+
 tb:hasLiteralValue a owl:ObjectProperty ;
     rdfs:domain tb:LiteralValue ;
     rdfs:range xsd:string .
@@ -185,6 +204,10 @@ tb:hasMaxValue a owl:ObjectProperty ;
 tb:hasMinValue a owl:ObjectProperty ;
     rdfs:domain tb:RangeValue ;
     rdfs:range xsd:double .
+
+tb:hasOperation a owl:ObjectProperty ;
+    rdfs:domain tb:AlgebraicExpression ;
+    rdfs:range tb:Operation .
 
 tb:hasOptionExplorerName a owl:ObjectProperty ;
     rdfs:domain tb:ExperimentConstraint ;
@@ -253,9 +276,17 @@ tb:has_datatype a owl:ObjectProperty ;
 tb:has_defaultvalue a owl:ObjectProperty ;
     rdfs:domain tb:Parameter .
 
+tb:has_engine a owl:ObjectProperty ;
+    rdfs:domain tb:EngineImplementation ;
+    rdfs:range tb:Engine .
+
 tb:has_position a owl:DatatypeProperty ;
     rdfs:domain [ owl:unionOf ( tb:Data tb:DataSpec tb:Step tb:Parameter ) ] ;
     rdfs:range xsd:integer .
+
+tb:implements a owl:ObjectProperty ;
+    rdfs:domain tb:Implementation ;
+    rdfs:range tb:Algorithm .
 
 tb:isHard a owl:ObjectProperty ;
     rdfs:domain tb:ExperimentConstraint ;
@@ -290,18 +321,20 @@ tb:solves a owl:ObjectProperty ;
     rdfs:range tb:Task .
 
 tb:specifiedBy a owl:ObjectProperty ;
-    rdfs:domain tb:Parameter ;
+    rdfs:domain tb:BaseParameter ;
     rdfs:range tb:ParameterSpecification .
 
 tb:specifies a owl:ObjectProperty ;
-    rdfs:domain tb:Intent,
-        tb:ModelEvaluation ;
-    rdfs:range tb:Algorithm,
-        tb:Metric .
+    rdfs:domain tb:Intent ;
+    rdfs:range tb:Algorithm .
 
 tb:specifiesInput a owl:ObjectProperty ;
     rdfs:domain tb:Implementation ;
     rdfs:range tb:DataSpec .
+
+tb:specifiesMetric a owl:ObjectProperty ;
+    rdfs:domain tb:ModelEvaluation ;
+    rdfs:range tb:Metric .
 
 tb:specifiesOutput a owl:ObjectProperty ;
     rdfs:domain tb:Implementation ;
@@ -336,12 +369,29 @@ tb:withMethod a owl:ObjectProperty ;
     rdfs:domain tb:EvaluationRequirement ;
     rdfs:range tb:Method .
 
+tb:BaseParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter ;
+    owl:disjointWith tb:DerivedParameter .
+
 tb:DataTag a owl:Class .
+
+tb:EngineImplementation a owl:Class .
+
+tb:FactorLevel a owl:Class .
+
+tb:FactorParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter ;
+    owl:disjointWith tb:NumericParameter .
 
 tb:LiteralValue a owl:Class ;
     rdfs:subClassOf tb:ConstraintValue .
 
 tb:Method a owl:Class .
+
+tb:NumericParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter .
+
+tb:Operation a owl:Class .
 
 tb:User a owl:Class .
 
@@ -349,7 +399,7 @@ tb:UserFeedback a owl:Class .
 
 tb:VisualizationRequirement a owl:Class .
 
-tb:Algorithm a owl:Class .
+tb:AlgebraicExpression a owl:Class .
 
 tb:CopyTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
@@ -357,6 +407,11 @@ tb:CopyTransformation a owl:Class ;
 tb:DataCharacteristics a owl:Class .
 
 tb:Dataset a owl:Class .
+
+tb:DerivedParameter a owl:Class ;
+    rdfs:subClassOf tb:Parameter .
+
+tb:Engine a owl:Class .
 
 tb:Metric a owl:Class .
 
@@ -374,6 +429,8 @@ tb:VisualizerImplementation a owl:Class ;
     rdfs:subClassOf tb:Implementation ;
     owl:disjointWith tb:ApplierImplementation,
         tb:LearnerImplementation .
+
+tb:Algorithm a owl:Class .
 
 tb:ConstraintValue a owl:Class .
 
@@ -397,8 +454,6 @@ tb:ApplierImplementation a owl:Class ;
 
 tb:DataSpec a owl:Class .
 
-tb:ExperimentConstraint a owl:Class .
-
 tb:LearnerComponent a owl:Class ;
     rdfs:subClassOf tb:Component ;
     owl:disjointWith tb:ApplierComponent .
@@ -411,17 +466,19 @@ tb:Transformation a owl:Class .
 
 tb:Data a owl:Class .
 
+tb:ExperimentConstraint a owl:Class .
+
 tb:Task a owl:Class .
 
 tb:Workflow a owl:Class .
 
-tb:Implementation a owl:Class .
-
 tb:Step a owl:Class .
 
-tb:Parameter a owl:Class .
+tb:Implementation a owl:Class .
 
 tb:Component a owl:Class .
 
 tb:Intent a owl:Class .
+
+tb:Parameter a owl:Class .
 

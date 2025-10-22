@@ -1,0 +1,9 @@
+
+import {{module}}
+
+def {{step_name}}(X):
+    Xt = X.drop(["{{control['Target']}}"],axis=1)
+    yt = X["{{control['Target']}}"]
+    model = {{module}}.{{function}}({%- for param, value in parameters -%}{{param}}={%- if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif -%}{%- endfor -%})
+    return model.fit(Xt, yt)
+

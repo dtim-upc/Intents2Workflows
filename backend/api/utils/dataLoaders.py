@@ -8,6 +8,7 @@ import zipfile
 import tempfile
 import shutil
 import atexit
+import laspy
 
 
 # Create a temporary directory
@@ -132,6 +133,23 @@ class ZipLoader(FolderLoader):
         self.metadata['path'] = Path(dir).resolve().as_posix()
 
 
+class LidarLoader(DataLoader):
+    fileFormat = "Lidar_point_cloud" 
+
+    def getDataFrame(self):
+        laspy_data = laspy.read(self.file_path)
+        xyz = laspy_data.xyz
+        xyz_df = pd.DataFrame(xyz, columns=["x", "y", "z"]) #get coordinates scaled
+        points_df = pd.DataFrame(laspy_data.points.array)
+        points_df = points_df.drop(columns=["X", "Y", "Z"]) #drop unscaled columns
+
+        # Merge both
+        full_df = pd.concat([xyz_df, points_df], axis=1)
+        return full_df
+
+
+
+
 class DummyLoader(DataLoader):
     fileFormat = "Unsupported"
     
@@ -156,6 +174,7 @@ loaders = {
     "parquet": ParquetLoader,
     "zip": ZipLoader,
     "npz": NumpyZipLoader,
+    "las": LidarLoader,
     "": FolderLoader,
 }
 

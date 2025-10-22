@@ -3,7 +3,7 @@ import os
 import jinja2
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from core.translator_common_functions import *
+from ..core.translator_graph_queries import *
 
 template_base = os.path.dirname(os.path.abspath(__file__))
 template_paths = [

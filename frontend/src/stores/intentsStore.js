@@ -134,7 +134,8 @@ export const useIntentsStore = defineStore('intents', {
             selected: true,
             plan: response.data[key].logical_plan,
             graph:  response.data[key].graph,
-            knimeCompatible: response.data[key].knimeCompatible
+            KNIMECompatible: response.data[key].KNIME,
+            PythonCompatible: response.data[key].Python,
           }
           this.logicalPlans.map(logPlan => {
             if (logPlan.id === this.removeLastPart(key)) {
@@ -188,6 +189,18 @@ export const useIntentsStore = defineStore('intents', {
         notify.positive(`KNIME file downloaded`);
       } catch (error) {
         notify.negative("Error downloading the KNIME file");
+        console.error("Error:", error);
+      }
+    },
+
+    async downloadPython(plan) {
+      const data = {"graph": plan.graph, "plan_id": plan.id}
+      try {
+        const response = await intentsAPI.downloadPython(data);
+        FileSaver.saveAs(new Blob([response.data]), `${plan.id}.py`);
+        notify.positive(`Python file downloaded`);
+      } catch (error) {
+        notify.negative("Error downloading the Python file");
         console.error("Error:", error);
       }
     },

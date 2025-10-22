@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Type, Union
+from typing import Dict, List, Set, Tuple, Type, Union, Literal as Lit
 from rdflib import Graph, URIRef
 
 
@@ -52,6 +52,31 @@ def get_intent_dataset_task(intent_graph: Graph, intent_iri: URIRef) -> Tuple[UR
 """
     result = intent_graph.query(dataset_task_query).bindings[0]
     return result['dataset'], result['task'], result.get('algorithm', None)
+
+def get_intent_task(intent_graph: Graph, intent_iri: URIRef) -> URIRef:
+    dataset_task_query = f"""
+    PREFIX tb: <{tb}>
+    SELECT ?dataset ?task ?algorithm
+    WHERE {{
+        {intent_iri.n3()} a tb:Intent .
+        ?task tb:tackles {intent_iri.n3()} .
+    }}
+"""
+    result = intent_graph.query(dataset_task_query).bindings[0]
+    return result['task']
+
+def get_intent_dataset_format(intent_graph: Graph, intent_iri: URIRef) -> Tuple[URIRef, URIRef, URIRef]:
+    dataset_task_query = f"""
+    PREFIX tb: <{tb}>
+    SELECT ?format
+    WHERE {{
+        {intent_iri.n3()} a tb:Intent .
+        {intent_iri.n3()} tb:overData ?dataset .
+        ?dataset dmop:fileFormat ?format .
+    }}
+"""
+    result = intent_graph.query(dataset_task_query).bindings[0]
+    return result['format']
 
 
 def get_intent_parameters(intent_graph: Graph):
@@ -110,12 +135,15 @@ def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
     result = ontology.query(expparams_query).bindings
     return result 
 
-def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxImportanceLevel: int = 3) -> List[List[URIRef]]:
+def get_implementation_io_specs(ontology: Graph, implementation: URIRef, type = Lit["Input", "Output"], maxImportanceLevel: int = 3) -> List[List[URIRef]]:
+    
+    assert type in ["Input", "Output"], f"invalid type {type}"
+    
     input_spec_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
+        SELECT ?position ?spec (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
         WHERE {{
-            {implementation.n3()} tb:specifiesInput ?spec .
+            {implementation.n3()} tb:specifies{type} ?spec .
             ?spec a tb:DataSpec ;
                 tb:hasSpecTag ?sptg ;
                 tb:has_position ?position .
@@ -125,37 +153,16 @@ def get_implementation_input_specs(ontology: Graph, implementation: URIRef, maxI
             FILTER(?imp <= {int(maxImportanceLevel)}) .
 
         }}
-		GROUP BY ?position
+		GROUP BY ?position ?spec
         ORDER BY ?position
     """ #TODO check shape type datatag
     results = ontology.query(input_spec_query).bindings
 
     if results == [{}]:
         return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
+    shapes = [(result['spec'],unpack_shapes(result['shapes'])) for result in results]
     return shapes
 
-
-def get_implementation_output_specs(ontology: Graph, implementation: URIRef) -> List[List[URIRef]]:
-    output_spec_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?position (GROUP_CONCAT(?shape; SEPARATOR=",") AS ?shapes)
-        WHERE {{
-            {implementation.n3()} tb:specifiesOutput ?spec .
-            ?spec a tb:DataSpec ;
-                tb:hasSpecTag ?sptg ;
-                tb:has_position ?position .
-            ?sptg tb:hasDatatag ?shape . 
-        }}
-		GROUP BY ?position
-        ORDER BY ?position
-    """ #TODO check shape type datatag
-
-    results = ontology.query(output_spec_query).bindings
-    if results == [{}]:
-        return []
-    shapes = [unpack_shapes(result['shapes']) for result in results]
-    return shapes
 
 def unpack_shapes(shapes:str) -> List[URIRef]:
     spec_shapes = shapes.split(',')
@@ -175,29 +182,6 @@ def unpack_shapes(shapes:str) -> List[URIRef]:
     if cb.TestTensorDatasetShape in spec_shapes_uris:
         shape_to_top(cb.TestTensorDatasetShape, spec_shapes_uris)
     return spec_shapes_uris
-
-
-# def get_all_implementations(ontology: Graph, task_iri: URIRef = None, algorithm: URIRef = None) -> \
-#         List[Tuple[URIRef, List[URIRef]]]:
-#     main_implementation_query = f"""
-#     PREFIX tb: <{tb}>
-#     SELECT DISTINCT ?implementation
-#     WHERE {{
-#         ?implementation a tb:Implementation ;
-#             tb:implements {algorithm.n3() if algorithm is not None else '?algorithm'} .
-#         ?algorithm a tb:Algorithm ;
-#             tb:solves {task_iri.n3() if task_iri is not None else '?task'} .
-#         ?subtask tb:subtaskOf* {task_iri.n3() if task_iri is not None else '?task'} .
-#     }}
-# """
-#     results = ontology.query(main_implementation_query).bindings
-#     implementations = [result['implementation'] for result in results]
-
-#     implementations_with_shapes = [
-#         (implementation, get_implementation_input_specs(ontology, implementation))
-#         for implementation in implementations]
-
-#     return implementations_with_shapes
 
 def get_potential_implementations(ontology: Graph, algorithm: URIRef, exclude_appliers=True) -> \
         List[URIRef]:
@@ -239,6 +223,7 @@ def get_implementation_components(ontology: Graph, implementation: URIRef) -> Li
     """
     results = ontology.query(components_query).bindings
     return [result['component'] for result in results]
+
 
 def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
     implementation_query = f"""
@@ -286,12 +271,13 @@ def targets_dataset(ontology:Graph, shape:URIRef):
     return ontology.query(query).askAnswer
 
 
-def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
+#TODO: this function is a monster. Refactoring would be nice
+def identify_data_io(ontology: Graph, ios: List[Tuple[URIRef,List[URIRef]]], train: bool = False, test: bool = False, return_index: bool = False) -> Union[int, List[URIRef]]:
+    for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
             if (targets_dataset(ontology, io_shape) 
                 or (io_shape, SH.targetClass, cb.TabularDatasetShape) in ontology 
-                or io_shape.fragment == "TabularDatasetShape"):
+                or io_shape.fragment == "TabularDatasetShape") or True:
 
                 if test:
                     test_query = f'''
@@ -342,8 +328,8 @@ def identify_data_io(ontology: Graph, ios: List[List[URIRef]], train: bool = Fal
                 if not train and not test:
                     return i if return_index else io_shapes
             
-def identify_model_io(ontology: Graph, ios: List[List[URIRef]], return_index: bool = False) -> Union[int, List[URIRef]]:
-    for i, io_shapes in enumerate(ios):
+def identify_model_io(ontology: Graph, ios:List[Tuple[URIRef,List[URIRef]]], return_index: bool = False) -> Union[int, List[URIRef]]:
+    for i, (io_spec, io_shapes) in enumerate(ios):
         for io_shape in io_shapes:
             query = f'''
     PREFIX sh: <{SH}>
@@ -417,12 +403,12 @@ def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -
     URIRef, Tuple[Literal, Literal, Literal]]:
     parameters_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?parameter ?parameterValue ?position ?condition
+        SELECT ?parameter ?value ?position ?condition
         WHERE {{
             {component.n3()} tb:hasImplementation ?implementation .
             ?implementation tb:hasParameter ?parameter .
-            ?parameter tb:has_defaultvalue ?parameterValue ;
-                       tb:has_position ?position ;
+            ?parameter tb:has_position ?position ;
+                       tb:has_defaultvalue ?value ;
                        tb:has_condition ?condition .
             FILTER NOT EXISTS {{
                 ?parameter tb:specifiedBy ?parameterSpecification .
@@ -431,7 +417,7 @@ def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -
         ORDER BY ?position
     """
     results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['parameterValue'], param['position'], param['condition']) for param in results}
+    return {param['parameter']: (param['value'],param['position'], param['condition']) for param in results}
 
 
 def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
@@ -599,4 +585,12 @@ def retreive_component_rules(graph: Graph, task:URIRef, component: URIRef):
 
 
 def get_engine(graph: Graph, implementation:URIRef):
-    return next(graph.objects(implementation, tb.engine, unique=True),None)
+    return next(graph.objects(implementation, tb.has_engine, unique=True),None)
+
+
+def get_implementation_engine_compatibility(ontology:Graph, implementation: URIRef):
+    return set(ontology.objects(implementation, tb.compatibleWith))
+
+
+def get_engines(ontology: Graph):
+    return set(ontology.subjects(RDF.type, tb.Engine)) # Repetitions here make no sense, so using set

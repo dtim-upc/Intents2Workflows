@@ -40,13 +40,8 @@ def get_constraint(ontology: Graph, name: str):
 
 
 def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
-    #impls_algos = {imp : algo + "-Train" if "learner" in imp.fragment else algo
-    #               for algo in algos_list for imp in get_potential_implementations_constrained(ontology, shape_graph, algo,exclude_appliers=False)}
 
     linked_impls = {}
-
-    #impls_list = list(impls_algos.keys())
-    #print(impls_list)
     partition = False
 
     for i in range(1,len(algos_list)):
@@ -65,28 +60,6 @@ def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
 
     linked_impls[algos_list[-1]] = []
 
-
-
-    
-    #for preceding_impl in impls_list:
-
-        #out_specs = get_implementation_output_specs(ontology, preceding_impl)
-        #out_spec_set = {out_sp for out_spec in out_specs for out_sp in out_spec}
-
-        #preceding_impl_key = impls_algos[preceding_impl]
-        #linked_impls.setdefault(preceding_impl_key, [])
-        
-        #for following_impl in following_impls:
-
-            #in_specs = get_implementation_input_specs(ontology, following_impl)
-            #in_spec_set = {in_sp for in_spec in in_specs for in_sp in in_spec}
-
-            #if out_spec_set & in_spec_set:
-                #following_impl_key = impls_algos[following_impl]
-
-                #if following_impl_key not in linked_impls[preceding_impl_key]:
-                    #linked_impls[preceding_impl_key].append(following_impl_key)
-
     return linked_impls
 
 
@@ -94,6 +67,8 @@ def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
 def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tuple[
     Dict[Node, Dict[Node, List[Node]]], Dict[Node, List[Node]]]:
 
+    intent_iri = get_intent_iri(intent)
+    task = get_intent_task(intent, intent_iri)
     algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}
@@ -102,18 +77,25 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         alg = next(ontology.objects(impl, tb.implements)), 
         (impl, RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl, RDF.type))
 
-        algs_shapes[alg[0]] = get_implementation_input_specs(ontology, impl)[0] #assuming data shapes is on input 0
-
+        input_specs = get_implementation_io_specs(ontology, impl, "Input")
+        if len(input_specs) > 0:
+            algs_shapes[alg[0]] = input_specs[0] #assuming data shapes is on input 0 
+        else:
+            algs_shapes[alg[0]] = []
+       
         alg_plans[alg[0]].append(impl)
-
         available_algs.append(alg[0])
     
     plans = {}
 
     for alg in available_algs:
         print(alg)
-        if cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
+        if len(algs_shapes[alg]) <= 0:
+            plans[alg] = connect_algorithms(ontology, shape_graph, [alg])
+        elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
+        elif task == cb.Clustering:
+            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
     return plans, alg_plans
@@ -122,9 +104,9 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
     return build_workflows(ontology, shape_graph, intent, implementations, log=True)
 
-def getKnimeCompatibility(workflow_graph: Graph):
+def getCompatibility(workflow_graph: Graph, engine:URIRef):
     workflow_id = next(workflow_graph.subjects(RDF.type, tb.Workflow, unique=True),None)
-    compatible = next(workflow_graph.objects(workflow_id,tb.knimeCompatible),False).value #Incompatible by default
+    compatible = (workflow_id,tb.compatibleWith,engine) in workflow_graph
     return compatible
 
 
@@ -152,7 +134,11 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
                    f'{counter[main_component]}')
         counter[main_component] += 1
-        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle"), "knimeCompatible": getKnimeCompatibility(workflow_plan)}
+
+        engines = { engine.fragment: getCompatibility(workflow_plan, engine) 
+                   for engine in graph_queries.get_engines(ontology) }
+        print("Engines compatibility:", engines)
+        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")} | engines
 
     return logical_plans
 

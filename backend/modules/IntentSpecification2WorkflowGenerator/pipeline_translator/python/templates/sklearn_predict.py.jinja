@@ -1,0 +1,9 @@
+
+import {{module}}
+
+def {{step_name}}(model,X):
+    Xv = X.drop(["{{control['Target']}}"],axis=1)
+    yp = model.predict(Xv)
+    Xv["{{control['Target']}}"] = yp
+    return Xv
+
