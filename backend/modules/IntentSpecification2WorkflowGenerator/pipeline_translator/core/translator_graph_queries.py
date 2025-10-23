@@ -8,7 +8,7 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 from common import *
-from pipeline_generator.graph_queries import get_implementation_io_specs
+from pipeline_generator.graph_queries.ontology_queries import get_implementation_io_specs
 from .algebraic_expression_computation import compute_algebraic_expression
 
 def get_ontology() -> Graph:

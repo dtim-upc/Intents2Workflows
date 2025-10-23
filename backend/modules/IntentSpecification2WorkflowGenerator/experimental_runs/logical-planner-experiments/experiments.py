@@ -11,7 +11,7 @@ import time
 p = Path().absolute() / '../..'
 sys.path.append(p.resolve().as_posix())
 
-from pipeline_generator.optimized_pipeline_generator import get_potential_implementations_constrained, build_workflows
+from pipeline_generator.pipeline_generator import get_potential_implementations_constrained, build_workflows
 
 from common.common import ab, tb, cb, get_graph_xp
 

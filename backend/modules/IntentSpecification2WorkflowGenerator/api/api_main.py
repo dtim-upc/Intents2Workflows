@@ -3,6 +3,7 @@ import os
 import shutil
 import os
 from pathlib import Path
+import uuid
 
 import proactive
 
@@ -151,7 +152,7 @@ def run_logical_planner():
 
     intent = Graph().parse(data=intent_json, format='turtle')
 
-    algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent)
+    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
 
     workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
     logical_plans = logical_planner(extended_ontology, workflow_plans)
@@ -168,7 +169,7 @@ def download_knime():
     plan_id = request.json.get('plan_id', uuid.uuid4())
 
     if getCompatibility(plan_graph, cb.KNIME):
-        intent_name = get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_name(plan_graph)
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')
@@ -240,7 +241,7 @@ def download_python():
     
     if getCompatibility(plan_graph, cb.Python):
         plan_id = request.json.get('plan_id', uuid.uuid4())
-        intent_name = get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_name(plan_graph)
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')

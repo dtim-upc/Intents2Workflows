@@ -1,12 +1,17 @@
 import zipfile
 import sys
 import os
+from typing import Dict
 
 from rdflib.term import Node
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from pipeline_generator.optimized_pipeline_generator import *
-from pipeline_generator.graph_queries import *
+
+from common import *
+from pipeline_generator.graph_queries import intent_queries
+from typing import List, Tuple
+from pipeline_generator.graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name, get_engines
+from pipeline_generator import abstract_planner as abstractPlannerModule, pipeline_generator
 
 def get_custom_ontology(path):
     graph = get_graph_xp()
@@ -36,7 +41,7 @@ def get_custom_ontology_only_problems():
     return graph
 
 def get_constraint(ontology: Graph, name: str):
-    return graph_queries.get_constraint_by_name(ontology,name)
+    return get_constraint_by_name(ontology,name)
 
 
 def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
@@ -67,9 +72,9 @@ def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
 def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tuple[
     Dict[Node, Dict[Node, List[Node]]], Dict[Node, List[Node]]]:
 
-    intent_iri = get_intent_iri(intent)
-    task = get_intent_task(intent, intent_iri)
-    algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
+    intent_iri = intent_queries.get_intent_iri(intent)
+    task = intent_queries.get_intent_task(intent, intent_iri)
+    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}
     available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
@@ -102,7 +107,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     
 
 def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
-    return build_workflows(ontology, shape_graph, intent, implementations, log=True)
+    return pipeline_generator.generate_logical_plans(ontology, shape_graph, intent, implementations, log=True)
 
 def getCompatibility(workflow_graph: Graph, engine:URIRef):
     workflow_id = next(workflow_graph.subjects(RDF.type, tb.Workflow, unique=True),None)
@@ -113,7 +118,7 @@ def getCompatibility(workflow_graph: Graph, engine:URIRef):
 def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
     logical_plans = {}
     counter = {}
-
+    """
     for workflow_plan in workflow_plans:
         steps = list(workflow_plan.subjects(RDF.type, tb.Step))
         step_components = {step: next(workflow_plan.objects(step, tb.runs)) for step in steps}
@@ -136,11 +141,22 @@ def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
         counter[main_component] += 1
 
         engines = { engine.fragment: getCompatibility(workflow_plan, engine) 
-                   for engine in graph_queries.get_engines(ontology) }
+                   for engine in get_engines(ontology) }
         print("Engines compatibility:", engines)
         logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")} | engines
+    """
+    """
+    for main_component, plans in workflow_plans.items():
 
-    return logical_plans
+        counter = 0
+        for plan in plans:
+            plan_id = (f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
+                    f'{counter}')
+            counter += 1
+            logical_plans[plan_id] = {"logical_plan": plan}
+    """
+
+    return workflow_plans
 
 def compress(folder: str, destination: str) -> None:
     with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as zipf:

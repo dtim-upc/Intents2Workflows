@@ -4,7 +4,7 @@ import time
 from tqdm import tqdm
 from datetime import datetime
 
-from optimized_pipeline_generator import build_workflows, get_algorithms_and_implementations_to_solve_task, get_intent_info
+from pipeline_generator.pipeline_generator import build_workflows, get_algorithms_and_implementations_to_solve_task, get_intent_info
 from common import *
 import graph_queries
 
