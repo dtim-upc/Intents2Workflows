@@ -106,57 +106,10 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     return plans, alg_plans
     
 
-def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
-    return pipeline_generator.generate_logical_plans(ontology, shape_graph, intent, implementations, log=True)
-
 def getCompatibility(workflow_graph: Graph, engine:URIRef):
     workflow_id = next(workflow_graph.subjects(RDF.type, tb.Workflow, unique=True),None)
     compatible = (workflow_id,tb.compatibleWith,engine) in workflow_graph
     return compatible
-
-
-def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
-    logical_plans = {}
-    counter = {}
-    """
-    for workflow_plan in workflow_plans:
-        steps = list(workflow_plan.subjects(RDF.type, tb.Step))
-        step_components = {step: next(workflow_plan.objects(step, tb.runs)) for step in steps}
-        step_next = {step: list(workflow_plan.objects(step, tb.followedBy)) for step in steps}
-        logical_plan = {
-            step_components[step]: [step_components[s] for s in nexts] for step, nexts in step_next.items()
-        }
-
-        main_component = next((comp for comp in logical_plan.keys() 
-                if logical_plan[comp] == [cb.term('component-csv_local_writer')]
-                or logical_plan[comp] == [cb.term('component-data_writer_component')] #TODO main component transparent to specific component names
-                or logical_plan[comp] == []), None)
-        if (main_component, RDF.type, tb.ApplierImplementation) in ontology:
-            options = list(ontology.objects(main_component, tb.hasLearner))
-            main_component = next(o for o in options if (None, None, o) in workflow_plan)
-        if main_component not in counter:
-            counter[main_component] = 0
-        plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
-                   f'{counter[main_component]}')
-        counter[main_component] += 1
-
-        engines = { engine.fragment: getCompatibility(workflow_plan, engine) 
-                   for engine in get_engines(ontology) }
-        print("Engines compatibility:", engines)
-        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")} | engines
-    """
-    """
-    for main_component, plans in workflow_plans.items():
-
-        counter = 0
-        for plan in plans:
-            plan_id = (f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
-                    f'{counter}')
-            counter += 1
-            logical_plans[plan_id] = {"logical_plan": plan}
-    """
-
-    return workflow_plans
 
 def compress(folder: str, destination: str) -> None:
     with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as zipf:

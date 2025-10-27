@@ -145,17 +145,13 @@ def run_logical_planner():
     intent_json = request.json.get('intent_graph', '')
     dataset = request.json.get('dataset', '')
 
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    extended_ontology = ontology.parse(data = dataset, format='turtle')
+    data_graph = Graph().parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent = Graph().parse(data=intent_json, format='turtle')
-
     algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
-
-    workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
-    logical_plans = logical_planner(extended_ontology, workflow_plans)
+    logical_plans = pipeline_generator.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
 
     return logical_plans
 
