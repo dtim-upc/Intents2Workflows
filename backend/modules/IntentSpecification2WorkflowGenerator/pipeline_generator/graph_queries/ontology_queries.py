@@ -1,4 +1,4 @@
-from typing import List, Literal as Lit, Tuple
+from typing import Dict, List, Literal as Lit, Tuple
 from rdflib import Graph, URIRef
 from common import *
 
@@ -179,3 +179,50 @@ def get_constraint_by_name(ontology:Graph, constraint_name:str):
 
 def get_engines(ontology: Graph):
     return set(ontology.subjects(RDF.type, tb.Engine)) # Repetitions here make no sense, so using set
+
+
+def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
+    implementation_query = f"""
+        PREFIX tb: <{tb}>
+        PREFIX cb: <{cb}>
+        SELECT ?implementation
+        WHERE {{
+            {component.n3()} tb:hasImplementation ?implementation .
+        }}
+    """
+    result = ontology.query(implementation_query).bindings
+    assert len(result) == 1
+    return result[0]['implementation']
+
+def get_implementation_parameters(ontology: Graph, implementation: URIRef) -> Dict[
+    URIRef, Tuple[Literal, Literal, Literal]]:
+    parameters_query = f"""
+        PREFIX tb: <{tb}>
+        SELECT ?parameter ?value ?order ?condition
+        WHERE {{
+            <{implementation}> tb:hasParameter ?parameter .
+            ?parameter tb:has_defaultvalue ?value ;
+                       tb:has_condition ?condition ;
+                       tb:has_position ?order .
+        }}
+        ORDER BY ?order
+    """
+    results = ontology.query(parameters_query).bindings
+    return {param['parameter']: (param['value'], param['order'], param['condition']) for param in results}
+
+
+def get_component_overridden_parameters(ontology: Graph, component: URIRef) -> Dict[URIRef, Tuple[URIRef, Literal]]:
+    paramspecs_query = f"""
+        PREFIX tb:<{tb}>
+        SELECT ?parameterSpec ?parameter ?parameterValue ?position
+        WHERE{{
+            {component.n3()} tb:overridesParameter ?parameterSpec .
+            ?parameterSpec tb:hasValue ?parameterValue .
+            ?parameter tb:specifiedBy ?parameterSpec ;
+                       tb:has_position ?position .
+        }}
+    """
+    results = ontology.query(paramspecs_query).bindings
+    overridden_params = {paramspec['parameter']: (paramspec['parameterValue'], paramspec['position'], None) for paramspec in results}
+
+    return overridden_params

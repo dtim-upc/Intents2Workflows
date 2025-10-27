@@ -249,31 +249,21 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
 
     t = time.time()
 
-    for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0,
-                                                leave=False):
-        #tqdm.write(str(workflow_order))
-        #print("TC", *transformation_combination)
+    for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0, leave=False):
 
         prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, transformation_combination)
-
         t_comb += comp_comb
-        
         component_combinations = itertools.product(*prep_components)
 
-        for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1,
-                                                leave=False):
+
+        for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1, leave=False):
 
             if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
-
                 logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
-
                 main_component = URIRef(component_combination[-1]).fragment
 
                 if main_component not in counter:
                     counter[main_component] = 0
-                    #logical_plans[main_component] = 
-                
-                #logical_plans[main_component].append(logical_plan)
                 logical_plans[f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
                     f'{counter[main_component]}'] = {"logical_plan": logical_plan}
                 

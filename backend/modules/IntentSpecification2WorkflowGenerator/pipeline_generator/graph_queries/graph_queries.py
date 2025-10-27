@@ -32,20 +32,25 @@ def get_exposed_parameters(ontology: Graph, task: URIRef, algorithm: URIRef):
     result = ontology.query(expparams_query).bindings
     return result 
 
-
-def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
-    implementation_query = f"""
+def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -> Dict[
+    URIRef, Tuple[Literal, Literal, Literal]]:
+    parameters_query = f"""
         PREFIX tb: <{tb}>
-        PREFIX cb: <{cb}>
-        SELECT ?implementation
+        SELECT ?parameter ?value ?position ?condition
         WHERE {{
             {component.n3()} tb:hasImplementation ?implementation .
+            ?implementation tb:hasParameter ?parameter .
+            ?parameter tb:has_position ?position ;
+                       tb:has_defaultvalue ?value ;
+                       tb:has_condition ?condition .
+            FILTER NOT EXISTS {{
+                ?parameter tb:specifiedBy ?parameterSpecification .
+            }}
         }}
+        ORDER BY ?position
     """
-    result = ontology.query(implementation_query).bindings
-    assert len(result) == 1
-    return result[0]['implementation']
-
+    results = ontology.query(parameters_query).bindings
+    return {param['parameter']: (param['value'],param['position'], param['condition']) for param in results}
 
 def targets_dataset(ontology:Graph, shape:URIRef):
     query = f"""
@@ -175,43 +180,6 @@ def get_shape_target_class(ontology: Graph, shape: URIRef) -> URIRef:
         }}
     """).bindings[0]['targetClass']
 
-
-def get_implementation_parameters(ontology: Graph, implementation: URIRef) -> Dict[
-    URIRef, Tuple[Literal, Literal, Literal]]:
-    parameters_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?parameter ?value ?order ?condition
-        WHERE {{
-            <{implementation}> tb:hasParameter ?parameter .
-            ?parameter tb:has_defaultvalue ?value ;
-                       tb:has_condition ?condition ;
-                       tb:has_position ?order .
-        }}
-        ORDER BY ?order
-    """
-    results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['value'], param['order'], param['condition']) for param in results}
-
-
-def get_component_non_overriden_parameters(ontology: Graph, component: URIRef) -> Dict[
-    URIRef, Tuple[Literal, Literal, Literal]]:
-    parameters_query = f"""
-        PREFIX tb: <{tb}>
-        SELECT ?parameter ?value ?position ?condition
-        WHERE {{
-            {component.n3()} tb:hasImplementation ?implementation .
-            ?implementation tb:hasParameter ?parameter .
-            ?parameter tb:has_position ?position ;
-                       tb:has_defaultvalue ?value ;
-                       tb:has_condition ?condition .
-            FILTER NOT EXISTS {{
-                ?parameter tb:specifiedBy ?parameterSpecification .
-            }}
-        }}
-        ORDER BY ?position
-    """
-    results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['value'],param['position'], param['condition']) for param in results}
 
 
 def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
