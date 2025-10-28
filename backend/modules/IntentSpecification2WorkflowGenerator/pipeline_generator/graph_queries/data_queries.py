@@ -3,13 +3,25 @@ from rdflib import Graph, URIRef
 from common import *
 
 def get_dataset_type(data_graph: Graph, dataset:URIRef):
-    return next(data_graph.objects(dataset, RDF.type),Literal()).toPython()
+    return next(data_graph.objects(dataset, RDF.type),Literal("")).toPython()
 
 def get_dataset_format(data_graph: Graph, dataset:URIRef):
-    return next(data_graph.objects(dataset, dmop.fileFormat,unique=True),Literal()).toPython()
+    return next(data_graph.objects(dataset, dmop.fileFormat,unique=True),Literal("")).toPython()
 
 def get_dataset_path(data_graph: Graph, dataset:URIRef):
-    return next(data_graph.objects(dataset, dmop.path, unique=True),Literal()).toPython()
+    return next(data_graph.objects(dataset, dmop.path, unique=True),Literal("")).toPython()
+
+def get_dataset_uri(data_graph: Graph) -> URIRef:
+    data_uri_query = f"""
+PREFIX tb: <{tb}>
+SELECT ?uri
+WHERE {{
+    ?uri a tb:Dataset .
+}}
+"""
+    result = data_graph.query(data_uri_query).bindings
+    assert len(result) == 1
+    return result[0]['uri']
 
 
 def get_dataset_feature_types(data_graph: Graph, dataset: URIRef) -> Set[Type]:

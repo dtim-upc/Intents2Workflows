@@ -33,3 +33,10 @@ def get_ontology_graph():
 
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph
+
+def get_graph_with_tbox(turtle_graph):
+    graph = get_graph_xp()
+    graph.parse(r'ontologies/tbox.ttl', format="turtle")
+    graph.parse(data=turtle_graph, format="turtle")
+    DeductiveClosure(OWLRL_Semantics).expand(graph)
+    return graph

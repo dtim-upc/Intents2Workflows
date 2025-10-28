@@ -13,7 +13,7 @@ from .graph_queries import intent_queries, ontology_queries, shape_queries, data
 MAX_PLAN_LENGTH = 10
 
 def get_reader_component(dataset_type:URIRef, dataset_format:URIRef):
-    component_name = f"component-{dataset_format.toPython().lower()}_reader_component"
+    component_name = f"component-{dataset_format.lower()}_reader_component"
     if dataset_type == dmop.TensorDataset:
         component_name +="_(tensor)"
     return cb[component_name]
@@ -243,7 +243,7 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
             combs += comb
    
     
-    logical_plans = {}
+    logical_plans = []
     counter = {}
     t_comb = 0
 
@@ -260,16 +260,18 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
 
             if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
                 logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
+                print("Logical plan", logical_plan)
                 main_component = URIRef(component_combination[-1]).fragment
 
                 if main_component not in counter:
                     counter[main_component] = 0
-                logical_plans[f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
-                    f'{counter[main_component]}'] = {"logical_plan": logical_plan}
+
+                plan_name = f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} {counter[main_component]}'
+                logical_plans.append({"name":plan_name, "plan":[(key, value) for key, value in logical_plan.items()]})
                 
                 counter[main_component] += 1
 
     t2 = time.time()
     print("Temps total",t2-t)
-    return logical_plans
+    return {"logical_plans": logical_plans}
     

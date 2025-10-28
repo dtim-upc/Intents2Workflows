@@ -28,6 +28,9 @@ export default {
   setLogicalPlans(data) {
     return intentsApi.post('/logical_planner', data)
   },
+  setWorkflowPlans(data){
+    return intentsApi.post('/workflow_builder',data)
+  },
   downloadKNIME(data) {
     return intentsApi.post('/workflow_plans/knime', data, {responseType: 'blob'})
   },

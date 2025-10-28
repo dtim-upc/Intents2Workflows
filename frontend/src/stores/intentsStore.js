@@ -123,36 +123,68 @@ export const useIntentsStore = defineStore('intents', {
         const response = await intentsAPI.setLogicalPlans(data);
         notify.positive(`Logical plans created`);
         // Formatting the plans to be displayed in the UI
-        const keys = Object.keys(response.data);
         this.logicalPlans = [];
         this.countSelectedPlans = 0;
-      
-        for (let key of keys) {
-          let found = false
-          const plan = {
-            id: key,
-            selected: true,
-            plan: response.data[key].logical_plan,
-            graph:  response.data[key].graph,
-            KNIMECompatible: response.data[key].KNIME,
-            PythonCompatible: response.data[key].Python,
-          }
-          this.logicalPlans.map(logPlan => {
-            if (logPlan.id === this.removeLastPart(key)) {
-              logPlan.plans.push(plan)
-              found = true
-            }
-          })
-          if (!found) {
-            this.logicalPlans.push({
-              id: this.removeLastPart(key),
+
+        const plans = response.data.logical_plans;
+        for (const p of plans) {      
+            let found = false
+            const plan = {
+              id: p.name,
               selected: true,
-              plans: [plan]
+              plan: p.plan,
+              graph: null,
+              KNIMECompatible: null,
+              PythonCompatible: null,
+            }
+            this.logicalPlans.map(logPlan => {
+              if (logPlan.id === this.removeLastPart(p.name)) {
+                logPlan.plans.push(plan)
+                found = true
+              }
             })
-          }
-          this.countSelectedPlans++
+            if (!found) {
+              this.logicalPlans.push({
+                id: this.removeLastPart(p.name),
+                selected: true,
+                plans: [plan]
+              })
+            }
+            this.countSelectedPlans++
         }
         this.selectedPlans = []
+        successCallback();
+      } catch (error) {
+        notify.negative("Error creating the logical plans.");
+        console.error("Error:", error);
+      }
+    },
+
+    async setWorkflowPlans(data, successCallback) {
+      try {
+        const response = await intentsAPI.setWorkflowPlans(data)
+        notify.positive(`Worklow plans created`);
+        // Formatting the plans to be displayed in the UI
+        const plans = response.data.workflow_plans;
+        this.countSelectedPlans = 0;
+      
+        for (let p of plans) {
+          this.selectedPlans.forEach(selPlan => {
+            if (selPlan.id === this.removeLastPart(p.name)) {
+              selPlan.plans.forEach(subplan => {
+                if (subplan.id === p.name) {
+                      subplan.graph = p.graph
+                      subplan.KNIMECompatible = p.KNIME
+                      subplan.PythonCompatible =  p.Python
+                }
+
+
+              })
+
+            }
+          })
+        }
+        console.log(this.selectedPlans)
         successCallback();
       } catch (error) {
         notify.negative("Error creating the logical plans.");
@@ -173,6 +205,7 @@ export const useIntentsStore = defineStore('intents', {
     // ------------ Download operations
     async downloadRDF(plan) {
       try {
+        console.log(plan)
         FileSaver.saveAs(new Blob([plan.graph]), `${plan.id}.ttl`);
         notify.positive(`RDF file downloaded`);
       } catch (error) {

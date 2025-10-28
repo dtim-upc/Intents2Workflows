@@ -152,8 +152,25 @@ def run_logical_planner():
     intent = Graph().parse(data=intent_json, format='turtle')
     algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
     logical_plans = pipeline_generator.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
+    print("Lgic 2", logical_plans)
 
     return logical_plans
+
+@app.post('/workflow_builder')
+def run_workflow_builder():
+    intent_json = request.json.get('intent_graph', '')
+    dataset = request.json.get('dataset', '')
+    logical_plans = request.json.get('logical_plans', '')
+
+    intent_graph = Graph().parse(data=intent_json, format='turtle')
+    print("important graph")
+    data_graph = get_graph_with_tbox(dataset)#Graph().parse(data = dataset, format='turtle')
+    print("finitto")
+    data_graph.serialize('./data_graph.ttl', format="turtle")
+
+    workflow_plans = workflow_builder.generate_workflows(ontology, intent_graph, data_graph, logical_plans)
+
+    return {"workflow_plans": [{"name": name, "graph": graph.serialize(format="turtle")} for name, graph in workflow_plans.items()]}
 
 
 @app.post('/workflow_plans/knime')
