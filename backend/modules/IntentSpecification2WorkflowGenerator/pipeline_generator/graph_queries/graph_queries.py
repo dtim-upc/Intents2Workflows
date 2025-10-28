@@ -213,29 +213,7 @@ def get_inputs_all_columns(graph: Graph, inputs: List[URIRef]) -> List:
     return [x['label'].value for x in columns]
 
 
-def get_inputs_label_name(graph: Graph, inputs: List[URIRef]) -> str:
-    
-    data_input = get_data_input(graph,inputs)
-    if data_input is None:
-        return ""
 
-    label_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isLabel true ;
-                    dmop:hasColumnName ?label .
-
-        }}
-    """
-    
-    results = graph.query(label_query).bindings
-    
-    if results is not None and len(results) > 0:
-        return results[0]['label']
     
 
 def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> str:
@@ -258,76 +236,6 @@ def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> st
     
     if results is not None and len(results) > 0:
         return results[0]['label']
-
-
-def get_inputs_numeric_columns(graph: Graph, inputs: List[URIRef]) -> str:
-    data_input = get_data_input(graph, inputs)
-    columns_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isFeature true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type ;
-                    dmop:hasColumnName ?label .
-            FILTER(?type IN (dmop:Float, dmop:Int, dmop:Number, dmop:Double, dmop:Long, dmop:Short, dmop:Integer))
-        }}
-    """
-    columns = graph.query(columns_query).bindings
- 
-    return [x['label'].value for x in columns]
-
-
-def get_inputs_categorical_columns(graph: Graph, inputs: List[URIRef], includeTarget=True) -> str:
-    data_input = get_data_input(graph, inputs)
-
-    categ_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isCategorical true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type ;
-                    dmop:hasColumnName ?label .
-            {"?column dmop:isLabel false ." if not includeTarget else ""}
-        }}
-    """
-    columns = graph.query(categ_query).bindings
-
-    return [x['label'].value for x in columns]
-
-def get_inputs_feature_types(graph: Graph, inputs: List[URIRef]) -> Set[Type]:
-    data_input = get_data_input(graph, inputs)
-
-    if data_input is None:
-        return set()
-    columns_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?type
-        WHERE {{
-            {data_input.n3()} dmop:hasColumn ?column .
-            ?column dmop:isFeature true ;
-                    dmop:hasDataPrimitiveTypeColumn ?type .
-        }}
-    """
-    columns = graph.query(columns_query).bindings
-    mapping = {
-        dmop.Float: float,
-        dmop.Int: int,
-        dmop.Integer: int,
-        dmop.Number: float,
-        dmop.Double: float,
-        dmop.String: str,
-        dmop.Boolean: bool,
-    }
-    return set([mapping[x['type']] for x in columns])
-
 
 
 def get_engine(graph: Graph, implementation:URIRef):

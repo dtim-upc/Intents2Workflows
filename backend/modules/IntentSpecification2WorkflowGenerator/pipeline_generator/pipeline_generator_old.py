@@ -50,9 +50,7 @@ def add_parameter_specification(inputs: List[URIRef], workflow_graph: Graph, par
     injected_value = inject_value(workflow_graph, inputs, value.value, intent_graph=intent_graph)
     #print(f"Injecting value {injected_value} into value {value} for parameter {parameter}")
 
-    workflow_graph.add((parameterSpecifcation, RDF.type, tb.ParameterSpecification))
-    workflow_graph.add((parameter, tb.specifiedBy, parameterSpecifcation))
-    workflow_graph.add((parameterSpecifcation, tb.hasValue, Literal(injected_value)))
+
 
 
 def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, component: URIRef, inputs:List[URIRef]) -> Dict[URIRef, Tuple[URIRef, Literal]]:
@@ -77,36 +75,6 @@ def get_component_overridden_paramspecs(ontology: Graph, workflow_graph: Graph, 
         
 
     return overridden_paramspecs
-
-
-def inject_value(graph:Graph, inputs: List[URIRef], value:str, intent_graph: Graph = None):
-    new_value = value
-
-    if not isinstance(value, str):
-        return value
-
-    if '$$LABEL$$' in value:
-        new_value = value.replace('$$LABEL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
-    if '$$LABEL_CATEGORICAL$$' in value: #this allows target column to be defined without exposed parameters
-        new_value = value.replace('$$LABEL_CATEGORICAL$$', f'{graph_queries.get_inputs_label_name(graph, inputs)}')
-    if '$$NUMERIC_COLUMNS$$' in value:
-        new_value = value.replace('$$NUMERIC_COLUMNS$$', f'{graph_queries.get_inputs_numeric_columns(graph, inputs)}')
-    if '$$NUMERIC_AND_TARGET_COLUMNS$$' in value:
-        numeric_cols = graph_queries.get_inputs_numeric_columns(graph, inputs)
-        target = graph_queries.get_inputs_label_name(graph, inputs)
-        if not target is None and not numeric_cols is None:
-            numeric_cols.append(target.value)
-        new_value = value.replace('$$NUMERIC_AND_TARGET_COLUMNS$$', f'{numeric_cols}')
-    if '$$PATH$$' in value:
-        new_value = value.replace('$$PATH$$', f'{get_path_from_inputs(graph, inputs)}')
-    if '$$CATEGORICAL_COLUMNS$$' in value:
-        new_value = value.replace('$$CATEGORICAL_COLUMNS$$', f'{graph_queries.get_inputs_categorical_columns(graph, inputs, includeTarget=False)}')
-    if '$$DATA_RAW_FORMAT$$' in value:
-        new_value = value.replace('$$DATA_RAW_FORMAT$$', f'{graph_queries.get_intent_dataset_format(intent_graph=intent_graph,intent_iri=graph_queries.get_intent_iri(intent_graph))}')
-    if '&amp;' in value:
-        new_value = value.replace('&amp;', '&')
-    
-    return new_value
 
 
 def perform_param_substitution(graph: Graph, parameters: Dict[URIRef, Tuple[Literal, Literal, Literal]],
@@ -192,48 +160,6 @@ def assign_to_parameter_specs(inputs, graph: Graph,
     
     return param_specs
 
-
-def add_step(graph: Graph, pipeline: URIRef, task_name: str, component: URIRef,
-             parameter_specs: Dict[URIRef, Tuple[URIRef, Literal]],
-             order: int, previous_task: Union[None, list, URIRef] = None, inputs: Optional[List[URIRef]] = None, input_specs:Optional[List[URIRef]] = None,
-             outputs: Optional[List[URIRef]] = None, output_specs:Optional[List[URIRef]] = None) -> URIRef:
-    if outputs is None:
-        outputs = []
-        output_specs = []
-    if inputs is None:
-        inputs = []
-        input_specs = []
-
-    step = ab.term(task_name)
-    graph.add((pipeline, tb.hasStep, step))
-    graph.add((step, RDF.type, tb.Step))
-    graph.add((step, tb.runs, component))
-    graph.add((step, tb.has_position, Literal(order)))
-    for i, input in enumerate(inputs):
-        in_node = BNode()
-        graph.add((in_node, RDF.type, tb.Data))
-        graph.add((in_node, tb.has_data, input))
-        graph.add((in_node, tb.has_spec, input_specs[i][0]))
-        graph.add((in_node, tb.has_position, Literal(i)))
-        graph.add((step, tb.hasInput, in_node))
-
-    
-    for o, output in enumerate(outputs):
-        out_node = BNode()
-        graph.add((out_node, RDF.type, tb.Data))
-        graph.add((out_node, tb.has_data, output))
-        graph.add((out_node, tb.has_spec, output_specs[o][0]))
-        graph.add((out_node, tb.has_position, Literal(o)))
-        graph.add((step, tb.hasOutput, out_node))
-    for param, *_ in parameter_specs.values():
-        graph.add((step, tb.usesParameter, param))
-    if previous_task:
-        if isinstance(previous_task, list):
-            for previous in previous_task:
-                graph.add((previous, tb.followedBy, step))
-        else:
-            graph.add((previous_task, tb.followedBy, step))
-    return step
 
 def get_path(data_graph:Graph, input:URIRef) -> str:
     query = f"""
@@ -351,9 +277,6 @@ PREFIX dmop: <{dmop}>
             #tqdm.write(str(query))
             workflow_graph.update(query)
 
-
-def get_step_name(workflow_name: str, task_order: int, implementation: URIRef) -> str:
-    return f'{workflow_name}-step_{task_order}_{implementation.fragment.replace("-", "_")}'
 
 
 def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, dataset_node: URIRef, loader_component:URIRef) -> URIRef:
