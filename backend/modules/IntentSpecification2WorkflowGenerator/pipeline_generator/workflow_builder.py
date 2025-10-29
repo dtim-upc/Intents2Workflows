@@ -60,7 +60,7 @@ class Dataset:
         return self._feat_types
     
 
-def inject_value(dataset:Dataset, value:str, intent_graph: Graph = None):
+def inject_value(dataset:Dataset, value:str):
 
     injections= [("$$LABEL$$", dataset.label),
                  ('$$LABEL_CATEGORICAL$$', dataset.label),
@@ -77,7 +77,8 @@ def inject_value(dataset:Dataset, value:str, intent_graph: Graph = None):
     return value
 
 def condition_satisfied(condition:str, feature_types:Set):
-    return (condition == '$$INTEGER_COLUMN$$' and int not in feature_types) \
+    return condition is None \
+        or (condition == '$$INTEGER_COLUMN$$' and int not in feature_types) \
         or (condition == '$$STRING_COLUMN$$' and str not in feature_types) \
         or (condition == '$$FLOAT_COLUMN$$' and float not in feature_types)
 
@@ -88,7 +89,7 @@ def get_workflow_parameters(ontology:Graph, dataset:Dataset, implementation: URI
 
 
     parameters = {
-        key: inject_value(value)
+        key: inject_value(dataset, value)
         for key, (value, order, condition) in parameters.items()
         if condition_satisfied(condition, dataset.feature_types)
     }
@@ -137,8 +138,8 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
         workflow_graph.add((out_node, tb.has_position, Literal(o)))
         workflow_graph.add((step, tb.hasOutput, out_node))
 
-    for param, (value, order, condition) in parameters.items():
-        parameterSpec = ab.term[f'{param.fragment}_{step.fragment}_specification']
+    for param, value in parameters.items():
+        parameterSpec = ab.term(f'{param.fragment}_{step.fragment}_specification')
         workflow_graph.add((parameterSpec, RDF.type, tb.ParameterSpecification))
         workflow_graph.add((param, tb.specifiedBy, parameterSpec))
         workflow_graph.add((parameterSpec, tb.hasValue, Literal(value)))
