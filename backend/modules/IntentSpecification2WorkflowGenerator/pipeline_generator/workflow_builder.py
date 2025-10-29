@@ -157,7 +157,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
             component_transformations = ontology_queries.get_component_transformations(ontology, step_component)
             run_component_transformation(ontology, dataset, component_transformations, inputs, outputs, step_parameters)
 
-        engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation)
+        engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation) #TODO: Check translation condition
         compatibility = compatibility & engine_compatibility
 
     for engine in compatibility:

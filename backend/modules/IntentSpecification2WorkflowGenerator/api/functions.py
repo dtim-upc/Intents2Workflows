@@ -11,7 +11,7 @@ from common import *
 from pipeline_generator.graph_queries import intent_queries, ontology_queries
 from typing import List, Tuple
 from pipeline_generator.graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name, get_engines
-from pipeline_generator import abstract_planner as abstractPlannerModule, pipeline_generator, workflow_builder
+from pipeline_generator import abstract_planner as abstractPlannerModule, logical_planner, workflow_builder
 
 def get_custom_ontology(path):
     graph = get_graph_xp()

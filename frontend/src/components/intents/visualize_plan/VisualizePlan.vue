@@ -98,7 +98,7 @@ async function plan_layout(plan: [[key: string],string[]]) {
     })
   }
 
-  console.log(nodes_plan)
+  //console.log(nodes_plan)
 
   let edges_plan = [];
   let i = 0;
@@ -116,7 +116,7 @@ async function plan_layout(plan: [[key: string],string[]]) {
     }
   }
 
-  console.log(edges_plan)
+  //console.log(edges_plan)
 
   const graph = {
     id: "root",

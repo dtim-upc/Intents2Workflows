@@ -59,8 +59,13 @@ sigmoid_svm_learner_component = Component(
     transformations=[
         Transformation(
             query='''
-INSERT DATA{
-    $output1 cb:setsClassColumnName $parameter1 .
+INSERT {
+    $output1 cb:setsClassColumnName "Prediction (?label)" .
+}
+WHERE {
+    $input1 dmop:hasColumn ?column .
+    ?column dmop:isLabel true ;
+            dmop:hasColumnName ?label .
 }
             ''',
         ),
@@ -79,8 +84,13 @@ rbf_svm_learner_component = Component(
     transformations=[
         Transformation(
             query='''
-INSERT DATA{
-    $output1 cb:setsClassColumnName $parameter1 .
+INSERT {
+    $output1 cb:setsClassColumnName "Prediction (?label)" .
+}
+WHERE {
+    $input1 dmop:hasColumn ?column .
+    ?column dmop:isLabel true ;
+            dmop:hasColumnName ?label .
 }
             ''',
         ),
