@@ -171,7 +171,16 @@ def run_workflow_builder():
 
     workflow_plans = workflow_builder.generate_workflows(ontology, intent_graph, data_graph, logical_plans)
 
-    return {"workflow_plans": [{"name": name, "graph": graph.serialize(format="turtle")} for name, graph in workflow_plans.items()]}
+    plans = []
+    for name, graph in workflow_plans.items():
+        engines = { engine.fragment: getCompatibility(graph, engine) 
+                        for engine in ontology_queries.get_engines(ontology) }
+        plans.append({
+            "name": name,
+            "graph": graph.serialize(format="turtle"),
+        } | engines)
+        
+    return {"workflow_plans": plans}
 
 
 @app.post('/workflow_plans/knime')
@@ -183,7 +192,7 @@ def download_knime():
     plan_id = request.json.get('plan_id', uuid.uuid4())
 
     if getCompatibility(plan_graph, cb.KNIME):
-        intent_name = intent_queries.get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_iri(plan_graph).fragment
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')
@@ -255,7 +264,7 @@ def download_python():
     
     if getCompatibility(plan_graph, cb.Python):
         plan_id = request.json.get('plan_id', uuid.uuid4())
-        intent_name = intent_queries.get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_iri(plan_graph).fragment
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')

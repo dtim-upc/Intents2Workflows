@@ -49,7 +49,7 @@ def get_most_suitable_predecessor(input_shapes:Set[URIRef], candidates: List[Tup
     best_score = 0
     best_candidate = cb.NONE
     print("Candidates", candidates)
-    for port, shapes in candidates:
+    for port, shapes in candidates:       
         intersection = input_shapes & set(shapes)
 
         if len(intersection) == len(input_shapes):
@@ -69,19 +69,21 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
     workflow_graph.add((step, tb.runs, step_component))
     workflow_graph.add((step, tb.has_position, Literal(step_order)))
 
-    for i, input in enumerate(input_specs):
+
+    print(input_specs)
+    for i, (port, spec) in enumerate(input_specs):
         in_node = BNode()
         workflow_graph.add((in_node, RDF.type, tb.Data))
-        workflow_graph.add((in_node, tb.has_data, input))
-        #graph.add((in_node, tb.has_spec, input_specs[i][0]))
+        workflow_graph.add((in_node, tb.has_data, port))
+        workflow_graph.add((in_node, tb.has_spec, spec))
         workflow_graph.add((in_node, tb.has_position, Literal(i)))
         workflow_graph.add((step, tb.hasInput, in_node))
 
-    for o, output in enumerate(output_specs):
+    for o, (port, spec) in enumerate(output_specs):
         out_node = BNode()
         workflow_graph.add((out_node, RDF.type, tb.Data))
-        workflow_graph.add((out_node, tb.has_data, output))
-        #graph.add((out_node, tb.has_spec, output_specs[o][0]))
+        workflow_graph.add((out_node, tb.has_data, port))
+        workflow_graph.add((out_node, tb.has_spec, spec))
         workflow_graph.add((out_node, tb.has_position, Literal(o)))
         workflow_graph.add((step, tb.hasOutput, out_node))
 
@@ -105,6 +107,8 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
     workflow_graph = get_graph_xp()
     workflow_uri = ab.term(workflow_name)
     workflow_graph.add((workflow_uri, RDF.type, tb.Workflow))
+
+    compatibility = set(ontology_queries.get_engines(ontology))
     
 
     for step_order, (step_component, follows) in enumerate(logical_plan):
@@ -124,20 +128,22 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
         inputs = []
         prev_out_step_ports = prev_output_ports.get(step_component, [])
 
-        if step_order == 0:
-            inputs.append(dataset.dataset)
 
-        else:
-            for i, (sepc, shapes) in enumerate(input_specs):
-                print(shapes)
-                inputs.append(get_most_suitable_predecessor(set(shapes), prev_out_step_ports))
-
-
+        for i, (spec, shapes) in enumerate(input_specs):
+            if cb.UnsatisfiableShape not in shapes: #ignore port if unsatisfiable
+                input_port = get_most_suitable_predecessor(set(shapes), prev_out_step_ports)
+                inputs.append((input_port,spec))
+  
         outputs = []
         output_ports = []
         for i, (spec, shapes) in enumerate(output_specs):
-            output_i = ab[f'{step_name}-output_{i}']
-            outputs.append(output_i)
+
+            if step_order == 0: #TODO it would be better to specify it as a special shape that denotes orignal dataset
+                output_i = dataset.dataset
+            else:
+                output_i = ab[f'{step_name}-output_{i}']
+
+            outputs.append((output_i,spec))
             output_ports.append((output_i, shapes))
 
 
@@ -150,6 +156,12 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
         if run_transformations:
             component_transformations = ontology_queries.get_component_transformations(ontology, step_component)
             run_component_transformation(ontology, dataset, component_transformations, inputs, outputs, step_parameters)
+
+        engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation)
+        compatibility = compatibility & engine_compatibility
+
+    for engine in compatibility:
+        workflow_graph.add((workflow_uri, tb.compatibleWith, engine))  
 
     return workflow_graph, workflow_uri
 

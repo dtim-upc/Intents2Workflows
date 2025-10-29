@@ -239,3 +239,11 @@ def get_component_transformations(ontology: Graph, component: URIRef) -> List[UR
     '''
     transformations = ontology.query(transformation_query).bindings
     return [x['transformation'] for x in transformations]
+
+
+def get_engine(graph: Graph, implementation:URIRef):
+    return next(graph.objects(implementation, tb.has_engine, unique=True),None)
+
+
+def get_implementation_engine_compatibility(ontology:Graph, implementation: URIRef):
+    return set(ontology.objects(implementation, tb.compatibleWith))

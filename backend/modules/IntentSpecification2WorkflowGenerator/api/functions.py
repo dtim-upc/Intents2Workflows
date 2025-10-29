@@ -8,7 +8,7 @@ from rdflib.term import Node, URIRef
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from common import *
-from pipeline_generator.graph_queries import intent_queries
+from pipeline_generator.graph_queries import intent_queries, ontology_queries
 from typing import List, Tuple
 from pipeline_generator.graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name, get_engines
 from pipeline_generator import abstract_planner as abstractPlannerModule, pipeline_generator, workflow_builder

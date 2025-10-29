@@ -1,5 +1,5 @@
 from owlrl import DeductiveClosure, OWLRL_Semantics
-from rdflib import Namespace, Graph, URIRef, BNode, RDF, RDFS, SH, OWL, XSD
+from rdflib import Namespace, Graph, URIRef, Literal, Variable, BNode, RDF, RDFS, SH, OWL, XSD
 
 dmop = Namespace('http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#')
 tb = Namespace('https://extremexp.eu/ontology/tbox#')
@@ -16,7 +16,6 @@ def get_graph_xp():
     g.bind('dmop', dmop)
     g.bind('dolce', dolce)
     return g
-
 
 def get_ontology_graph():
     graph = get_graph_xp()

@@ -264,6 +264,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str, ke
         step_info[step.fragment] = ports
 
     tqdm.write('\tCreating workflow file')
+    print("STEP INFO", step_info)
     create_workflow_file(ontology, graph, steps, step_info, step_paths, temp_folder)
 
     tqdm.write('\tCreating zip file')

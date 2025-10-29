@@ -224,11 +224,4 @@ def get_exact_column(graph: Graph, inputs: List[URIRef], column_name: str) -> st
         return results[0]['label']
 
 
-def get_engine(graph: Graph, implementation:URIRef):
-    return next(graph.objects(implementation, tb.has_engine, unique=True),None)
-
-
-def get_implementation_engine_compatibility(ontology:Graph, implementation: URIRef):
-    return set(ontology.objects(implementation, tb.compatibleWith))
-
 
