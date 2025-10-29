@@ -1,5 +1,5 @@
 from typing import Dict, List, Literal as Lit, Tuple
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Literal
 from common import *
 
 
@@ -226,3 +226,16 @@ def get_component_overridden_parameters(ontology: Graph, component: URIRef) -> D
     overridden_params = {paramspec['parameter']: (paramspec['parameterValue'], paramspec['position'], None) for paramspec in results}
 
     return overridden_params
+
+
+def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
+    transformation_query = f'''
+        PREFIX tb: <{tb}>
+        SELECT ?transformation
+        WHERE {{
+            <{component}> tb:hasTransformation ?transformation_list .
+            ?transformation_list rdf:rest*/rdf:first ?transformation .
+        }}
+    '''
+    transformations = ontology.query(transformation_query).bindings
+    return [x['transformation'] for x in transformations]

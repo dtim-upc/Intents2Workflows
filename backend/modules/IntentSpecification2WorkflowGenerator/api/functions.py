@@ -3,7 +3,7 @@ import sys
 import os
 from typing import Dict
 
-from rdflib.term import Node
+from rdflib.term import Node, URIRef
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 

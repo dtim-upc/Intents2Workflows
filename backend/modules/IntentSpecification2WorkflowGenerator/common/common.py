@@ -1,5 +1,5 @@
 from owlrl import DeductiveClosure, OWLRL_Semantics
-from rdflib import *
+from rdflib import Namespace, Graph, URIRef, BNode, RDF, RDFS, SH, OWL, XSD
 
 dmop = Namespace('http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#')
 tb = Namespace('https://extremexp.eu/ontology/tbox#')

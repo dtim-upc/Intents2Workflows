@@ -1,5 +1,5 @@
 from typing import List, Set, Type
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Literal
 from common import *
 
 def get_dataset_type(data_graph: Graph, dataset:URIRef):

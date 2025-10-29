@@ -1,5 +1,5 @@
 from typing import Dict, List, Set, Tuple, Type, Union, Literal as Lit
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Literal
 
 
 from common import *
@@ -179,20 +179,6 @@ def get_shape_target_class(ontology: Graph, shape: URIRef) -> URIRef:
             <{shape}> sh:targetClass ?targetClass .
         }}
     """).bindings[0]['targetClass']
-
-
-
-def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
-    transformation_query = f'''
-        PREFIX tb: <{tb}>
-        SELECT ?transformation
-        WHERE {{
-            <{component}> tb:hasTransformation ?transformation_list .
-            ?transformation_list rdf:rest*/rdf:first ?transformation .
-        }}
-    '''
-    transformations = ontology.query(transformation_query).bindings
-    return [x['transformation'] for x in transformations]
 
 
 def get_inputs_all_columns(graph: Graph, inputs: List[URIRef]) -> List:

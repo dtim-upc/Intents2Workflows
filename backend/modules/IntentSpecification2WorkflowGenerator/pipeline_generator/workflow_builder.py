@@ -1,64 +1,11 @@
 from typing import Dict, List, Tuple, Set
 import uuid
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Literal, BNode
 from .graph_queries import ontology_queries, intent_queries, data_queries
+from .utils.dataset import Dataset
+from .utils.transformation_engine import run_component_transformation
 from common import *
-
-
-class Dataset:
-    def __init__(self, data_graph: Graph, dataset:URIRef):
-        self.data_graph = data_graph
-        self.dataset = dataset
-        self._label = None
-        self._numeric_columns = None
-        self._categorical_columns = None
-        self._target = None
-        self._format = None
-        self._path = None
-        self._feat_types = None
-    
-    @property
-    def label(self):
-        if self._label is None:
-            self._label = data_queries.get_datset_label_name(self.data_graph, self.dataset)
-        return self._label
-    
-    @property
-    def numeric_columns(self):
-        if self._numeric_columns is None:
-            self._numerc_columns = data_queries.get_dataset_numeric_columns(self.data_graph, self.dataset)
-        return self._numerc_columns
-    
-    @property
-    def categorical_columns(self):
-        if self._categorical_columns is None:
-            self._categorical_columns = data_queries.get_dataset_categorical_columns(self.data_graph, self.dataset)
-        return self._categorical_columns
-    
-    @property
-    def target(self):
-        if self._target is None:
-            self._target = data_queries.get_dataset_target_column(self.data_graph, self.dataset)
-        return self._target
-    
-    @property
-    def format(self):
-        if self._format is None:
-            self._format = data_queries.get_dataset_format(self.data_graph, self.dataset)
-        return self._format
-    
-    @property
-    def path(self):
-        if self._path is None:
-            self._path = data_queries.get_dataset_path(self.data_graph, self.dataset)
-        return self._path
-    
-    @property
-    def feature_types(self):
-        if self._feat_types is None:
-            self._feat_types = data_queries.get_dataset_feature_types(self.data_graph, self.dataset)
-        return self._feat_types
-    
+ 
 
 def inject_value(dataset:Dataset, value:str):
 
@@ -150,7 +97,7 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
     return step
 
 
-def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]]):
+def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]], run_transformations = False):
     prev_output_ports = {URIRef(c) : [] for (c, follows) in logical_plan}
     prev_steps = {URIRef(c) : [] for (c, follows) in logical_plan}
     print(prev_steps, prev_output_ports)
@@ -176,9 +123,14 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
         inputs = []
         prev_out_step_ports = prev_output_ports.get(step_component, [])
-        for i, (sepc, shapes) in enumerate(input_specs):
-            print(shapes)
-            inputs.append(get_most_suitable_predecessor(set(shapes), prev_out_step_ports))
+
+        if step_order == 0:
+            inputs.append(dataset.dataset)
+
+        else:
+            for i, (sepc, shapes) in enumerate(input_specs):
+                print(shapes)
+                inputs.append(get_most_suitable_predecessor(set(shapes), prev_out_step_ports))
 
 
         outputs = []
@@ -195,10 +147,14 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
             prev_output_ports[URIRef(f)].extend(output_ports)
             prev_steps[URIRef(f)].append(step_uri)
 
+        if run_transformations:
+            component_transformations = ontology_queries.get_component_transformations(ontology, step_component)
+            run_component_transformation(ontology, dataset, component_transformations, inputs, outputs, step_parameters)
+
     return workflow_graph, workflow_uri
 
 
-def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]]):
+def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
     workflows = {}
 
     intent_uri = intent_queries.get_intent_iri(intent_graph)
@@ -209,10 +165,12 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
 
     for i, (name, plan) in enumerate(logical_plans.items()):
         workflow_name = f'workflow_{i}_{intent_uri.fragment}_{uuid.uuid4()}'.replace('-', '_')
-        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan)
+        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan,run_transformations=True)
         
         workflow_graph.add((workflow_uri, tb.generatedFor, intent_uri))
         workflow_graph.add((intent_uri, RDF.type, tb.Intent))
+        workflow_graph += intent_graph
+        workflow_graph += dataset.data_node_graph
         workflows[name] = workflow_graph
 
     return workflows

@@ -1,8 +1,7 @@
 import os
 from typing import Dict, List, Tuple
 import sys
-
-import rdflib
+from rdflib import Literal
 
 root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)

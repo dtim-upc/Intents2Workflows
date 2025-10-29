@@ -225,60 +225,6 @@ def annotate_ios_with_specs(ontology: Graph, workflow_graph: Graph, data_io: Lis
         annotate_io_with_spec(ontology, workflow_graph, io, spec[1])
 
 
-def run_copy_transformation(ontology: Graph, workflow_graph: Graph, transformation: URIRef, inputs: List[URIRef],
-                            outputs: List[URIRef]):
-    input_index = next(ontology.objects(transformation, tb.copy_input, True)).value
-    output_index = next(ontology.objects(transformation, tb.copy_output, True)).value
-    #tqdm.write(f"Copy transformation: i:{str(input_index)} o:{str(output_index)}")
-    input = inputs[input_index - 1] 
-    output = outputs[output_index - 1]
-
-    copy_subgraph(workflow_graph, input, workflow_graph, output)
-
-
-def run_component_transformation(ontology: Graph, workflow_graph: Graph, component: URIRef, inputs: List[URIRef],
-                                 outputs: List[URIRef],
-                                 parameters_specs: Dict[URIRef, Tuple[URIRef, Literal, Literal]]) -> None:
-    transformations = graph_queries.get_component_transformations(ontology, component)
-    #tqdm.write("run_component_transformation")
-    
-    for transformation in transformations:
-        #tqdm.write(str(transformation))
-        if (transformation, RDF.type, tb.CopyTransformation) in ontology:
-            run_copy_transformation(ontology, workflow_graph, transformation, inputs, outputs)
-        elif (transformation, RDF.type, tb.LoaderTransformation) in ontology:
-            #tqdm.write("loader_transformation")
-            continue
-        else:
-            prefixes = f'''
-PREFIX tb: <{tb}>
-PREFIX ab: <{ab}>
-PREFIX rdf: <{RDF}>
-PREFIX rdfs: <{RDFS}>
-PREFIX owl: <{OWL}>
-PREFIX xsd: <{XSD}>
-PREFIX dmop: <{dmop}>
-'''
-            query = next(ontology.objects(transformation, tb.transformation_query, True)).value
-            query = prefixes + query
-            for i in range(len(inputs)):
-                query = query.replace(f'$input{i + 1}', f'{inputs[i].n3()}')
-            for i in range(len(outputs)):
-                query = query.replace(f'$output{i + 1}', f'{outputs[i].n3()}')
-            for param_spec, (param, value, order) in parameters_specs.items():
-                #tqdm.write(param_spec)
-                #tqdm.write(param)
-                #tqdm.write(value)
-                #tqdm.write(order)
-                query = query.replace(f'$param{order + 1}', f'{value.n3()}')
-                query = query.replace(f'$parameter{order + 1}', f'{value.n3()}')
-            
-            #tqdm.write("Query:")
-            #tqdm.write(str(query))
-            workflow_graph.update(query)
-
-
-
 def add_loader_step(ontology: Graph, workflow_graph: Graph, workflow: URIRef, dataset_node: URIRef, loader_component:URIRef) -> URIRef:
     #loader_component = cb.term('component-csv_local_reader')
     loader_step_name = get_step_name(workflow.fragment, 0, loader_component)
