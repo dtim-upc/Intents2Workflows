@@ -44,26 +44,36 @@ def get_constraint(ontology: Graph, name: str):
     return get_constraint_by_name(ontology,name)
 
 
-def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
+def connect_algorithms(algos_list: List[URIRef]):
 
-    linked_impls = {}
+    linked_impls = []
+    previous = algos_list[0]
     partition = False
+    train_component = None
 
     for i in range(1,len(algos_list)):
-        connections = [algos_list[i]]
-        
+        connection_list = []
+        connection_list.append(algos_list[i])
+
+        if not train_component is None:
+            linked_impls.append((previous, connection_list))
+            connection_list = [previous]
+            previous = train_component
+            train_component = None
+
         if partition:
-            connections.append(algos_list[i]+"-Train")
-            linked_impls[algos_list[i]+"-Train"] = [algos_list[i+1]]
+            train_component = algos_list[i]+"-Train"           
+            connection_list.append(train_component)
             partition = False
-        linked_impls[algos_list[i-1]] = connections
 
-        if algos_list[i] == cb.Partitioning:
-            partition = True
+        linked_impls.append((previous, connection_list))
 
-        
+        previous = algos_list[i]
+        partition = algos_list[i] == cb.Partitioning
+    
+    linked_impls.append((previous,[]))
 
-    linked_impls[algos_list[-1]] = []
+
 
     return linked_impls
 
@@ -84,7 +94,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 
         input_specs = get_implementation_io_specs(ontology, impl, "Input")
         if len(input_specs) > 0:
-            algs_shapes[alg[0]] = input_specs[0] #assuming data shapes is on input 0 
+            algs_shapes[alg[0]] = input_specs[0][1] #assuming data shapes is on input 0 
         else:
             algs_shapes[alg[0]] = []
        
@@ -96,13 +106,13 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     for alg in available_algs:
         print(alg)
         if len(algs_shapes[alg]) <= 0:
-            plans[alg] = connect_algorithms(ontology, shape_graph, [alg])
+            plans[alg] = connect_algorithms([alg])
         elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
-            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
+            plans[alg] = connect_algorithms([cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         elif task == cb.Clustering:
-            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, alg, cb.DataStoring])
+            plans[alg] = connect_algorithms([cb.DataLoading, alg, cb.DataStoring])
         else:
-            plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
+            plans[alg] = connect_algorithms([cb.DataLoading, alg])
     return plans, alg_plans
     
 
