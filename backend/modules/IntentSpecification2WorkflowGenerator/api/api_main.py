@@ -153,7 +153,6 @@ def run_logical_planner():
     intent = Graph().parse(data=intent_json, format='turtle')
     algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
     logical_plans = logical_planner.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
-    print("Lgic 2", logical_plans)
 
     return logical_plans
 

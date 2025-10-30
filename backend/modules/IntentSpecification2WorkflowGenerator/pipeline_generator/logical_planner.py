@@ -218,7 +218,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
 
 
 def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Graph, data_graph:Graph, pot_impls, log: bool = False) -> List[Graph]:
-
+    t = time.time()
     intent_iri = intent_queries.get_intent_iri(intent_graph=intent_graph)
     dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri) 
     dataset_type = data_queries.get_dataset_type(data_graph, dataset)
@@ -247,7 +247,6 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     counter = {}
     t_comb = 0
 
-    t = time.time()
 
     for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0, leave=False):
 
@@ -260,7 +259,6 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
 
             if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
                 logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
-                print("Logical plan", logical_plan)
                 main_component = URIRef(component_combination[-1]).fragment
 
                 if main_component not in counter:

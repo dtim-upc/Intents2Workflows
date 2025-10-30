@@ -45,10 +45,7 @@ PREFIX dmop: <{dmop}>
                 query = query.replace(f'$input{i + 1}', f'{inputs[i][0].n3()}')
             for i in range(len(outputs)):
                 query = query.replace(f'$output{i + 1}', f'{outputs[i][0].n3()}')
-
-            print(parameters_specs)
             for order, (param_spec, value) in enumerate(parameters_specs.items()):
                 query = query.replace(f'$param{order + 1}', f'{value}') #TODO allow transformation engine to have access to all the parameters. Otherwise, some transformations can not be done (see numberofrows on partitioning)
                 query = query.replace(f'$parameter{order + 1}', f'{value}')
-            print("Query", query)
             data_graph.update(query)

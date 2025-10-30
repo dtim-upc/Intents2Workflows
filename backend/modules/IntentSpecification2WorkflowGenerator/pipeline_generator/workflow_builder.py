@@ -5,6 +5,7 @@ from .graph_queries import ontology_queries, intent_queries, data_queries
 from .utils.dataset import Dataset
 from .utils.transformation_engine import run_component_transformation
 from common import *
+import time
  
 
 def inject_value(dataset:Dataset, value:str):
@@ -48,7 +49,6 @@ def get_workflow_parameters(ontology:Graph, dataset:Dataset, implementation: URI
 def get_most_suitable_predecessor(input_shapes:Set[URIRef], candidates: List[Tuple[URIRef,List[URIRef]]]):
     best_score = 0
     best_candidate = cb.NONE
-    print("Candidates", candidates)
     for port, shapes in candidates:       
         intersection = input_shapes & set(shapes)
 
@@ -69,8 +69,6 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
     workflow_graph.add((step, tb.runs, step_component))
     workflow_graph.add((step, tb.has_position, Literal(step_order)))
 
-
-    print(input_specs)
     for i, (port, spec) in enumerate(input_specs):
         in_node = BNode()
         workflow_graph.add((in_node, RDF.type, tb.Data))
@@ -102,7 +100,6 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
 def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]], run_transformations = False):
     prev_output_ports = {URIRef(c) : [] for (c, follows) in logical_plan}
     prev_steps = {URIRef(c) : [] for (c, follows) in logical_plan}
-    print(prev_steps, prev_output_ports)
 
     workflow_graph = get_graph_xp()
     workflow_uri = ab.term(workflow_name)
@@ -114,7 +111,6 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
     for step_order, (step_component, follows) in enumerate(logical_plan):
         #intent_parameters = get_intent_parameters()
         step_component = URIRef(step_component)
-        print("STEP:", step_component)
         
         step_implementation = ontology_queries.get_component_implementation(ontology, step_component)
         step_name = f'{workflow_name}-step_{step_order}_{step_implementation.fragment.replace("-", "_")}'
@@ -123,7 +119,6 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
         input_specs  = ontology_queries.get_implementation_input_specs(ontology, step_implementation, max_imp_level) 
         output_specs = ontology_queries.get_implementation_output_specs(ontology, step_implementation, max_imp_level)
-        print(output_specs)
 
         inputs = []
         prev_out_step_ports = prev_output_ports.get(step_component, [])
@@ -167,6 +162,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
 
 def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
+    t = time.time()
     workflows = {}
 
     intent_uri = intent_queries.get_intent_iri(intent_graph)
@@ -174,6 +170,7 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
     
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_uri)
     dataset = Dataset(data_graph, dataset_uri)
+
 
     for i, (name, plan) in enumerate(logical_plans.items()):
         workflow_name = f'workflow_{i}_{intent_uri.fragment}_{uuid.uuid4()}'.replace('-', '_')
@@ -184,6 +181,10 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
         workflow_graph += intent_graph
         workflow_graph += dataset.data_node_graph
         workflows[name] = workflow_graph
+        dataset.clear_node_graph()
+
+    t2 = time.time()
+    print("Temps total:", t2-t)
 
     return workflows
 

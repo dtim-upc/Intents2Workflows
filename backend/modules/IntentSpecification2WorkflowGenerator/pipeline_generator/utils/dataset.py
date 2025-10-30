@@ -69,3 +69,6 @@ class Dataset:
 
             copy_subgraph(self.data_graph, self.dataset, self._graph_lite, self.dataset)
         return self._graph_lite
+    
+    def clear_node_graph(self):
+        self._graph_lite = None
