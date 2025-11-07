@@ -2,7 +2,7 @@ from rdflib import Graph, URIRef
 from typing import List
 from tqdm import tqdm
 
-from .graph_queries import intent_queries, ontology_queries, shape_queries
+from graph_queries import intent_queries, ontology_queries, shape_queries
 from common import *
 
 

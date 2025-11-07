@@ -1,5 +1,5 @@
 from rdflib import Graph, URIRef
-from ..graph_queries import data_queries
+from graph_queries import data_queries
 from .graph_operations import copy_subgraph
 
 

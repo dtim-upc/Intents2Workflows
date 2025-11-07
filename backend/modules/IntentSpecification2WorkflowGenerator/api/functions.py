@@ -8,10 +8,10 @@ from rdflib.term import Node, URIRef
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from common import *
-from pipeline_generator.graph_queries import intent_queries, ontology_queries
+from graph_queries.intent_queries import get_intent_iri, get_intent_task
 from typing import List, Tuple
-from pipeline_generator.graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name, get_engines
-from pipeline_generator import abstract_planner as abstractPlannerModule, logical_planner, workflow_builder
+from graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name
+from pipeline_generator import abstract_planner as abstractPlannerModule
 
 def get_custom_ontology(path):
     graph = get_graph_xp()
@@ -82,8 +82,8 @@ def connect_algorithms(algos_list: List[URIRef]):
 def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tuple[
     Dict[Node, Dict[Node, List[Node]]], Dict[Node, List[Node]]]:
 
-    intent_iri = intent_queries.get_intent_iri(intent)
-    task = intent_queries.get_intent_task(intent, intent_iri)
+    intent_iri = get_intent_iri(intent)
+    task = get_intent_task(intent, intent_iri)
     algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}

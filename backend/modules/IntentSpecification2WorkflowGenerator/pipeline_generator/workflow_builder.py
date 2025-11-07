@@ -1,31 +1,38 @@
 from typing import Dict, List, Tuple, Set
 import uuid
 from rdflib import Graph, URIRef, Literal, BNode
-from .graph_queries import ontology_queries, intent_queries, data_queries
+from graph_queries import ontology_queries, intent_queries, data_queries
 from .utils.dataset import Dataset
 from .utils.transformation_engine import run_component_transformation
 from common import *
 import time
  
 
-def inject_value(dataset:Dataset, value:str):
-
-    injections= [("$$LABEL$$", dataset.label),
-                 ('$$LABEL_CATEGORICAL$$', dataset.label),
-                 ('$$NUMERIC_COLUMNS$$', f'{dataset.numeric_columns}'),
-                 ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns.append(dataset.target)}'),
-                 ('$$CATEGORICAL_COLUMNS$$',f'{dataset.categorical_columns}'),
-                 ('$$PATH$$',f'{dataset.path}'),
-                 ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'),
-                 ]
+def inject_value(dataset:Dataset, value:Literal):
     
-    for expression, newvalue in injections:
-        value = value.replace(expression, newvalue)
+    raw_value = value.toPython()
+    
+    if isinstance(raw_value,str):
+        injections= [("$$LABEL$$", dataset.label),
+                    ('$$LABEL_CATEGORICAL$$', dataset.label),
+                    ('$$NUMERIC_COLUMNS$$', f'{dataset.numeric_columns}'),
+                    ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns.append(dataset.target)}'),
+                    ('$$CATEGORICAL_COLUMNS$$',f'{dataset.categorical_columns}'),
+                    ('$$PATH$$',f'{dataset.path}'),
+                    ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'),
+                    ]
+        
+        for expression, newvalue in injections:
+            raw_value = raw_value.replace(expression, newvalue)
+    
 
-    return value
+    return raw_value
 
-def condition_satisfied(condition:str, feature_types:Set):
-    return condition is None \
+def condition_satisfied(condition:Literal, feature_types:Set):
+    if condition is None:
+        return True
+    condition = condition.toPython()
+    return condition == ""\
         or (condition == '$$INTEGER_COLUMN$$' and int not in feature_types) \
         or (condition == '$$STRING_COLUMN$$' and str not in feature_types) \
         or (condition == '$$FLOAT_COLUMN$$' and float not in feature_types)
@@ -41,6 +48,7 @@ def get_workflow_parameters(ontology:Graph, dataset:Dataset, implementation: URI
         for key, (value, order, condition) in parameters.items()
         if condition_satisfied(condition, dataset.feature_types)
     }
+    print("PARAMS",parameters)
     return parameters
             
 
@@ -174,7 +182,7 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
 
     for i, (name, plan) in enumerate(logical_plans.items()):
         workflow_name = f'workflow_{i}_{intent_uri.fragment}_{uuid.uuid4()}'.replace('-', '_')
-        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan,run_transformations=True)
+        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan,run_transformations) #TODO fix transformations
         
         workflow_graph.add((workflow_uri, tb.generatedFor, intent_uri))
         workflow_graph.add((intent_uri, RDF.type, tb.Intent))

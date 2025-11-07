@@ -16,9 +16,10 @@ from api.functions import *
 from pipeline_translator.knime import knime_pipeline_translator
 from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
+from pipeline_generator import logical_planner, workflow_builder
+from graph_queries import ontology_queries, intent_queries
 
 import requests
-from urllib.parse import quote
 
 app = Flask(__name__)
 CORS(app)

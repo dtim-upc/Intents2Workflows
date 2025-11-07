@@ -194,7 +194,7 @@ def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
     assert len(result) == 1
     return result[0]['implementation']
 
-def get_implementation_parameters(ontology: Graph, implementation: URIRef) -> Dict[
+def get_implementation_parameters(ontology: Graph, implementation: URIRef, type:URIRef=tb.Parameter) -> Dict[
     URIRef, Tuple[Literal, Literal, Literal]]:
     parameters_query = f"""
         PREFIX tb: <{tb}>
@@ -202,14 +202,41 @@ def get_implementation_parameters(ontology: Graph, implementation: URIRef) -> Di
         WHERE {{
             <{implementation}> tb:hasParameter ?parameter .
             ?parameter tb:has_defaultvalue ?value ;
-                       tb:has_condition ?condition ;
-                       tb:has_position ?order .
+                       a <{type}> .
+            OPTIONAL {{ ?parameter tb:has_condition ?condition . }}
+            OPTIONAL {{ ?parameter tb:has_position ?order . }}
         }}
         ORDER BY ?order
     """
+    print(parameters_query)
     results = ontology.query(parameters_query).bindings
-    return {param['parameter']: (param['value'], param['order'], param['condition']) for param in results}
+    print(results)
+    return {param['parameter']: (param['value'], param.get('order',None), param.get('condition',None)) for param in results}
 
+
+def get_text_parameter_base_parameter(ontology: Graph, factorParameter: URIRef):
+    results = next(ontology.objects(factorParameter, tb.hasBaseParameter, unique=True),None)
+    return results
+
+def translate_factor_level(ontology:Graph, base_param:URIRef, base_level:str, engineParam:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?value
+    WHERE {{
+        {base_param.n3()} a tb:Parameter;
+                tb:hasLevel ?baseFactor .
+        ?baseFactor a tb:FactorLevel ;
+                tb:hasValue "{base_level}" .
+        {engineParam.n3()} tb:hasLevel ?engineFactor .
+        ?engineFactor a tb:FactorLevel ;
+            tb:equivalentTo ?baseFactor ;
+            tb:hasValue ?value .
+        
+    }}
+    '''
+    result = ontology.query(query).bindings
+    #print(query, result)
+    return result[0]['value']
 
 def get_component_overridden_parameters(ontology: Graph, component: URIRef) -> Dict[URIRef, Tuple[URIRef, Literal]]:
     paramspecs_query = f"""
@@ -247,3 +274,80 @@ def get_engine(graph: Graph, implementation:URIRef):
 
 def get_implementation_engine_compatibility(ontology:Graph, implementation: URIRef):
     return set(ontology.objects(implementation, tb.compatibleWith))
+
+def is_predictor(ontology: Graph, implementation: URIRef):
+    query = f""" PREFIX tb: <{tb}>
+                ASK {{ {implementation.n3()} a tb:ApplierImplementation .}} """
+    return ontology.query(query).askAnswer
+
+def get_implementation_task(ontology: Graph, implementation: URIRef):
+    query = f""" PREFIX tb: <{tb}>
+                SELECT ?task
+                WHERE {{ {implementation.n3()} tb:implements ?task .}} """
+    
+    results = ontology.query(query).bindings
+    assert len(results) == 1
+
+    return results[0]['task']
+
+
+def get_parameter_datatype(ontology: Graph, parameter: URIRef):
+    return next(ontology.objects(parameter, tb.has_datatype, True), None)
+
+
+def get_algebraic_expression(ontology:Graph, param:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?expr
+    WHERE {{
+        {param.n3()} a tb:DerivedParameter;
+                tb:derivedFrom ?expr .
+        ?expr a tb:AlgebraicExpression .
+                
+    }}
+    '''
+    result = ontology.query(query).bindings
+    return result[0]['expr'] 
+
+def get_translation_condition(ontology: Graph, implementation:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?condition
+    WHERE {{
+        {implementation.n3()} tb:has_translation_condition ?condition .
+        ?condition a tb:AlgebraicExpression .
+                
+    }}
+    '''
+    result = ontology.query(query).bindings
+    if len(result) == 0:
+        return None
+    return result[0]['condition']
+
+def get_engine_implementations(ontology: Graph, base_implementation:URIRef, engine:URIRef):
+
+    query = f'''
+    PREFIX tb: <{tb}>
+    SELECT ?impl
+    WHERE {{
+        ?impl a tb:EngineImplementation ;
+            tb:has_engine {engine.n3()} ;
+            tb:hasBaseImplementation {base_implementation.n3()} .          
+    }}
+    '''
+    result = ontology.query(query).bindings
+    
+    return [r['impl'] for r in result]
+
+def is_factor(ontology:Graph, parameter:URIRef):
+    query = f'''
+    PREFIX tb: <{tb}>
+    ASK {{
+        {parameter.n3()} a tb:FactorParameter .
+    }}
+    '''
+
+    return ontology.query(query).askAnswer
+
+def get_parameter_key(ontology:Graph, parameter:URIRef):
+    return next(ontology.objects(parameter, tb.key, unique=True))

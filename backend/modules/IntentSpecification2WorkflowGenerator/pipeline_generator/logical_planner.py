@@ -7,7 +7,7 @@ import random
 import math
 
 from common import *
-from .graph_queries import intent_queries, ontology_queries, shape_queries, data_queries
+from graph_queries import intent_queries, ontology_queries, shape_queries, data_queries
 
 
 MAX_PLAN_LENGTH = 10

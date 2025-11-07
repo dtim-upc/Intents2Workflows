@@ -72,12 +72,15 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
 
 
     def compute_term_value(term):
+        print("term",term,type(term))
         if isinstance(term,Literal):
+            print("tipus",term.datatype)
             value = term.toPython()
         elif term == cb.NONE or term is None:
             value = None
         elif is_parameter(ontology, term):
             if term in step_parameters.keys():
+                print("param one",step_parameters[term], step_parameters[term].datatype, type(step_parameters[term]))
                 value = step_parameters[term].toPython()
             else:
                 tqdm.write(str(term) +" not present in step parameters. Using default value")
@@ -86,7 +89,7 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
             value = compute_algebraic_expression(ontology, term, step_parameters)
         else:
             raise Exception("Invalid term type: "+type+" for term: "+term)
-        
+        print("term final",term,value,type(value))
         return value
     
     value_1 = compute_term_value(term1)

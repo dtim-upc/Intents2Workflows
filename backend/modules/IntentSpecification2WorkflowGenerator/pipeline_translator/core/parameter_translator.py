@@ -9,9 +9,9 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 from common import *
-from . import translator_graph_queries as queries
 from .algebraic_expression_computation import compute_algebraic_expression
-
+from graph_queries.ontology_queries import get_text_parameter_base_parameter, get_implementation_parameters, is_factor, \
+    translate_factor_level, get_algebraic_expression, get_parameter_key
 
 def literal_to_raw_datatype(value):
     if isinstance(value, Literal):
@@ -22,20 +22,20 @@ def literal_to_raw_datatype(value):
 
 def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
     python_params = {}
-    text_params = queries.get_text_params(ontology,implementation)
+    text_params = get_implementation_parameters(ontology,implementation, tb.TextParameter)
 
-    for param in text_params:
-        base_param = queries.get_base_param(ontology, param)
+    for param, (default_value, order, condition) in text_params.items():
+        base_param = get_text_parameter_base_parameter(ontology, param)
         if base_param in step_parameters.keys():
-            if queries.is_factor(ontology, param):
-                value = queries.translate_factor_level(ontology, base_param, step_parameters[base_param],param)
+            if is_factor(ontology, param):
+                value = translate_factor_level(ontology, base_param, step_parameters[base_param],param)
             else:
                 value = step_parameters[base_param]
         else:
-            value = queries.get_default_value(ontology, param)
+            value = default_value
 
         value = literal_to_raw_datatype(value)
-        key = next(ontology.objects(param, tb.key, unique=True))
+        key = get_parameter_key(ontology,param)
         
         python_params[param] = (key,value)
     return python_params
@@ -43,30 +43,32 @@ def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters
 
 def translate_numeric_params(ontology:Graph, implementation:URIRef, step_parameters: Dict[URIRef,Literal]):
     python_params = {}
-    numeric_params = queries.get_numeric_params(ontology,implementation)
+    numeric_params =  get_implementation_parameters(ontology,implementation, tb.NumericParameter)
 
-    for param in numeric_params:
-        alg_expression = queries.get_algebraic_expression(ontology, param)
+
+    for param, (default_value, order, condition) in numeric_params.items():
+        alg_expression = get_algebraic_expression(ontology, param)
+        print("Algebraic from",param)
         value = compute_algebraic_expression(ontology, alg_expression, step_parameters)
  
         if value is None:
-            value = queries.get_default_value(ontology, param)
+            value = default_value
 
         value = literal_to_raw_datatype(value)
 
-        key = next(ontology.objects(param, tb.key, unique=True))
+        key = get_parameter_key(ontology,param)
         python_params[param] = (key,value)
     return python_params
 
 def get_engine_specific_params(ontology:Graph, implementation:URIRef):
     params = {}
-    specific_params = queries.get_engine_specific_params(ontology,implementation)
+    specific_params = get_implementation_parameters(ontology,implementation,tb.EngineSpecificParameter)
 
-    for param in specific_params:
-        value = queries.get_default_value(ontology, param)
-        value = literal_to_raw_datatype(value)
+    for param, (default_value, order, condition) in specific_params.items():
 
-        key = next(ontology.objects(param, tb.key, unique=True))
+        value = literal_to_raw_datatype(default_value)
+
+        key = get_parameter_key(ontology,param)
         params[param] = (key,value)
     return params
 

@@ -71,9 +71,9 @@ class EngineImplementation():
 
                 default_value = parameter.default_value
                 if default_value is None:
-                    g.add((parameter.uri_ref, tb.has_default_value, cb.NONE))
+                    g.add((parameter.uri_ref, tb.has_defaultvalue, cb.NONE))
                 else:
-                    g.add((parameter.uri_ref, tb.has_default_value, Literal(default_value)))
+                    g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(default_value)))
 
                 g.add((parameter.uri_ref, tb.key, Literal(parameter.label)))
                 g.add((parameter.uri_ref, tb.has_datatype, parameter.datatype))
