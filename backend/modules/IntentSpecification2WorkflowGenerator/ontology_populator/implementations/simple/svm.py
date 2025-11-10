@@ -17,7 +17,7 @@ svm_learner_implementation = Implementation(
          IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]),
     ],
     output=[ 
-        OutputIOSpec([IOSpecTag(cb.SVMModel)]),
+        OutputIOSpec([IOSpecTag(cb.SVMModelShape)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -103,7 +103,7 @@ svm_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.SVMModel)]),
+        InputIOSpec([IOSpecTag(cb.SVMModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape), 
          IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]), 
          #TODO add spec to filter out textual columns

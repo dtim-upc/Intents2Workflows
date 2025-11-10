@@ -6,7 +6,16 @@ from .utils.dataset import Dataset
 from .utils.transformation_engine import run_component_transformation
 from common import *
 import time
- 
+
+def get_port_target_type(ontology:Graph, shapes:List[URIRef]):
+    data_port = True
+    model_port = True
+
+    for s in shapes:
+        data_port = data_port & ontology_queries.is_shape_targeting_data(ontology, s)
+        model_port = model_port & ontology_queries.is_shape_targeting_model(ontology,s)
+    
+    return data_port,model_port
 
 def inject_value(dataset:Dataset, value:Literal):
     
@@ -48,24 +57,37 @@ def get_workflow_parameters(ontology:Graph, dataset:Dataset, implementation: URI
         for key, (value, order, condition) in parameters.items()
         if condition_satisfied(condition, dataset.feature_types)
     }
-    print("PARAMS",parameters)
     return parameters
-            
 
-# Try to guess the component connected to the input port with input_specs.
-# It compares the input specs of the input port with the output specs of each previous component directly connected to the current step.
-def get_most_suitable_predecessor(input_shapes:Set[URIRef], candidates: List[Tuple[URIRef,List[URIRef]]]):
-    best_score = 0
+
+
+def get_most_suitable_predecessor(input_port:Tuple[Set[URIRef],Tuple[bool,bool]], candidates: List[Tuple[URIRef,List[URIRef],Tuple[bool,bool]]]): #TODO create candidate class
+    """Get the most plausible component to connect to input_port. 
+    This is infered based on the input shapes of each port candidate port and the target type.
+    The returned candidate is ideally the one that contain all the shapes of the input port. 
+    If ideal option is not found, it returns the one with more shapes in common.
+    If no candidate share any shape with input_port, it returns a candidate with the same target
+    (data or model) as input_port, starting at the end of the list.
+
+    It is expected that candiates list is ordered based on ascending step order.
+    """
+    
+    best_score = -1 #if shapes don't match, at least select a data/model candidate port that matches the input
     best_candidate = cb.NONE
-    for port, shapes in candidates:       
-        intersection = input_shapes & set(shapes)
+    input_shapes, (input_targets_data, input_targets_model) = input_port
+    print("input shape",input_port,"candidates",candidates)
 
-        if len(intersection) == len(input_shapes):
-            return port # Best possible match
+    for port, shapes, (port_targets_data, port_tarets_model)  in reversed(candidates): #it is more likely to connect to the immediately precedent step
         
-        if len(intersection) > best_score:
-            best_candidate = port
-            best_score = len(intersection)
+        if (port_targets_data and input_targets_data) or (port_tarets_model and input_targets_model): #do not consider a viable candidate if port_targets differ 
+            intersection = input_shapes & set(shapes)
+
+            if len(intersection) == len(input_shapes):
+                return port # Best possible match
+            
+            if len(intersection) > best_score:
+                best_candidate = port
+                best_score = len(intersection)
 
     return best_candidate
 
@@ -134,7 +156,10 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
         for i, (spec, shapes) in enumerate(input_specs):
             if cb.UnsatisfiableShape not in shapes: #ignore port if unsatisfiable
-                input_port = get_most_suitable_predecessor(set(shapes), prev_out_step_ports)
+
+                input_target = get_port_target_type(ontology,shapes)
+                input_port = get_most_suitable_predecessor((set(shapes),input_target), prev_out_step_ports)
+                print("chosen candidate", input_port)
                 inputs.append((input_port,spec))
   
         outputs = []
@@ -147,7 +172,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
                 output_i = ab[f'{step_name}-output_{i}']
 
             outputs.append((output_i,spec))
-            output_ports.append((output_i, shapes))
+            output_ports.append((output_i, shapes, get_port_target_type(ontology,shapes)))
 
 
         step_uri = add_step(workflow_graph,workflow_uri,step_name, step_order, step_component, inputs, outputs, step_parameters, prev_steps[step_component])

@@ -171,9 +171,8 @@ def add_models(cbox):
         'ProjectionModel',
     ]
 
-    cbox.add((cb.Model, RDFS.subClassOf, tb.Data))
     for model in models:
-        cbox.add((cb.term(model), RDFS.subClassOf, cb.Model))
+        cbox.add((cb.term(model), RDF.type, tb.Model))
 
         cbox.add((cb.term(model + 'Shape'), RDF.type, SH.NodeShape))
         cbox.add((cb.term(model + 'Shape'), RDF.type, tb.DataSpec))
@@ -200,12 +199,12 @@ def add_visualizations(cbox):
         cbox.add((cb.term(visual + 'Shape'), SH.targetClass, cb.term(visual)))
 
 
-# def add_datasets(cbox):
-#     cbox.add((dmop.TabularDataset, RDFS.subClassOf, tb.Data))
+def add_datasets(cbox):
+    cbox.add((dmop.TabularDataset, RDF.type, tb.Dataset))
 
-#     cbox.add((cb.term('TabularDatasetShape'), RDF.type, SH.NodeShape))
-#     cbox.add((cb.term('TabularDatasetShape'), RDF.type, tb.DataSpec))
-#     cbox.add((cb.term('TabularDatasetShape'), SH.targetClass, dmop.TabularDataset))
+    cbox.add((cb.term('TabularDatasetShape'), RDF.type, SH.NodeShape))
+    cbox.add((cb.term('TabularDatasetShape'), RDF.type, tb.DataSpec))
+    cbox.add((cb.term('TabularDatasetShape'), SH.targetClass, dmop.TabularDataset))
 
 
 def add_subproperties(cbox):
@@ -641,8 +640,8 @@ def main(dest='../ontologies/cbox.ttl'):
     add_algorithms(cbox)
     add_implementations(cbox)
     add_models(cbox)
-    add_visualizations(cbox)
-    # add_datasets(cbox)
+    #add_visualizations(cbox)
+    add_datasets(cbox)
     add_subproperties(cbox)
     add_shapes(cbox)
     add_constraints(cbox)

@@ -14,7 +14,7 @@ dbscan_implementation = Implementation(
         Parameter("minimum samples", XSD.int)
     ],
     input = [
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
         
     ],
     output=[

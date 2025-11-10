@@ -27,7 +27,7 @@ decision_tree_learner_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape)])
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.DecisionTreeModel)]),
+        OutputIOSpec([IOSpecTag(cb.DecisionTreeModelShape)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -51,7 +51,7 @@ decision_tree_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.DecisionTreeModel)]),
+        InputIOSpec([IOSpecTag(cb.DecisionTreeModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
     output=[

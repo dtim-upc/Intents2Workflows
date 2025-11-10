@@ -208,9 +208,7 @@ def get_implementation_parameters(ontology: Graph, implementation: URIRef, type:
         }}
         ORDER BY ?order
     """
-    print(parameters_query)
     results = ontology.query(parameters_query).bindings
-    print(results)
     return {param['parameter']: (param['value'], param.get('order',None), param.get('condition',None)) for param in results}
 
 
@@ -351,3 +349,20 @@ def is_factor(ontology:Graph, parameter:URIRef):
 
 def get_parameter_key(ontology:Graph, parameter:URIRef):
     return next(ontology.objects(parameter, tb.key, unique=True))
+
+def is_shape_targeting_node(ontology:Graph, shape:URIRef, target_node:URIRef):
+    query = f"""
+    PREFIX tb: <{tb}>
+    PREFIX sh: <{SH}>
+    ASK {{ {shape.n3()} sh:targetClass ?class .
+            ?class a { target_node.n3() } .
+            }} 
+    """
+    print(query)
+    return ontology.query(query).askAnswer
+
+def is_shape_targeting_data(ontology:Graph, shape:URIRef):
+    return is_shape_targeting_node(ontology, shape, tb.Dataset)
+
+def is_shape_targeting_model(ontology:Graph, shape:URIRef):
+    return is_shape_targeting_node(ontology, shape, tb.Model)

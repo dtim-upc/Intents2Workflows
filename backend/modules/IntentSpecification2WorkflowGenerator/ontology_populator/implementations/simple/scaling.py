@@ -17,11 +17,11 @@ scaling_learner_implementation = Implementation(
 
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NormalizedTabularDatasetShape)]),
-        OutputIOSpec([IOSpecTag(cb.NormalizerModel)]),
+        OutputIOSpec([IOSpecTag(cb.NormalizerModelShape)]),
     ],
     implementation_type=tb.LearnerImplementation
 )
@@ -198,7 +198,7 @@ scaling_applier_implementation = Implementation(
         cols
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.NormalizerModel)]),
+        InputIOSpec([IOSpecTag(cb.NormalizerModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
     output=[
