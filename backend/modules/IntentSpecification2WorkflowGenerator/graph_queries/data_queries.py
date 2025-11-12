@@ -127,3 +127,18 @@ def get_dataset_target_column(data_graph: Graph, dataset: Graph) -> str:
     else:
         print("WARNING: unusal target column resoinse:", list(columns))
         return ""
+
+def get_dataset_columns(data_graph:Graph, dataset:Graph)-> List[str]:
+    query = f"""
+        PREFIX rdfs: <{RDFS}>
+        PREFIX dmop: <{dmop}>
+
+        SELECT ?label
+        WHERE {{
+            {dataset.n3()} dmop:hasColumn ?column .
+            ?column dmop:hasColumnName ?label .
+        }}
+        """
+    columns = data_graph.query(query).bindings
+
+    return [x['label'].value for x in columns]

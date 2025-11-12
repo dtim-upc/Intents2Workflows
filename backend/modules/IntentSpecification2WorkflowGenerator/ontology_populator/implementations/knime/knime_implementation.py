@@ -25,7 +25,6 @@ class KnimeImplementation(EngineImplementation):
         #assert set(output_ports) <= set(self.baseImplementation.output + [cb.NONE])
         self.output_ports = output_ports
 
-        print("Inputs: ", input_ports)
 
     def add_to_graph(self, g: Graph):
         g.add((self.uri_ref, tb.term('knime-node-name'), Literal(self.name)))
@@ -67,9 +66,7 @@ class KnimeImplementation(EngineImplementation):
 
         if self.output_ports is None:
             self.output_ports = [p.get_uri(self.baseImplementation.uri_ref) for p in self.baseImplementation.output]
-            print("OUTS", self.baseImplementation.output)
 
-        print(self.output_ports)
         for i, port in enumerate(self.output_ports):
             knime_port = BNode()
             g.add((knime_port, tb.hasSpec, port))

@@ -75,7 +75,6 @@ def get_most_suitable_predecessor(input_port:Tuple[Set[URIRef],Tuple[bool,bool]]
     best_score = -1 #if shapes don't match, at least select a data/model candidate port that matches the input
     best_candidate = cb.NONE
     input_shapes, (input_targets_data, input_targets_model) = input_port
-    print("input shape",input_port,"candidates",candidates)
 
     for port, shapes, (port_targets_data, port_tarets_model)  in reversed(candidates): #it is more likely to connect to the immediately precedent step
         
@@ -159,7 +158,6 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
                 input_target = get_port_target_type(ontology,shapes)
                 input_port = get_most_suitable_predecessor((set(shapes),input_target), prev_out_step_ports)
-                print("chosen candidate", input_port)
                 inputs.append((input_port,spec))
   
         outputs = []

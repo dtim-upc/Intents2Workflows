@@ -4,17 +4,22 @@ import time
 from tqdm import tqdm
 from datetime import datetime
 
-from pipeline_generator.pipeline_generator import build_workflows, get_algorithms_and_implementations_to_solve_task, get_intent_info
+from graph_queries.intent_queries import get_intent_iri, get_intent_dataset_task
+from graph_queries.data_queries import get_dataset_numeric_columns, get_dataset_categorical_columns, get_dataset_columns
+from graph_queries.ontology_queries import get_algorithms_from_task
+from .abstract_planner import get_algorithms_and_implementations_to_solve_task
+from .logical_planner import generate_logical_plans
+from .workflow_builder import generate_workflows
 from common import *
-import graph_queries
 
-def add_input_parameters(ontology:Graph, intent_graph:Graph):
-    dataset, task, algorithm, intent_iri = get_intent_info(intent_graph)
+def add_input_parameters(ontology:Graph, intent_graph:Graph, data_graph:Graph):
+    intent_iri = get_intent_iri(intent_graph)
+    dataset, task, algorithm = get_intent_dataset_task(intent_graph, intent_iri)
 
-    all_cols = graph_queries.get_inputs_all_columns(ontology, [dataset])
-    cat_cols = graph_queries.get_inputs_categorical_columns(ontology, [dataset])
-    num_cols = graph_queries.get_inputs_numeric_columns(ontology, [dataset])
-    exp_params = graph_queries.get_exposed_parameters(ontology, task, algorithm)
+    all_cols = get_dataset_columns(data_graph, dataset)
+    cat_cols = get_dataset_categorical_columns(data_graph, dataset)
+    num_cols = get_dataset_numeric_columns(data_graph, dataset)
+    exp_params = []#graph_queries.get_exposed_parameters(ontology, task, algorithm)
 
     for exp_param in exp_params:
         option_columns = []
@@ -42,7 +47,7 @@ def add_input_parameters(ontology:Graph, intent_graph:Graph):
 def interactive():
     intent_graph = get_graph_xp()
     intent = input('Introduce the intent name [ClassificationIntent]: ') or 'VisualizationIntent' #or 'ClassificationIntent'
-    data = input('Introduce the dataset name [titanic.csv]: ') or 'titanic.csv'
+    data = input('Introduce the annotated dataset path [./titanic.ttl]: ') or './titanic.ttl'
     task = input('Introduce the task name [Classification]: ') or 'Classification'
 
 
@@ -50,11 +55,13 @@ def interactive():
     intent_graph.add((ab.term(intent), tb.overData, ab.term(data)))
     intent_graph.add((cb.term(task), tb.tackles, ab.term(intent)))
 
+    data_graph = Graph().parse(f'{data}',format="turtle")
+
 
     ontology = get_ontology_graph()
 
     if task == 'DataVisualization':
-        algos = [alg.fragment for alg in graph_queries.get_algorithms_from_task(ontology, cb.term(task))]
+        algos = [alg.fragment for alg in get_algorithms_from_task(ontology, cb.term(task))]
         vis_algorithm = str(input(f'Choose a visualization algorithm from the following (case-sensitive):{algos}'))
         if vis_algorithm is not None:
             intent_graph.add((ab.term(intent), tb.specifies, cb.term(vis_algorithm)))
@@ -75,10 +82,13 @@ def interactive():
 
     shape_graph = Graph()
     shape_graph.parse('./shapeGraph.ttl')
-    add_input_parameters(ontology,intent_graph)
+
+    #add_input_parameters(ontology,intent_graph,data_graph)
+
     t = time.time()
     solving_algs, solving_impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent_graph, log=True)
-    workflows = build_workflows(ontology, shape_graph, intent_graph, solving_impls, log=True)
+    logical_plans = generate_logical_plans(ontology, shape_graph, intent_graph, data_graph, solving_impls, log=True)
+    workflows = generate_workflows(ontology, intent_graph, data_graph, logical_plans, run_transformations=False)
     t = time.time() - t
 
     print(f'Workflows built in {t} seconds')

@@ -104,7 +104,6 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     plans = {}
 
     for alg in available_algs:
-        print(alg)
         if len(algs_shapes[alg]) <= 0:
             plans[alg] = connect_algorithms([alg])
         elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:

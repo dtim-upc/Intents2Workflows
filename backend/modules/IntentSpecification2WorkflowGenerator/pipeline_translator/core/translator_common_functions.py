@@ -26,7 +26,6 @@ def load_workflow(path: str) -> Graph:
 def get_implementation_engine_conditional(ontology: Graph, base_implementation: URIRef, engine:URIRef, parameters):
 
     implementations = get_engine_implementations(ontology, base_implementation, engine)
-    print("Implementacions",implementations)
 
     for implementation in implementations:
         cond = get_translation_condition(ontology, implementation)

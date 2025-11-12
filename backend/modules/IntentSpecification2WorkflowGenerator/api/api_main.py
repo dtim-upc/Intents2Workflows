@@ -102,7 +102,7 @@ def run_abstract_planner():
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
     intent = intent_graph
-    intent.serialize('intent.ttl', format="turtle")
+    #intent.serialize('intent.ttl', format="turtle")
 
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
@@ -164,10 +164,8 @@ def run_workflow_builder():
     logical_plans = request.json.get('logical_plans', '')
 
     intent_graph = Graph().parse(data=intent_json, format='turtle')
-    print("important graph")
     data_graph = get_graph_with_tbox(dataset)#Graph().parse(data = dataset, format='turtle')
-    print("finitto")
-    data_graph.serialize('./data_graph.ttl', format="turtle")
+    #data_graph.serialize('./data_graph.ttl', format="turtle")
 
     workflow_plans = workflow_builder.generate_workflows(ontology, intent_graph, data_graph, logical_plans)
 

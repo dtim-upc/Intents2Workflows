@@ -2,7 +2,7 @@ import itertools
 import uuid
 from rdflib import Graph, URIRef
 from tqdm import tqdm
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 import random
 import math
 
@@ -217,7 +217,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
     return logical_plan
 
 
-def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Graph, data_graph:Graph, pot_impls, log: bool = False) -> List[Graph]:
+def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Graph, data_graph:Graph, pot_impls, log: bool = False) -> Dict[str,Dict[URIRef,List[URIRef]]]:
     t = time.time()
     intent_iri = intent_queries.get_intent_iri(intent_graph=intent_graph)
     dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri) 

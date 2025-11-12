@@ -33,7 +33,6 @@ class EngineImplementation():
 
 
         if self.translation_condition is not None:
-            print(self.translation_condition)
             condtion_uri = self.translation_condition.add_to_graph(g)
             g.add((self.uri_ref, tb.has_translation_condition, condtion_uri))
  

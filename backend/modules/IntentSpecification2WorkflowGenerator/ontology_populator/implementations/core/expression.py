@@ -26,8 +26,7 @@ class AlgebraicExpression:
             elif isinstance(term, LiteralValue):
                 return Literal(term)
             else:
-                print(term)
-                raise Exception("invalid term type")
+                raise Exception(f"invalid term type {term}")
 
         expr = self.uri_ref
         g.add((expr,RDF.type,tb.AlgebraicExpression))
