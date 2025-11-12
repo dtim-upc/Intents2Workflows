@@ -33,8 +33,8 @@ def get_implementation_engine_conditional(ontology: Graph, base_implementation: 
         if cond is None or compute_algebraic_expression(ontology, cond, parameters):
             return implementation #returns the first compatible engine implementation
         
-    print(f"ERROR: No translation condition matched for {base_implementation} in {engine} engine.")
-    return None
+    raise Exception(f"ERROR: No translation condition matched for {base_implementation} in {engine} engine.")
+
         #print(f"WARNING: More than one engine implementations found for {base_implementation} in {engine} engine. Only one of them (chosen randomly) will be used")
     
 

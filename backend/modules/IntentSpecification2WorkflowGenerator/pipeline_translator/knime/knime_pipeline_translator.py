@@ -156,7 +156,6 @@ def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folde
     step_parameters = get_step_parameters_agnostic(workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
     engine_implementation = get_implementation_engine_conditional(ontology, implementation, engine=cb.KNIME, parameters=step_parameters)
     knime_step_parameters = translate_parameters(ontology=ontology, step_parameters=step_parameters, engine_implementation=engine_implementation)
-    print("KNIME step parameters", knime_step_parameters, step_parameters)
     
     properties = get_knime_properties(ontology, engine_implementation)
     conf_params = get_config_parameters(ontology, engine_implementation, knime_step_parameters)
@@ -271,7 +270,6 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str, ke
         step_info[step.fragment] = ports
 
     tqdm.write('\tCreating workflow file')
-    print("STEP INFO", step_info)
     create_workflow_file(ontology, graph, steps, step_info, step_paths, temp_folder)
 
     tqdm.write('\tCreating zip file')

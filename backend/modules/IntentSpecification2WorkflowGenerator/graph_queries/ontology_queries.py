@@ -252,31 +252,6 @@ def get_component_overridden_parameters(ontology: Graph, component: URIRef) -> D
 
     return overridden_params
 
-#Only used in run_generator
-def get_component_exposed_parameters(ontology: Graph, component: URIRef) -> Dict[URIRef, Tuple[URIRef, Literal]]:
-    expparams_query = f"""
-    PREFIX tb: <{tb}>
-    SELECT DISTINCT ?exp_param ?label ?value ?condition
-    WHERE {{
-        {task.n3()} a tb:Task .
-        {{
-            {"BIND(" + algorithm.n3() + " AS ?algorithm) ." if algorithm else f"?algorithm tb:solves {task.n3()} ."}
-        }}
-        # {'?algorithm' if algorithm is None else algorithm.n3()} tb:solves {task.n3()} .
-        ?imp tb:implements ?algorithm .
-        ?com tb:hasImplementation ?imp ;
-            tb:exposesParameter ?exp_param .
-        ?exp_param tb:has_defaultvalue ?value;
-                tb:has_condition ?condition ;
-                rdfs:label ?label .
-    }}
-    """
-    
-    result = ontology.query(expparams_query).bindings
-    return result 
-
-    return overridden_params
-
 
 def get_component_transformations(ontology: Graph, component: URIRef) -> List[URIRef]:
     transformation_query = f'''
