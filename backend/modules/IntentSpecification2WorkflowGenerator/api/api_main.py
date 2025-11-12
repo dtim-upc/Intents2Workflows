@@ -3,6 +3,8 @@ import os
 import shutil
 import os
 from pathlib import Path
+import uuid
+from rdflib import URIRef, Literal, BNode
 
 import proactive
 
@@ -14,9 +16,10 @@ from api.functions import *
 from pipeline_translator.knime import knime_pipeline_translator
 from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
+from pipeline_generator import logical_planner, workflow_builder
+from graph_queries import ontology_queries, intent_queries
 
 import requests
-from urllib.parse import quote
 
 app = Flask(__name__)
 CORS(app)
@@ -99,7 +102,7 @@ def run_abstract_planner():
     intent_graph.add((ab.term(intent_name), tb.has_complexity, Literal(complexity)))
 
     intent = intent_graph
-    intent.serialize('intent.ttl', format="turtle")
+    #intent.serialize('intent.ttl', format="turtle")
 
     abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
 
@@ -144,19 +147,38 @@ def run_logical_planner():
     intent_json = request.json.get('intent_graph', '')
     dataset = request.json.get('dataset', '')
 
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
-    extended_ontology = ontology.parse(data = dataset, format='turtle')
+    data_graph = Graph().parse(data = dataset, format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent = Graph().parse(data=intent_json, format='turtle')
-
-    algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent)
-
-    workflow_plans = workflow_planner(extended_ontology, shape_graph, impls, intent)
-    logical_plans = logical_planner(extended_ontology, workflow_plans)
+    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
+    logical_plans = logical_planner.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
 
     return logical_plans
+
+@app.post('/workflow_builder')
+def run_workflow_builder():
+    intent_json = request.json.get('intent_graph', '')
+    dataset = request.json.get('dataset', '')
+    logical_plans = request.json.get('logical_plans', '')
+
+    intent_graph = Graph().parse(data=intent_json, format='turtle')
+    data_graph = get_graph_with_tbox(dataset)#Graph().parse(data = dataset, format='turtle')
+    #data_graph.serialize('./data_graph.ttl', format="turtle")
+
+    workflow_plans = workflow_builder.generate_workflows(ontology, intent_graph, data_graph, logical_plans)
+
+    plans = []
+    for name, graph in workflow_plans.items():
+        engines = { engine.fragment: getCompatibility(graph, engine) 
+                        for engine in ontology_queries.get_engines(ontology) }
+        plans.append({
+            "name": name,
+            "graph": graph.serialize(format="turtle"),
+        } | engines)
+        
+    return {"workflow_plans": plans}
 
 
 @app.post('/workflow_plans/knime')
@@ -168,7 +190,7 @@ def download_knime():
     plan_id = request.json.get('plan_id', uuid.uuid4())
 
     if getCompatibility(plan_graph, cb.KNIME):
-        intent_name = get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_iri(plan_graph).fragment
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')
@@ -240,7 +262,7 @@ def download_python():
     
     if getCompatibility(plan_graph, cb.Python):
         plan_id = request.json.get('plan_id', uuid.uuid4())
-        intent_name = get_intent_name(plan_graph)
+        intent_name = intent_queries.get_intent_iri(plan_graph).fragment
 
         file_path = os.path.join(temporary_folder, f'{intent_name}_{plan_id}.ttl')
         plan_graph.serialize(file_path, format='turtle')

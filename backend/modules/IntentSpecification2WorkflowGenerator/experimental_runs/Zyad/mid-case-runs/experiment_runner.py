@@ -6,8 +6,8 @@ from natsort import os_sorted
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from pipeline_generator.optimized_pipeline_generator import *
-
+from pipeline_generator.pipeline_generator import *
+from pipeline_generator.graph_queries import *
 
 def build_experimental_workflow(workflow_name: str, ontology: Graph, dataset: URIRef, main_component: URIRef,
                    transformations: List[URIRef]) -> Tuple[Graph, URIRef]:

@@ -13,10 +13,10 @@ partitioning_implementation = Implementation(
         Parameter("Class columns", XSD.string),
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.TrainTabularDatasetShape)]),
+        OutputIOSpec([IOSpecTag(cb.TrainTabularDatasetShape), IOSpecTag(cb.TabularDatasetShape)]),
         OutputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)]),
     ],
 )

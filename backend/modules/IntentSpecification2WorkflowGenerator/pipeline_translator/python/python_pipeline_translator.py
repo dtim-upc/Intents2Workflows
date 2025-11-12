@@ -14,8 +14,11 @@ root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/python/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
-from ..core.translator_graph_queries import *
+from ..core.translator_common_functions import *
 from ..core.parameter_translator import translate_parameters
+from graph_queries.workflow_queries import get_step_component, get_workflow_steps, get_step_parameters_agnostic, get_step_input_data, get_step_output_data, get_workflow_connections
+from graph_queries.ontology_queries import get_component_implementation, get_implementation_task, is_predictor
+from ..core.translator_common_functions import get_implementation_engine_conditional
 
 
 try:
@@ -57,13 +60,14 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
     target = None
     control_params = {}
     for step in tqdm(steps):
-        component, implementation = get_step_component_implementation(ontology, graph, step)
+        component = get_step_component(graph, step)
+        implementation = get_component_implementation(ontology, component)
         task = get_implementation_task(ontology, implementation).fragment
-        if is_predictior(ontology, implementation):
+        if is_predictor(ontology, implementation):
             task += '_predictor'
 
         step_parameters = get_step_parameters_agnostic(graph, step)
-        engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, cb.Python)
+        engine_implementation = get_implementation_engine_conditional(ontology, implementation, cb.Python, step_parameters)
         python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
         cp, function_params = split_parameters(ontology, python_step_parameters)
         control_params.update(cp)
@@ -74,8 +78,8 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
         python_function = get_python_function(ontology, engine_implementation)
         template = get_template(ontology, engine_implementation)
 
-        inputs = get_step_inputs(graph, step)
-        outputs = get_step_outputs(graph, step)
+        inputs = get_step_input_data(graph, step)
+        outputs = get_step_output_data(graph, step)
 
         step_template = environment.get_template(f"{template}.py.jinja")
 

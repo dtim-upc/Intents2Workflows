@@ -1,12 +1,17 @@
 import zipfile
 import sys
 import os
+from typing import Dict
 
-from rdflib.term import Node
+from rdflib.term import Node, URIRef
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from pipeline_generator.optimized_pipeline_generator import *
-from pipeline_generator.graph_queries import *
+
+from common import *
+from graph_queries.intent_queries import get_intent_iri, get_intent_task
+from typing import List, Tuple
+from graph_queries.ontology_queries import get_implementation_io_specs, get_constraint_by_name
+from pipeline_generator import abstract_planner as abstractPlannerModule
 
 def get_custom_ontology(path):
     graph = get_graph_xp()
@@ -36,29 +41,39 @@ def get_custom_ontology_only_problems():
     return graph
 
 def get_constraint(ontology: Graph, name: str):
-    return graph_queries.get_constraint_by_name(ontology,name)
+    return get_constraint_by_name(ontology,name)
 
 
-def connect_algorithms(ontology, shape_graph, algos_list: List[URIRef]):
+def connect_algorithms(algos_list: List[URIRef]):
 
-    linked_impls = {}
+    linked_impls = []
+    previous = algos_list[0]
     partition = False
+    train_component = None
 
     for i in range(1,len(algos_list)):
-        connections = [algos_list[i]]
-        
+        connection_list = []
+        connection_list.append(algos_list[i])
+
+        if not train_component is None:
+            linked_impls.append((previous, connection_list))
+            connection_list = [previous]
+            previous = train_component
+            train_component = None
+
         if partition:
-            connections.append(algos_list[i]+"-Train")
-            linked_impls[algos_list[i]+"-Train"] = [algos_list[i+1]]
+            train_component = algos_list[i]+"-Train"           
+            connection_list.append(train_component)
             partition = False
-        linked_impls[algos_list[i-1]] = connections
 
-        if algos_list[i] == cb.Partitioning:
-            partition = True
+        linked_impls.append((previous, connection_list))
 
-        
+        previous = algos_list[i]
+        partition = algos_list[i] == cb.Partitioning
+    
+    linked_impls.append((previous,[]))
 
-    linked_impls[algos_list[-1]] = []
+
 
     return linked_impls
 
@@ -69,7 +84,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 
     intent_iri = get_intent_iri(intent)
     task = get_intent_task(intent, intent_iri)
-    algs, impls = get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
+    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
     algs_shapes = {}
     alg_plans = {alg: [] for alg in algs}
     available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
@@ -79,7 +94,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 
         input_specs = get_implementation_io_specs(ontology, impl, "Input")
         if len(input_specs) > 0:
-            algs_shapes[alg[0]] = input_specs[0] #assuming data shapes is on input 0 
+            algs_shapes[alg[0]] = input_specs[0][1] #assuming data shapes is on input 0 
         else:
             algs_shapes[alg[0]] = []
        
@@ -89,58 +104,21 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     plans = {}
 
     for alg in available_algs:
-        print(alg)
         if len(algs_shapes[alg]) <= 0:
-            plans[alg] = connect_algorithms(ontology, shape_graph, [alg])
+            plans[alg] = connect_algorithms([alg])
         elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
-            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
+            plans[alg] = connect_algorithms([cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         elif task == cb.Clustering:
-            plans[alg] = connect_algorithms(ontology, shape_graph,[cb.DataLoading, alg, cb.DataStoring])
+            plans[alg] = connect_algorithms([cb.DataLoading, alg, cb.DataStoring])
         else:
-            plans[alg] = connect_algorithms(ontology, shape_graph, [cb.DataLoading, alg])
+            plans[alg] = connect_algorithms([cb.DataLoading, alg])
     return plans, alg_plans
     
-
-def workflow_planner(ontology: Graph, shape_graph: Graph, implementations: List, intent: Graph):
-    return build_workflows(ontology, shape_graph, intent, implementations, log=True)
 
 def getCompatibility(workflow_graph: Graph, engine:URIRef):
     workflow_id = next(workflow_graph.subjects(RDF.type, tb.Workflow, unique=True),None)
     compatible = (workflow_id,tb.compatibleWith,engine) in workflow_graph
     return compatible
-
-
-def logical_planner(ontology: Graph, workflow_plans: List[Graph]):
-    logical_plans = {}
-    counter = {}
-
-    for workflow_plan in workflow_plans:
-        steps = list(workflow_plan.subjects(RDF.type, tb.Step))
-        step_components = {step: next(workflow_plan.objects(step, tb.runs)) for step in steps}
-        step_next = {step: list(workflow_plan.objects(step, tb.followedBy)) for step in steps}
-        logical_plan = {
-            step_components[step]: [step_components[s] for s in nexts] for step, nexts in step_next.items()
-        }
-
-        main_component = next((comp for comp in logical_plan.keys() 
-                if logical_plan[comp] == [cb.term('component-csv_local_writer')]
-                or logical_plan[comp] == [cb.term('component-data_writer_component')] #TODO main component transparent to specific component names
-                or logical_plan[comp] == []), None)
-        if (main_component, RDF.type, tb.ApplierImplementation) in ontology:
-            options = list(ontology.objects(main_component, tb.hasLearner))
-            main_component = next(o for o in options if (None, None, o) in workflow_plan)
-        if main_component not in counter:
-            counter[main_component] = 0
-        plan_id = (f'{main_component.fragment.split("-")[1].replace("_", " ").replace(" learner", "").title()} '
-                   f'{counter[main_component]}')
-        counter[main_component] += 1
-
-        engines = { engine.fragment: getCompatibility(workflow_plan, engine) 
-                   for engine in graph_queries.get_engines(ontology) }
-        print("Engines compatibility:", engines)
-        logical_plans[plan_id] = {"logical_plan": logical_plan, "graph": workflow_plan.serialize(format="turtle")} | engines
-
-    return logical_plans
 
 def compress(folder: str, destination: str) -> None:
     with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as zipf:

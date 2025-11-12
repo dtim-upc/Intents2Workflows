@@ -17,7 +17,7 @@ svm_learner_implementation = Implementation(
          IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]),
     ],
     output=[ 
-        OutputIOSpec([IOSpecTag(cb.SVMModel)]),
+        OutputIOSpec([IOSpecTag(cb.SVMModelShape)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -59,8 +59,13 @@ sigmoid_svm_learner_component = Component(
     transformations=[
         Transformation(
             query='''
-INSERT DATA{
-    $output1 cb:setsClassColumnName $parameter1 .
+INSERT {
+    $output1 cb:setsClassColumnName "Prediction (?label)" .
+}
+WHERE {
+    $input1 dmop:hasColumn ?column .
+    ?column dmop:isLabel true ;
+            dmop:hasColumnName ?label .
 }
             ''',
         ),
@@ -79,8 +84,13 @@ rbf_svm_learner_component = Component(
     transformations=[
         Transformation(
             query='''
-INSERT DATA{
-    $output1 cb:setsClassColumnName $parameter1 .
+INSERT {
+    $output1 cb:setsClassColumnName "Prediction (?label)" .
+}
+WHERE {
+    $input1 dmop:hasColumn ?column .
+    ?column dmop:isLabel true ;
+            dmop:hasColumnName ?label .
 }
             ''',
         ),
@@ -93,7 +103,7 @@ svm_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.SVMModel)]),
+        InputIOSpec([IOSpecTag(cb.SVMModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape), 
          IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape,1)]), 
          #TODO add spec to filter out textual columns

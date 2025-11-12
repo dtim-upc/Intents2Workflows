@@ -85,6 +85,9 @@ tb:EngineParameter a owl:Class ;
 tb:LoaderTransformation a owl:Class ;
     rdfs:subClassOf tb:Transformation .
 
+tb:Model a owl:Class ;
+    rdfs:subClassOf tb:Data .
+
 tb:PlotProperties a owl:Class .
 
 tb:PlotType a owl:Class .
@@ -406,7 +409,8 @@ tb:CopyTransformation a owl:Class ;
 
 tb:DataCharacteristics a owl:Class .
 
-tb:Dataset a owl:Class .
+tb:Dataset a owl:Class ;
+    rdfs:subClassOf tb:Data .
 
 tb:DerivedParameter a owl:Class ;
     rdfs:subClassOf tb:Parameter .
@@ -464,13 +468,13 @@ tb:LearnerImplementation a owl:Class ;
 
 tb:Transformation a owl:Class .
 
-tb:Data a owl:Class .
-
 tb:ExperimentConstraint a owl:Class .
 
 tb:Task a owl:Class .
 
 tb:Workflow a owl:Class .
+
+tb:Data a owl:Class .
 
 tb:Step a owl:Class .
 

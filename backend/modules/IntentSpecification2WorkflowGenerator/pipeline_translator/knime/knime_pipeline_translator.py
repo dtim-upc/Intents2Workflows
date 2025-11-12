@@ -19,8 +19,13 @@ sys.path.append(root_dir)
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/knime/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
 
-from ..core.translator_graph_queries import *
+from common import *
+from ..core.translator_common_functions import get_implementation_engine_conditional, get_ontology, load_workflow
 from ..core.parameter_translator import translate_parameters
+from graph_queries.workflow_queries import get_step_component, get_workflow_steps, get_step_parameters_agnostic, get_step_input_specs, get_step_output_specs, \
+    get_workflow_intent_number, get_workflow_connections
+from graph_queries.ontology_queries import get_parameter_datatype, get_component_implementation, is_predictor
+from graph_queries.intent_queries import get_intent_iri
 
 from rdflib import Graph, URIRef, RDF, XSD
 
@@ -145,10 +150,11 @@ def get_number_of_knime_output_ports(ontology:Graph, engine_implementation:URIRe
 
 def create_step_file(ontology: Graph, workflow_graph: Graph, step: URIRef, folder, iterator: int) -> str:
 
-    component, implementation = get_step_component_implementation(ontology, workflow_graph, step)
+    component = get_step_component(workflow_graph, step)
+    implementation = get_component_implementation(ontology, component)
     
     step_parameters = get_step_parameters_agnostic(workflow_graph, step) #TODO: this is callled twice (other in translate_parameters)
-    engine_implementation = get_engine_implementation(ontology, implementation, step_parameters, engine=cb.KNIME)
+    engine_implementation = get_implementation_engine_conditional(ontology, implementation, engine=cb.KNIME, parameters=step_parameters)
     knime_step_parameters = translate_parameters(ontology=ontology, step_parameters=step_parameters, engine_implementation=engine_implementation)
     
     properties = get_knime_properties(ontology, engine_implementation)
@@ -184,7 +190,7 @@ def create_workflow_metadata_file(workflow_graph: Graph, folder: str) -> None:
     author = 'ODIN'
     date = datetime.today().strftime('%d/%m/%Y')
     workflow_name = next(workflow_graph.subjects(RDF.type, tb.Workflow, True)).fragment
-    title = f'{get_workflow_intent_name(workflow_graph)} (Workflow {get_workflow_intent_number(workflow_graph)})'
+    title = f'{get_intent_iri(workflow_graph).fragment} (Workflow {get_workflow_intent_number(workflow_graph)})'
     description = f'This workflow was automatically created from the logical workflow {workflow_name}.'
     url = 'ExtremeXP https://extremexp.eu/'
     tags = 'model training, training, testing'
@@ -218,7 +224,7 @@ def get_connections_config(ontology: Graph, workflow_graph: Graph, steps:List[UR
 def create_workflow_file(ontology:Graph, workflow_graph: Graph, steps:List[URIRef], steps_info: dict, step_paths: List[str],
                          folder: str) -> None:
     
-    is_applier = [is_applier_step(ontology, workflow_graph, step) for step in steps]
+    is_applier = [is_predictor(ontology, get_component_implementation(ontology, get_step_component(workflow_graph, step))) for step in steps]
     connections = get_connections_config(ontology,workflow_graph, steps, steps_info)
     metadata_template = environment.get_template("workflow.py.jinja")
     workflow_file = metadata_template.render(steps = zip(step_paths,is_applier),

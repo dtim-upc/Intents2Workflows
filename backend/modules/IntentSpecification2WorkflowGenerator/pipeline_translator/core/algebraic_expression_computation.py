@@ -86,16 +86,12 @@ def compute_algebraic_expression(ontology: Graph, expression: URIRef, step_param
             value = compute_algebraic_expression(ontology, term, step_parameters)
         else:
             raise Exception("Invalid term type: "+type+" for term: "+term)
-        
         return value
     
     value_1 = compute_term_value(term1)
-    #print("Value 1:", value_1)
     value_2 = compute_term_value(term2)
-    #print("Value 2:", value_2)
 
     result = calculate(value_1, value_2, operation)
-    #print("Result:",result)
 
     if type(result) == float and result.is_integer():
         return int(result) #Always returns the result as integer when possible

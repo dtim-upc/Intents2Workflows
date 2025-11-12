@@ -10,11 +10,11 @@ factorizer_implemenation = Implementation(
         columns_parameter,
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NumericCategoricalTabularDatasetShape)]),
-        OutputIOSpec([IOSpecTag(cb.NumericCategoricalModel)]),
+        OutputIOSpec([IOSpecTag(cb.NumericCategoricalModelShape)]),
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -51,7 +51,7 @@ factorizer_applier_implementation = Implementation(
         columns_parameter,
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.NumericCategoricalModel)]),
+        InputIOSpec([IOSpecTag(cb.NumericCategoricalModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape)])
     ],
     output=[

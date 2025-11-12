@@ -9,7 +9,7 @@ projection_learner_implementation = Implementation(
         Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     output=[
        OutputIOSpec([IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),
@@ -67,7 +67,7 @@ projection_predictor_implementation = Implementation(
         Parameter("Target Column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.TabularDataset)]),
+        InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),

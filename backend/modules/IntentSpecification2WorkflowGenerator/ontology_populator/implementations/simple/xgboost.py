@@ -44,7 +44,7 @@ xgboost_learner_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.XGBoostModel)]), 
+        OutputIOSpec([IOSpecTag(cb.XGBoostModelShape)]), 
     ],
     implementation_type=tb.LearnerImplementation,
 )
@@ -132,7 +132,7 @@ xgboost_predictor_implementation = Implementation(
     parameters=[
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.XGBoostModel)]),
+        InputIOSpec([IOSpecTag(cb.XGBoostModelShape)]),
         InputIOSpec([IOSpecTag(cb.TestTabularDatasetShape), IOSpecTag(cb.NumericOnlyTabularDatasetShape)]),
     ],
     output=[

@@ -54,13 +54,17 @@
 <script setup>
 import {ref} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
+import {useDataProductsStore} from 'stores/dataProductsStore';
 import DialogWithVisualizedPlan from "../../components/intents/visualize_plan/DialogWithVisualizedPlan.vue";
 import {useRoute, useRouter} from "vue-router";
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const router = useRouter()
 const route = useRoute()
 
 const intentsStore = useIntentsStore()
+const dataProductsStore = useDataProductsStore()
 
 const visualizedPlan = ref(null)
 const dialog = ref(false)
@@ -100,7 +104,7 @@ const checkboxGroup = (group, value) => {
   })
 }
 
-const handleSubmit = () => {
+const handleSubmit = async() => {
   intentsStore.selectedPlans = intentsStore.logicalPlans.map(group => {
     const filteredPlans = group.plans.filter(plan => plan.selected)
     return {
@@ -110,7 +114,23 @@ const handleSubmit = () => {
   }).filter(group => group.plans.length > 0) // get only the groups with at least one selected plan
   intentsStore.countSelectedPlans = countSelectedPlans.value
 
-  router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/intent-workflows" })
+  $q.loading.show({message: 'Building workflows'})
+
+  const successCallback = () => {
+    router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/intent-workflows" })
+  }
+
+  const plans = {}
+  intentsStore.selectedPlans.forEach(plangroup => {
+    plangroup.plans.forEach(p => {
+      plans[p.id] = p.plan
+    })
+    
+  })
+
+  const data = {"intent_graph":intentsStore.intent_graph, 'dataset':dataProductsStore.selectedDataProductAnnotations, "logical_plans":plans}
+  await intentsStore.setWorkflowPlans(data,successCallback)
+  $q.loading.hide()
 }
 
 const selectedPlansOfGroup = (group) => {

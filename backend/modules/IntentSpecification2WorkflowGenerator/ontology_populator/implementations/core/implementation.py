@@ -36,7 +36,6 @@ class Implementation:
             assert implementation_type in {tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
             if isinstance(self.counterpart, list):
                 for c in self.counterpart:
-                    print(c)
                     if c.counterpart is None:
                         c.counterpart = self
             elif self.counterpart.counterpart is None:
@@ -79,7 +78,6 @@ class Implementation:
                     g.add((parameter.uri_ref, tb.has_defaultvalue, Literal(parameter.default_value)))
 
             if isinstance(parameter, FactorParameter):
-                print("BaseFactor detectat:",parameter)
                 for level in parameter.levels:
                     level_uri = parameter.uri_ref + '-'+ level
                     g.add((level_uri, RDF.type, tb.FactorLevel))

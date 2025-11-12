@@ -1,5 +1,5 @@
 from owlrl import DeductiveClosure, OWLRL_Semantics
-from rdflib import *
+from rdflib import Namespace, Graph, URIRef, Literal, Variable, BNode, RDF, RDFS, SH, OWL, XSD
 
 dmop = Namespace('http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#')
 tb = Namespace('https://extremexp.eu/ontology/tbox#')
@@ -17,7 +17,6 @@ def get_graph_xp():
     g.bind('dolce', dolce)
     return g
 
-
 def get_ontology_graph():
     graph = get_graph_xp()
     ontologies = [
@@ -31,5 +30,12 @@ def get_ontology_graph():
     for o in ontologies:
         graph.parse(o, format="turtle")
 
+    DeductiveClosure(OWLRL_Semantics).expand(graph)
+    return graph
+
+def get_graph_with_tbox(turtle_graph):
+    graph = get_graph_xp()
+    graph.parse(r'ontologies/tbox.ttl', format="turtle")
+    graph.parse(data=turtle_graph, format="turtle")
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph

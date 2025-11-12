@@ -98,6 +98,7 @@ def add_classes(ontology: Graph):
         tb.ModelEvaluation,
         tb.Data,
         tb.Dataset,
+        tb.Model,
         tb.DataCharacteristics,
         tb.DataSpec,
         tb.DataSpecTag,
@@ -135,6 +136,8 @@ def add_classes(ontology: Graph):
     ontology.add((tb.RangeValue, RDFS.subClassOf, tb.ConstraintValue))
     ontology.add((tb.LiteralValue, RDFS.subClassOf, tb.ConstraintValue))
 
+    ontology.add((tb.Model, RDFS.subClassOf, tb.Data))
+    ontology.add((tb.Dataset, RDFS.subClassOf, tb.Data))
     ontology.add((dmop.TabularDataset, RDFS.subClassOf, tb.Dataset))
     ontology.add((dmop.TensorDataset, RDFS.subClassOf, tb.Dataset))
 

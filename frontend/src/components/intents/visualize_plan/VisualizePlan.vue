@@ -77,15 +77,16 @@ function toTitleCase(str: string): string {
   );
 }
 
-async function plan_layout(plan: { [key: string]: string[] }) {
-  let nodes_plan = Object.keys(plan).map(node => {
-    let node_id = node.split('#').at(-1)!;
+async function plan_layout(plan: [[key: string],string[]]) {
+  let nodes_plan = [];
+  for (let component of plan){
+    let node_id = component[0].split('#').at(-1)!;
     let label = toTitleCase(node_id.replaceAll('_', ' ').replaceAll('-', ' ').replace('component ', ''));
     let width = 200;
     let label_width = label.length * 12;
     let height = label_width > width ? 30 * label_width / width : 30;
-    return {
-      id: node,
+    nodes_plan.push({
+      id: component[0],
       node_id: node_id,
       data: {
           label: label,
@@ -94,24 +95,28 @@ async function plan_layout(plan: { [key: string]: string[] }) {
       height: height,
       sourcePosition: 'right',
       targetPosition: 'left',
-    }
-  });
+    })
+  }
+
+  //console.log(nodes_plan)
 
   let edges_plan = [];
   let i = 0;
-  for (let source of Object.keys(plan)) {
-    for (let target of plan[source]) {
+  for (let source of plan) {
+    for (let target of source[1]) {
       edges_plan.push({
         id: 'e' + i,
-        sources: [source],
+        sources: [source[0]],
         targets: [target],
-        source: source,
+        source: source[0],
         target: target,
         arrow: true,
       });
       i++;
     }
   }
+
+  //console.log(edges_plan)
 
   const graph = {
     id: "root",
