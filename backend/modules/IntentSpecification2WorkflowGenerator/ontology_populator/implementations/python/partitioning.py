@@ -24,8 +24,12 @@ python_partitioning_implementation = PythonImplementation(
                                                                     AlgebraicExpression(cb.EQ, 
                                                                                         next((p for p in base_params if p.label == "Size type"),None),
                                                                                         "Relative"),
-                                                                    next((p for p in base_params if p.label == "Fraction (Relative size)"),None))),
-                                default_value = 0.25),
+                                                                    AlgebraicExpression(cb.SUB, 1,
+                                                                                        next((p for p in base_params if p.label == "Fraction (Relative size)"),None)
+                                                                    )
+                                                                )
+                               ),
+                                default_value = 0.75),
                                                   
         PythonNumericParameter("random_state", XSD.int, 
                                expression=AlgebraicExpression(cb.COPY, next((p for p in base_params if p.label == "random_seed"),None)),default_value=None),

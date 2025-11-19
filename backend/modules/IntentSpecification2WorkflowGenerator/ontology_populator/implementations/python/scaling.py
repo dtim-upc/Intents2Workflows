@@ -13,10 +13,8 @@ python_minmax_scaling_implementation = PythonImplementation(
     baseImplementation=scaling_learner_implementation,
     parameters=[
         python_cols,
-        PythonNumericParameter("feature_range.min", XSD.float,
-                               expression=AlgebraicExpression(cb.COPY, min), default_value=0),
-        PythonNumericParameter("feature_range.max", XSD.float,
-                               expression=AlgebraicExpression(cb.COPY, max), default_value=1),
+        PythonNumericParameter("feature_range", RDF.List,
+                               expression=AlgebraicExpression(cb.STACK, min, max), default_value=(0,1)),
     ],
     python_module='sklearn.preprocessing',
     module_version='1.7.2',

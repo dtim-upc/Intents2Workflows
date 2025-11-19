@@ -33,6 +33,7 @@ def add_operations(cbox):
         cb.EQ,
         cb.NEQ,
         cb.COPY,
+        cb.STACK, 
     ]
 
     for o in operations:

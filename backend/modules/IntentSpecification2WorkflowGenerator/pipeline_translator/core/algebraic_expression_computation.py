@@ -31,6 +31,8 @@ def calculate(term1, term2, operation):
         return term1 != term2
     elif operation == 'COPY':
         return term1
+    elif operation == 'STACK':
+        return (term1,term2)
     else:
         raise Exception("Invalid operation: "+operation)
     
