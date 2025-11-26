@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-      <q-table :rows="dataProductsStore.dataProducts" :columns="columns" :filter="search" row-key="id"
+      <q-table :rows="dataProductsStore.dataProducts" :columns="columns" :filter="search" row-key="id"  v-model:pagination="pagination"
                no-results-label="The filter didn't uncover any results">
   
         <template v-slot:top-left="">
@@ -22,7 +22,8 @@
   
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
+            <q-btn dense round flat color="primary" @click="downloadRow(props)" icon="mdi-download" size="14px"/>
+            <q-btn dense round flat color="red" @click="deleteRow(props)" icon="delete"></q-btn>
           </q-td>
         </template>
 
@@ -80,9 +81,17 @@
     }
   }
   
+  const downloadRow = (propsRow) => {
+    dataProductsStore.downloadDataProduct(propsRow.row.name)
+  }
   const editRow = (propsRow) => {
     showEditDataProduct.value = true
     selectedDataProduct.value = propsRow.row
   }
+
+  const pagination = ref({
+  page: 1,
+  rowsPerPage: 15, // number of rows you want to display
+  })
   </script>
   

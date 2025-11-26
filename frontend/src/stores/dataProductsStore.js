@@ -85,7 +85,7 @@ export const useDataProductsStore = defineStore('dataProducts', {
       try {
         const response = await dataProductAPI.downloadDataProduct(fileName);
         const content = response.headers['content-type'];
-        download(response.data, fileName, content);
+        download(response.data, fileName+".ttl", content);
       } catch (error) {
         notify.negative("Error downloading the data");
         console.error("Error:", error);

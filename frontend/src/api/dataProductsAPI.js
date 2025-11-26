@@ -11,7 +11,7 @@ export default {
     return odinApi.post('/project/' + projectID + '/data-product', data)
   }, */
   deleteDataProduct(fileName) {
-    return odinApi.delete('/data-product/' +  fileName)
+    return odinApi.delete('/data-products/' +  fileName)
   },
 /*   putDataProduct(projectID, dataProductID, data) {
     return odinApi.put('/project/' + projectID + '/data-product/' +  dataProductID, data)
@@ -20,9 +20,9 @@ export default {
     return odinApi.post('/project/' + projectID + '/download-temporal-data-product/' +  dataProductUUID)
   }, */
   downloadDataProduct(fileName) {
-    return odinApi.get('/data-product/' +  fileName)
+    return odinApi.get('/data-products/' +  fileName)
   },
   getDataProductAnnotations(fileName,data) {
-    return odinApi.post('/data-product/' +  fileName + '/annotations',data)
+    return odinApi.post('/data-products/' +  fileName + '/annotations',data)
   },
 }

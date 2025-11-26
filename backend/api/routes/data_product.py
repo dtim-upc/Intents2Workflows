@@ -1,5 +1,6 @@
+import io
 from typing import Tuple
-from fastapi import APIRouter, Form, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from rdflib import RDF, Graph, Namespace, URIRef
 from sqlalchemy.orm import Session
@@ -9,7 +10,7 @@ import time
 import shutil
 from urllib.parse import quote
 
-from database.database import SessionLocal, init_db
+from database.database import SessionLocal
 from dataset_annotator import annotator, namespaces
 from models import DataProduct
 
@@ -154,7 +155,7 @@ def get_dataset_uri(annotation_graph:Graph):
 
 
 
-@router.post("/data-product")
+@router.post("/data-products")
 async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
     #if not file.filename.endswith(".csv"):
@@ -198,7 +199,17 @@ async def list_uploaded_files(db: Session = Depends(get_db)):
     data_products = db.query(DataProduct).all()
     return JSONResponse(status_code=200, content={"files": [dp.to_dict() for dp in data_products]})
 
-@router.post("/data-product/{data_product}/annotations")
+@router.get("/data-products/{data_product}")
+async def  get_data_product(data_product:str, db: Session = Depends(get_db)):
+
+    annotation_path = get_annotation_path(db,data_product)
+    annotation_graph = load_graph(annotation_path)
+    serialized_graph = annotation_graph.serialize(format='ttl')
+    
+    return Response(content=serialized_graph, media_type="text/turtle")
+
+
+@router.post("/data-products/{data_product}/annotations")
 async def get_annotations(data_product:str, label: str = Form(...), db: Session = Depends(get_db)):
     """Get dataset annotations and add labels"""
 
@@ -218,7 +229,7 @@ async def get_annotations(data_product:str, label: str = Form(...), db: Session 
 
 
 
-@router.delete("/data-product/{data_product}")
+@router.delete("/data-products/{data_product}")
 async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
     """Deletes a data product by its name from the database and file system."""
 
