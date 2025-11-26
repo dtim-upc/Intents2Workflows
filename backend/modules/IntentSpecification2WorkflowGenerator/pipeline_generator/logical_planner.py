@@ -180,8 +180,8 @@ import time
 def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], reader_component:URIRef, writer_component:URIRef):
     logical_plan = {}
     applier_list = []
-    last_not_applier = None
     component_list = list(component_combination)
+    last_not_applier = component_list[0] if len(component_list) > 0 else None
 
     logical_plan[reader_component] = [component_list[0]]
 
@@ -209,7 +209,8 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
         else:
             logical_plan[a] = []
     
-    logical_plan[last_not_applier].append(applier_list[0])
+    if not last_not_applier is None:
+        logical_plan[last_not_applier].append(applier_list[0])
 
     logical_plan[list(logical_plan.keys())[-1]].append(writer_component)
     logical_plan[writer_component] = []
@@ -249,25 +250,26 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
 
 
     for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0, leave=False):
+        
+        for tc in transformation_combination:
+            prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, tc)
+            t_comb += comp_comb
+            component_combinations = itertools.product(*prep_components)
+            
 
-        prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, transformation_combination)
-        t_comb += comp_comb
-        component_combinations = itertools.product(*prep_components)
+            for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1, leave=False):
 
+                if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
+                    logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
+                    main_component = URIRef(component_combination[-1]).fragment
 
-        for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1, leave=False):
+                    if main_component not in counter:
+                        counter[main_component] = 0
 
-            if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
-                logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
-                main_component = URIRef(component_combination[-1]).fragment
-
-                if main_component not in counter:
-                    counter[main_component] = 0
-
-                plan_name = f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} {counter[main_component]}'
-                logical_plans.append({"name":plan_name, "plan":[(key, value) for key, value in logical_plan.items()]})
-                
-                counter[main_component] += 1
+                    plan_name = f'{main_component.split("-")[1].replace("_", " ").replace(" learner", "").title()} {counter[main_component]}'
+                    logical_plans.append({"name":plan_name, "plan":[(key, value) for key, value in logical_plan.items()]})
+                    
+                    counter[main_component] += 1
 
     t2 = time.time()
     print("Temps total",t2-t)

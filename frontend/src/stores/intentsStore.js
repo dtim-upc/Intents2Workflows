@@ -103,12 +103,18 @@ export const useIntentsStore = defineStore('intents', {
         notify.positive(`Abstract plans created`)
         this.intent_graph = response.data.intent
         this.algorithmImplementations = response.data.algorithm_implementations
+        this.scores = response.data.scores
         this.abstractPlans = Object.entries(response.data.abstract_plans).map(([plan, value]) => ({
           name: plan.split('#').at(-1),
           id: plan,
           selected: true,
-          plan: value
+          plan: value,
         }));
+        this.abstractPlans.forEach(plan => {
+          plan.score = this.scores[plan.id]
+        })
+
+        this.abstractPlans.sort((a,b) => b.score - a.score)
         this.logicalPlans = [];
         this.selectedPlans = [];
         successCallback();

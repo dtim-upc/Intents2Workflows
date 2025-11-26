@@ -104,10 +104,10 @@ def run_abstract_planner():
     intent = intent_graph
     #intent.serialize('intent.ttl', format="turtle")
 
-    abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent)
+    abstract_plans, algorithm_implementations, scores= abstract_planner(ontology, shape_graph, intent)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
-        "algorithm_implementations": algorithm_implementations, "mdp_input":get_mdp_input(intent_graph)}
+        "algorithm_implementations": algorithm_implementations, "scores":scores, "mdp_input":get_mdp_input(intent_graph)}
 
 def get_mdp_input(intent_graph: Graph):
     intent_name = next(intent_graph.subjects(RDF.type, tb.Intent, unique=True)) #TODO: get this information from get_intent_info function

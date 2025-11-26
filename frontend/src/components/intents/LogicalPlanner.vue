@@ -16,7 +16,10 @@
               <q-checkbox v-model="selectedPlans" :val="absPlan"/>
             </q-item-section>
             <q-item-section> 
-              <text-body1 style="font-size: 17px;"> {{ absPlan.name }} </text-body1>
+              <text-body1 style="font-size: 17px;"> {{ absPlan.name }}</text-body1>
+            </q-item-section>
+            <q-item-section side> 
+              <text-body1 style="font-size: 17px;"> {{ absPlan.score }}</text-body1>
             </q-item-section>
             <q-item-section avatar>
               <q-btn color="primary" icon="mdi-eye-outline" @click="openDialog(absPlan.plan)">
@@ -87,12 +90,14 @@ const selectAll = () => {
   intentsStore.abstractPlans.forEach(absPlan => {
     absPlan.selected = true
   });
+  selectedPlans.value = intentsStore.abstractPlans
 }
 
 const selectNone = () => {
   intentsStore.abstractPlans.forEach(absPlan => {
     absPlan.selected = false
   });
+  selectedPlans.value = []
 }
 
 const openDialog = (plan) => {

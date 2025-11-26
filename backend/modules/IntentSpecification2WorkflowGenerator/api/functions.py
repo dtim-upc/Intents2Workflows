@@ -84,9 +84,9 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
 
     intent_iri = get_intent_iri(intent)
     task = get_intent_task(intent, intent_iri)
-    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, log=True)
+    scored_algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, ordered_algorithms=True, log=True)
     algs_shapes = {}
-    alg_plans = {alg: [] for alg in algs}
+    alg_plans = {alg: [] for (alg,_) in scored_algs}
     available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
     for impl in impls:
         alg = next(ontology.objects(impl, tb.implements)), 
@@ -112,7 +112,9 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
             plans[alg] = connect_algorithms([cb.DataLoading, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms([cb.DataLoading, alg])
-    return plans, alg_plans
+
+    scores = {alg: score for (alg, score) in scored_algs}
+    return plans, alg_plans, scores
     
 
 def getCompatibility(workflow_graph: Graph, engine:URIRef):
