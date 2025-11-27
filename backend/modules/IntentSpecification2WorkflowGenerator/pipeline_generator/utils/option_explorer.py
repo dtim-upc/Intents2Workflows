@@ -1,3 +1,4 @@
+import random
 from rdflib import Graph
 import requests
 import json
@@ -90,7 +91,15 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
         for exp in resp.get('data',[]):
             translated_alg = mappings.get(exp['algorithm'],None)
             if not translated_alg is None:
-                algs[translated_alg] = exp['utility_value']
+                algs[translated_alg] = {
+                    'utility_value': exp.get('utility_value',0),
+                    'loss': exp.get("loss",None),
+                    'accuracy': exp.get("accuracy",None),
+                    'recall':exp.get("recall",None),
+                    "precision":exp.get("precision",None),
+                    "f1_score":exp.get("f1_score",None),
+                    "training_time":exp.get("training_time",None),
+                }
         
         return algs
 
@@ -98,4 +107,16 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
     else:
         print(f"Request option explorer failed with status code {response.status_code}")
         print(response.text) 
+    
+    return {}
 
+def get_placeholder_metrics():
+        return {
+                    'utility_value': round(random.random(),3),
+                    'loss': round(random.random(),3),
+                    'accuracy': round(random.random(),3),
+                    'recall':round(random.random(),3),
+                    "precision":round(random.random(),3),
+                    "f1_score":round(random.random(),3),
+                    "training_time":round(random.random(),3),
+                }

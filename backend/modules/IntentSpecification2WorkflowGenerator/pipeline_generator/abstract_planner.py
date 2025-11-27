@@ -38,7 +38,8 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
     else:
         order = {}
 
-    scored_algs = [(alg, order.get(alg, 0)) for alg in algs]
+
+    scored_algs = {alg:order.get(alg,option_explorer.get_placeholder_metrics()) for alg in algs}
     print("scores", scored_algs)
     
     #scored_algs = sorted(scored_algs, key=lambda x: x[1])

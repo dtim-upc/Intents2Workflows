@@ -86,7 +86,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
     task = get_intent_task(intent, intent_iri)
     scored_algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, ordered_algorithms=True, log=True)
     algs_shapes = {}
-    alg_plans = {alg: [] for (alg,_) in scored_algs}
+    alg_plans = {alg: [] for alg in scored_algs.keys()}
     available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
     for impl in impls:
         alg = next(ontology.objects(impl, tb.implements)), 
@@ -113,7 +113,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tupl
         else:
             plans[alg] = connect_algorithms([cb.DataLoading, alg])
 
-    scores = {alg: score for (alg, score) in scored_algs}
+    scores = {alg: scores for (alg, scores) in scored_algs.items()}
     return plans, alg_plans, scores
     
 

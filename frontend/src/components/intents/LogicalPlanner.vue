@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+<q-page>
     <q-form class="row q-col-gutter-md text-center justify-center" @submit.prevent="handleSubmit">            
       <div class="col-12">
         <h4> Logical planner </h4>
@@ -8,7 +8,7 @@
       <div v-if="intentsStore.abstractPlans.length === 0">
         <h6 style="color: red;">No query selected</h6>
       </div>
-      <div v-else class="col-6 text-left">
+      <div v-else-if="intentsStore.abstractPlans.length == 1" class="col-6 text-left">
         <q-list bordered separator>
           <q-item v-for="(absPlan) in intentsStore.abstractPlans"
                   :key="absPlan.id" class="q-my-sm">
@@ -18,17 +18,16 @@
             <q-item-section> 
               <text-body1 style="font-size: 17px;"> {{ absPlan.name }}</text-body1>
             </q-item-section>
-            <q-item-section side> 
-              <text-body1 style="font-size: 17px;"> {{ absPlan.score }}</text-body1>
-            </q-item-section>
             <q-item-section avatar>
               <q-btn color="primary" icon="mdi-eye-outline" @click="openDialog(absPlan.plan)">
               </q-btn>
             </q-item-section>
           </q-item>
         </q-list>
-
         <DialogWithVisualizedPlan v-model:dialog="dialog" :visualizedPlan="visualizedPlan"/>
+      </div>
+      <div v-else>
+        <TableAbstractPlans/>
       </div>
       <div class="col-12">
         <q-btn label="Run logical planner" color="primary" type="submit" :disabled="get_num_selected_plans() == 0"/>
@@ -48,6 +47,7 @@ import {useDataProductsStore} from 'stores/dataProductsStore';
 import DialogWithVisualizedPlan from "../../components/intents/visualize_plan/DialogWithVisualizedPlan.vue";
 import {useRoute, useRouter} from "vue-router";
 import { useQuasar } from 'quasar'
+import TableAbstractPlans from 'components/tables/TableAbstractPlans.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -63,7 +63,7 @@ console.log(intentsStore.abstractPlans)
 const selectedPlans = ref(intentsStore.abstractPlans); 
 
 const get_num_selected_plans = () => {
-  return selectedPlans.value.length
+  return intentsStore.selectedAlgorithms.length
 }
         
 const handleSubmit = async() => {
@@ -74,12 +74,6 @@ const handleSubmit = async() => {
 
   //await dataProductsStore.getDataProductAnnotations(intentsStore.selectedDataProdutName)
 
-  intentsStore.selectedAlgorithms = []
-  selectedPlans.value.map(absPlan => {
-    intentsStore.selectedAlgorithms.push(absPlan.name)
-  })
-
-  intentsStore.getShapeGraph()
   const data = {"shape_graph": intentsStore.getShapeGraph(), "intent_graph":intentsStore.intent_graph, 'dataset':dataProductsStore.selectedDataProductAnnotations}
 
   await intentsStore.setLogicalPlans(data, successCallback)
@@ -87,17 +81,13 @@ const handleSubmit = async() => {
 }
 
 const selectAll = () => {
-  intentsStore.abstractPlans.forEach(absPlan => {
-    absPlan.selected = true
-  });
-  selectedPlans.value = intentsStore.abstractPlans
+  selectedPlans.value.map(absPlan => {
+    intentsStore.selectedAlgorithms.push(absPlan.name)
+  })
 }
 
 const selectNone = () => {
-  intentsStore.abstractPlans.forEach(absPlan => {
-    absPlan.selected = false
-  });
-  selectedPlans.value = []
+   intentsStore.selectedAlgorithms = []
 }
 
 const openDialog = (plan) => {

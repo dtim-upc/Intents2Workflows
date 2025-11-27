@@ -111,10 +111,15 @@ export const useIntentsStore = defineStore('intents', {
           plan: value,
         }));
         this.abstractPlans.forEach(plan => {
-          plan.score = this.scores[plan.id]
+          const {utility_value, accuracy, recall, f1_score, precission, training_time, loss} = this.scores[plan.id]
+          plan.score = utility_value
+          plan.accuracy = accuracy
+          plan.recall = recall
+          plan.f1_score = f1_score
+          plan.precission = precission
+          plan.training_time = training_time
+          plan.loss = loss
         })
-
-        this.abstractPlans.sort((a,b) => b.score - a.score)
         this.logicalPlans = [];
         this.selectedPlans = [];
         successCallback();
