@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:18.20.6
+FROM node:22
 
 # Set the working directory in the container to /app/frontend
 WORKDIR /app

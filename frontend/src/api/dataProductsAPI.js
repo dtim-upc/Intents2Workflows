@@ -8,7 +8,7 @@ export default {
     return odinApi.post('/project/' + projectID + '/data-product/' + dataProductID + '/materialize')
   }, */
 /*   postDataProduct(projectID, data) {
-    return odinApi.post('/project/' + projectID + '/data-product', data)
+    return odinApi.post('/project/' + projectID + '/data-products', data)
   }, */
   deleteDataProduct(fileName) {
     return odinApi.delete('/data-products/' +  fileName)

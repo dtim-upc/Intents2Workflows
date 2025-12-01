@@ -19,14 +19,15 @@ api/dbFiles
 *.rdf
 *.lck
 *.bak_002d
-*.png
 *.crc
 *.pyc
 
 frontend/package-lock.json
 backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
-backend/api/datasets
+backend/api/datasets/**
+backend/api/annotated_datasets/*.ttl
 backend/api/ontology/new_triples.tsv
+
 
 !orm.xml
 !persistence.xml

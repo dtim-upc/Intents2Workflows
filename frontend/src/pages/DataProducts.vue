@@ -67,7 +67,7 @@ const sendFileToBackend = async (file_list) => {
 
   try {
     $q.loading.show({message: 'Creating data product...'})
-    const response = await odinApi.post('/data-product', formData, {
+    const response = await odinApi.post('/data-products', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

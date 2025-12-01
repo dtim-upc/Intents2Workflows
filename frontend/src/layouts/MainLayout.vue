@@ -10,7 +10,7 @@
             </q-item-section>
 
             <q-item-section v-else>
-              <q-img src="~assets/I2W.png" style="max-width: 180px; max-height: 35px; " fit="contain"/>
+              <q-img src="~assets/I2WG.png" style="max-width: 180px; max-height: 35px; " fit="contain"/>
             </q-item-section>
           </q-item>
 

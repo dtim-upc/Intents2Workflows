@@ -10,3 +10,4 @@ python-multipart
 rdflib
 pandas
 scipy
+laspy

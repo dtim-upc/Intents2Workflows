@@ -19,7 +19,7 @@ ab:iris a dmop:TabularDataset ;
 """ ;
     dmop:numberOfColumns 5 ;
     dmop:numberOfRows 150 ;
-    dmop:path "C:/Users/gerard.pons.recasens/Desktop/Github Repos/Intents2Workflows/backend/api/datasets/iris.csv" ;
+    dmop:path "C:/Users/Adria.Portatil-Adria/Documents/uni/PSR/Codi/Intents2Workflows/backend/api/datasets/iris.csv" ;
     dmop:quoteChar "\"" ;
     dmop:skipInitialSpace false .
 
