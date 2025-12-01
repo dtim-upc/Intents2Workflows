@@ -621,16 +621,16 @@ def add_shapes(cbox):
 
 def add_constraints(cbox):
     constraints = [
-        (cb.usingGPU, "GPU", "pu", "Literal", False),
-        (cb.ram, "RAM", "ram", "Range", False),
-    ]
+        (cb.usingGPU, "pu", "Literal"),
+        (cb.ram, "ram", "Range"),
+        (cb.accuracy, "accuracy", "Range"),
+        (cb.accuracy, "precision", "Range"),
+    ] 
 
-    for node, name, optionExplorerName, constraintType, isHard in constraints:
+    for node, optionExplorerName, constraintType in constraints:
         cbox.add((node, RDF.type, tb.ExperimentConstraint))
-        cbox.add((node, RDFS.label, Literal(name)))
+        cbox.add((node, RDFS.label, Literal(optionExplorerName)))
         cbox.add((node, tb.constraintType, Literal(constraintType)))
-        cbox.add((node, tb.hasOptionExplorerName, Literal(optionExplorerName)))
-        cbox.add((node, tb.isHard, Literal(isHard)))
 
 
 def main(dest='../ontologies/cbox.ttl'):

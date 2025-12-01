@@ -4,7 +4,7 @@ import requests
 import json
 
 from graph_queries.intent_queries import get_intent_iri, get_intent_dataset_task
-from common import tb, RDF, cb
+from common import tb, RDF, cb, RDFS
 
 
 OPTION_EXPLORER_URL = "http://194.249.3.27:8000/experiment/call_mdp"
@@ -12,7 +12,10 @@ OPTION_EXPLORER_URL = "http://194.249.3.27:8000/experiment/call_mdp"
 
 mappings = {
     'RNN': cb.NN,
-    'CNN': cb.NN
+    'CNN': cb.NN,
+    'Gradient Boosting': cb.XGBoost,
+    'SVM': cb.SVM,
+    "Random Forest": cb.DecisionTree
 }
 
 
@@ -30,7 +33,7 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
         print(constraint)
         value_node = next(intent_graph.objects(constraint, tb.hasConstraintValue, unique=True))
         print(value_node)
-        name = next(ontology.objects(constraint, tb.hasOptionExplorerName, unique=True))
+        name = next(ontology.objects(constraint, RDFS.label, unique=True))
         print(name)
         value_type = next(intent_graph.objects(value_node, RDF.type, unique=True))
         print(value_type)
@@ -56,7 +59,7 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
     json_data = {
         'domain': "manufacturing",
         'intent': "anomaly detection",
-        'algorithm': algorithm.fragment if algorithm is not None else None,
+        'algorithm': None,
         'method': None, #task.fragment if task is not None else None,
         "hard_constraints": [],
         "soft_constraints": [
@@ -66,9 +69,10 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
 
     print(json_data)
 
+    # This is not exaclty good parctice, but it is enough for now
     headers = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDE1Njc4OSwianRpIjoiZDkzMDgxNjMtMjBkYi00NGI0LWEzNzMtOGE0MjRmYTk0MDYyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IntcInVzZXJfaWRcIjogMSwgXCJuYW1lXCI6IFwiTW9oYW1tYWRcIiwgXCJsYXN0X25hbWVcIjogXCJQZXplc2hraVwiLCBcInByb2ZpbGVfcGljXCI6IG51bGwsIFwiZW1haWxcIjogXCJtb2hhbW1hZEBnbWFpbC5jb21cIiwgXCJhZGRyZXNzXCI6IFwiVmlhIFNhbiBNYXJjb1wiLCBcImJpcnRoX2RhdGVcIjogXCIxOTk0LTEyLTAzXCIsIFwic3RhdHVzXCI6IFwiYWN0aXZlXCIsIFwiY3JlYXRpb25fZGF0ZVwiOiBcIjIwMjUtMTEtMjZUMTE6Mjk6NTQuMjg0MTg1XCIsIFwiZWR1Y2F0aW9uYWxfbGV2ZWxcIjogXCJCYWNoZWxvcidzIERlZ3JlZVwiLCBcImVkdWNhdGlvbmFsX2ZpZWxkXCI6IFwiQ29tcHV0ZXIgU2NpZW5jZVwifSIsIm5iZiI6MTc2NDE1Njc4OSwiY3NyZiI6ImM2NzU1YjdlLWJmNzgtNDFiZC1iYjFjLWZhM2ViYmMxOWFmMiIsImV4cCI6MTc2NDI0MzE4OX0.0VA5jVSKOlwq3YyntGYaW4BPXP2bgR6KVgbI6uyu7YI" # This is not exaclty good parctice, but it is enough for now
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDU3NjkwNSwianRpIjoiMzc4YzNmYjYtNmY1Ny00Y2RkLWIxMzctZTQzZjI2Mzc0MmYwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IntcInVzZXJfaWRcIjogMSwgXCJuYW1lXCI6IFwiTW9oYW1tYWRcIiwgXCJsYXN0X25hbWVcIjogXCJQZXplc2hraVwiLCBcInByb2ZpbGVfcGljXCI6IG51bGwsIFwiZW1haWxcIjogXCJtb2hhbW1hZEBnbWFpbC5jb21cIiwgXCJhZGRyZXNzXCI6IFwiVmlhIFNhbiBNYXJjb1wiLCBcImJpcnRoX2RhdGVcIjogXCIxOTk0LTEyLTAzXCIsIFwic3RhdHVzXCI6IFwiYWN0aXZlXCIsIFwiY3JlYXRpb25fZGF0ZVwiOiBcIjIwMjUtMTEtMzBUMTk6Mzk6MjIuNjg5Mzc2XCIsIFwiZWR1Y2F0aW9uYWxfbGV2ZWxcIjogXCJCYWNoZWxvcidzIERlZ3JlZVwiLCBcImVkdWNhdGlvbmFsX2ZpZWxkXCI6IFwiQ29tcHV0ZXIgU2NpZW5jZVwifSIsIm5iZiI6MTc2NDU3NjkwNSwiY3NyZiI6IjVkOTJkNWQ0LTVmNTAtNGE4NC04YjRiLTA0NGMwY2NhNGRlOSIsImV4cCI6MTc2NDY2MzMwNX0.11e37UqmCyDciJVm-T93k3-8Be2NP11zsnkrphjiQLs" 
     }
 
     try:
@@ -90,7 +94,9 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
         algs = {}
         for exp in resp.get('data',[]):
             translated_alg = mappings.get(exp['algorithm'],None)
-            if not translated_alg is None:
+            if not translated_alg is None and \
+                (translated_alg not in algs or exp.get('utility_value',0) > algs[translated_alg]['utility_value']):
+                
                 algs[translated_alg] = {
                     'utility_value': exp.get('utility_value',0),
                     'loss': exp.get("loss",None),
