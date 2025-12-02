@@ -112,7 +112,7 @@ export const useIntentsStore = defineStore('intents', {
         }));
         this.abstractPlans.forEach(plan => {
           const {utility_value, accuracy, recall, f1_score, precission, training_time, loss} = this.scores[plan.id]
-          plan.score = utility_value.toFixed(4)
+          utility_value !== undefined? plan.score = utility_value.toFixed(4) : plan.score = null
           plan.accuracy = accuracy
           plan.recall = recall
           plan.f1_score = f1_score
