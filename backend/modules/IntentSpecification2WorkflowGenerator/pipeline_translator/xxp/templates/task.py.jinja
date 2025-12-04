@@ -1,0 +1,13 @@
+import proactive_helper as ph 
+{{python_function}}
+
+{% for input in inputs %}
+{{input.fragment}} = ph.load(variables,'{{input.fragment}}')
+{%endfor%}
+
+{%- for output in outputs %}{{output.fragment}}{% if not loop.last %}, {% endif -%}{% endfor -%}
+{%- if outputs|length > 0%} = {% endif %}{{python_function_name}}({%- for input in inputs %}{{input.fragment}}{% if not loop.last %}, {% endif -%}{% endfor %})
+
+{%for output in outputs%}
+ph.save(variables,{{output.fragment}},'{{output.fragment}}')
+{%endfor%}

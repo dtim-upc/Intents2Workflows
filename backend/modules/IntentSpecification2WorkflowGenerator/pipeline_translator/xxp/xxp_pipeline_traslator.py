@@ -8,12 +8,13 @@ from graph_queries.workflow_queries import get_workflow_steps, get_step_componen
 from graph_queries.ontology_queries import get_component_implementation, get_implementation_task, get_implementation_input_specs
 from graph_queries.intent_queries import get_intent_iri, get_intent_dataset
 from graph_queries.data_queries import get_dataset_path
+from pipeline_translator.python import python_pipeline_translator
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 template_base = os.path.dirname(os.path.abspath(__file__))
 template_paths = [
-    os.path.join(template_base, "pipeline_translator", "dsl", "templates"),
+    os.path.join(template_base, "pipeline_translator", "xxp", "templates"),
     os.path.join(template_base, "templates")
 ]
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths))
@@ -29,6 +30,22 @@ def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[Lis
         implementation = get_component_implementation(ontology, component)
         task = get_implementation_task(ontology, implementation).fragment
         in_specs = get_implementation_input_specs(ontology, implementation)
+    
+        python_step, step_name, inputs, outputs = python_pipeline_translator.translate_step(ontology, workflow_graph, step)
+        task_python_template = environment.get_template('task.py.jinja')
+        task_python = task_python_template.render(python_function = python_step,
+                                    python_function_name = task,
+                                    inputs=inputs,
+                                    outputs=outputs)
+        with open(f'./{task}.py', mode='w') as f:
+            f.write(task_python)
+
+        task_xxp_template = environment.get_template("task.xxp.jinja")
+        task_xxp = task_xxp_template.render(task = task,
+                                            inputs = inputs,
+                                            outputs = outputs)
+        with open(f'./{task}.xxp', mode='w') as f:
+            f.write(task_xxp)
 
         if any(cb.TrainTabularDatasetShape in spec for spec in in_specs):
             tasks.append("ModelTrain")
@@ -38,6 +55,7 @@ def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[Lis
         elif tb.ApplierImplementation not in ontology.objects(implementation, RDF.type):
             tasks.append(task)
             task_implementations[task] = component.fragment
+    assert 3 == 2
     
     return tasks, task_implementations
 

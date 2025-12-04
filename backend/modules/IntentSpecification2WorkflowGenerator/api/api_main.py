@@ -15,7 +15,7 @@ from flask_cors import CORS
 from api.functions import *
 from pipeline_translator.knime import knime_pipeline_translator
 from pipeline_translator.python import python_pipeline_translator
-from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
+from pipeline_translator.xxp import xxp_pipeline_traslator
 from pipeline_generator import logical_planner, workflow_builder
 from graph_queries import ontology_queries, intent_queries
 
@@ -217,7 +217,7 @@ def download_file():
     for graph_id, graph_content in raw_graphs.items():
         workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
 
-    translation = translate_graphs_to_dsl(ontology, workflow_graphs)
+    translation = xxp_pipeline_traslator.translate_graphs_to_dsl(ontology, workflow_graphs)
 
     # Define the path where the file is stored
     file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
