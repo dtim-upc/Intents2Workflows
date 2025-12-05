@@ -1,33 +1,21 @@
-{% if header == True %}package {{ intent_name }};
-
-{% endif %}
 workflow {{ workflow_name }} {
 
-    {% for task in tasks %} 
-    define task {{ task }};{% endfor %}
+    {% for key, step in steps.items() %} 
+    define task {{ step["task"] }};{% endfor %}
 
 
-    START{% for task in tasks%} -> {{ task }}{% endfor %} -> END;
+    START{% for key, step in steps.items() %} -> {{ step["task"] }}{% endfor %} -> END;
 
-    {% for task in tasks %}
-    task {{ task }} {
-        implementation "{{ intent_name }}.{{ task_implementations[task].split('-')[1] }}";
+    {% for key, step in steps.items() %}
+    task {{step["task"] }} {
+        implementation "{{ step["implementation"] }}";
     }
     {% endfor %}
 
-    {% for input in inputs[tasks[0]] %}
-    define input data {{ input }};
+    {% for (sourceTask, destinationTask, sourcePort, destinationPort) in data_flow %}
+    {{sourceTask}}.output{{sourcePort}} --> {{destinationTask}}.input{{destinationPort}}
+    {%endfor%}
 
-    configure data {{ input }} {
-        path "/**";
-    }
-    {% else %}
-    define input data InputData;
-
-    configure data InputData {
-        path "./{{ path.split('\\')[-1] }}"
-    }
-    {% endfor %}
 
     
 }

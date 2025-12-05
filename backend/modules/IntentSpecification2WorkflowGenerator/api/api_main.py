@@ -217,7 +217,7 @@ def download_file():
     for graph_id, graph_content in raw_graphs.items():
         workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
 
-    translation = xxp_pipeline_traslator.translate_graphs_to_dsl(ontology, workflow_graphs)
+    translation = xxp_pipeline_traslator.translate_graphs_to_xxp(ontology, workflow_graphs)
 
     # Define the path where the file is stored
     file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
