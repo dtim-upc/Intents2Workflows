@@ -1,7 +1,11 @@
+import shutil
 import sys
 import os
 import jinja2
 from typing import Tuple, List
+from tqdm import tqdm
+import tempfile
+import zipfile
 
 from common import *
 from graph_queries.workflow_queries import get_workflow_steps, get_step_component, get_step_input_data, get_step_output_data, get_workflow_intent_number, get_workflow_connections
@@ -9,6 +13,7 @@ from graph_queries.ontology_queries import get_component_implementation, get_imp
 from graph_queries.intent_queries import get_intent_iri, get_intent_dataset
 from graph_queries.data_queries import get_dataset_path
 from pipeline_translator.python import python_pipeline_translator
+from pipeline_translator.core.translator_common_functions import load_workflow
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -43,65 +48,14 @@ def create_connection_mappings(workflow_connections, steps_task:dict):
                          sourcePort, destinationPort))
     return mappings
         
+def adapt_io(ios:list[URIRef]) -> List[str]:
+    adapted_io = []
+    for io in ios:
+        start = io.fragment.find('step')
+        adapted_io.append(io.fragment[start:].replace('-','_') if start != -1 else io.fragment)
+    return adapted_io
 
-
-def get_task_implementations(ontology: Graph, workflow_graph:Graph) -> Tuple[List[URIRef],List[str]]:
-    tasks = []
-    task_implementations = {}
-
-    steps = get_workflow_steps(workflow_graph)
-
-    for step in steps:
-        component = get_step_component(workflow_graph,step)
-        implementation = get_component_implementation(ontology, component)
-        task = get_implementation_task(ontology, implementation).fragment
-        in_specs = get_implementation_input_specs(ontology, implementation)
-    
-        python_step, step_name, inputs, outputs = python_pipeline_translator.translate_step(ontology, workflow_graph, step)
-        task_python_template = environment.get_template('task.py.jinja')
-        task_python = task_python_template.render(python_function = python_step,
-                                    python_function_name = task,
-                                    inputs=inputs,
-                                    outputs=outputs)
-        with open(f'./{task}.py', mode='w') as f:
-            f.write(task_python)
-
-        task_xxp_template = environment.get_template("task.xxp.jinja")
-        task_xxp = task_xxp_template.render(task = task,
-                                            inputs = inputs,
-                                            outputs = outputs)
-        with open(f'./{task}.xxp', mode='w') as f:
-            f.write(task_xxp)
-
-        if any(cb.TrainTabularDatasetShape in spec for spec in in_specs):
-            tasks.append("ModelTrain")
-            task_implementations["ModelTrain"] = component.fragment
-            tasks.append("ModelPredict")
-            task_implementations["ModelPredict"] = component.fragment + "_predictor"
-        elif tb.ApplierImplementation not in ontology.objects(implementation, RDF.type):
-            tasks.append(task)
-            task_implementations[task] = component.fragment
-    assert 3 == 2
-    
-    return tasks, task_implementations
-
-def get_steps_io(ontology:Graph, workflow_graph:Graph)->Tuple[List[List[URIRef]], List[List[URIRef]]]:
-    steps = get_workflow_steps(workflow_graph)
-    inputs = {}
-    outputs = {}
-
-    for step in steps:
-        component = get_step_component(workflow_graph,step)
-        implementation = get_component_implementation(ontology, component)
-        task = get_implementation_task(ontology, implementation).fragment
-        step_inputs = get_step_input_data(workflow_graph, step)
-        step_outputs = get_step_output_data(workflow_graph, step)
-        inputs[task] = step_inputs
-        outputs[task] = step_outputs
-    
-    return inputs,outputs
-
-def tranlate_graph_to_xxp(folder, ontology: Graph, workflow_graph:Graph) -> str:
+def translate_graph_to_xxp(folder, ontology: Graph, workflow_graph:Graph) -> str:
     workflow_steps = get_workflow_steps(workflow_graph)
     workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
 
@@ -115,11 +69,18 @@ def tranlate_graph_to_xxp(folder, ontology: Graph, workflow_graph:Graph) -> str:
         component = get_step_component(workflow_graph,step)
         implementation = get_component_implementation(ontology, component)
         task = get_implementation_task(ontology, implementation).fragment
-        python_step, step_name, inputs, outputs = python_pipeline_translator.translate_step(ontology, workflow_graph, step)
-        component_name = component.fragment.replace('component','').replace('-','')
+        if (implementation, RDF.type, tb.ApplierImplementation) in ontology:
+            task += '_test'
 
-        task_python = generate_task_python(python_step,component.fragment, inputs, outputs)
-        task_xxp = generate_task_xxp(task, inputs, outputs)
+
+        component_name = component.fragment.replace('component','').replace('-','')
+        python_step, step_name, inputs, outputs = python_pipeline_translator.translate_step(ontology, workflow_graph, step, 
+                                                                                            function_name=component_name)
+        inputs_adapted = adapt_io(inputs)
+        outputs_adapted = adapt_io(outputs)
+
+        task_python = generate_task_python(python_step,component_name, inputs_adapted, outputs_adapted)
+        task_xxp = generate_task_xxp(component_name, inputs_adapted, outputs_adapted)
 
         subfolder_name = f'{component_name}'
         subfolder = os.path.join(folder, subfolder_name)
@@ -139,8 +100,6 @@ def tranlate_graph_to_xxp(folder, ontology: Graph, workflow_graph:Graph) -> str:
     connections = get_workflow_connections(workflow_graph)
     connection_mappings = create_connection_mappings(connections, steps_struct)
 
-    print("STEPS",steps_struct)
-
     workflow_template = environment.get_template("workflow.xxp.jinja")
     translation = workflow_template.render(workflow_name = workflow_name,
                                            steps = steps_struct,
@@ -149,41 +108,49 @@ def tranlate_graph_to_xxp(folder, ontology: Graph, workflow_graph:Graph) -> str:
     with open(os.path.join(folder, f'{workflow_name}.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(translation)
 
-    assert 3 == 2
+def package_workflow(folder: str, destination: str) -> None:
+    print("Destination", destination)
+    with zipfile.ZipFile(destination, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        print("Folder", folder)
+        for root, _, files in os.walk(folder):
+            for file in files:
+                print("FILE", file)
+                file_path = os.path.join(root, file)
+                archive_path = os.path.relpath(file_path, folder)
+                workflow_name = os.path.splitext(os.path.basename(destination))[0]
+                zipf.write(file_path, arcname=os.path.join(workflow_name, archive_path))
 
 
-def translate_graphs_to_xxp(ontology:Graph, workflow_graphs:List[Graph]):
-    tranlate_graph_to_xxp('./testingthetest',ontology, workflow_graphs[0])
 
-def tranlate_graph_to_dsl(ontology: Graph, workflow_graph:Graph, header=True) -> str:
-    tasks, task_implementations = get_task_implementations(ontology, workflow_graph)
-    intent_iri = get_intent_iri(workflow_graph)
-    workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
-    inputs, outputs = get_steps_io(ontology, workflow_graph)
-    dataset_uri = get_intent_dataset(workflow_graph, intent_iri)
-    or_dataset_path = get_dataset_path(workflow_graph, dataset_uri)
+def translate_graph(ontology: Graph, source_path: str, destination_path: str):
+    tqdm.write('\tCreating temp folder: ', end='')
+    temp_folder = tempfile.mkdtemp()
+    tqdm.write(temp_folder)
+  
+    tqdm.write('\tLoading workflow:', end=' ')
+    graph = load_workflow(source_path)
+    tqdm.write(next(graph.subjects(RDF.type, tb.Workflow, True)).fragment)
 
-    workflow_template = environment.get_template("workflow.py.jinja")
-    translation = workflow_template.render(intent_name = intent_iri.fragment, 
-                                           workflow_name = workflow_name,
-                                           tasks = tasks,
-                                           task_implementations = task_implementations,
-                                           header = header,
-                                           inputs = inputs,
-                                           outputs = outputs,
-                                           path = or_dataset_path)
+    tqdm.write('\tCreating files')
+    translate_graph_to_xxp(temp_folder, ontology, graph)
 
-    with open('test.txt', mode='w') as f:
-        f.write(translation)
+    tqdm.write('\tCreating zip file')
+    package_workflow(temp_folder, destination_path)
 
-    return translation
-
-def translate_graphs_to_dsl(ontology:Graph, workflow_graphs:List[Graph]) -> str:
-    trans = []
-    header = True
-    for w in workflow_graphs:
-        trans.append(tranlate_graph_to_dsl(ontology, w, header))
-        header = False
+    tqdm.write('\tRemoving temp folder')
+    shutil.rmtree(temp_folder)
+    tqdm.write('Done')
+    tqdm.write('-' * 50)
     
-    return "\n".join(trans)
 
+#TODO this to common functions
+def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str):
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+    assert os.path.exists(source_folder)
+
+    workflows = [f for f in os.listdir(source_folder) if f.endswith('.ttl')]
+    for workflow in tqdm(workflows):
+        source_path = os.path.join(source_folder, workflow)
+        destination_path = os.path.join(destination_folder, workflow[:-4] + '.zip')
+        translate_graph(ontology, source_path, destination_path)

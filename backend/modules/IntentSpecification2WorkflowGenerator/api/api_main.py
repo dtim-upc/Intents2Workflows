@@ -209,28 +209,28 @@ def download_all_knime():
 
 @app.post('/intent-to-dsl')
 def download_file():
-    raw_graphs = request.json.get("graphs", "")
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    graphs = request.json.get("graphs", "")
+    
+    folder = os.path.join(temporary_folder, 'rdf_to_trans')
+    xxp_folder = os.path.join(temporary_folder, 'xxp')
 
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
+    if os.path.exists(xxp_folder):
+        shutil.rmtree(xxp_folder)
+    os.mkdir(folder)
+    os.mkdir(xxp_folder)
 
-    workflow_graphs = []
-    for graph_id, graph_content in raw_graphs.items():
-        workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
+    for graph_id, graph_content in graphs.items():
+        graph = Graph().parse(data=graph_content, format='turtle')
+        file_path = os.path.join(folder, f'{graph_id}.ttl')
+        graph.serialize(file_path, format='turtle')
+    
+    xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder)
+    compress(xxp_folder, xxp_folder + '.zip') 
 
-    translation = xxp_pipeline_traslator.translate_graphs_to_xxp(ontology, workflow_graphs)
+    return send_file(xxp_folder + '.zip', as_attachment=True)
 
-    # Define the path where the file is stored
-    file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
-
-    with open(file_path, mode="w") as file:
-        file.write(translation)
-
-    # Check if the file exists
-    if not os.path.exists(file_path):
-        abort(404, description="File not found")
-
-    # Send the file for download
-    return send_file(file_path, as_attachment=True)
 
 @app.post('/workflow_plans/python')
 def download_python():

@@ -309,7 +309,7 @@ export const useIntentsStore = defineStore('intents', {
       const data = {"graphs": this.getSelectedGraphs()}
       try {
         const response = await intentsAPI.downloadAllDSL(data);
-        FileSaver.saveAs(new Blob([response.data]), `intent_to_dsl.xxp`);
+        FileSaver.saveAs(new Blob([response.data]), `intent_to_xxp.zip`);
         notify.positive(`XXP file downloaded`);
       } catch (error) {
         notify.negative("Error downloading the XXP files");

@@ -1,9 +1,9 @@
 task {{task}} {
     {% for input in inputs -%}
-    define input data {{input.fragment}};
+    define input data {{input}};
     {% endfor %}
     {% for output in outputs -%}
-    define output data {{output.fragment}};
+    define output data {{output}};
     {% endfor %}
-    implementation "{{task}}/{{task}}.py";
+    implementation "{{task}}/task.py";
 }

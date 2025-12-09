@@ -47,7 +47,7 @@ def split_parameters(ontology: Graph, params: Dict[str,str]):
             function_params[key] = value
     return control_params, function_params
 
-def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited_params:dict = {}):
+def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited_params:dict = {}, function_name = None):
     component = get_step_component(workflow_graph, step)
     implementation = get_component_implementation(ontology, component)
     task = get_implementation_task(ontology, implementation).fragment
@@ -69,6 +69,8 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
     inputs = get_step_input_data(workflow_graph, step)
     outputs = get_step_output_data(workflow_graph, step)
 
+    step_name = function_name if not function_name is None else task
+
     step_template = environment.get_template(f"{template}.py.jinja")
 
     #tqdm.write("RENDER parameters:", python_step_parameters)
@@ -77,7 +79,7 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
                                         parameters = function_params.items(),
                                         control = inherited_params,
                                         function = python_function,
-                                        step_name = task,
+                                        step_name = step_name,
                                         inputs = [i for i in range(len(inputs))],
                                         outputs = [i for i in range(len(outputs))])
     return step_file, task, inputs, outputs
