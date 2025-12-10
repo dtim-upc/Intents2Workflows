@@ -226,10 +226,9 @@ def download_file():
         file_path = os.path.join(folder, f'{graph_id}.ttl')
         graph.serialize(file_path, format='turtle')
     
-    xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder)
-    compress(xxp_folder, xxp_folder + '.zip') 
+    xxp_zip_file = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder)
 
-    return send_file(xxp_folder + '.zip', as_attachment=True)
+    return send_file(xxp_zip_file, as_attachment=True)
 
 
 @app.post('/workflow_plans/python')

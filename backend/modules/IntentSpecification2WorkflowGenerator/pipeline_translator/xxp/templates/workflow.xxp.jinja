@@ -1,21 +1,23 @@
 workflow {{ workflow_name }} {
 
-    {% for key, step in steps.items() %} 
-    define task {{ step["task"] }};{% endfor %}
+    START{% for task in tasks %} -> {{ task }}{% endfor %} -> END;
 
-
-    START{% for key, step in steps.items() %} -> {{ step["task"] }}{% endfor %} -> END;
-
-    {% for key, step in steps.items() %}
-    task {{step["task"] }} {
-        implementation "{{ step["implementation"] }}";
-    }
-    {% endfor %}
+    {% for task in tasks %} 
+    define task {{task }};{% endfor %}
 
     {% for (sourceTask, destinationTask, sourcePort, destinationPort) in data_flow %}
     {{sourceTask}}.output{{sourcePort}} --> {{destinationTask}}.input{{destinationPort}}
     {%endfor%}
-
-
     
 }
+
+{% for w in workflows %}
+workflow {{w["name"]}} from {{workflow_name}} {
+    {% for task, implementation in w["tasks_implementation"] %}
+    task {{ task }} {
+        implementation "{{ implementation }}";
+    }
+    {% endfor %}
+
+}
+{% endfor %}
