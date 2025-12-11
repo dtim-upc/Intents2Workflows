@@ -8,10 +8,11 @@ import tempfile
 import zipfile
 
 from common import *
-from graph_queries.workflow_queries import get_workflow_steps, get_step_component, get_step_input_data, get_step_output_data, get_workflow_intent_number, get_workflow_connections
+from graph_queries.workflow_queries import get_workflow_steps, get_step_component, get_step_input_data, get_step_output_data, \
+    get_workflow_intent_number, get_workflow_connections
 from graph_queries.ontology_queries import get_component_implementation, get_implementation_task, get_implementation_input_specs
 from graph_queries.intent_queries import get_intent_iri, get_intent_dataset
-from graph_queries.data_queries import get_dataset_path
+from graph_queries.data_queries import get_dataset_path, get_dataset_uri
 from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.core.translator_common_functions import load_workflow
 
@@ -43,14 +44,37 @@ class WorkflowXXP:
     def tasks(self):
         return self.tasks_component.keys()
     
-    def get_connection_mappings(self):
+    
+    def get_external_input(self):
+        dataset = get_dataset_uri(self.graph)
+        return {
+                "name":dataset.fragment,
+                "path": get_dataset_path(self.graph, dataset)
+                }
+    
+    def get_external_output(self):
+        return {
+            "name":"workflowOutput",
+            "path": "/outputs/output.csv"
+        }
+    
+    def get_connection_mappings(self, external_input, external_output):
         connections = get_workflow_connections(self.graph)
 
         mappings=[]
         for sourceStep, destinationStep, sourcePort, destinationPort in connections:
-            mappings.append((self.steps_task[sourceStep.fragment], 
-                            self.steps_task[destinationStep.fragment], 
-                            sourcePort, destinationPort))
+            if sourceStep.fragment in self.steps_task and destinationStep.fragment in self.steps_task:
+                mappings.append((self.steps_task[sourceStep.fragment], 
+                                self.steps_task[destinationStep.fragment], 
+                                sourcePort, destinationPort))
+            elif sourceStep.fragment not in self.steps_task:
+                mappings.append((external_input, 
+                                 self.steps_task[destinationStep.fragment], 
+                                 None, destinationPort))
+            else:
+                mappings.append((self.steps_task[sourceStep.fragment], 
+                external_output, 
+                sourcePort, None))
         return mappings
         
 
@@ -81,15 +105,16 @@ def adapt_io(ios:list[URIRef]) -> List[str]:
 
 def get_xxp_workflow(ontology: Graph, workflow_graph:Graph) -> WorkflowXXP:
     workflow_steps = get_workflow_steps(workflow_graph)
-    workflow_name = 'Workflow_' + str(get_workflow_intent_number(workflow_graph))
 
     intent_iri = get_intent_iri(workflow_graph)
     dataset_uri = get_intent_dataset(workflow_graph, intent_iri)
     or_dataset_path = get_dataset_path(workflow_graph, dataset_uri)
 
+    workflow_name = f"{intent_iri.fragment}"
+
     workflow = WorkflowXXP(workflow_name,workflow_graph)
 
-    for step in workflow_steps:
+    for step in workflow_steps[1:-1]: #ignore reader and writer
         component = get_step_component(workflow_graph,step)
         implementation = get_component_implementation(ontology, component)
         task = get_implementation_task(ontology, implementation).fragment
@@ -179,16 +204,20 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
 
     assembled_names = []
     abstract_workflows = []
-    for assemblies in xxp_workflows.values():
+    for i,assemblies in enumerate(xxp_workflows.values()):
         assert len(assemblies) > 0
         base_workflow = assemblies[0]
-        data_flow = base_workflow.get_connection_mappings()
+        base_name = f"{base_workflow.name}Workflow{i}"
+        external_input = base_workflow.get_external_input()
+        external_output = base_workflow.get_external_output()
+
+        data_flow = base_workflow.get_connection_mappings(external_input["name"], external_output["name"])
         tasks = base_workflow.tasks
         assembly_workflows = []
         abstract_workflows.append(f'/test/{base_workflow.name}.xxp')
 
         for a in assemblies:
-            name = f"Assembled{a.name}"
+            name = f"{a.name}AssembledWorkflow{get_workflow_intent_number(a.graph)}"
             assembly_workflows.append({
                 "name":name,
                 "tasks_implementation":a.tasks_component.items()
@@ -197,13 +226,15 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
             assembled_names.append(name)
 
         workflow_template = environment.get_template("workflow.xxp.jinja")
-        translation = workflow_template.render(workflow_name = base_workflow.name,
+        translation = workflow_template.render(workflow_name = base_name,
                                                tasks = tasks,
                                                data_flow = data_flow,
+                                               inputs = [external_input],
+                                               outputs = [external_output],
                                                workflows = assembly_workflows
                                             )
         
-        with open(os.path.join(temp_folder, f'{base_workflow.name}.xxp'), encoding='UTF-8', mode='w') as file:
+        with open(os.path.join(temp_folder, f'{base_name}.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(translation)
         
 
