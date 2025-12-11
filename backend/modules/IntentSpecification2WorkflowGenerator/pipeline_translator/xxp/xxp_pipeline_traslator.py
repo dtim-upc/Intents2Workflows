@@ -149,23 +149,10 @@ def package_workflow(folder: str, destination: str) -> None:
                 #workflow_name = os.path.splitext(os.path.basename(destination))[0]
                 zipf.write(file_path, arcname=os.path.join(archive_path))
 
-    
-
-
-def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=False):
-    if not os.path.exists(destination_folder):
-        os.makedirs(destination_folder)
-    assert os.path.exists(source_folder)
-
-    tqdm.write('\tCreating temp folder: ', end='')
-    temp_folder = tempfile.mkdtemp()
-    tqdm.write(temp_folder)
-
-    workflows = [f for f in os.listdir(source_folder) if f.endswith('.ttl')]
+def process_workflows(ontology, source_folder, workflows:List[str]) -> Dict[int, List[WorkflowXXP]]:
     xxp_workflows:Dict[int,List[WorkflowXXP]] = {}
 
     for workflow in tqdm(workflows):
-
         tqdm.write('\tLoading workflow:', end=' ')
         source_path = os.path.join(source_folder, workflow)
         graph = load_workflow(source_path)
@@ -179,6 +166,21 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
             xxp_workflows[id] = []
 
         xxp_workflows[id].append(workflow)
+
+    return xxp_workflows
+
+
+def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=False):
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+    assert os.path.exists(source_folder)
+
+    tqdm.write('\tCreating temp folder: ', end='')
+    temp_folder = tempfile.mkdtemp()
+    tqdm.write(temp_folder)
+
+    workflows = [f for f in os.listdir(source_folder) if f.endswith('.ttl')]
+    xxp_workflows=process_workflows(ontology, source_folder, workflows)
 
     assembled_names = []
     abstract_workflows = []
@@ -210,8 +212,6 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                         subfolder_name = f'{step.component}'
                         subfolder = os.path.join(temp_folder, subfolder_name)
                         os.mkdir(subfolder)
-
-                        a.graph.serialize('test.ttl', format='turtle')
                         
                         python_step, step_name, inputs, outputs, module = python_pipeline_translator.translate_step(ontology, a.graph, step.uri, 
                                                                                                             function_name=step.component)
