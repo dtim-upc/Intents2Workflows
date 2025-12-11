@@ -5,5 +5,8 @@ task {{task}} {
     {% for output, port in outputs -%}
     define output data {{output}}Output{{port}};
     {% endfor %}
+    
     implementation "{{task}}/task.py";
+    python_version "3.11";
+    venv "{{task}}/requirements.txt";
 }

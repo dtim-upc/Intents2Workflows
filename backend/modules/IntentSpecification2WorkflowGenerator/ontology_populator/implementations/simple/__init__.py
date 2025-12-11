@@ -81,7 +81,7 @@ components = [
     binary_decision_tree_learner_component,
     min_max_scaling_component,
     z_score_scaling_component,
-    decimal_scaling_component,
+    #decimal_scaling_component,
     scaling_applier_component,
     factorizer_component,
     factorizer_applier_component,
