@@ -195,7 +195,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
         data_flow = base_workflow.get_connection_mappings(external_input["name"], external_output["name"])
         tasks = base_workflow.tasks
         assembly_workflows = []
-        abstract_workflows.append(f'/test/{base_workflow.name}.xxp')
+        abstract_workflows.append(f'/{base_name}.xxp')
 
         for a in assemblies:
             name = f"{a.name}AssembledWorkflow{get_workflow_intent_number(a.graph)}"
@@ -254,7 +254,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
     with open(os.path.join(temp_folder, f'experiments.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(experiment_translation)
 
-    
+
     
     destination_path = os.path.join(destination_folder,'xxp_translation.zip')
     package_workflow(temp_folder, destination_path)
