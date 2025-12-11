@@ -20,7 +20,7 @@ workflow {{ workflow_name }} {
     {% endfor %}
 
     {% for (sourceTask, destinationTask, sourcePort, destinationPort) in data_flow %}
-    {{sourceTask}}{%if sourcePort is not none%}.output{{sourcePort}}{%endif%} --> {{destinationTask}}{%if destinationPort is not none%}.input{{destinationPort}}{%endif%}
+    {{sourceTask}}{%if sourcePort is not none%}.{{sourceTask}}Output{{sourcePort}}{%endif%} --> {{destinationTask}}{%if destinationPort is not none%}.{{destinationTask}}Input{{destinationPort}}{%endif%}
     {%endfor%}
     
 }

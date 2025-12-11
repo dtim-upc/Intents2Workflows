@@ -82,7 +82,7 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
                                         step_name = step_name,
                                         inputs = [i for i in range(len(inputs))],
                                         outputs = [i for i in range(len(outputs))])
-    return step_file, task, inputs, outputs
+    return step_file, task, inputs, outputs, python_module
 
 
 def translate_graph(ontology: Graph, source_path: str, destination_path: str) -> None:
@@ -98,7 +98,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
     control_params = {}
     for step in tqdm(steps):
         #TODO custom step class to solve this output
-        step_file, task, inputs, outputs = translate_step(ontology, graph, step, inherited_params=control_params)
+        step_file, task, inputs, outputs, dependences = translate_step(ontology, graph, step, inherited_params=control_params)
         
         steps_struct[step] = {'task':task, 'inputs': [None]*len(inputs), 'outputs':[task+str(i) for i in range(len(outputs))], 'file': step_file}
     

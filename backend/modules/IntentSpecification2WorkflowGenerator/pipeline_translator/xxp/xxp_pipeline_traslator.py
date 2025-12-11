@@ -25,24 +25,29 @@ template_paths = [
 ]
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths))
 
+class Step:
+    def __init__(self, uri:URIRef, name:str, task:str, component:str):
+        self.uri = uri
+        self.name = name
+        self.task = task
+        self.component = component
+
 class WorkflowXXP:
     def __init__(self,name:str, graph:Graph):
         self.name = name
-        self.steps_task = {}
-        self.tasks_component = {}
         self.graph = graph
+        self.steps = {}
     
-    def add_step(self,name:str, task:str, component:str):
-        self.steps_task[name] = task
-        self.tasks_component[task] = component
+    def add_step(self,uri:URIRef, name:str, task:str, component:str):
+        self.steps[uri.fragment] = Step(uri, name, task, component)
 
     @property
     def abstract_workflow_id(self):
-        return hash(tuple(self.tasks_component.keys()))
+        return hash(tuple(s.task for s in self.steps.values()))
     
     @property
     def tasks(self):
-        return self.tasks_component.keys()
+        return [s.task for s in self.steps.values()]
     
     
     def get_external_input(self):
@@ -63,16 +68,16 @@ class WorkflowXXP:
 
         mappings=[]
         for sourceStep, destinationStep, sourcePort, destinationPort in connections:
-            if sourceStep.fragment in self.steps_task and destinationStep.fragment in self.steps_task:
-                mappings.append((self.steps_task[sourceStep.fragment], 
-                                self.steps_task[destinationStep.fragment], 
+            if sourceStep.fragment in self.steps and destinationStep.fragment in self.steps:
+                mappings.append((self.steps[sourceStep.fragment].task, 
+                                self.steps[destinationStep.fragment].task, 
                                 sourcePort, destinationPort))
-            elif sourceStep.fragment not in self.steps_task:
+            elif sourceStep.fragment not in self.steps:
                 mappings.append((external_input, 
-                                 self.steps_task[destinationStep.fragment], 
+                                 self.steps[destinationStep.fragment].task, 
                                  None, destinationPort))
             else:
-                mappings.append((self.steps_task[sourceStep.fragment], 
+                mappings.append((self.steps[sourceStep.fragment].task, 
                 external_output, 
                 sourcePort, None))
         return mappings
@@ -94,6 +99,11 @@ def generate_task_xxp(task:str, inputs:List[URIRef], outputs:List[URIRef]):
                                         inputs = inputs,
                                         outputs = outputs)
     return task_xxp
+
+def generate_task_requirements(requirements:List[str]):
+    task_req_template = environment.get_template("requirements.txt.jinja")
+    task_req = task_req_template.render(requirements=requirements)
+    return task_req
 
         
 def adapt_io(ios:list[URIRef]) -> List[str]:
@@ -121,43 +131,11 @@ def get_xxp_workflow(ontology: Graph, workflow_graph:Graph) -> WorkflowXXP:
         if (implementation, RDF.type, tb.ApplierImplementation) in ontology:
             task += '_test'
 
-
         component_name = component.fragment.replace('component','').replace('-','')
-
-        #subfolder_name = f'{component_name}'
-        #subfolder = os.path.join(folder, subfolder_name)
-
-        workflow.add_step(step.fragment, task, component_name)
+        workflow.add_step(step, step.fragment, task, component_name)
 
     return workflow
 
-
-        # if not os.path.exists(subfolder): #if subfolder exists, task already present. We avoid repetitions when translating multiple workflows
-        #     os.mkdir(subfolder)
-        #     python_step, step_name, inputs, outputs = python_pipeline_translator.translate_step(ontology, workflow_graph, step, 
-        #                                                                                         function_name=component_name)
-        #     inputs_adapted = adapt_io(inputs)
-        #     outputs_adapted = adapt_io(outputs)
-
-        #     task_python = generate_task_python(python_step,component_name, inputs_adapted, outputs_adapted)
-        #     task_xxp = generate_task_xxp(component_name, inputs_adapted, outputs_adapted)
-
-        #     with open(os.path.join(subfolder, 'task.py'), encoding='UTF-8', mode='w') as file:
-        #         file.write(task_python)
-        #     with open(os.path.join(subfolder, 'task.xxp'), encoding='UTF-8', mode='w') as file:
-        #         file.write(task_xxp)
-
-
-    #connections = get_workflow_connections(workflow_graph)
-    #connection_mappings = create_connection_mappings(connections, steps_task)
-
-    # workflow_template = environment.get_template("workflow.xxp.jinja")
-    # translation = workflow_template.render(workflow_name = workflow_name,
-    #                                        steps = steps_struct,
-    #                                        data_flow = connection_mappings
-    #                                        )
-    # with open(os.path.join(folder, f'{workflow_name}.xxp'), encoding='UTF-8', mode='w') as file:
-    #         file.write(translation)
 
 def package_workflow(folder: str, destination: str) -> None:
     print("Destination", destination)
@@ -174,7 +152,7 @@ def package_workflow(folder: str, destination: str) -> None:
     
 
 
-def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str):
+def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=False):
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
     assert os.path.exists(source_folder)
@@ -204,6 +182,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
 
     assembled_names = []
     abstract_workflows = []
+    tasks_visited = {}
     for i,assemblies in enumerate(xxp_workflows.values()):
         assert len(assemblies) > 0
         base_workflow = assemblies[0]
@@ -220,10 +199,39 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
             name = f"{a.name}AssembledWorkflow{get_workflow_intent_number(a.graph)}"
             assembly_workflows.append({
                 "name":name,
-                "tasks_implementation":a.tasks_component.items()
+                "tasks_implementation": [(s.task, s.component) for s in a.steps.values()]
             })
 
             assembled_names.append(name)
+
+            if generate_tasks:
+                for step in a.steps.values():
+                    if step.component not in tasks_visited:
+                        subfolder_name = f'{step.component}'
+                        subfolder = os.path.join(temp_folder, subfolder_name)
+                        os.mkdir(subfolder)
+
+                        a.graph.serialize('test.ttl', format='turtle')
+                        
+                        python_step, step_name, inputs, outputs, module = python_pipeline_translator.translate_step(ontology, a.graph, step.uri, 
+                                                                                                            function_name=step.component)
+                        inputs_adapted = [(step.task, port) for port in range(len(inputs))]
+                        outputs_adapted =  [(step.task, port) for port in range(len(outputs))]
+
+                        task_python = generate_task_python(python_step,step.component, inputs_adapted, outputs_adapted)
+                        task_xxp = generate_task_xxp(step.component, inputs_adapted, outputs_adapted)
+                        task_requirements = generate_task_requirements([module.split('.')[0]])
+
+                        with open(os.path.join(subfolder, 'task.py'), encoding='UTF-8', mode='w') as file:
+                            file.write(task_python)
+                        with open(os.path.join(subfolder, 'task.xxp'), encoding='UTF-8', mode='w') as file:
+                            file.write(task_xxp)
+                        with open(os.path.join(subfolder, 'requirements.txt'), encoding='UTF-8', mode='w') as file:
+                            file.write(task_requirements)
+
+                        tasks_visited[step.component] = True
+
+
 
         workflow_template = environment.get_template("workflow.xxp.jinja")
         translation = workflow_template.render(workflow_name = base_name,
@@ -245,6 +253,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                                         )
     with open(os.path.join(temp_folder, f'experiments.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(experiment_translation)
+
     
     
     destination_path = os.path.join(destination_folder,'xxp_translation.zip')

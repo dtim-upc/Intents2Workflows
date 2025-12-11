@@ -1,9 +1,9 @@
 task {{task}} {
-    {% for input in inputs -%}
-    define input data {{input}};
+    {% for input, port in inputs -%}
+    define input data {{input}}Input{{port}};
     {% endfor %}
-    {% for output in outputs -%}
-    define output data {{output}};
+    {% for output, port in outputs -%}
+    define output data {{output}}Output{{port}};
     {% endfor %}
     implementation "{{task}}/task.py";
 }
