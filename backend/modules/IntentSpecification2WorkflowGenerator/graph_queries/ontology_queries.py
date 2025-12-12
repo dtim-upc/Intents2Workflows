@@ -191,7 +191,7 @@ def get_component_implementation(ontology: Graph, component: URIRef) -> URIRef:
         }}
     """
     result = ontology.query(implementation_query).bindings
-    assert len(result) == 1
+    assert len(result) == 1, f"Component {component} with multiple implementations {result}"
     return result[0]['implementation']
 
 def get_implementation_parameters(ontology: Graph, implementation: URIRef, type:URIRef=tb.Parameter) -> Dict[

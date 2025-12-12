@@ -2,14 +2,14 @@ from typing import List, Set, Type
 from rdflib import Graph, URIRef, Literal
 from common import *
 
-def get_dataset_type(data_graph: Graph, dataset:URIRef):
-    return next(data_graph.objects(dataset, RDF.type),Literal("")).toPython()
-
 def get_dataset_format(data_graph: Graph, dataset:URIRef):
     return next(data_graph.objects(dataset, dmop.fileFormat,unique=True),Literal("")).toPython()
 
 def get_dataset_path(data_graph: Graph, dataset:URIRef):
     return next(data_graph.objects(dataset, dmop.path, unique=True),Literal("")).toPython()
+
+def isTensor_data(data_graph: Graph, dataset:URIRef):
+    return (dataset, RDF.type, dmop.TensorDataset) in data_graph
 
 def get_dataset_uri(data_graph: Graph) -> URIRef:
     data_uri_query = f"""

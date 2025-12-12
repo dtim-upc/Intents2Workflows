@@ -12,15 +12,15 @@ from graph_queries import intent_queries, ontology_queries, shape_queries, data_
 
 MAX_PLAN_LENGTH = 10
 
-def get_reader_component(dataset_type:URIRef, dataset_format:URIRef):
+def get_reader_component(tensor_dataset:bool, dataset_format:URIRef):
     component_name = f"component-{dataset_format.lower()}_reader_component"
-    if dataset_type == dmop.TensorDataset:
+    if tensor_dataset:
         component_name +="_(tensor)"
     return cb[component_name]
 
-def get_writer_component(dataset_type:URIRef): #TODO dynamically obtain those components
-    if dataset_type == dmop.TensorDataset:
-        return cb["cb:component-data_writer_component_(tensor)"]
+def get_writer_component(tensor_dataset:bool): #TODO dynamically obtain those components
+    if tensor_dataset:
+        return cb["component-data_writer_component_(tensor)"]
     else:
         return cb["component-data_writer_component"]
 
@@ -222,10 +222,10 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     t = time.time()
     intent_iri = intent_queries.get_intent_iri(intent_graph=intent_graph)
     dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri) 
-    dataset_type = data_queries.get_dataset_type(data_graph, dataset)
+    is_tensor = data_queries.isTensor_data(data_graph, dataset)
     dataset_format = data_queries.get_dataset_format(data_graph, dataset)
-    reader_component = get_reader_component(dataset_type, dataset_format)
-    writer_component = get_writer_component(dataset_type)
+    reader_component = get_reader_component(is_tensor, dataset_format)
+    writer_component = get_writer_component(is_tensor)
 
     component_threshold = intent_queries.get_component_threshold(intent_graph, intent_iri)
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_iri)

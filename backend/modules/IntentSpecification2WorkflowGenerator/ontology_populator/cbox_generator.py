@@ -207,6 +207,12 @@ def add_datasets(cbox):
     cbox.add((cb.term('TabularDatasetShape'), RDF.type, tb.DataSpec))
     cbox.add((cb.term('TabularDatasetShape'), SH.targetClass, dmop.TabularDataset))
 
+    cbox.add((dmop.TensorDataset, RDF.type, tb.Dataset))
+
+    cbox.add((cb.term('TensorDatasetShape'), RDF.type, SH.NodeShape))
+    cbox.add((cb.term('TensorDatasetShape'), RDF.type, tb.DataSpec))
+    cbox.add((cb.term('TensorDatasetShape'), SH.targetClass, dmop.TensorDataset))
+
 
 def add_subproperties(cbox):
     subproperties = [
