@@ -11,7 +11,7 @@ nn_learner_implementation = Implementation(
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), 
-         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape)]),
+         IOSpecTag(cb.NormalizedTabularDatasetShape,2), IOSpecTag(cb.NonNullTabularDatasetShape,2)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NNModelShape)]),

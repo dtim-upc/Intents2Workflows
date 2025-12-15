@@ -221,12 +221,16 @@ def download_file():
     os.mkdir(folder)
     os.mkdir(xxp_folder)
 
+    python_compatible = True
+
     for graph_id, graph_content in graphs.items():
         graph = Graph().parse(data=graph_content, format='turtle')
+        python_compatible = python_compatible and getCompatibility(graph, cb.Python)
         file_path = os.path.join(folder, f'{graph_id}.ttl')
         graph.serialize(file_path, format='turtle')
+        
     
-    xxp_zip_file = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder)
+    xxp_zip_file = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible)
 
     return send_file(xxp_zip_file, as_attachment=True)
 
