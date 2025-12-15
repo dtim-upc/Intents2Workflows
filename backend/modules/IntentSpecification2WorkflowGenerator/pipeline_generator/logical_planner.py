@@ -20,7 +20,7 @@ def get_reader_component(tensor_dataset:bool, dataset_format:URIRef):
 
 def get_writer_component(tensor_dataset:bool): #TODO dynamically obtain those components
     if tensor_dataset:
-        return cb["component-data_writer_component_(tensor)"]
+        return cb["component-data_writer_component"] #this is redundant (or maybe should be different?) 
     else:
         return cb["component-data_writer_component"]
 

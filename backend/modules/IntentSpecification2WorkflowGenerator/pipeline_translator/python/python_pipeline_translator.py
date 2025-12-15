@@ -42,7 +42,7 @@ def split_parameters(ontology: Graph, params: Dict[str,str]):
     for param_uri, param_data in params.items():
         key, value = param_data
         if next(ontology.objects(param_uri, tb.isControlParameter,unique=True),False):
-            control_params[key.toPython()] = value
+            control_params[key] = value
         else:
             function_params[key] = value
     return control_params, function_params
@@ -91,6 +91,7 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
     tqdm.write('\tLoading workflow:', end=' ')
     graph = load_workflow(source_path)
     tqdm.write(next(graph.subjects(RDF.type, tb.Workflow, True)).fragment)
+
 
     tqdm.write('\tBuilding steps')
     steps = get_workflow_steps(graph)

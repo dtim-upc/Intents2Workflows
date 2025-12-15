@@ -1,0 +1,48 @@
+
+from tensorflow.keras import layers, models
+
+def {{step_name}}(X):
+    timesteps = X[0].shape[1]
+    features = X[0].shape[2]
+    classes = len(set(X[1]))
+
+
+    # -----------------------------
+    # Build CNN model
+    # -----------------------------
+    model = models.Sequential([
+        # Automatically get timesteps and features from X
+        # Input layer
+        layers.Input(shape=(timesteps, features)),
+        
+        layers.Conv1D(32, 3, activation="relu"),
+        layers.MaxPooling1D(pool_size=2),
+
+        layers.Conv1D(filters=64, kernel_size=3, activation='relu'),
+        layers.MaxPooling1D(pool_size=2),
+
+        layers.Flatten(),
+        layers.Dense(64, activation="relu"),
+        layers.Dense(classes, activation="softmax")
+    ])
+
+    # -----------------------------
+    # Compile model
+    # -----------------------------
+    model.compile(
+        optimizer="adam",
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    # -----------------------------
+    # Train model
+    # -----------------------------
+    model.fit(
+        X[0], X[1],
+        epochs=10,
+        batch_size=64,
+        validation_split=0.2
+    )
+
+    return model

@@ -35,7 +35,7 @@ def translate_text_params(ontology:Graph, implementation:URIRef, step_parameters
             value = default_value
 
         value = literal_to_raw_datatype(value)
-        key = get_parameter_key(ontology,param)
+        key = get_parameter_key(ontology,param).toPython()
         
         python_params[param] = (key,value)
     return python_params

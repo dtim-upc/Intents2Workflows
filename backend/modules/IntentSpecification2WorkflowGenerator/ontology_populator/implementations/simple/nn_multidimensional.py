@@ -9,7 +9,7 @@ nn_multi_learner_implementation = Implementation(
         Parameter("NN type", XSD.string, None),
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.LabeledTensorDatasetShape), IOSpecTag(cb.TrainTensorDatasetShape)]),
+        InputIOSpec([IOSpecTag(cb.LabeledTensorDatasetShape), IOSpecTag(cb.TrainTensorDatasetShape), IOSpecTag(cb.IntegerTargetTensorShape)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NNModelShape)]),

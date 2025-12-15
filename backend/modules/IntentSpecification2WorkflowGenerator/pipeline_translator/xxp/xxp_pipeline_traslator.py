@@ -110,7 +110,7 @@ def adapt_io(ios:list[URIRef]) -> List[str]:
     adapted_io = []
     for io in ios:
         start = io.fragment.find('step')
-        adapted_io.append(io.fragment[start:].replace('-','_') if start != -1 else io.fragment)
+        adapted_io.append(io.fragment[start:].replace('-','_').replace('(','').replace(')','') if start != -1 else io.fragment)
     return adapted_io
 
 def get_xxp_workflow(ontology: Graph, workflow_graph:Graph) -> WorkflowXXP:
@@ -131,8 +131,9 @@ def get_xxp_workflow(ontology: Graph, workflow_graph:Graph) -> WorkflowXXP:
         if (implementation, RDF.type, tb.ApplierImplementation) in ontology:
             task += '_test'
 
-        component_name = component.fragment.replace('component','').replace('-','')
+        component_name = component.fragment.replace('component','').replace('-','').replace('(','').replace(')','')
         workflow.add_step(step, step.fragment, task, component_name)
+
 
     return workflow
 
@@ -170,7 +171,7 @@ def process_workflows(ontology, source_folder, workflows:List[str]) -> Dict[int,
     return xxp_workflows
 
 
-def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=False):
+def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=True):
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
     assert os.path.exists(source_folder)
