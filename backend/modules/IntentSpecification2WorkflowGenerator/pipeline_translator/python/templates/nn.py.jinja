@@ -6,13 +6,11 @@ def {{step_name}}(X):
     features = X[0].shape[2]
     classes = len(set(X[1]))
 
-
     # -----------------------------
-    # Build CNN model
+    # Build model
     # -----------------------------
+    {% if control['type'] == 'CNN'%}
     model = models.Sequential([
-        # Automatically get timesteps and features from X
-        # Input layer
         layers.Input(shape=(timesteps, features)),
         
         layers.Conv1D(32, 3, activation="relu"),
@@ -25,6 +23,44 @@ def {{step_name}}(X):
         layers.Dense(64, activation="relu"),
         layers.Dense(classes, activation="softmax")
     ])
+    {% elif control['type'] == 'RNN'%}
+    model = models.Sequential([
+        layers.Input(shape=(timesteps, features)),
+
+        layers.SimpleRNN(64, return_sequences=True, activation="tanh"), 
+        layers.SimpleRNN(64, activation="tanh"), 
+
+        layers.Dense(64, activation="relu"),
+        layers.Dense(classes, activation="softmax") 
+    ])
+    {% elif control['type'] == 'FFNN'%}
+    model = models.Sequential([
+        layers.Input(shape=(timesteps, features)), 
+
+        layers.Flatten(),
+        layers.Dense(128, activation='relu'),  
+        layers.Dense(64, activation='relu'),   
+        layers.Dense(32, activation='relu'),   
+        
+        layers.Dense(classes, activation='softmax')  
+    ])
+    {% elif control['type'] == 'LSTM'%}
+    model = models.Sequential([
+        layers.Input(shape=(timesteps, features)),
+
+        layers.LSTM(64, return_sequences=True, activation="tanh"),
+        layers.LSTM(64, activation="tanh"), 
+        
+        layers.Dense(64, activation="relu"),
+        layers.Dense(classes, activation="softmax") 
+    ])
+    {% else %}
+    model = models.Sequential([
+        layers.Input(shape=(timesteps, features)),
+        layers.Flatten(),
+        layers.Dense(classes, activation="softmax")
+    ])
+    {%endif%}
 
     # -----------------------------
     # Compile model

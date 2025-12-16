@@ -6,7 +6,7 @@ nn_multi_learner_implementation = Implementation(
     algorithm=cb.NN,
     parameters=[
         Parameter("Label array", XSD.string, "$$LABEL$$"),
-        Parameter("NN type", XSD.string, None),
+        FactorParameter("NN type", ["FeedForward", 'Recurrent', 'LSTM', 'Convolutional']),
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.LabeledTensorDatasetShape), IOSpecTag(cb.TrainTensorDatasetShape), IOSpecTag(cb.IntegerTargetTensorShape)]),
