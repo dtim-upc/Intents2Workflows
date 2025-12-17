@@ -156,10 +156,12 @@ def get_dataset_uri(annotation_graph:Graph):
 
 
 @router.post("/data-products")
-async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
+async def upload_file(files: list[UploadFile] = File(...), tensor= Form(), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
+
+    print("TEENSOR",tensor)
 
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")

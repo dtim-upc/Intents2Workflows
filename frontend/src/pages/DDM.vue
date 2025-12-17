@@ -48,12 +48,25 @@
       <div>
         Selected item: <strong>{{ selected_node?.label || 'None' }}</strong>
       </div>
+
+      <!-- Checkbox and Upload Button -->
+      <div class="q-gutter-md" style="display: flex; align-items: center;">
+        <!-- Checkbox with description -->
+        <q-checkbox
+          v-model="tensorImport"
+          label="Tensor import"
+          dense
+          color="primary"
+          style="margin-right: 10px;"
+          v-if="selected_node?.folder"
+        />
       <q-btn
         label="Import"
         icon="cloud_download"
         color="primary"
         @click="downloadItem"
       />
+      </div>
     </div>
   </q-card>
 </template>
@@ -79,6 +92,7 @@
   const selected = ref(null)
   const selected_node = ref(null)
   const loading = ref(true);  // Track loading state
+  const tensorImport = ref(false)
 
 
   const bearerToken = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1UFdHcVJMRjRDcDBkYTdLUFB4OWtMTVZDR2xYSmh1MHpVWDY1Z3FlSDVJIn0.eyJleHAiOjE3NjY3NTQ2OTUsImlhdCI6MTc2NTg5MDY5NSwianRpIjoiNmE3ZGFmMzctOGIzMC00MmEwLTkwNWYtMTUyMTllOWIxMzViIiwiaXNzIjoiaHR0cHM6Ly9leHRyZW1leHAtYXV0aDAxLnRibS50dWRlbGZ0Lm5sL2F1dGgvcmVhbG1zL2V4dHJlbWV4cCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI1NjM5NTJiZC1mZTkzLTQ2OTktOWI5MC1mYTdiZjU2Njk1YzUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhY2Nlc3Njb250cm9sIiwic2Vzc2lvbl9zdGF0ZSI6IjVlMDZmOGU0LTA4NTMtNDI5ZS1iMjBjLWE0N2RlNTBiNjcyYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1leHRyZW1leHAiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6IjVlMDZmOGU0LTA4NTMtNDI5ZS1iMjBjLWE0N2RlNTBiNjcyYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiVVBDIERlbW8iLCJncm91cHMiOlsiZGVmYXVsdC1yb2xlcy1leHRyZW1leHAiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl0sInByZWZlcnJlZF91c2VybmFtZSI6InVwY2RlbW8iLCJsb2NhbGUiOiJlbiIsImdpdmVuX25hbWUiOiJVUEMiLCJmYW1pbHlfbmFtZSI6IkRlbW8iLCJlbWFpbCI6ImRlbW9AdXBjLmVkdSJ9.e_CcjKPi_EO_QUuMyL2ZrHD2fBy3wkPPq6GXCv8o54VzA5ttR_in2pyPLSzTbvc8qkJlzZTJHIMxT_02MLKFJ7VTac05b6Rhl1jxPx53lZ0lR-DI2SLcmE3BeLgNAr-BBRId52ILYDc276Rl_ecs48Bm47v4JZfBg96hW4J0DMOoEQ3qKu8td5mJHy1Yke5pxySJE76rpSUS17vqH40JgfZ3VDsygp63veqCKKvFqg0Ffm6ku9-8_T8PoSAnC4nt6J9MMW8lGg3YWiOryxJRnvxlSEB8vTN285EwcPv4VK1IJZWp26Re6n3vzAm2ibrWXaPd3wiROjE5G3TUdtXrHw'; // Replace this with the actual token
@@ -218,8 +232,10 @@
       try {
         const response = await downloadProject(selected_node?.value?.path);
         $q.loading.hide()
+        sendFileToBackend([new File([response], selected_node.value.label+'.zip', { type: response.type })],tensorImport.value)
+        router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/data-products" })
         //var decodedString = atob(response);
-        FileSaver.saveAs(response, 'test.zip')
+        //FileSaver.saveAs(response, 'test.zip')
       } catch (error) {
           console.error("Error:", error);
           $q.loading.hide()
@@ -262,15 +278,17 @@ const findNodeById = (list, id) => {
 const onSelect = (id) => {
   selected.value = id
   selected_node.value = findNodeById(nodes.value, id)
+  tensorImport.value = false
   console.log("Selected node:",selected_node)
 }
 
 
-const sendFileToBackend = async (file_list) => {
+const sendFileToBackend = async (file_list, tensor=false) => {
   const formData = new FormData();
   for (let i = 0; i < file_list.length; i++) {
         formData.append("files", file_list[i]);
     }
+    formData.append("tensor",tensor)
 
   try {
     $q.loading.show({message: 'Creating data product...'})
