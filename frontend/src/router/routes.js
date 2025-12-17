@@ -20,6 +20,7 @@ const routes = [
       {path: 'logical-planner', name: 'logical-planner', component: () => import('pages/CreateIntent.vue')},
       {path: 'workflow-planner', name: 'workflow-planner', component: () => import('pages/CreateIntent.vue')},
       {path: 'intent-workflows', name: 'intent-workflows', component: () => import('pages/CreateIntent.vue')},
+      {path: 'DDM', name: 'DDM', component: () => import('pages/DDM.vue')},
     ]
   },
 

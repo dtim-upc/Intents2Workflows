@@ -8,9 +8,12 @@
     <!-- Folder Upload Button -->
     <q-btn label="Upload Folder" @click="triggerFolderInput" color="primary" style="margin-left: 20px;"/>
 
+    <q-btn label="Upload DDM" @click="triggerDDM" color="primary" style="margin-left: 20px;"/>
+
     <!-- File Input (Hidden, triggered by button) -->
     <input ref="fileInput" type="file" accept=".csv, .parquet, .zip, .npz, .las" style="display: none;" @change="handleFileUpload" multiple/>
     <input ref="folderInput" type="file" accept="*" style="display: none;" @change="handleFileUpload"  webkitdirectory = "true" directory/>
+
 
   </q-page>
 </template>
@@ -22,7 +25,10 @@ import { useDataProductsStore } from 'src/stores/dataProductsStore';
 import {odinApi} from 'boot/axios';
 import { useNotify } from 'src/use/useNotify.js';
 import {useQuasar} from 'quasar'
+import {useRoute, useRouter} from "vue-router";
 
+const router = useRouter()
+const route = useRoute()
 const dataProductsStore = useDataProductsStore()
 const notify = useNotify();
 const $q = useQuasar()
@@ -39,6 +45,10 @@ const triggerFileInput = () => {
 // Trigger folder input click when button is clicked
 const triggerFolderInput = () => {
   folderInput.value.click();
+};
+
+const triggerDDM = () => {
+    router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/DDM" })
 };
 
 // Handle file selection and read the file
