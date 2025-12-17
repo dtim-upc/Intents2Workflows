@@ -8,7 +8,7 @@
     <!-- Folder Upload Button -->
     <q-btn label="Upload Folder" @click="triggerFolderInput" color="primary" style="margin-left: 20px;"/>
 
-    <q-btn label="Upload DDM" @click="triggerDDM" color="primary" style="margin-left: 20px;"/>
+    <q-btn label="Import from DDM" @click="triggerDDM" color="primary" icon="cloud_download" style="margin-left: 20px;"/>
 
     <!-- File Input (Hidden, triggered by button) -->
     <input ref="fileInput" type="file" accept=".csv, .parquet, .zip, .npz, .las" style="display: none;" @change="handleFileUpload" multiple/>

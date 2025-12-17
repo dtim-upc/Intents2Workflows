@@ -16,8 +16,8 @@ from .target_encoder_multidimensional import encoder_applier_component, encoder_
 
 
 implementations = [
-    nn_learner_implementation,
-    nn_predictor_implementation,
+    #nn_learner_implementation,
+    #nn_predictor_implementation,
     data_reader_implementation,
     data_writer_implementation,
     nn_multi_learner_implementation,
