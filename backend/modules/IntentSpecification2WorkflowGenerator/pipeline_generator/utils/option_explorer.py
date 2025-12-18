@@ -27,8 +27,6 @@ def get_best_options(intent_graph:Graph, ontology:Graph):
 
     exp_constraints = intent_graph.objects(intent_iri,tb.hasConstraint)
 
-    intent_graph.serialize("intnenttest.ttl", format="turtle")
-
     soft_constraints = []
     for constraint in exp_constraints:
         print(constraint)

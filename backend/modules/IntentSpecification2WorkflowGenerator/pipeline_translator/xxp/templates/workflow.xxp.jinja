@@ -3,24 +3,24 @@ workflow {{ workflow_name }} {
     START{% for task in tasks %} -> {{ task }}{% endfor %} -> END;
 
     {% for task in tasks %} 
-    define task {{task }};{% endfor %}
+    task {{task }};{% endfor %}
 
     {% for input in inputs %}
-    define input data file {{input["name"]}};
-    configure input data {{input["name"]}} {
+    define input file {{input["name"]}};
+    configure data {{input["name"]}} {
         path "{{input["path"]}}";
     }
     {% endfor %}
 
     {% for output in outputs %}
-    define output data file {{output["name"]}};
-    configure output data {{output["name"]}} {
+    define output data {{output["name"]}};
+    configure data {{output["name"]}} {
         path "{{output["path"]}}";
     }
     {% endfor %}
 
     {% for (sourceTask, destinationTask, sourcePort, destinationPort) in data_flow %}
-    {{sourceTask}}{%if sourcePort is not none%}.{{sourceTask}}Output{{sourcePort}}{%endif%} --> {{destinationTask}}{%if destinationPort is not none%}.{{destinationTask}}Input{{destinationPort}}{%endif%}
+    {{sourceTask}}{%if sourcePort is not none%}.{{sourceTask}}Output{{sourcePort}}{%endif%} --> {{destinationTask}}{%if destinationPort is not none%}.{{destinationTask}}Input{{destinationPort}}{%endif%};
     {%endfor%}
     
 }
