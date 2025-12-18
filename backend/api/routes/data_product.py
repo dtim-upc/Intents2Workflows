@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 from database.database import SessionLocal
 from dataset_annotator import annotator, namespaces
+from utils import tensor_preprocesser
 from models import DataProduct
 
 router = APIRouter()
@@ -161,13 +162,28 @@ async def upload_file(files: list[UploadFile] = File(...), tensor= Form(), db: S
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
 
-    print("TEENSOR",tensor)
 
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
+    
+    if tensor == "true": #tensor import
+        print("##################################TENSOR######################################")
+
+        name, size, upload_time, path = process_file(files[0])
+        print("path",path)
+        file = tensor_preprocesser.get_npz(path)
+        name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"))
+
+        dp = create_data_product(db, name, size, upload_time, path)
+
+        return JSONResponse(status_code=200, content={
+        "message": "File uploaded successfully",
+        "data_product": [dp.to_dict()]
+    })
+
+
 
     folder = Path(files[0].filename).parent
-
     print(folder, Path(UPLOAD_DIR))
 
     dps = []

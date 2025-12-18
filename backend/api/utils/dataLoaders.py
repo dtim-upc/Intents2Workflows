@@ -127,9 +127,9 @@ class ZipLoader(FolderLoader):
 
     def __init__(self,dir):
         zfile = zipfile.ZipFile(dir, mode='r')
-        extraction_path = Path(temp_dir).joinpath(Path(dir).with_suffix('').name)
-        zfile.extractall(extraction_path)
-        super().__init__(extraction_path)
+        self.extraction_path = Path(temp_dir).joinpath(Path(dir).with_suffix('').name)
+        zfile.extractall(self.extraction_path)
+        super().__init__(self.extraction_path)
         self.metadata['path'] = Path(dir).resolve().as_posix()
 
 
