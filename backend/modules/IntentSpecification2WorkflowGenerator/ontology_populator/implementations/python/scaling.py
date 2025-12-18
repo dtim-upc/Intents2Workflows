@@ -17,7 +17,7 @@ python_minmax_scaling_implementation = PythonImplementation(
                                expression=AlgebraicExpression(cb.STACK, min, max), default_value=(0,1)),
     ],
     python_module='sklearn.preprocessing',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='MinMaxScaler',
     template='sklearn_scaling',
     translation_condition= AlgebraicExpression(cb.EQ, mode, "MinMax")
@@ -30,7 +30,7 @@ python_zscore_scaling_implementation = PythonImplementation(
         python_cols
     ],
     python_module='sklearn.preprocessing',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='StandardScaler',
     template='sklearn_scaling',
     translation_condition=AlgebraicExpression(cb.EQ, mode, "ZScore")
@@ -44,7 +44,7 @@ python_scaling_applier_implementation = PythonImplementation(
         python_cols
     ],
     python_module='sklearn.preprocessing',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='Scaler', #does not matter in this case
     template='sklearn_scaling_applier'
 )

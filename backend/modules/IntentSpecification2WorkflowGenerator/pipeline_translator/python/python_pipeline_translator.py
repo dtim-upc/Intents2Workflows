@@ -30,6 +30,9 @@ except ImportError:
 def get_python_module(ontology: Graph, implementation: URIRef):
     return next(ontology.objects(implementation, tb.python_module, unique=True),None)
 
+def get_python_dependences(ontology: Graph, implementation: URIRef):
+    return list(ontology.objects(implementation, tb.python_dependency, unique=False))
+
 def get_python_function(ontology: Graph, implementation: URIRef):
     return next(ontology.objects(implementation, tb.python_function, unique=True),None)
 
@@ -63,6 +66,7 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
     #print("Function:",function_params)
 
     python_module = get_python_module(ontology, engine_implementation)
+    python_dependences = get_python_dependences(ontology, engine_implementation)
     python_function = get_python_function(ontology, engine_implementation)
     template = get_template(ontology, engine_implementation)
 
@@ -82,7 +86,7 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
                                         step_name = step_name,
                                         inputs = [i for i in range(len(inputs))],
                                         outputs = [i for i in range(len(outputs))])
-    return step_file, task, inputs, outputs, python_module
+    return step_file, task, inputs, outputs, python_dependences
 
 
 def translate_graph(ontology: Graph, source_path: str, destination_path: str) -> None:

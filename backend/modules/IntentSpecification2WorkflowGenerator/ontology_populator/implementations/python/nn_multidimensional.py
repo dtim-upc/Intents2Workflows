@@ -15,7 +15,7 @@ python_nn_tensor_implementation = PythonImplementation(
     ],
     python_module="tensorflow",
     python_function="NN",
-    module_version='2.2.3',
+    python_dependences=[("tensorflow", '2.2.3')],
     template="nn"
 )
 
@@ -26,6 +26,6 @@ python_nn_tensor_applier_implementation = PythonImplementation(
     ],
     python_module="tensorflow",
     python_function="NN",
-    module_version='2.2.3',
+    python_dependences=[("tensorflow", '2.2.3')],
     template="nn_predict"
 ) 

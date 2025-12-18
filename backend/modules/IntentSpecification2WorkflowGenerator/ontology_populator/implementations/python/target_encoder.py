@@ -10,7 +10,7 @@ python_target_encoder_implementation = PythonImplementation(
     ],
     python_module="numpy",
     python_function="custom",
-    module_version='2.2.3',
+    python_dependences=[("numpy", '2.2.3')],
     template="target_to_int_multidimensional"
 )
 
@@ -22,6 +22,6 @@ python_target_encoder_applier_implementation = PythonImplementation(
     ],
     python_module="numpy",
     python_function="custom",
-    module_version='2.2.3',
+    python_dependences=[("numpy", '2.2.3')],
     template="target_to_int_multidimensional"
 ) 

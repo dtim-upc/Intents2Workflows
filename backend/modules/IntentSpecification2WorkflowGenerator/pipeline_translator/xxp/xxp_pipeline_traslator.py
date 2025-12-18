@@ -100,7 +100,7 @@ def generate_task_xxp(task:str, inputs:List[URIRef], outputs:List[URIRef]):
                                         outputs = outputs)
     return task_xxp
 
-def generate_task_requirements(requirements:List[str]):
+def generate_task_requirements(requirements:List[Tuple[str,str]]):
     task_req_template = environment.get_template("requirements.txt.jinja")
     task_req = task_req_template.render(requirements=requirements)
     return task_req
@@ -214,14 +214,14 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                         subfolder = os.path.join(temp_folder, subfolder_name)
                         os.mkdir(subfolder)
                         
-                        python_step, step_name, inputs, outputs, module = python_pipeline_translator.translate_step(ontology, a.graph, step.uri, 
+                        python_step, step_name, inputs, outputs, dependences = python_pipeline_translator.translate_step(ontology, a.graph, step.uri, 
                                                                                                             function_name=step.component)
                         inputs_adapted = [(step.task, port) for port in range(len(inputs))]
                         outputs_adapted =  [(step.task, port) for port in range(len(outputs))]
 
                         task_python = generate_task_python(python_step,step.component, inputs_adapted, outputs_adapted)
                         task_xxp = generate_task_xxp(step.component, inputs_adapted, outputs_adapted)
-                        task_requirements = generate_task_requirements([module.split('.')[0]])
+                        task_requirements = generate_task_requirements(dependences)
 
                         with open(os.path.join(subfolder, 'task.py'), encoding='UTF-8', mode='w') as file:
                             file.write(task_python)

@@ -16,7 +16,7 @@ python_reader_implementation = PythonImplementation(
                             default_value=None)
     ],
     python_module="Custom",
-    module_version="1.0.0",
+    python_dependences=[],
     python_function="Custom",
     template="reader"
 )
@@ -31,7 +31,7 @@ python_writer_implementation = PythonImplementation(
                             default_value=None)
     ],
     python_module="pandas",
-    module_version="2.2.3",
+    python_dependences=[("pandas","2.2.3")],
     python_function="DataFrame",
     template="writer"
 )

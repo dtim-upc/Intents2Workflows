@@ -38,7 +38,7 @@ python_partitioning_implementation = PythonImplementation(
                                default_value=True)
     ],
     python_module='sklearn.model_selection',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='train_test_split',
     template='basic_function'
 )

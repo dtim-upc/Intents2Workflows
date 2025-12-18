@@ -16,7 +16,7 @@ python_reader_tensor_implementation = PythonImplementation(
                             default_value=None)
     ],
     python_module="Custom",
-    module_version="1.0.0",
+    python_dependences=[],
     python_function="Custom",
     template="reader_multidimensional"
 )

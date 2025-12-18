@@ -232,7 +232,7 @@
       try {
         const response = await downloadProject(selected_node?.value?.path);
         $q.loading.hide()
-        sendFileToBackend([new File([response], selected_node.value.label+'.zip', { type: response.type })],tensorImport.value)
+        await sendFileToBackend([new File([response], selected_node.value.label+'.zip', { type: response.type })],tensorImport.value)
         router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/data-products" })
         //var decodedString = atob(response);
         //FileSaver.saveAs(response, 'test.zip')
@@ -248,7 +248,7 @@
           const response = await donwnloadFile(selected_node?.value?.id)
           //FileSaver.saveAs(response, selected_node.value.label)
           $q.loading.hide()
-          sendFileToBackend([new File([response], selected_node.value.label, { type: response.type })])
+          await sendFileToBackend([new File([response], selected_node.value.label, { type: response.type })])
           router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/data-products" })
         }
           catch (error) {

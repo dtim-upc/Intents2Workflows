@@ -23,7 +23,7 @@ python_missing_value_implementation = PythonImplementation(
         python_factor_param,
     ],
     python_module='sklearn.impute',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='SimpleImputer',
     template="sklearn_missings",
 )
@@ -37,7 +37,7 @@ python_missing_value_applier_implementation = PythonImplementation(
         python_factor_param
     ],
     python_module='sklearn.impute',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='SimpleImputer',
     template="sklearn_missings_applier",
 )

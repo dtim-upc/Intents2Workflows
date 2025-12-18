@@ -158,7 +158,7 @@ python_xgboost_learner_implementation = PythonImplementation(
                         default_value=0.0)
     ],
     python_module='xgboost',
-    module_version='3.0.5',
+    python_dependences=[('xgboost', '3.0.5')],
     python_function='XGBClassifier',
     template='sklearn_train'
 )
@@ -169,7 +169,7 @@ python_xgboost_predictor_implementation = PythonImplementation(
     baseImplementation=xgboost.xgboost_predictor_implementation,
     parameters=[],
     python_module='xgboost',
-    module_version='3.0.5',
+    python_dependences=[('xgboost', '3.0.5')],
     python_function='XGBClassifier',
     template='sklearn_predict'
 )

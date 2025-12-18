@@ -19,7 +19,7 @@ python_decision_tree_implementation = PythonImplementation(
                                expression=AlgebraicExpression(cb.COPY, max_depth), default_value=None)
     ],
     python_module='sklearn.tree',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='DecisionTreeClassifier',
     template='sklearn_train'
 ) 
@@ -29,7 +29,7 @@ python_decision_tree_predictor_implementation = PythonImplementation(
     baseImplementation= decision_tree_predictor_implementation,
     parameters=[],
     python_module='sklearn.tree',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='DecisionTreeClassifier',
     template='sklearn_predict'
 )
