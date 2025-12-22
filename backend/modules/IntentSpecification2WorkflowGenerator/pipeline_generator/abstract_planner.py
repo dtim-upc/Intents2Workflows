@@ -7,6 +7,8 @@ from common import *
 
 from .utils import option_explorer
 
+option_client = option_explorer.OptionExplorerClient("http://194.249.3.27:8000")
+
 
 def get_algorithms_from_task_constrained(ontology:Graph, shape_graph:Graph, task: URIRef) -> URIRef:
     algs_unconstr = ontology_queries.get_algorithms_from_task(ontology, task)
@@ -34,7 +36,7 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
     algs = algorithm if not algorithm is None else get_algorithms_from_task_constrained(ontology,shape_graph,task)
 
     if ordered_algorithms:
-        order = option_explorer.get_best_options(intent_graph, ontology)
+        order = option_client.get_best_options(intent_graph, ontology)
     else:
         order = {}
 
