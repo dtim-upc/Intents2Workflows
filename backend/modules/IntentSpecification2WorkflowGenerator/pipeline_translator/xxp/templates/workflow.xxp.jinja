@@ -6,9 +6,9 @@ workflow {{ workflow_name }} {
     task {{task }};{% endfor %}
 
     {% for input in inputs %}
-    define input file {{input["name"]}};
+    define input data {{input["name"]}};
     configure data {{input["name"]}} {
-        path "{{input["path"]}}";
+        path "{{input["local_path"]}}";
     }
     {% endfor %}
 

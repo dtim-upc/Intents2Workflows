@@ -8,6 +8,9 @@ def get_dataset_format(data_graph: Graph, dataset:URIRef):
 def get_dataset_path(data_graph: Graph, dataset:URIRef):
     return next(data_graph.objects(dataset, dmop.path, unique=True),Literal("")).toPython()
 
+def get_dataset_local_path(data_graph: Graph, dataset:URIRef):
+    return next(data_graph.objects(dataset, dmop.local_path, unique=True),Literal("")).toPython()
+
 def isTensor_data(data_graph: Graph, dataset:URIRef):
     return (dataset, RDF.type, dmop.TensorDataset) in data_graph
 

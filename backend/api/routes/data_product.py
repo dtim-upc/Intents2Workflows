@@ -80,9 +80,9 @@ def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
         return []
     return [target.fragment for target in pot_targets]
 
-def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:
+def create_data_product(db: Session, filename, size, upload_time, file_path:Path, source_path:str)-> DataProduct:
 
-    dataset_node, annotations = annotator.annotate_dataset(file_path)
+    dataset_node, annotations = annotator.annotate_dataset(file_path,local_path=source_path)
     annotation_name = file_path.with_suffix('.ttl').name
     save_path = Path(ANNOTATOR_DIR).joinpath(annotation_name)
     pot_targets = get_potential_targets(dataset_node,annotations)
@@ -157,7 +157,7 @@ def get_dataset_uri(annotation_graph:Graph):
 
 
 @router.post("/data-products")
-async def upload_file(files: list[UploadFile] = File(...), tensor= Form(default="false"), db: Session = Depends(get_db)):
+async def upload_file(files: list[UploadFile] = File(...), tensor=Form(default="false"), original_path = Form(default=None), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
@@ -167,14 +167,11 @@ async def upload_file(files: list[UploadFile] = File(...), tensor= Form(default=
         raise HTTPException(status_code=400, detail="No files uploaded")
     
     if tensor == "true": #tensor import
-        print("##################################TENSOR######################################")
-
         name, size, upload_time, path = process_file(files[0])
-        print("path",path)
         file = tensor_preprocesser.get_npz(path)
         name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"))
 
-        dp = create_data_product(db, name, size, upload_time, path)
+        dp = create_data_product(db, name, size, upload_time, path, original_path)
 
         return JSONResponse(status_code=200, content={
         "message": "File uploaded successfully",
@@ -196,14 +193,14 @@ async def upload_file(files: list[UploadFile] = File(...), tensor= Form(default=
 
         folder_path = get_root_folder(file_path)
 
-        dp = create_data_product(db, folder_path.name, folder_size, upload_time, folder_path)
+        dp = create_data_product(db, folder_path.name, folder_size, upload_time,folder_path,original_path)
         dps.append(dp)
 
     else: #file import
         for file in files:
             name, size, upload_time, path = process_file(file)
 
-            dp = create_data_product(db, name, size, upload_time, path)
+            dp = create_data_product(db, name, size, upload_time, path, original_path)
             dps.append(dp)
 
     return JSONResponse(status_code=200, content={

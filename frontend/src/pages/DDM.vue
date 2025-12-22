@@ -191,7 +191,6 @@
       }
 
       return await response.blob()
-      return new Blob([text], { type: 'text/plain' })
 
     } catch (error) {
       console.error('Error fetching file system data:', error);
@@ -232,7 +231,7 @@
       try {
         const response = await downloadProject(selected_node?.value?.path);
         $q.loading.hide()
-        await sendFileToBackend([new File([response], selected_node.value.label+'.zip', { type: response.type })],tensorImport.value)
+        await sendFileToBackend([new File([response], selected_node.value.label+'.zip', { type: response.type })],tensorImport.value,selected_node.value.path)
         router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/data-products" })
         //var decodedString = atob(response);
         //FileSaver.saveAs(response, 'test.zip')
@@ -248,7 +247,7 @@
           const response = await donwnloadFile(selected_node?.value?.id)
           //FileSaver.saveAs(response, selected_node.value.label)
           $q.loading.hide()
-          await sendFileToBackend([new File([response], selected_node.value.label, { type: response.type })])
+          await sendFileToBackend([new File([response], selected_node.value.label, { type: response.type })],false, selected_node.value.path)
           router.push({ path: route.path.substring(0, route.path.lastIndexOf("/")) + "/data-products" })
         }
           catch (error) {
@@ -283,12 +282,13 @@ const onSelect = (id) => {
 }
 
 
-const sendFileToBackend = async (file_list, tensor=false) => {
+const sendFileToBackend = async (file_list, tensor=false, path=null) => {
   const formData = new FormData();
   for (let i = 0; i < file_list.length; i++) {
         formData.append("files", file_list[i]);
     }
     formData.append("tensor",tensor)
+    formData.append("original_path", path)
 
   try {
     $q.loading.show({message: 'Creating data product...'})

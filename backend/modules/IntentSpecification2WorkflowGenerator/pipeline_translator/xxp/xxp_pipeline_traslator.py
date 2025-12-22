@@ -12,7 +12,7 @@ from graph_queries.workflow_queries import get_workflow_steps, get_step_componen
     get_workflow_intent_number, get_workflow_connections
 from graph_queries.ontology_queries import get_component_implementation, get_implementation_task, get_implementation_input_specs
 from graph_queries.intent_queries import get_intent_iri, get_intent_dataset
-from graph_queries.data_queries import get_dataset_path, get_dataset_uri
+from graph_queries.data_queries import get_dataset_path, get_dataset_uri, get_dataset_local_path
 from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.core.translator_common_functions import load_workflow
 
@@ -52,9 +52,12 @@ class WorkflowXXP:
     
     def get_external_input(self):
         dataset = get_dataset_uri(self.graph)
+        path = get_dataset_path(self.graph, dataset)
+        local_path = get_dataset_local_path(self.graph, dataset)
         return {
                 "name":dataset.fragment,
-                "path": get_dataset_path(self.graph, dataset)
+                "path": path,
+                "local_path": local_path if local_path != "None" else path,
                 }
     
     def get_external_output(self):
@@ -117,8 +120,6 @@ def get_xxp_workflow(ontology: Graph, workflow_graph:Graph) -> WorkflowXXP:
     workflow_steps = get_workflow_steps(workflow_graph)
 
     intent_iri = get_intent_iri(workflow_graph)
-    dataset_uri = get_intent_dataset(workflow_graph, intent_iri)
-    or_dataset_path = get_dataset_path(workflow_graph, dataset_uri)
 
     workflow_name = f"{intent_iri.fragment}"
 
