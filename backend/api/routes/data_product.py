@@ -268,3 +268,68 @@ async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
     db.commit()
 
     return JSONResponse(status_code=200, content={"message": f"Data product '{data_product}' deleted successfully"})
+
+
+#################################################################### DDM integration #########################################################################################
+import json
+import requests
+
+BASE_DIR = Path(__file__).resolve().parent
+cred_path = BASE_DIR / "DDM_credentials.json"
+
+with cred_path.open() as f:
+    creds = json.load(f)
+
+USERNAME = creds["username"]
+PASSWORD = creds["password"]
+
+
+class DDMClient:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.username = USERNAME
+        self.password = PASSWORD
+        self._token = None
+    
+    @property
+    def token(self):
+        if self._token is None:
+            self.login()
+        return self._token
+
+
+    def login(self):
+        self._token = None
+
+        login_body = {
+            "username": self.username,
+            "password": self.password,
+        }
+
+        print(login_body)
+
+        try:
+            # Making the POST request
+            response = requests.post(f"{self.base_url}/person/login", json=login_body)
+        
+        except Exception as e:
+            print("Option explorer connection error:", e)
+            return
+
+
+
+        # Check the response
+        if response.status_code == 200:
+            response_json = response.json()
+            print("RESPONSE",response_json)
+            self._token = response_json.get("access_token",None)
+        else:
+            print("ERROR getting token:",response.text)
+            
+        return
+    
+ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/")
+    
+@router.get("/ddm")
+async def  get_ddm_token():
+    return {"token": ddm.token}

@@ -27,6 +27,7 @@ backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
 backend/api/datasets/**
 backend/api/annotated_datasets/*.ttl
 backend/api/ontology/new_triples.tsv
+backend/api/routes/DDM_credentials.json
 
 
 !orm.xml
