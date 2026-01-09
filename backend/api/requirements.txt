@@ -11,3 +11,4 @@ rdflib
 pandas
 scipy
 laspy
+tensorflow #DDM integration

@@ -17,7 +17,7 @@ python_dbscan_implementation = PythonImplementation(
         
     ],
     python_module='sklearn.cluster',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='DBSCAN',
     template='basic_sklearn_fitpredict_function'
 )

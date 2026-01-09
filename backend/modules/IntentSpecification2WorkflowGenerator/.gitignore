@@ -1,2 +1,3 @@
 /pipeline_generator/workflows/**/*.ttl
 /dataset_annotator/annotated_datasets
+/pipeline_generator/utils/OE_credentials.json

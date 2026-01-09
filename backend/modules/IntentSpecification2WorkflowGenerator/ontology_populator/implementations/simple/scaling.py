@@ -271,6 +271,6 @@ WHERE {
     counterpart=[
         min_max_scaling_component,
         z_score_scaling_component,
-        decimal_scaling_component,
+        #decimal_scaling_component,
     ]
 )

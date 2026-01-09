@@ -1,0 +1,12 @@
+task {{task}} {
+    {% for input, port in inputs -%}
+    define input data {{input}}Input{{port}};
+    {% endfor %}
+    {% for output, port in outputs -%}
+    define output data {{output}}Output{{port}};
+    {% endfor %}
+    
+    implementation "{{task}}/task.py";
+    python_version "3.9";
+    venv "{{task}}/requirements.txt";
+}

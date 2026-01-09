@@ -12,7 +12,7 @@ python_factorizer_implementation = PythonImplementation(
     ],
     python_module="pandas",
     python_function="factorize",
-    module_version='2.2.3',
+    python_dependences=[("pandas","2.2.3")],
     template="factorize"
 )
 
@@ -25,6 +25,6 @@ python_factorizer_applier_implementation = PythonImplementation(
     ],
     python_module="pandas",
     python_function="factorize",
-    module_version='2.2.3',
+    python_dependences=[("pandas","2.2.3")],
     template="factorize_applier",
 ) 

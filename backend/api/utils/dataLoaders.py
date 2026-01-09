@@ -28,11 +28,12 @@ print(f"Temporary directory created: {temp_dir}")
 class DataLoader:
     fileFormat = "data file"
 
-    def __init__(self,file):
-        self.file_path = Path(file).resolve().as_posix()
+    def __init__(self,file,displayed_path=None):
+        self.file_path = Path(file).as_posix()
         self.metadata = {
             "fileFormat": self.fileFormat,
-            "path": self.file_path
+            "path": self.file_path,
+            "local_path":displayed_path
         }
 
     @abstractmethod
@@ -46,8 +47,8 @@ class DataLoader:
 class CSVLoader(DataLoader):
     fileFormat = "CSV"
 
-    def __init__(self,file):
-        super().__init__(file)
+    def __init__(self,file, local_path=None):
+        super().__init__(file, local_path)
 
         with open(self.file_path, 'r') as csvfile:
             self.encoding = csvfile.encoding
@@ -95,8 +96,8 @@ class NumpyZipLoader(DataLoader):
 class FolderLoader(DataLoader):
     fileFormat = "Folder"
 
-    def __init__(self,dir):
-        super().__init__(dir)
+    def __init__(self,dir, local_dir=None):
+        super().__init__(dir, local_dir)
         self.data_loaders: list[DataLoader] = [get_loader(file.as_posix()) for file in Path(dir).iterdir()]
 
     def getDataFrame(self):
@@ -125,11 +126,11 @@ class FolderLoader(DataLoader):
 class ZipLoader(FolderLoader):
     fileFormat = "ZIP"
 
-    def __init__(self,dir):
+    def __init__(self,dir,local_dir=None):
         zfile = zipfile.ZipFile(dir, mode='r')
-        extraction_path = Path(temp_dir).joinpath(Path(dir).with_suffix('').name)
-        zfile.extractall(extraction_path)
-        super().__init__(extraction_path)
+        self.extraction_path = Path(temp_dir).joinpath(Path(dir).with_suffix('').name)
+        zfile.extractall(self.extraction_path)
+        super().__init__(self.extraction_path, local_dir)
         self.metadata['path'] = Path(dir).resolve().as_posix()
 
 
@@ -183,11 +184,11 @@ def get_extension(file_path) -> str:
     extension = Path(file_path).suffix
     return extension[1:]
 
-def get_loader(path:Path) -> DataLoader:
+def get_loader(path:Path, local_path=None) -> DataLoader:
 
     if Path(path).is_dir():
-        return FolderLoader(path)
+        return FolderLoader(path,local_path)
     
     extension = get_extension(path)
     print(loaders.get(extension,DummyLoader))
-    return loaders.get(extension,DummyLoader)(path)
+    return loaders.get(extension,DummyLoader)(path,local_path)

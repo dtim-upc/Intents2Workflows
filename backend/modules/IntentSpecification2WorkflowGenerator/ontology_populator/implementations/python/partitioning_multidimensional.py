@@ -1,15 +1,15 @@
 from common import *
 from .python_implementation import PythonImplementation
 from .python_parameter import PythonNumericParameter
-from ..simple import partitioning
+from ..simple import partitioning_multidimensional
 from ..core.expression import AlgebraicExpression
 
-base_params = partitioning.partitioning_implementation.parameters.keys()
+base_params = partitioning_multidimensional.tensor_partitioning_implementation.parameters.keys()
 
 
-python_partitioning_implementation = PythonImplementation(
-    name='Python Data Partitioning',
-    baseImplementation=partitioning.partitioning_implementation,
+python_partitioning_tensor_implementation = PythonImplementation(
+    name='Python Data Partitioning (Tensor)',
+    baseImplementation=partitioning_multidimensional.tensor_partitioning_implementation,
     parameters=[
         PythonNumericParameter('test_size', XSD.numeric, 
                                expression = AlgebraicExpression(cb.COPY, None), default_value=None),
@@ -40,5 +40,5 @@ python_partitioning_implementation = PythonImplementation(
     python_module='sklearn.model_selection',
     python_dependences=[('scikit-learn', '1.7.2')],
     python_function='train_test_split',
-    template='basic_function'
+    template='partitioning_multidimensional'
 )

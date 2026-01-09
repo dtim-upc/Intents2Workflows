@@ -1,0 +1,16 @@
+
+import numpy as np
+
+def {{step_name}}({% if inputs|length >= 2%}class_to_index, {%endif%}X):
+    y = X[1]
+    {% if inputs|length == 1%}
+    class_names = sorted(set(y)) 
+    class_to_index = {name: idx for idx, name in enumerate(class_names)}
+    class_names = sorted(set(y)) 
+    {%endif%}
+    y_int = np.array([class_to_index[label] for label in y])
+
+    return (X[0],y_int){% if outputs|length >= 2%}, class_to_index{%endif%}
+
+
+    

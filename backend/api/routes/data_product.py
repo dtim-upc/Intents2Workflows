@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 from database.database import SessionLocal
 from dataset_annotator import annotator, namespaces
+from utils import tensor_preprocesser
 from models import DataProduct
 
 router = APIRouter()
@@ -79,9 +80,9 @@ def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
         return []
     return [target.fragment for target in pot_targets]
 
-def create_data_product(db: Session, filename, size, upload_time, file_path:Path)-> DataProduct:
+def create_data_product(db: Session, filename, size, upload_time, file_path:Path, source_path:str)-> DataProduct:
 
-    dataset_node, annotations = annotator.annotate_dataset(file_path)
+    dataset_node, annotations = annotator.annotate_dataset(file_path,local_path=source_path)
     annotation_name = file_path.with_suffix('.ttl').name
     save_path = Path(ANNOTATOR_DIR).joinpath(annotation_name)
     pot_targets = get_potential_targets(dataset_node,annotations)
@@ -156,16 +157,30 @@ def get_dataset_uri(annotation_graph:Graph):
 
 
 @router.post("/data-products")
-async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
+async def upload_file(files: list[UploadFile] = File(...), tensor=Form(default="false"), original_path = Form(default=None), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
 
+
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
+    
+    if tensor == "true": #tensor import
+        name, size, upload_time, path = process_file(files[0])
+        file = tensor_preprocesser.get_npz(path)
+        name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"))
+
+        dp = create_data_product(db, name, size, upload_time, path, original_path)
+
+        return JSONResponse(status_code=200, content={
+        "message": "File uploaded successfully",
+        "data_product": [dp.to_dict()]
+    })
+
+
 
     folder = Path(files[0].filename).parent
-
     print(folder, Path(UPLOAD_DIR))
 
     dps = []
@@ -178,14 +193,14 @@ async def upload_file(files: list[UploadFile] = File(...), db: Session = Depends
 
         folder_path = get_root_folder(file_path)
 
-        dp = create_data_product(db, folder_path.name, folder_size, upload_time, folder_path)
+        dp = create_data_product(db, folder_path.name, folder_size, upload_time,folder_path,original_path)
         dps.append(dp)
 
     else: #file import
         for file in files:
             name, size, upload_time, path = process_file(file)
 
-            dp = create_data_product(db, name, size, upload_time, path)
+            dp = create_data_product(db, name, size, upload_time, path, original_path)
             dps.append(dp)
 
     return JSONResponse(status_code=200, content={
@@ -253,3 +268,68 @@ async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
     db.commit()
 
     return JSONResponse(status_code=200, content={"message": f"Data product '{data_product}' deleted successfully"})
+
+
+#################################################################### DDM integration #########################################################################################
+import json
+import requests
+
+BASE_DIR = Path(__file__).resolve().parent
+cred_path = BASE_DIR / "DDM_credentials.json"
+
+with cred_path.open() as f:
+    creds = json.load(f)
+
+USERNAME = creds["username"]
+PASSWORD = creds["password"]
+
+
+class DDMClient:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.username = USERNAME
+        self.password = PASSWORD
+        self._token = None
+    
+    @property
+    def token(self):
+        if self._token is None:
+            self.login()
+        return self._token
+
+
+    def login(self):
+        self._token = None
+
+        login_body = {
+            "username": self.username,
+            "password": self.password,
+        }
+
+        print(login_body)
+
+        try:
+            # Making the POST request
+            response = requests.post(f"{self.base_url}/person/login", json=login_body)
+        
+        except Exception as e:
+            print("Option explorer connection error:", e)
+            return
+
+
+
+        # Check the response
+        if response.status_code == 200:
+            response_json = response.json()
+            print("RESPONSE",response_json)
+            self._token = response_json.get("access_token",None)
+        else:
+            print("ERROR getting token:",response.text)
+            
+        return
+    
+ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/")
+    
+@router.get("/ddm")
+async def  get_ddm_token():
+    return {"token": ddm.token}

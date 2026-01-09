@@ -1,0 +1,16 @@
+
+{% for path in imports %}import "{{ path }}";
+{% endfor %}
+
+experiment {{ experiment_name }} {
+
+    control {
+        START{% for w in workflows %} -> S{{ loop.index }}{% endfor %} -> END;
+    }
+
+    {% for w in workflows %}
+    space S{{ loop.index }} of {{w}} {
+        strategy gridsearch;
+    }
+    {%endfor%}
+}

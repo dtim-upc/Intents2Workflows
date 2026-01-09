@@ -170,6 +170,7 @@ def add_models(cbox):
         'NNModel',
         'NumericCategoricalModel',
         'ProjectionModel',
+        'EncoderModel',
     ]
 
     for model in models:
@@ -206,6 +207,12 @@ def add_datasets(cbox):
     cbox.add((cb.term('TabularDatasetShape'), RDF.type, SH.NodeShape))
     cbox.add((cb.term('TabularDatasetShape'), RDF.type, tb.DataSpec))
     cbox.add((cb.term('TabularDatasetShape'), SH.targetClass, dmop.TabularDataset))
+
+    cbox.add((dmop.TensorDataset, RDF.type, tb.Dataset))
+
+    cbox.add((cb.term('TensorDatasetShape'), RDF.type, SH.NodeShape))
+    cbox.add((cb.term('TensorDatasetShape'), RDF.type, tb.DataSpec))
+    cbox.add((cb.term('TensorDatasetShape'), SH.targetClass, dmop.TensorDataset))
 
 
 def add_subproperties(cbox):
@@ -270,6 +277,10 @@ def add_shapes(cbox):
     cbox.add((numeric_column_property, SH.path, dmop.hasDataPrimitiveTypeColumn))
     cbox.add((numeric_column_property, SH['in'],
               Collection(cbox, BNode(), seq=[dmop.Integer, dmop.Float]).uri))
+    
+    integer_column_property = cb.IntegerColumnProperty
+    cbox.add((numeric_column_property, SH.path, dmop.hasDataPrimitiveTypeColumn))
+    cbox.add((numeric_column_property, SH.hasValue, dmop.Integer))
 
     non_null_column_property = cb.NonNullColumnProperty
     # non_null_column_property = BNode()
@@ -320,13 +331,13 @@ def add_shapes(cbox):
     cbox.add((labeled_dataset_shape, RDF.type, SH.NodeShape))
     cbox.add((labeled_dataset_shape, SH.targetClass, dmop.TabularDataset))
 
-    bnode_qualified = BNode()
-    cbox.add((bnode_qualified, SH.path, dmop.isLabel))
-    cbox.add((bnode_qualified, SH.hasValue, Literal(True)))
+    islabel = BNode()
+    cbox.add((islabel, SH.path, dmop.isLabel))
+    cbox.add((islabel, SH.hasValue, Literal(True)))
 
     bnode_column = BNode()
     cbox.add((bnode_column, SH.path, dmop.hasColumn))
-    cbox.add((bnode_column, SH.qualifiedValueShape, bnode_qualified))
+    cbox.add((bnode_column, SH.qualifiedValueShape, islabel))
     cbox.add((bnode_column, SH.qualifiedMinCount, Literal(1)))
     cbox.add((bnode_column, SH.minCount, Literal(1)))
 
@@ -338,13 +349,13 @@ def add_shapes(cbox):
     cbox.add((labeled_tensor_shape, RDF.type, SH.NodeShape))
     cbox.add((labeled_tensor_shape, SH.targetClass, dmop.TensorDataset))
 
-    bnode_qualified = BNode()
-    cbox.add((bnode_qualified, SH.path, dmop.isLabel))
-    cbox.add((bnode_qualified, SH.hasValue, Literal(True)))
+    labeled_tensor_property = BNode()
+    cbox.add((labeled_tensor_property, SH.path, dmop.isLabel))
+    cbox.add((labeled_tensor_property, SH.hasValue, Literal(True)))
 
     bnode_column_2 = BNode()
     cbox.add((bnode_column_2, SH.path, dmop.hasArray))
-    cbox.add((bnode_column_2, SH.qualifiedValueShape, bnode_qualified))
+    cbox.add((bnode_column_2, SH.qualifiedValueShape, labeled_tensor_property))
     cbox.add((bnode_column_2, SH.qualifiedMinCount, Literal(1)))
     cbox.add((bnode_column_2, SH.minCount, Literal(1)))
 
@@ -423,6 +434,77 @@ def add_shapes(cbox):
     cbox.add((property_bnode, SH.path, dmop.hasColumn))
     cbox.add((numericonly_tabular_dataset_shape, SH.property, property_bnode))
     cbox.add((numericonly_tabular_dataset_shape, SH.targetClass, dmop.TabularDataset))
+
+    #IntegerTargetShape
+    labelnode = BNode()
+    cbox.add((labelnode, SH.path, dmop.isLabel))
+    cbox.add((labelnode, SH.hasValue, Literal(True)))
+
+
+    and_list = BNode()
+    constraint_list = Collection(cbox, and_list)
+    constraint_list.append(integer_column_property)
+    constraint_list.append(labelnode)
+
+    bnode = BNode() 
+    cbox.add((bnode, SH["and"], and_list))
+    integer_target_shape = cb.IntegerTargetShape
+    cbox.add((integer_target_shape, RDF.type, SH.NodeShape))
+
+    property_bnode = BNode()
+    cbox.add((property_bnode, SH.node, bnode))
+    cbox.add((property_bnode, SH.path, dmop.hasColumn))
+    cbox.add((integer_target_shape, SH.property, property_bnode))
+    cbox.add((integer_target_shape, SH.targetClass, dmop.TabularDataset))
+
+    #IntegerTensorTargetShape
+
+    integer_target_tensor_shape = cb.IntegerTargetTensorShape
+    
+    integer_tensor_array_property = BNode()
+    cbox.add((integer_tensor_array_property, SH.path, dmop.hasDatatype))
+    cbox.add((integer_tensor_array_property, SH.hasValue, dmop.Integer))
+
+    and_list = BNode()
+    constraint_list = Collection(cbox, and_list)
+    constraint_list.append(labeled_tensor_property)
+    constraint_list.append(integer_tensor_array_property)
+
+    bnode = BNode() 
+    cbox.add((bnode, SH["and"], and_list))
+    integer_target_shape = cb.IntegerTargetShape
+    cbox.add((integer_target_shape, RDF.type, SH.NodeShape))
+
+    bnode_column_2 = BNode()
+    cbox.add((bnode_column_2, SH.path, dmop.hasArray))
+    cbox.add((bnode_column_2, SH.qualifiedValueShape, bnode))
+    cbox.add((bnode_column_2, SH.qualifiedMinCount, Literal(1)))
+    cbox.add((bnode_column_2, SH.minCount, Literal(1)))
+
+    cbox.add((integer_target_tensor_shape, SH.property, bnode_column_2))
+    cbox.add((integer_target_tensor_shape, RDF.type, SH.NodeShape))
+    cbox.add((integer_target_tensor_shape, SH.targetClass, dmop.TensorDataset))
+
+
+
+    and_list = BNode()
+    constraint_list = Collection(cbox, and_list)
+    constraint_list.append(integer_column_property)
+    constraint_list.append(labelnode)
+
+    bnode = BNode() 
+    cbox.add((bnode, SH["and"], and_list))
+    integer_target_shape = cb.IntegerTargetShape
+    cbox.add((integer_target_shape, RDF.type, SH.NodeShape))
+
+    property_bnode = BNode()
+    cbox.add((property_bnode, SH.node, bnode))
+    cbox.add((property_bnode, SH.path, dmop.hasColumn))
+    cbox.add((integer_target_shape, SH.property, property_bnode))
+    cbox.add((integer_target_shape, SH.targetClass, dmop.TabularDataset))
+
+
+
 
 
     # NormalizedTabularDatasetShape 

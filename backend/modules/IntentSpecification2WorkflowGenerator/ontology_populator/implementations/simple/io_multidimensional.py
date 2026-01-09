@@ -13,7 +13,7 @@ tensor_data_reader_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.UnsatisfiableShape)]), 
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.TensorDataset)]),
+        OutputIOSpec([IOSpecTag(cb.TensorDatasetShape)]),
     ],
 )
 

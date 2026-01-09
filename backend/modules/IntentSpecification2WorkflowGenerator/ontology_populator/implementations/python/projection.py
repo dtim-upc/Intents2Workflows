@@ -15,7 +15,7 @@ python_projection_learner_implementation = PythonImplementation(
                             default_value="", control_parameter=True),
     ],
     python_module='pandas',
-    module_version='2.2.3',
+    python_dependences=[("pandas","2.2.3")],
     python_function='custom',
     template="projection"
 )
@@ -33,7 +33,7 @@ python_projection_predictor_implementation = PythonImplementation(
                             default_value="", control_parameter=True),
     ],
     python_module='pandas',
-    module_version='2.2.3',
+    python_dependences=[("pandas","2.2.3")],
     python_function='custom',
     template="projection"
 

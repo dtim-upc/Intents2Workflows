@@ -30,6 +30,9 @@ except ImportError:
 def get_python_module(ontology: Graph, implementation: URIRef):
     return next(ontology.objects(implementation, tb.python_module, unique=True),None)
 
+def get_python_dependences(ontology: Graph, implementation: URIRef):
+    return list(ontology.objects(implementation, tb.python_dependency, unique=False))
+
 def get_python_function(ontology: Graph, implementation: URIRef):
     return next(ontology.objects(implementation, tb.python_function, unique=True),None)
 
@@ -42,10 +45,49 @@ def split_parameters(ontology: Graph, params: Dict[str,str]):
     for param_uri, param_data in params.items():
         key, value = param_data
         if next(ontology.objects(param_uri, tb.isControlParameter,unique=True),False):
-            control_params[key.toPython()] = value
+            control_params[key] = value
         else:
             function_params[key] = value
     return control_params, function_params
+
+def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited_params:dict = {}, function_name = None):
+    component = get_step_component(workflow_graph, step)
+    implementation = get_component_implementation(ontology, component)
+    task = get_implementation_task(ontology, implementation).fragment
+    if is_predictor(ontology, implementation):
+        task += '_predictor'
+
+    step_parameters = get_step_parameters_agnostic(workflow_graph, step)
+    engine_implementation = get_implementation_engine_conditional(ontology, implementation, cb.Python, step_parameters)
+    python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
+    cp, function_params = split_parameters(ontology, python_step_parameters)
+    inherited_params.update(cp)
+    #print("Control:",control_params) 
+    #print("Function:",function_params)
+
+    python_module = get_python_module(ontology, engine_implementation)
+    python_dependences = get_python_dependences(ontology, engine_implementation)
+    python_function = get_python_function(ontology, engine_implementation)
+    template = get_template(ontology, engine_implementation)
+
+    inputs = get_step_input_data(workflow_graph, step)
+    outputs = get_step_output_data(workflow_graph, step)
+
+    step_name = function_name if not function_name is None else task
+
+    step_template = environment.get_template(f"{template}.py.jinja")
+
+    #tqdm.write("RENDER parameters:", python_step_parameters)
+    
+    step_file = step_template.render(module = python_module,
+                                        parameters = function_params.items(),
+                                        control = inherited_params,
+                                        function = python_function,
+                                        step_name = step_name,
+                                        inputs = [i for i in range(len(inputs))],
+                                        outputs = [i for i in range(len(outputs))])
+    return step_file, task, inputs, outputs, python_dependences
+
 
 def translate_graph(ontology: Graph, source_path: str, destination_path: str) -> None:
     tqdm.write('Creating new workflow')
@@ -54,45 +96,15 @@ def translate_graph(ontology: Graph, source_path: str, destination_path: str) ->
     graph = load_workflow(source_path)
     tqdm.write(next(graph.subjects(RDF.type, tb.Workflow, True)).fragment)
 
+
     tqdm.write('\tBuilding steps')
     steps = get_workflow_steps(graph)
     steps_struct = {}
-    target = None
     control_params = {}
     for step in tqdm(steps):
-        component = get_step_component(graph, step)
-        implementation = get_component_implementation(ontology, component)
-        task = get_implementation_task(ontology, implementation).fragment
-        if is_predictor(ontology, implementation):
-            task += '_predictor'
-
-        step_parameters = get_step_parameters_agnostic(graph, step)
-        engine_implementation = get_implementation_engine_conditional(ontology, implementation, cb.Python, step_parameters)
-        python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
-        cp, function_params = split_parameters(ontology, python_step_parameters)
-        control_params.update(cp)
-        #print("Control:",control_params) 
-        #print("Function:",function_params)
-
-        python_module = get_python_module(ontology, engine_implementation)
-        python_function = get_python_function(ontology, engine_implementation)
-        template = get_template(ontology, engine_implementation)
-
-        inputs = get_step_input_data(graph, step)
-        outputs = get_step_output_data(graph, step)
-
-        step_template = environment.get_template(f"{template}.py.jinja")
-
-        #tqdm.write("RENDER parameters:", python_step_parameters)
+        #TODO custom step class to solve this output
+        step_file, task, inputs, outputs, dependences = translate_step(ontology, graph, step, inherited_params=control_params)
         
-        step_file = step_template.render(module = python_module,
-                                         parameters = function_params.items(),
-                                         control = control_params,
-                                         function = python_function,
-                                         step_name = task,
-                                         target=target,
-                                         inputs = [i for i in range(len(inputs))],
-                                         outputs = [i for i in range(len(outputs))])
         steps_struct[step] = {'task':task, 'inputs': [None]*len(inputs), 'outputs':[task+str(i) for i in range(len(outputs))], 'file': step_file}
     
     connections = get_workflow_connections(graph)

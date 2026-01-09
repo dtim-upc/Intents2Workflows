@@ -1,0 +1,13 @@
+from eexp_engine_utils import utils, types
+{{python_function}}
+
+{% for input,port in inputs %}
+{{input}}Input{{port}} =  utils.load_dataset(variables, resultMap,'{{input}}Input{{port}}')
+{%endfor%}
+
+{%- for output, port in outputs %}{{output}}Output{{port}}{% if not loop.last %}, {% endif -%}{% endfor -%}
+{%- if outputs|length > 0%} = {% endif %}{{python_function_name}}({%- for input, port in inputs %}{{input}}Input{{port}}{% if not loop.last %}, {% endif -%}{% endfor %})
+
+{%for output, port in outputs%}
+utils.save_dataset(variables, resultMap, '{{output}}Output{{port}}', {{output}}Output{{port}})
+{%endfor%}

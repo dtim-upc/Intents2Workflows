@@ -7,11 +7,11 @@ nn_learner_implementation = Implementation(
     algorithm=cb.NN,
     parameters=[
         Parameter("Class column", XSD.string, "$$LABEL$$"),
-        Parameter("NN type", XSD.string, None),
+        FactorParameter("NN type", ["FeedForward", 'Recurrent', 'LSTM', 'Convolutional']),
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), 
-         IOSpecTag(cb.NormalizedTabularDatasetShape), IOSpecTag(cb.NonNullTabularDatasetShape)]),
+         IOSpecTag(cb.NormalizedTabularDatasetShape,2), IOSpecTag(cb.NonNullTabularDatasetShape,2)]),
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.NNModelShape)]),

@@ -28,7 +28,7 @@ python_svm_learner_implementation = PythonImplementation(
                         default_value='rbf'),
     ],
     python_module='sklearn.svm',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='SVC',
     template='sklearn_train'
 )
@@ -40,7 +40,7 @@ python_svm_predictor_implementation = PythonImplementation(
     ],
     baseImplementation=svm.svm_predictor_implementation,
     python_module='sklearn.svm',
-    module_version='1.7.2',
+    python_dependences=[('scikit-learn', '1.7.2')],
     python_function='SVC',
     template='sklearn_predict'
     

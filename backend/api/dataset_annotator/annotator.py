@@ -9,9 +9,9 @@ from .namespaces import *
 from .tabular_annotator import add_dataframe_info
 from .tensor_annotator import add_tensor_info
 
-def add_dataset_info(dataset_path, graph, label):
+def add_dataset_info(dataset_path, graph, label, local_path):
     dataset_node = ab.term(quote(Path(dataset_path).with_suffix('').name))
-    data_loader: dataLoaders.DataLoader = dataLoaders.get_loader(dataset_path)
+    data_loader: dataLoaders.DataLoader = dataLoaders.get_loader(dataset_path,local_path)
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
     add_metadata_info(data_loader.getFileMetadata(), dataset_node, graph)
 
@@ -31,11 +31,11 @@ def add_metadata_info(metadata, dataset_node, graph:Graph):
         graph.add((dataset_node,dmop[key],Literal(value)))
     print('Done!')
 
-def annotate_dataset(source_path, label="") -> Tuple[URIRef,Graph]:
+def annotate_dataset(source_path, label="",local_path=None) -> Tuple[URIRef,Graph]:
     print(f'Annotating {source_path}')
 
     dataset_graph = get_annotator_base_graph()
-    dataset_node = add_dataset_info(source_path, dataset_graph, label)
+    dataset_node = add_dataset_info(source_path, dataset_graph, label, local_path)
 
     return dataset_node, dataset_graph
 

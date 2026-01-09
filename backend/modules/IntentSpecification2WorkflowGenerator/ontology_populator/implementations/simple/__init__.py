@@ -12,11 +12,12 @@ from .dbscan import dbscan_implementation, dbscan_component
 from .decision_tree import *
 from .scaling import scaling_learner_implementation, scaling_applier_implementation, z_score_scaling_component, min_max_scaling_component, decimal_scaling_component, scaling_applier_component
 from .factorizer import factorizer_component, factorizer_applier_component, factorizer_applier_implementation, factorizer_implemenation
+from .target_encoder_multidimensional import encoder_applier_component, encoder_applier_implementation, encoder_component, encoder_implemenation
 
 
 implementations = [
-    nn_learner_implementation,
-    nn_predictor_implementation,
+    #nn_learner_implementation,
+    #nn_predictor_implementation,
     data_reader_implementation,
     data_writer_implementation,
     nn_multi_learner_implementation,
@@ -40,6 +41,8 @@ implementations = [
     factorizer_applier_implementation,
     tensor_data_reader_implementation,
     tensor_data_writer_implementation,
+    encoder_implemenation,
+    encoder_applier_implementation
 ]
 
 components = [
@@ -81,10 +84,12 @@ components = [
     binary_decision_tree_learner_component,
     min_max_scaling_component,
     z_score_scaling_component,
-    decimal_scaling_component,
+    #decimal_scaling_component,
     scaling_applier_component,
     factorizer_component,
     factorizer_applier_component,
     *tensor_data_reader_components,
     tensor_data_writer_component,
+    encoder_component,
+    encoder_applier_component
 ]

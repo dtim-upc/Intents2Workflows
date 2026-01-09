@@ -1,0 +1,37 @@
+workflow {{ workflow_name }} {
+
+    START{% for task in tasks %} -> {{ task }}{% endfor %} -> END;
+
+    {% for task in tasks %} 
+    task {{task }};{% endfor %}
+
+    {% for input in inputs %}
+    define input data {{input["name"]}};
+    configure data {{input["name"]}} {
+        path "{{input["local_path"]}}";
+    }
+    {% endfor %}
+
+    {% for output in outputs %}
+    define output data {{output["name"]}};
+    configure data {{output["name"]}} {
+        path "{{output["path"]}}";
+    }
+    {% endfor %}
+
+    {% for (sourceTask, destinationTask, sourcePort, destinationPort) in data_flow %}
+    {{sourceTask}}{%if sourcePort is not none%}.{{sourceTask}}Output{{sourcePort}}{%endif%} --> {{destinationTask}}{%if destinationPort is not none%}.{{destinationTask}}Input{{destinationPort}}{%endif%};
+    {%endfor%}
+    
+}
+
+{% for w in workflows %}
+workflow {{w["name"]}} from {{workflow_name}} {
+    {% for task, implementation in w["tasks_implementation"] %}
+    task {{ task }} {
+        implementation "{{ implementation }}";
+    }
+    {% endfor %}
+
+}
+{% endfor %}

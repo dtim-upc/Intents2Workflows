@@ -15,7 +15,7 @@ from flask_cors import CORS
 from api.functions import *
 from pipeline_translator.knime import knime_pipeline_translator
 from pipeline_translator.python import python_pipeline_translator
-from pipeline_translator.dsl.dsl_pipeline_traslator import translate_graphs_to_dsl
+from pipeline_translator.xxp import xxp_pipeline_traslator
 from pipeline_generator import logical_planner, workflow_builder
 from graph_queries import ontology_queries, intent_queries
 
@@ -209,28 +209,31 @@ def download_all_knime():
 
 @app.post('/intent-to-dsl')
 def download_file():
-    raw_graphs = request.json.get("graphs", "")
-    #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
+    graphs = request.json.get("graphs", "")
+    
+    folder = os.path.join(temporary_folder, 'rdf_to_trans')
+    xxp_folder = os.path.join(temporary_folder, 'xxp')
 
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
+    if os.path.exists(xxp_folder):
+        shutil.rmtree(xxp_folder)
+    os.mkdir(folder)
+    os.mkdir(xxp_folder)
 
-    workflow_graphs = []
-    for graph_id, graph_content in raw_graphs.items():
-        workflow_graphs.append(Graph().parse(data=graph_content, format='turtle'))
+    python_compatible = True
 
-    translation = translate_graphs_to_dsl(ontology, workflow_graphs)
+    for graph_id, graph_content in graphs.items():
+        graph = Graph().parse(data=graph_content, format='turtle')
+        python_compatible = python_compatible and getCompatibility(graph, cb.Python)
+        file_path = os.path.join(folder, f'{graph_id}.ttl')
+        graph.serialize(file_path, format='turtle')
+        
+    
+    xxp_zip_file = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible)
 
-    # Define the path where the file is stored
-    file_path = os.path.join(temporary_folder, "intent_to_dsl.xxp")
+    return send_file(xxp_zip_file, as_attachment=True)
 
-    with open(file_path, mode="w") as file:
-        file.write(translation)
-
-    # Check if the file exists
-    if not os.path.exists(file_path):
-        abort(404, description="File not found")
-
-    # Send the file for download
-    return send_file(file_path, as_attachment=True)
 
 @app.post('/workflow_plans/python')
 def download_python():

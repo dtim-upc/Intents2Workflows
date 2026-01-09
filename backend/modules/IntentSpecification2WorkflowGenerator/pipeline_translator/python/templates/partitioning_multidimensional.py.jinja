@@ -1,0 +1,8 @@
+
+import sklearn.model_selection
+
+def {{step_name}}(input0):
+    Xtrain, Xtest, ytrain, ytest = sklearn.model_selection.train_test_split(*input0, 
+{%- for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
+    return  (Xtrain,ytrain), (Xtest,ytest)
+    

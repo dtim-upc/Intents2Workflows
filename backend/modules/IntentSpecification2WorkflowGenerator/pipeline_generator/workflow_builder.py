@@ -25,7 +25,7 @@ def inject_value(dataset:Dataset, value:Literal):
         injections= [("$$LABEL$$", dataset.label),
                     ('$$LABEL_CATEGORICAL$$', dataset.label),
                     ('$$NUMERIC_COLUMNS$$', f'{dataset.numeric_columns}'),
-                    ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns.append(dataset.target)}'),
+                    ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns + [dataset.target]}'),
                     ('$$CATEGORICAL_COLUMNS$$',f'{dataset.categorical_columns}'),
                     ('$$PATH$$',f'{dataset.path}'),
                     ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'),
