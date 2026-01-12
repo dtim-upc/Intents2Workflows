@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
-from typing import List, Dict
+from typing import List, Union
 from models import Workflow, Intent  # Assuming models are in a file named models.py
 from database.database import SessionLocal  # Assuming database connection is defined in database.py
 from pydantic import BaseModel
@@ -15,7 +15,7 @@ router = APIRouter()
 # Pydantic models for validation
 class WorkflowCreateRequest(BaseModel):
     workflowName: str
-    visualRepresentation: Dict[str, List[str]]  # Matches the frontend's map structure
+    visualRepresentation: List[List[Union[List[str], str]]]  # Matches the frontend's map structure
     stringGraph: str
 
 
