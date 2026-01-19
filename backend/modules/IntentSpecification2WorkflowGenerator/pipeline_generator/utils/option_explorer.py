@@ -91,7 +91,7 @@ class OptionExplorerClient:
 
         try:
             # Making the POST request
-            response = requests.post(f"{self.base_url}/experiment/call_mdp", json=json_data, headers=headers)
+            response = requests.post(f"{self.base_url}/experiment/call_mdp", json=json_data, headers=headers, timeout=10)
         
         except Exception as e:
             print("Option explorer connection error:", e)
