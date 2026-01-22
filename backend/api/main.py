@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes import data_product, intent, workflow
+from routes import data_product, intent, workflow, middleware
 from database.database import init_db
 
 import uvicorn
@@ -11,10 +11,12 @@ app = FastAPI()
 # Initialize Database
 init_db()
 
+app.add_middleware(middleware.SessionMiddleware)
+
 # Enable CORS for frontend requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:9000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import Column, String, Float, Text, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, String, Float, Text, ForeignKey, PrimaryKeyConstraint, Date, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from database.database import Base
@@ -13,10 +13,15 @@ class Workflow(Base):
     name = Column(String)
     visual_representation = Column(Text, nullable=False)  # Map as string representation
     graph = Column(String, nullable=False)
-    intent_name = Column(String, ForeignKey("intents.name"))  # Foreign key to Intent
+    session_id = Column(String)
+    intent_name = Column(String)  # Foreign key to Intent
 
     # Define composite primary key
-    __table_args__ = (PrimaryKeyConstraint('name', 'intent_name'),)
+    __table_args__ = (PrimaryKeyConstraint('name', 'intent_name', 'session_id'),
+                      ForeignKeyConstraint(
+                    ['intent_name', 'session_id'],  
+                    ['intents.name', 'intents.session_id']  
+        ),)
 
     intent = relationship("Intent", back_populates="workflows")
 
@@ -33,10 +38,18 @@ class Intent(Base):
     __tablename__ = "intents"
 
     name = Column(String, primary_key=True, index=True)
+    session_id = Column(String, primary_key=True)
     problem = Column(Text, nullable=False)
-    data_product_name = Column(String, ForeignKey("data_products.name"))
-    data_product = relationship("DataProduct")
+    data_product_name = Column(String)
 
+    __table_args__ = (ForeignKeyConstraint(
+                    ['data_product_name', 'session_id'],  
+                    ['data_products.name', 'data_products.session_id']  
+        ),)
+
+
+
+    data_product = relationship("DataProduct")
     workflows = relationship("Workflow", back_populates="intent", lazy="dynamic", cascade="all, delete")
 
     def to_dict(self):
@@ -51,12 +64,15 @@ class Intent(Base):
 class DataProduct(Base):
     __tablename__ = "data_products"
 
-    name = Column(String, primary_key=True)  # Filename as the unique key
+    name = Column(String, primary_key=True)  # Filename and session as primary key
+    session_id = Column(String, primary_key=True)
     creation_date = Column(String, nullable=False)
     size = Column(Float, nullable=False)
     path = Column(String, nullable=False)
     targets = Column(Text, nullable=False)  # Stored as comma-separated values
     annotation_path = Column(String, nullable=False)
+
+    intents = relationship("Intent", back_populates="data_product", lazy="dynamic", cascade="all, delete")
 
     def to_dict(self):
         return {
