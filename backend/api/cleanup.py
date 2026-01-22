@@ -6,11 +6,11 @@ from database.database import SessionLocal
 #rom routes.data_product import UPLOAD_DIR, ANNOTATOR_DIR
 UPLOAD_DIR = "datasets"
 ANNOTATOR_DIR = "annotated_datasets"
-RETENTION_DAYS = 1
+RETENTION_DAYS = 7 #one week retention
 
 
 def cleanup_old_sessions():
-    cutoff = datetime.now() - timedelta(minutes=RETENTION_DAYS)
+    cutoff = datetime.now() - timedelta(days=RETENTION_DAYS)
 
     with SessionLocal() as db:
 
