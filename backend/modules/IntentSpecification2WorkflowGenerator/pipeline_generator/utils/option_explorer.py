@@ -41,13 +41,9 @@ class OptionExplorerClient:
 
         soft_constraints = []
         for constraint in exp_constraints:
-            print(constraint)
             value_node = next(intent_graph.objects(constraint, tb.hasConstraintValue, unique=True))
-            print(value_node)
             name = next(ontology.objects(constraint, RDFS.label, unique=True))
-            print(name)
             value_type = next(intent_graph.objects(value_node, RDF.type, unique=True))
-            print(value_type)
 
             constr = {
                 "name": str(name),
@@ -79,8 +75,6 @@ class OptionExplorerClient:
         }
 
         auth = f"Bearer {self.token}" 
-        print(json_data)
-        print(auth)
 
 
         # This is not exaclty good parctice, but it is enough for now
