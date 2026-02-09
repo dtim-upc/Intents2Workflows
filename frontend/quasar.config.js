@@ -62,7 +62,7 @@ export default configure(function ( ctx ) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: '/intent2Workflow',
       // analyze: true,
       env: {
         API: ctx.dev
@@ -88,7 +88,29 @@ export default configure(function ( ctx ) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
+      proxy: {
+        // '/intent2Workflow-backend': {               // <-- catch all requests starting with /dataApi
+        //       target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
+        //       changeOrigin: true,        // needed for virtual hosted sites
+        //       pathRewrite: { '^/intent2Workflow-backend': '/intent2Workflow-backend' }, // keep the same path
+        //  },
+/*         '/intent2Workflow-intents': {               // <-- catch all requests starting with /dataApi
+              target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
+              changeOrigin: true,        // needed for virtual hosted sites
+              pathRewrite: { '^/intent2Workflow-intents': '/intent2Workflow-intents' }, // keep the same path
+         }, */
+        '/intent2Workflow-textToIntent': {               // <-- catch all requests starting with /dataApi
+              target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
+              changeOrigin: true,        // needed for virtual hosted sites
+              pathRewrite: { '^/intent2Workflow-textToIntent': '/intent2Workflow-textToIntent' }, // keep the same path
+         },
+        '/intent2Workflow-intentToGraphDB': {               // <-- catch all requests starting with /dataApi
+              target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
+              changeOrigin: true,        // needed for virtual hosted sites
+              pathRewrite: { '^/intent2Workflow-intentToGraphDB': '/intent2Workflow-intentToGraphDB' }, // keep the same path
+         },
+    },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
