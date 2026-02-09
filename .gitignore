@@ -23,6 +23,7 @@ api/dbFiles
 *.pyc
 
 frontend/package-lock.json
+frontend/public/docs/**
 backend/Modules/IntentSpecification2WorkflowGenerator/api/temp_files
 backend/api/datasets/**
 backend/api/annotated_datasets/*.ttl

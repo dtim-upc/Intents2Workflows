@@ -41,13 +41,9 @@ class OptionExplorerClient:
 
         soft_constraints = []
         for constraint in exp_constraints:
-            print(constraint)
             value_node = next(intent_graph.objects(constraint, tb.hasConstraintValue, unique=True))
-            print(value_node)
             name = next(ontology.objects(constraint, RDFS.label, unique=True))
-            print(name)
             value_type = next(intent_graph.objects(value_node, RDF.type, unique=True))
-            print(value_type)
 
             constr = {
                 "name": str(name),
@@ -79,8 +75,6 @@ class OptionExplorerClient:
         }
 
         auth = f"Bearer {self.token}" 
-        print(json_data)
-        print(auth)
 
 
         # This is not exaclty good parctice, but it is enough for now
@@ -91,7 +85,7 @@ class OptionExplorerClient:
 
         try:
             # Making the POST request
-            response = requests.post(f"{self.base_url}/experiment/call_mdp", json=json_data, headers=headers)
+            response = requests.post(f"{self.base_url}/experiment/call_mdp", json=json_data, headers=headers, timeout=10)
         
         except Exception as e:
             print("Option explorer connection error:", e)
@@ -123,7 +117,7 @@ class OptionExplorerClient:
             
             return algs
 
-        elif response.status_code == 401 and not self.token is None: # token is None is here to avoid a request livelock between getting options and login
+        elif (response.status_code == 401 or response.status_code == 422) and not self.token is None: # token is None is here to avoid a request livelock between getting options and login
                 self.login()
                 return self.get_best_options(intent_graph, ontology)
 
@@ -157,8 +151,9 @@ class OptionExplorerClient:
             response_json = response.json()
             data = response_json["data"]
             self.token = data["tokens"]["access_token"]
+            print("login correcte")
         else:
-            print("ERROR getting token:",response.text)
+            print("ERROR getting token:",response.text, self.username, self.password)
             
         return
 

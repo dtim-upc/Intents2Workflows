@@ -1,6 +1,6 @@
 import json
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 from typing import List, Union
@@ -15,7 +15,7 @@ router = APIRouter()
 # Pydantic models for validation
 class WorkflowCreateRequest(BaseModel):
     workflowName: str
-    visualRepresentation: List[List[Union[List[str], str]]]   # Matches the frontend's map structure
+    visualRepresentation: List[List[Union[List[str], str]]]  # Matches the frontend's map structure
     stringGraph: str
 
 
@@ -29,9 +29,12 @@ def get_db():
 
 
 @router.post("/intent/{intent_name}/workflow")
-def create_workflow(intent_name: str, request: WorkflowCreateRequest, db: Session = Depends(get_db)):
+def create_workflow(request_session:Request, intent_name: str, request: WorkflowCreateRequest, db: Session = Depends(get_db)):
+
+    session_id = request_session.state.session_id
+
     # Check if the intent exists
-    intent = db.query(Intent).filter(Intent.name == intent_name).first()
+    intent = db.query(Intent).filter(Intent.name == intent_name, Intent.session_id==session_id).first()
     if not intent:
         raise HTTPException(status_code=404, detail="Intent not found")
 
@@ -40,7 +43,8 @@ def create_workflow(intent_name: str, request: WorkflowCreateRequest, db: Sessio
         name=request.workflowName,
         visual_representation=str(json.dumps(request.visualRepresentation)),  # Convert dict to string for storing
         graph=request.stringGraph,
-        intent_name=intent_name
+        intent_name=intent_name,
+        session_id = session_id
     )
 
     # Add workflow to DB
@@ -71,8 +75,10 @@ def create_workflow(intent_name: str, request: WorkflowCreateRequest, db: Sessio
 
 # Delete a workflow
 @router.delete("/intent/{intent_name}/workflow/{workflow_name}")
-def delete_workflow(intent_name: str, workflow_name: str, db: Session = Depends(get_db)):
-    db_workflow = db.query(Workflow).filter(Workflow.name == workflow_name, Workflow.intent_name == intent_name).first()
+def delete_workflow(request:Request, intent_name: str, workflow_name: str, db: Session = Depends(get_db)):
+    session_id = request.state.session_id
+
+    db_workflow = db.query(Workflow).filter(Workflow.name == workflow_name, Workflow.intent_name == intent_name, Workflow.session_id==session_id).first()
 
     if db_workflow is None:
         raise HTTPException(status_code=404, detail="Workflow not found")

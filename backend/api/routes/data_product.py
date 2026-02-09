@@ -1,6 +1,6 @@
 import io
 from typing import Tuple
-from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from rdflib import RDF, Graph, Namespace, URIRef
 from sqlalchemy.orm import Session
@@ -56,8 +56,11 @@ def format_path(raw_path:str) ->Path:
         newparts.append(qpart)
     return Path(*newparts)
 
-def process_file(file: UploadFile)->Tuple[str,int,float, Path]:
-    file_path = Path(UPLOAD_DIR).joinpath(format_path(file.filename))
+def process_file(file: UploadFile, session: str)->Tuple[str,int,float, Path]:
+    session_path = Path(UPLOAD_DIR).joinpath(session)
+    session_path.mkdir(exist_ok=True)
+
+    file_path = session_path.joinpath(format_path(file.filename))
     print(file_path)
 
     # Save file
@@ -80,11 +83,13 @@ def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
         return []
     return [target.fragment for target in pot_targets]
 
-def create_data_product(db: Session, filename, size, upload_time, file_path:Path, source_path:str)-> DataProduct:
+def create_data_product(db: Session, session_id, filename, size, upload_time, file_path:Path, source_path:str)-> DataProduct:
 
     dataset_node, annotations = annotator.annotate_dataset(file_path,local_path=source_path)
     annotation_name = file_path.with_suffix('.ttl').name
-    save_path = Path(ANNOTATOR_DIR).joinpath(annotation_name)
+    session_path = Path(ANNOTATOR_DIR).joinpath(session_id)
+    session_path.mkdir(exist_ok=True)
+    save_path = session_path.joinpath(f"{annotation_name}")
     pot_targets = get_potential_targets(dataset_node,annotations)
 
     annotations.serialize(save_path,format="turtle")
@@ -95,7 +100,8 @@ def create_data_product(db: Session, filename, size, upload_time, file_path:Path
         size=round(size, 2),
         path=file_path.resolve().as_posix(),
         annotation_path=save_path.resolve().as_posix(),
-        targets=",".join(pot_targets)  # Store as CSV string
+        targets=",".join(pot_targets),  # Store as CSV string
+        session_id=session_id
     )
 
     db.add(data_product)
@@ -103,9 +109,9 @@ def create_data_product(db: Session, filename, size, upload_time, file_path:Path
 
     return data_product
 
-def get_annotation_path(db: Session,dp: DataProduct) -> str:
+def get_annotation_path(db: Session,dp: DataProduct, session_id) -> str:
     data_product_formatted = quote(dp)
-    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted).first()
+    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted, DataProduct.session_id == session_id).first()
 
     return data_product.annotation_path
     
@@ -157,21 +163,22 @@ def get_dataset_uri(annotation_graph:Graph):
 
 
 @router.post("/data-products")
-async def upload_file(files: list[UploadFile] = File(...), tensor=Form(default="false"), original_path = Form(default=None), db: Session = Depends(get_db)):
+async def upload_file(request: Request, files: list[UploadFile] = File(...), tensor=Form(default="false"), original_path = Form(default=None), db: Session = Depends(get_db)):
     """Uploads a CSV file and saves metadata to the database."""
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
-
+    
+    session_id = request.state.session_id
 
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
     
     if tensor == "true": #tensor import
-        name, size, upload_time, path = process_file(files[0])
+        name, size, upload_time, path = process_file(files[0], session_id)
         file = tensor_preprocesser.get_npz(path)
-        name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"))
+        name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"), session_id)
 
-        dp = create_data_product(db, name, size, upload_time, path, original_path)
+        dp = create_data_product(db, name, size, upload_time, path, original_path, session_id)
 
         return JSONResponse(status_code=200, content={
         "message": "File uploaded successfully",
@@ -188,19 +195,19 @@ async def upload_file(files: list[UploadFile] = File(...), tensor=Form(default="
     if folder != Path('.'): #folder import
         folder_size = 0
         for file in files:
-            _, size, upload_time , file_path = process_file(file)
+            _, size, upload_time , file_path = process_file(file, session_id)
             folder_size += size
 
         folder_path = get_root_folder(file_path)
 
-        dp = create_data_product(db, folder_path.name, folder_size, upload_time,folder_path,original_path)
+        dp = create_data_product(db, session_id, folder_path.name, folder_size, upload_time,folder_path,original_path)
         dps.append(dp)
 
     else: #file import
         for file in files:
-            name, size, upload_time, path = process_file(file)
+            name, size, upload_time, path = process_file(file, session_id)
 
-            dp = create_data_product(db, name, size, upload_time, path, original_path)
+            dp = create_data_product(db, session_id, name, size, upload_time, path, original_path)
             dps.append(dp)
 
     return JSONResponse(status_code=200, content={
@@ -209,15 +216,19 @@ async def upload_file(files: list[UploadFile] = File(...), tensor=Form(default="
     })
 
 @router.get("/data-products")
-async def list_uploaded_files(db: Session = Depends(get_db)):
+async def list_uploaded_files(request: Request, db: Session = Depends(get_db)):
     """Returns a list of all stored CSV files."""
-    data_products = db.query(DataProduct).all()
+
+    session_id = request.state.session_id
+    data_products = db.query(DataProduct).filter_by(session_id=session_id).all()
     return JSONResponse(status_code=200, content={"files": [dp.to_dict() for dp in data_products]})
 
 @router.get("/data-products/{data_product}")
-async def  get_data_product(data_product:str, db: Session = Depends(get_db)):
+async def  get_data_product(request: Request, data_product:str, db: Session = Depends(get_db)):
 
-    annotation_path = get_annotation_path(db,data_product)
+    session_id = request.state.session_id
+
+    annotation_path = get_annotation_path(db,data_product, session_id)
     annotation_graph = load_graph(annotation_path)
     serialized_graph = annotation_graph.serialize(format='ttl')
     
@@ -225,10 +236,12 @@ async def  get_data_product(data_product:str, db: Session = Depends(get_db)):
 
 
 @router.post("/data-products/{data_product}/annotations")
-async def get_annotations(data_product:str, label: str = Form(...), db: Session = Depends(get_db)):
+async def get_annotations(request: Request, data_product:str, label: str = Form(...), db: Session = Depends(get_db)):
     """Get dataset annotations and add labels"""
 
-    annotation_path = get_annotation_path(db,data_product)
+    session_id = request.state.session_id
+
+    annotation_path = get_annotation_path(db,data_product, session_id)
     annotation_graph = load_graph(annotation_path)
     datasetURI = get_dataset_uri(annotation_graph)
 
@@ -245,11 +258,13 @@ async def get_annotations(data_product:str, label: str = Form(...), db: Session 
 
 
 @router.delete("/data-products/{data_product}")
-async def delete_data_product(data_product: str, db: Session = Depends(get_db)):
+async def delete_data_product(request:Request, data_product: str, db: Session = Depends(get_db)):
     """Deletes a data product by its name from the database and file system."""
 
+    session_id = request.state.session_id
+
     data_product_formatted = quote(data_product)
-    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted).first()
+    data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted, DataProduct.session_id==session_id).first()
 
     if data_product is None:
         raise HTTPException(status_code=404, detail="Data product not found")
@@ -293,8 +308,7 @@ class DDMClient:
     
     @property
     def token(self):
-        if self._token is None:
-            self.login()
+        self.login()
         return self._token
 
 
@@ -325,7 +339,6 @@ class DDMClient:
             self._token = response_json.get("access_token",None)
         else:
             print("ERROR getting token:",response.text)
-            
         return
     
 ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/")
