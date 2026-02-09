@@ -117,7 +117,7 @@ class OptionExplorerClient:
             
             return algs
 
-        elif response.status_code == 401 and not self.token is None: # token is None is here to avoid a request livelock between getting options and login
+        elif (response.status_code == 401 or response.status_code == 422) and not self.token is None: # token is None is here to avoid a request livelock between getting options and login
                 self.login()
                 return self.get_best_options(intent_graph, ontology)
 
@@ -151,8 +151,9 @@ class OptionExplorerClient:
             response_json = response.json()
             data = response_json["data"]
             self.token = data["tokens"]["access_token"]
+            print("login correcte")
         else:
-            print("ERROR getting token:",response.text)
+            print("ERROR getting token:",response.text, self.username, self.password)
             
         return
 

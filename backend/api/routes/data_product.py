@@ -308,8 +308,7 @@ class DDMClient:
     
     @property
     def token(self):
-        if self._token is None:
-            self.login()
+        self.login()
         return self._token
 
 
@@ -340,7 +339,6 @@ class DDMClient:
             self._token = response_json.get("access_token",None)
         else:
             print("ERROR getting token:",response.text)
-            
         return
     
 ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/")
