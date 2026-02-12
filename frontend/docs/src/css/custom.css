@@ -1,0 +1,267 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+/*@import '@mdi/font/css/materialdesignicons.min.css';
+@import '@quasar/extras/material-icons/material-icons.css';*/
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.header-github-link:hover {
+  opacity: 0.6;
+}
+
+.header-github-link::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: flex;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+[data-theme='dark'] .header-github-link::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+
+.ui-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  height: 36px;
+  width: 167px;
+  border-radius: 3px;
+  background: #f0f0ff;
+  color:  #4945ff;
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-weight: 500;       /* Medium */
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ui-inline:hover {
+  background: #e1dcff;       /* slightly darker on hover */
+}
+
+.ui-inline:active {
+  background: #d4c7ff;       /* darker when clicked */
+}
+
+/* Container for the icon */
+.ui-inline .ui-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;    /* fixed width for the icon area */
+  flex-shrink: 0; /* don’t shrink */
+}
+
+/* Text takes remaining space */
+.ui-inline .ui-text {
+  flex: 1;               /* fill remaining space */
+  text-align: center;    /* center text */
+}
+
+.button-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  height: 36px;
+  border-radius: 3px;
+  background: #4945ff;
+  color:  #ffff;
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-weight: 500;       /* Medium */
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+  gap: 6px;
+
+  /* Add subtle shadow like Quasar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);  
+  transition: all 0.2s ease;    /* smooth hover transition */
+}
+
+.button-inline:hover {
+  background: #625efc;       /* slightly darker on hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18); /* slightly bigger on hover */
+}
+
+.button-inline:active {
+  background: #706eff;       /* darker when clicked */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+/* Container for the icon */
+.button-inline .button-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;    /* fixed width for the icon area */
+  flex-shrink: 0; /* don’t shrink */
+}
+
+/* Text takes remaining space */
+.button-inline .button-text {
+  flex: 1;               /* fill remaining space */
+  text-align: center;    /* center text */
+}
+
+.q-btn-like {
+  width: 32px;              /* dense */
+  height: 32px;
+  border-radius: 50%;       /* round */
+  border: none;
+  background: transparent; /* flat */ 
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0; /* ← key fix */
+
+  transition: background-color 0.2s ease;
+}
+
+.q-btn-like:hover {
+  background-color: rgba(244, 67, 54, 0.12);
+}
+
+.q-btn-like:active {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.q-btn-like .material-icons {
+  font-size: 20px;
+}
+
+.add-button {
+  padding: 0px 0px;
+  gap: 0px;
+  width: 24px;              /* dense */
+  height: 24px;
+}
+
+.eye-button {
+  justify-content: center;
+}
+
+.select-button {
+  background-color: rgba(255, 255, 255);
+  color:  #000000;
+
+}
+
+.select-button:hover {
+  background: #e7e7e7;       /* slightly darker on hover */
+
+}
+
+.select-button:active {
+  background: rgb(223, 223, 224);       /* darker when clicked */
+}
+
+.checkbox-large {
+  width: 18px;
+  height: 18px;
+}
+
+.dsl-button {
+  background: #9c27b0;
+}
+
+.dsl-button:hover {
+  background: #a845b9;
+}
+
+.dsl-button:active {
+  background: #a643b8;
+}
+
+/* Hide Home breadcrumb only */
+.breadcrumbs__item:first-child {
+  display: none;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  background: var(--step-circle-bg, black); /* default black */
+  color: var(--step-circle-color, white);   /* default white */
+}
+
+.vertical-line {
+  width: 2px;
+  flex: 1;
+  background: var(--step-line-color, #e0e0e0);
+  border-radius: 1px;
+}
+
+/* Dark mode */
+[data-theme='dark'] {
+  --step-circle-bg: white;
+  --step-circle-color: black;
+  --step-line-color: #555;
+}
+
+
+
+.codeBlockWithTitle {
+  position: relative;
+  max-height: 500px;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+}
+
+.codeBlockTitle {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--ifm-background-color);
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.codeBlockWithTitle pre {
+  margin: 0;
+  max-height: 400px;
+  overflow: auto;
+}
