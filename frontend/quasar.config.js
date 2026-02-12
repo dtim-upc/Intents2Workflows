@@ -89,7 +89,7 @@ export default configure(function ( ctx ) {
     devServer: {
       // https: true
       open: true, // opens browser window automatically
-      proxy: {
+      //proxy: {
         // '/intent2Workflow-backend': {               // <-- catch all requests starting with /dataApi
         //       target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
         //       changeOrigin: true,        // needed for virtual hosted sites
@@ -100,7 +100,7 @@ export default configure(function ( ctx ) {
               changeOrigin: true,        // needed for virtual hosted sites
               pathRewrite: { '^/intent2Workflow-intents': '/intent2Workflow-intents' }, // keep the same path
          }, */
-        '/intent2Workflow-textToIntent': {               // <-- catch all requests starting with /dataApi
+        /*'/intent2Workflow-textToIntent': {               // <-- catch all requests starting with /dataApi
               target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
               changeOrigin: true,        // needed for virtual hosted sites
               pathRewrite: { '^/intent2Workflow-textToIntent': '/intent2Workflow-textToIntent' }, // keep the same path
@@ -110,7 +110,7 @@ export default configure(function ( ctx ) {
               changeOrigin: true,        // needed for virtual hosted sites
               pathRewrite: { '^/intent2Workflow-intentToGraphDB': '/intent2Workflow-intentToGraphDB' }, // keep the same path
          },
-    },
+    },*/
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
