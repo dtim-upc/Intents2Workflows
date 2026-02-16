@@ -229,6 +229,12 @@ export default configure(function ( ctx ) {
 
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
+    },
+
+    htmlVariables: {
+      productName: 'Intent2Workflows',
+      productDescription: 'Workflow generator'
+
     }
   }
 });

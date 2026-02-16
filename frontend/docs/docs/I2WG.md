@@ -1,4 +1,4 @@
-# Intents2Workflows
+# Intent2Workflows
 
 ## Overview
 This component executes the translation from user-defined intents to actionable workflows. The user starts the process by defining, on a high level, the analytical task to be executed. I2W extracts the key features from the description and maps it to a rich knowledge base. From there, it chases the dependencies indicated in the ontology to produce workflows to implement the defined task according to the specified intention. These workflows are initially encoded using RDF, which implies a high flexibility to be translated to other representations, such as the DSL required by the execution engine.

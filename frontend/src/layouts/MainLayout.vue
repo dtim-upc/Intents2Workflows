@@ -8,9 +8,9 @@
             <q-item-section avatar v-if="miniState">
               <ODIN_short class="logoODIN" style="width:38px"></ODIN_short>
             </q-item-section>
-
             <q-item-section v-else>
-              <q-img src="~assets/I2WG.png" style="max-width: 180px; max-height: 35px; " fit="contain"/>
+              <q-img src="~assets/ExtremeXP.png" style="max-width: 180px; max-height: 35px; " fit="contain"/>
+              <div style="text-align: center; font-family: 'Roboto', sans-serif;font-weight: 200;font-size:18px;">Intent2Workflows</div>
             </q-item-section>
           </q-item>
 

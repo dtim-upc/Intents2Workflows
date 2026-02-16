@@ -21,7 +21,7 @@ console.log('EXTERNAL_URL =', EXTERNAL_URL);
 const config = {
   title: 'I2WG Documentation',
   tagline: 'Documentation for I2WG framework',
-  favicon: 'img/I2WG.png',
+  favicon: 'img/ExtremeXP.png',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -78,7 +78,7 @@ const config = {
         title: 'Intent2Workflows',
         logo: {
           alt: 'DTIM',
-          src: 'img/I2WG.png',
+          src: 'img/ExtremeXP.png',
           href: `${EXTERNAL_URL}/intent2Workflow`,
         },
         items: [
