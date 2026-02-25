@@ -18,6 +18,7 @@ from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.xxp import xxp_pipeline_traslator
 from pipeline_generator import logical_planner, workflow_builder
 from graph_queries import ontology_queries, intent_queries
+from api.xxp_fs_api import FileSystemClient
 
 import requests
 
@@ -214,25 +215,74 @@ def download_file():
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     xxp_folder = os.path.join(temporary_folder, 'xxp')
 
-    if os.path.exists(folder):
-        shutil.rmtree(folder)
-    if os.path.exists(xxp_folder):
-        shutil.rmtree(xxp_folder)
-    os.mkdir(folder)
-    os.mkdir(xxp_folder)
+    python_compatible = get_xxp_files(graphs, folder, xxp_folder)
 
-    python_compatible = True
-
-    for graph_id, graph_content in graphs.items():
-        graph = Graph().parse(data=graph_content, format='turtle')
-        python_compatible = python_compatible and getCompatibility(graph, cb.Python)
-        file_path = os.path.join(folder, f'{graph_id}.ttl')
-        graph.serialize(file_path, format='turtle')
-        
-    
     xxp_zip_file = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible)
 
     return send_file(xxp_zip_file, as_attachment=True)
+
+
+@app.post('/export-to-xxp')
+def export_xxp():
+    graphs = request.json.get("graphs", "")
+    
+    folder = os.path.join(temporary_folder, 'rdf_to_trans')
+    xxp_folder = os.path.join(temporary_folder, 'xxp_export')
+
+    python_compatible = get_xxp_files(graphs, folder, xxp_folder)
+    xxp_translation_folder = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible, zipContents=False)
+
+    FS = FileSystemClient("http://127.0.0.1:9090/api","upctest")
+    
+
+    print("ADDING EXPERIMENTS")
+    exp_path = Path(xxp_translation_folder)/"experiments"
+    
+    for file in exp_path.iterdir():
+        filename = file.name
+        with open(file) as f:
+                contents = f.read()
+        response = FS.add_experiment(filename, contents)
+        if response == 403:
+            return {"message": f"{filename} file already exists"}, 403
+        elif response != 201:
+            return {"message": "Internal error while exporting experiments file"}, 500
+
+    
+    print("ADDING WORKFLOWS")
+    wf_path = Path(xxp_translation_folder)/"workflows"
+    for file in wf_path.iterdir():
+            workflow_name = file.name
+            with open(file) as f:
+                workflow_content = f.read()
+            
+            print("adding workflow", workflow_name)
+            response = FS.add_workflow(workflow_name, workflow_content)
+            if response == 403:
+                return {"message": f"{workflow_name} file already exists"}, 403
+            elif response != 201:
+                return {"message": "Internal error while exporting workflows"}, 500
+
+
+    print("ADDING TASKS")
+    tasks_path = Path(xxp_translation_folder)/"tasks"
+    for file in tasks_path.iterdir():
+        if file.is_dir():
+            task_name = file.name
+            with open(file/"task.xxp") as f:
+                dsl_content = f.read()
+            with open(file/"task.py") as f:
+                python_content = f.read()
+            with open(file/"requirements.txt") as f:
+                requirements_content = f.read()
+            
+            print("adding task", task_name)
+            response = FS.add_task(task_name, dsl_content, python_content, requirements_content)
+
+            if response not in [201, 403]: #If file already exists we consider OK for tasks
+                return {"message": "Internal error while exporting tasks"}, response
+
+    return '', 200
 
 
 @app.post('/workflow_plans/python')

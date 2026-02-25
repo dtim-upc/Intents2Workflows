@@ -19,7 +19,7 @@ console.log('EXTERNAL_URL =', EXTERNAL_URL);
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'I2WG Documentation',
+  title: 'Documentation',
   tagline: 'Documentation for I2WG framework',
   favicon: 'img/ExtremeXP.png',
 

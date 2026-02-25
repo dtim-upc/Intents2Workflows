@@ -172,7 +172,7 @@ def process_workflows(ontology, source_folder, workflows:List[str]) -> Dict[int,
     return xxp_workflows
 
 
-def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=True):
+def translate_graph_folder(ontology:Graph, source_folder: str, destination_folder: str, generate_tasks=True, zipContents=True):
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
     assert os.path.exists(source_folder)
@@ -180,6 +180,14 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
     tqdm.write('\tCreating temp folder: ', end='')
     temp_folder = tempfile.mkdtemp()
     tqdm.write(temp_folder)
+
+    tasks_folder = os.path.join(temp_folder, 'tasks')
+    os.mkdir(tasks_folder)
+    workflows_folder = os.path.join(temp_folder, 'workflows')
+    os.mkdir(workflows_folder)
+    experiments_folder = os.path.join(temp_folder, 'experiments')
+    os.mkdir(experiments_folder)
+
 
     workflows = [f for f in os.listdir(source_folder) if f.endswith('.ttl')]
     xxp_workflows=process_workflows(ontology, source_folder, workflows)
@@ -190,7 +198,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
     for i,assemblies in enumerate(xxp_workflows.values()):
         assert len(assemblies) > 0
         base_workflow = assemblies[0]
-        base_name = f"{base_workflow.name}Workflow{i}"
+        base_name = f"{base_workflow.name}_Workflow{i}"
         external_input = base_workflow.get_external_input()
         external_output = base_workflow.get_external_output()
 
@@ -212,7 +220,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                 for step in a.steps.values():
                     if step.component not in tasks_visited:
                         subfolder_name = f'{step.component}'
-                        subfolder = os.path.join(temp_folder, subfolder_name)
+                        subfolder = os.path.join(tasks_folder, subfolder_name)
                         os.mkdir(subfolder)
                         
                         python_step, step_name, inputs, outputs, dependences = python_pipeline_translator.translate_step(ontology, a.graph, step.uri, 
@@ -244,7 +252,7 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                                                workflows = assembly_workflows
                                             )
         
-        with open(os.path.join(temp_folder, f'{base_name}.xxp'), encoding='UTF-8', mode='w') as file:
+        with open(os.path.join(temp_folder, "workflows", f'{base_name}.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(translation)
         
 
@@ -253,13 +261,18 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
                                             workflows=assembled_names,
                                             imports = abstract_workflows
                                         )
-    with open(os.path.join(temp_folder, f'experiments.xxp'), encoding='UTF-8', mode='w') as file:
+    with open(os.path.join(temp_folder, "experiments", f'{base_workflow.name}_experiments.xxp'), encoding='UTF-8', mode='w') as file:
             file.write(experiment_translation)
 
 
-    
-    destination_path = os.path.join(destination_folder,'xxp_translation.zip')
-    package_workflow(temp_folder, destination_path)
+    if zipContents: 
+        destination_path = os.path.join(destination_folder,'xxp_translation.zip')
+        package_workflow(temp_folder, destination_path)
+
+    else:
+        destination_path = os.path.join(destination_folder, 'xxp_translation')
+        shutil.copytree(temp_folder, destination_path)
+        
 
     tqdm.write('\tRemoving temp folder')
     shutil.rmtree(temp_folder)

@@ -317,6 +317,22 @@ export const useIntentsStore = defineStore('intents', {
       }
     },
 
+    async exportToXXP() {
+      const data = {"graphs": this.getSelectedGraphs()}
+      try {
+        const response = await intentsAPI.exportToXXP(data);
+        notify.positive(`XXP files exported`)
+        
+      } catch (error) {
+        if (error.response?.status === 403) {
+          notify.negative(error.response?.data?.message || "Filename already exists");
+        } else {
+          notify.negative(error.response?.data?.message || "Error exporting the XXP files");
+        }
+      }
+
+    },
+
     // ------------ Intent anticipation
   
     async predictIntentType(data) {

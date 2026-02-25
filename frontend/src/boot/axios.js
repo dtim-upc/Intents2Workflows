@@ -7,10 +7,14 @@ import axios from 'axios'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const odinApi = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-backend"});
+/*const odinApi = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-backend"});
 const intentsApi = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-intents"});
 const textToIntentAPI = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-textToIntent"});
-const intentToGraphDBAPI = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-intentToGraphDB"});
+const intentToGraphDBAPI = axios.create({baseURL: "https://quarry-dev.essi.upc.edu/intent2Workflow-intentToGraphDB"});*/
+const odinApi = axios.create({baseURL: "http://localhost:9001/", withCredentials: true });
+const intentsApi = axios.create({baseURL: "http://localhost:9002/"});
+const textToIntentAPI = axios.create({baseURL: "http://localhost:9003/"});
+const intentToGraphDBAPI = axios.create({baseURL: "http://localhost:9004/"});
 
 export default boot(({app}) => {
    app.config.globalProperties.$axios = axios

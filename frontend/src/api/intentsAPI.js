@@ -43,6 +43,9 @@ export default {
   downloadAllDSL(data) {
     return intentsApi.post('/intent-to-dsl', data, {responseType: 'blob'})
   },
+  exportToXXP(data) {
+    return intentsApi.post('/export-to-xxp', data)
+  },
   downloadProactive(data) {
     return intentsApi.post('/workflow_plans/proactive', data, {responseType: 'blob'})
   },

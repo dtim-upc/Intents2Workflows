@@ -2,6 +2,7 @@ import zipfile
 import sys
 import os
 from typing import Dict
+import shutil
 
 from rdflib.term import Node, URIRef
 
@@ -129,3 +130,23 @@ def compress(folder: str, destination: str) -> None:
                 file_path = os.path.join(root, file)
                 archive_path = os.path.relpath(file_path, folder)
                 zipf.write(file_path, arcname=os.path.join(os.path.basename(folder), archive_path))
+
+def get_xxp_files(graphs, folder, xxp_folder):
+
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
+    if os.path.exists(xxp_folder):
+        shutil.rmtree(xxp_folder)
+    os.mkdir(folder)
+    os.mkdir(xxp_folder)
+
+    python_compatible = True
+
+
+    for graph_id, graph_content in graphs.items():
+        graph = Graph().parse(data=graph_content, format='turtle')
+        python_compatible = python_compatible and getCompatibility(graph, cb.Python)
+        file_path = os.path.join(folder, f'{graph_id}.ttl')
+        graph.serialize(file_path, format='turtle')
+
+    return python_compatible

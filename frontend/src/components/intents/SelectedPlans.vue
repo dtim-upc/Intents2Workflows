@@ -48,6 +48,7 @@
               <q-btn label="Download all RDF representations" @click="intentsStore.downloadAllRDF()"/>
               <q-btn label="Download all KNIME representations" @click="intentsStore.downloadAllKNIME()" class="q-ml-sm"/>
               <q-btn label="Download Intent to DSL" color="purple" class="q-ml-sm"@click="intentsStore.downloadAllDSL()"/>
+              <q-btn label="Export to XXP FSS" color="purple" class="q-ml-sm"@click="exportToFS()"/>
             </div>
         </div>
     </q-page>
@@ -108,6 +109,13 @@ const storeWorkflow = async () => {
   const intentID = intentsStore.intentID
 
   workflowsStore.postWorkflow(intentID, data)
+}
+
+const exportToFS = async () => {
+  $q.loading.show({message: 'Exporting workflows'})
+  await intentsStore.exportToXXP()
+  $q.loading.hide()
+
 }
 
 </script>
