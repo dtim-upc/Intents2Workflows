@@ -1,4 +1,5 @@
 <template>
+    <DDMLogin v-model="isLoginVisible"/>
     <q-page padding>
         <div class="row q-col-gutter-md text-center justify-center">            
             <div class="col-12">
@@ -69,17 +70,22 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref, onMounted, watch } from 'vue';
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useWorkflowsStore} from 'stores/workflowsStore.js'
+import { useNotify } from 'src/use/useNotify.js';
 import DialogWithVisualizedPlan from "../../components/intents/visualize_plan/DialogWithVisualizedPlan.vue";
 import { useQuasar } from 'quasar'
 import {intentsApi} from 'boot/axios';
 import FileSaver from 'file-saver';
+import { useDdmStore } from 'src/stores/ddmStore';
+import DDMLogin from "src/components/utils/DDMLogin.vue";
 
+const ddmStore = useDdmStore();
 const intentsStore = useIntentsStore()
 const workflowsStore = useWorkflowsStore()
 const $q = useQuasar()
+const notify = useNotify();
 
 
 const storeWorkflowDialogBoolean = ref(false)
@@ -88,6 +94,16 @@ const dialog = ref(false)
 const selectedPlan = ref(null)
 const workflowName = ref("")
 const visualizedPlan = ref(null)
+const isLoginVisible = ref(false);
+
+var ddmbearerToken = "";
+
+// Watch for login status changes and react accordingly
+watch(() => ddmStore.token, async (newToken) => {
+  if (newToken) {
+    ddmbearerToken = newToken;
+  }
+});
 
 const openDialog = (plan) => {
   visualizedPlan.value = plan
@@ -112,10 +128,19 @@ const storeWorkflow = async () => {
 }
 
 const exportToFS = async () => {
-  $q.loading.show({message: 'Exporting workflows'})
-  await intentsStore.exportToXXP()
-  $q.loading.hide()
+  // Trigger login modal visibility when this button is clicked
+
+  if (ddmStore.token) {
+    isLoginVisible.value = false
+    $q.loading.show({message: 'Exporting workflows'})
+    await intentsStore.exportToXXP(ddmStore.user)
+    $q.loading.hide()
+  }
+  else {
+      isLoginVisible.value = true;
+  }
 
 }
+
 
 </script>

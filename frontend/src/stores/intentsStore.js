@@ -317,8 +317,8 @@ export const useIntentsStore = defineStore('intents', {
       }
     },
 
-    async exportToXXP() {
-      const data = {"graphs": this.getSelectedGraphs()}
+    async exportToXXP(username) {
+      const data = {"graphs": this.getSelectedGraphs(), 'username':username}
       try {
         const response = await intentsAPI.exportToXXP(data);
         notify.positive(`XXP files exported`)

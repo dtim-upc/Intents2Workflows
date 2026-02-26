@@ -1,10 +1,11 @@
 <template>
+  <DDMLogin v-model="isLoginVisible"/>
   <q-card class="q-pa-md" style="height: 100vh; display: flex; flex-direction: column; position: relative;">
     <!-- Header -->
     <q-card-section>
       <div class="text-h6 q-mb-sm">Import files from DDM</div>
       <div class="q-mb-md text-subtitle2 text-grey-7">
-        Browse the file tree below and select an file or folder to import.
+        Browse the file tree below and select a file or folder to import.
       </div>
     </q-card-section>
 
@@ -71,88 +72,90 @@
   </q-card>
 </template>
 
-
-
-
-
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch, nextTick } from 'vue';
   import { QTree, useQuasar } from 'quasar';
   import { useNotify } from 'src/use/useNotify.js';
-  import {odinApi} from 'boot/axios';
-  import {useRoute, useRouter} from "vue-router";
+  import { odinApi } from 'boot/axios';
+  import { useRoute, useRouter } from "vue-router";
+  import { useDdmStore } from 'src/stores/ddmStore';
+  import DDMLogin from "src/components/utils/DDMLogin.vue";
 
-  const router = useRouter()
-  const route = useRoute()
-  const $q = useQuasar()
+  const ddmStore = useDdmStore();
+  const router = useRouter();
+  const route = useRoute();
+  const $q = useQuasar();
   const notify = useNotify();
 
-  const nodes = ref([])
-  const selected = ref(null)
-  const selected_node = ref(null)
+  const nodes = ref([]);
+  const selected = ref(null);
+  const selected_node = ref(null);
   const loading = ref(true);  // Track loading state
-  const tensorImport = ref(false)
+  const tensorImport = ref(false);
+  const isLoginVisible = ref(false);
 
-  
-  const get_token = async () => {
-    const response = await odinApi.get('/ddm')
-    console.log(response)
-    if (response.status != 200) {
-       throw new Error('Failed to fetch token');
-      }
-    return response.data.token
-  }
-
-  var bearerToken = ""
+  var bearerToken = "";
 
   const fileColors = {
-  pdf: 'red-6',
-  csv: 'green-6',
-}
+    pdf: 'red-6',
+    csv: 'green-6',
+  };
 
-
+  // Map API response to tree structure
   const mapApiNode = (item) => {
     const mapped = {
       id: item.key,
       label: item.data.name,
       children: !item.leaf ? [] : null,
       lazy: !item.leaf,
-      icon: item.data.type == 'folder' ? 'folder': 'description',
+      icon: item.data.type == 'folder' ? 'folder' : 'description',
       iconColor: item.data.type == 'folder' ? 'orange-8' : fileColors[item.data.type] ?? 'grey-7',
-      path: item.data.type == 'folder'? item.data.path : item.data.path + '/' + item.data.name,
+      path: item.data.type == 'folder' ? item.data.path : item.data.path + '/' + item.data.name,
       folder: item.data.type == 'folder',
       format: item.data.type
-    }
-    return mapped
-  }
+    };
+    return mapped;
+  };
 
-
+  // Fetch children files/folders
   const fetchChildren = async (parentId) => {
-    const data  = await getFiles(parentId)
-    const mapping = data.map(mapApiNode)
-    return mapping
-  }
+    const data = await getFiles(parentId);
+    const mapping = data.map(mapApiNode);
+    return mapping;
+  };
 
-  // Initial root load
-  onMounted(async () => {
-    bearerToken = await get_token();
-    nodes.value = await fetchChildren("")
-    loading.value = false; 
-
-  })
-
-  // Lazy loader
+  // Lazy loader to fetch children dynamically
   const onLazyLoad = async ({ node, done, fail }) => {
     try {
-      const children = await fetchChildren(node.id)
-      done(children)
+      const children = await fetchChildren(node.id);
+      done(children);
     } catch (err) {
-      console.error(err)
-      fail()
+      console.error(err);
+      fail();
     }
+  };
+
+  // Watch for login status changes and react accordingly
+  watch(() => ddmStore.token, async (newToken) => {
+    if (newToken) {
+      bearerToken = newToken;
+      nodes.value = await fetchChildren(""); // Re-fetch data if token changes
+    }
+  });
+
+  // Initial mount: check if already logged in
+onMounted(async () => {
+  bearerToken = ddmStore.token;
+  if (bearerToken) {
+    isLoginVisible.value = false;  // If logged in, hide the login
+    console.log("Skipping login");
+    nodes.value = await fetchChildren("");
+  } else {
+    isLoginVisible.value = true;  // If no token, show login dialog
+    console.log("POPUP time");
   }
-
-
+  loading.value = false;  // Set loading to false after data has been processed
+});
 
   const getFiles = async (parent) => {
     const apiUrl = 'https://ddm.extremexp-icom.intracom-telecom.com/ddm/catalog/tree?perPage=100&parent='+parent;
@@ -235,6 +238,11 @@
   }
 
   const downloadItem = async() => {
+
+    if (!ddmStore.token) {
+      isLoginVisible.value = true;
+      return
+    }
 
     if (selected_node?.value?.folder) {
 

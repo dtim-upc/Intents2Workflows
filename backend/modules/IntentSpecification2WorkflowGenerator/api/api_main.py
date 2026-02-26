@@ -225,6 +225,10 @@ def download_file():
 @app.post('/export-to-xxp')
 def export_xxp():
     graphs = request.json.get("graphs", "")
+    username = request.json.get("username", "")
+
+    if username == "":
+        return {"message":"Invalid username"}, 400
     
     folder = os.path.join(temporary_folder, 'rdf_to_trans')
     xxp_folder = os.path.join(temporary_folder, 'xxp_export')
@@ -232,7 +236,7 @@ def export_xxp():
     python_compatible = get_xxp_files(graphs, folder, xxp_folder)
     xxp_translation_folder = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible, zipContents=False)
 
-    FS = FileSystemClient("http://127.0.0.1:9090/api","upctest")
+    FS = FileSystemClient("http://127.0.0.1:9090/api",username)
     
 
     print("ADDING EXPERIMENTS")

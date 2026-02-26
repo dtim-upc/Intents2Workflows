@@ -89,7 +89,7 @@ export default configure(function ( ctx ) {
     devServer: {
       // https: true
       open: true, // opens browser window automatically
-      //proxy: {
+      proxy: {
         // '/intent2Workflow-backend': {               // <-- catch all requests starting with /dataApi
         //       target: 'https://quarry-dev.essi.upc.edu', // <-- your API base URL
         //       changeOrigin: true,        // needed for virtual hosted sites
@@ -111,6 +111,13 @@ export default configure(function ( ctx ) {
               pathRewrite: { '^/intent2Workflow-intentToGraphDB': '/intent2Workflow-intentToGraphDB' }, // keep the same path
          },
     },*/
+
+        '/ddm': {
+          target: 'https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/person',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/ddm/, '') // removes /ddm prefix
+        }
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
