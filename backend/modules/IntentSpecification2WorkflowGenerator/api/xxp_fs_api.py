@@ -1,3 +1,5 @@
+import base64
+
 import requests
 import json
 from pathlib import Path
@@ -25,7 +27,21 @@ class FileSystemClient:
     def add_file(self, path:str, filename:str, file_contents:str):
 
         try:
-            response = requests.post(f"{self.base_url}/create/{self.user}/{path}/{filename}", data=file_contents, auth=HTTPBasicAuth(self.username, self.password), timeout=60)
+
+            # Combine username:password and Base64 encode
+            credentials = f"{self.username}:{self.password}"
+            encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+
+            headers = {
+                "Authorization": f"Basic {encoded_credentials}"
+            }
+
+            response = requests.post(f"{self.base_url}/create/{self.user}/{path}/{filename}", data=file_contents, headers=headers, timeout=60)  # <- prevents dropping Authorization
+            
+            print(response.status_code)
+            print(response.headers)
+            print(response.request.headers)
+            print(response.request.url)
 
             # Check the response
             if response.status_code == 201:

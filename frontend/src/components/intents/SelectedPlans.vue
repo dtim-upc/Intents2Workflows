@@ -49,7 +49,7 @@
               <q-btn label="Download all RDF representations" @click="intentsStore.downloadAllRDF()"/>
               <q-btn label="Download all KNIME representations" @click="intentsStore.downloadAllKNIME()" class="q-ml-sm"/>
               <q-btn label="Download Intent to DSL" color="purple" class="q-ml-sm"@click="intentsStore.downloadAllDSL()"/>
-              <q-btn label="Export to XXP FSS" color="purple" class="q-ml-sm"@click="exportToFS()"/>
+              <q-btn label="Export to Execution Engine" color="purple" class="q-ml-sm"@click="exportToFS()"/>
             </div>
         </div>
     </q-page>
