@@ -95,6 +95,7 @@ const selectedPlan = ref(null)
 const workflowName = ref("")
 const visualizedPlan = ref(null)
 const isLoginVisible = ref(false);
+const exportToFSclicked = ref(true)
 
 var ddmbearerToken = "";
 
@@ -102,6 +103,12 @@ var ddmbearerToken = "";
 watch(() => ddmStore.token, async (newToken) => {
   if (newToken) {
     ddmbearerToken = newToken;
+    if (exportToFSclicked.value) {
+      $q.loading.show({message: 'Exporting workflows'})
+      await intentsStore.exportToXXP(ddmStore.user)
+      $q.loading.hide()
+      exportToFSclicked.value = false
+    }
   }
 });
 
@@ -137,7 +144,8 @@ const exportToFS = async () => {
     $q.loading.hide()
   }
   else {
-      isLoginVisible.value = true;
+    isLoginVisible.value = true;
+    exportToFSclicked.value = true
   }
 
 }

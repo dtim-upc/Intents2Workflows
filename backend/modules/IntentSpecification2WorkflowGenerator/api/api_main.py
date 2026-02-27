@@ -236,7 +236,7 @@ def export_xxp():
     python_compatible = get_xxp_files(graphs, folder, xxp_folder)
     xxp_translation_folder = xxp_pipeline_traslator.translate_graph_folder(ontology, folder, xxp_folder, generate_tasks=python_compatible, zipContents=False)
 
-    FS = FileSystemClient("http://fs.extremexp-icom.intracom-telecom.com/api",username)
+    FS = FileSystemClient("https://fs.extremexp-icom.intracom-telecom.com/api",username)
     
 
     print("ADDING EXPERIMENTS")
