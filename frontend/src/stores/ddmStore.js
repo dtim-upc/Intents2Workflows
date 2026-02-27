@@ -14,7 +14,6 @@ export const useDdmStore = defineStore('ddm', {
     async login(username, password) { //DDM Login
       try {
         const response = await axios.post('/ddm/login',{'username':username, 'password':password});
-        console.log("Resposta",response)
         this.token = response.data.access_token;
         this.user = username
       }catch (error) {

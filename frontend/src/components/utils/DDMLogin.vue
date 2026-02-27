@@ -93,14 +93,12 @@
     // Watch modelValue for changes from parent
     watch(() => props.modelValue, (newValue) => {
     showDialog.value = newValue;
-    console.log("Child - new value", newValue)
     });
 
   // When the dialog is closed, emit an update to parent
   const onDialogClose = () => {
     showDialog.value = false;
     emit('update:modelValue', false); // Close the dialog when it's hidden
-    console.log("Dialog closed");
   };
   const ddmStore = useDdmStore();
 
@@ -110,15 +108,10 @@
 
   // Handle Login
   const handleLogin = async () => {
-    console.log('Logging in with', username.value, password.value);
 
     if (ddmStore.token === '') {
       // Perform login
       await ddmStore.login(username.value, password.value);
-
-      // Log the token and user information after login
-      console.log('Token after login:', ddmStore.token);
-      console.log('User after login:', ddmStore.user);
 
       if (ddmStore.token) {
         // Close the dialog after a successful login
