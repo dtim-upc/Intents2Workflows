@@ -112,11 +112,11 @@ export default configure(function ( ctx ) {
          },
     },*/
 
-        '/ddm': {
+ /*       '/ddm': {
           target: 'https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/person',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/ddm/, '') // removes /ddm prefix
-        }
+        }*/
       }
     },
 

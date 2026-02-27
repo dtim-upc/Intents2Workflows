@@ -13,7 +13,7 @@ export const useDdmStore = defineStore('ddm', {
   actions: {
     async login(username, password) { //DDM Login
       try {
-        const response = await axios.post('/ddm/login',{'username':username, 'password':password});
+        const response = await axios.post('https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/person/ddm/login',{'username':username, 'password':password});
         this.token = response.data.access_token;
         this.user = username
       }catch (error) {
