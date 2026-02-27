@@ -148,11 +148,9 @@ onMounted(async () => {
   bearerToken = ddmStore.token;
   if (bearerToken) {
     isLoginVisible.value = false;  // If logged in, hide the login
-    console.log("Skipping login");
     nodes.value = await fetchChildren("");
   } else {
     isLoginVisible.value = true;  // If no token, show login dialog
-    console.log("POPUP time");
   }
   loading.value = false;  // Set loading to false after data has been processed
 });

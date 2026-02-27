@@ -2,6 +2,7 @@ import io
 from typing import Tuple
 from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from rdflib import RDF, Graph, Namespace, URIRef
 from sqlalchemy.orm import Session
 import os
@@ -289,60 +290,50 @@ async def delete_data_product(request:Request, data_product: str, db: Session = 
 import json
 import requests
 
-BASE_DIR = Path(__file__).resolve().parent
-cred_path = BASE_DIR / "DDM_credentials.json"
-
-with cred_path.open() as f:
-    creds = json.load(f)
-
-USERNAME = creds["username"]
-PASSWORD = creds["password"]
-
-
 class DDMClient:
-    def __init__(self, base_url):
+    def __init__(self, base_url, username, password):
         self.base_url = base_url
-        self.username = USERNAME
-        self.password = PASSWORD
-        self._token = None
+        self.username = username
+        self.password = password
+        self.token = ""
     
-    @property
-    def token(self):
-        self.login()
-        return self._token
-
 
     def login(self):
-        self._token = None
 
         login_body = {
             "username": self.username,
             "password": self.password,
         }
 
-        print(login_body)
-
         try:
             # Making the POST request
             response = requests.post(f"{self.base_url}/person/login", json=login_body)
         
         except Exception as e:
-            print("Option explorer connection error:", e)
-            return
+            print("DDM error:", e)
+            raise HTTPException(status_code=500, detail="Internal server error")
 
 
 
         # Check the response
         if response.status_code == 200:
             response_json = response.json()
-            print("RESPONSE",response_json)
-            self._token = response_json.get("access_token",None)
+            self.token = response_json.get("access_token",None)
+            return self.token
+        elif response.status_code == 401:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
         else:
             print("ERROR getting token:",response.text)
-        return
+            raise HTTPException(status_code=500, detail="DDM server error")
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
     
-ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/")
-    
-@router.get("/ddm")
-async def  get_ddm_token():
-    return {"token": ddm.token}
+@router.post("/ddm")
+async def  get_ddm_token(data: LoginRequest):
+
+    ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/",data.username, data.password)
+
+    return {"token": ddm.login()}

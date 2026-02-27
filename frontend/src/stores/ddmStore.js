@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { useNotify } from 'src/use/useNotify.js';
 import axios from 'axios'
+import dataProductAPI from "src/api/dataProductsAPI";
 
 const notify = useNotify();
 
@@ -13,8 +14,8 @@ export const useDdmStore = defineStore('ddm', {
   actions: {
     async login(username, password) { //DDM Login
       try {
-        const response = await axios.post('https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/person/ddm/login',{'username':username, 'password':password});
-        this.token = response.data.access_token;
+        const response = await dataProductAPI.getDDMToken({'username':username, 'password':password});
+        this.token = response.data.token;
         this.user = username
       }catch (error) {
         notify.negative("Login error");

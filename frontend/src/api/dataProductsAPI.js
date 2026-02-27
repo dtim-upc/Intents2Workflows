@@ -25,4 +25,7 @@ export default {
   getDataProductAnnotations(fileName,data) {
     return odinApi.post('/data-products/' +  fileName + '/annotations',data)
   },
+  getDDMToken(data) {
+    return odinApi.post('/ddm',data)
+  }
 }
