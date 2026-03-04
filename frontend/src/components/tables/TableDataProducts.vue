@@ -45,14 +45,16 @@
   </template>
   
   <script setup>
-  import { onMounted, ref} from "vue";
+  import { onMounted, ref, watch} from "vue";
   import {useDataProductsStore} from 'src/stores/dataProductsStore.js'
+  import { useDdmStore } from 'src/stores/ddmStore';
   import NoDataImage from "src/assets/NoDataImage.vue";
   import ConfirmDialog from "src/components/utils/ConfirmDialog.vue";
   import EditDataProductForm from "src/components/forms/EditDataProductForm.vue";
   import FullScreenToggle from "./TableUtils/FullScreenToggle.vue";
   
   const dataProductsStore = useDataProductsStore()
+  const ddmStore = useDdmStore()
   
   const selectedDataProduct = ref(null)
   
@@ -68,8 +70,23 @@
     {name: 'actions', label: 'Actions', align: 'center', field: 'actions', sortable: false,},
   ]
 
+
+
+  watch(
+    () => ddmStore.isLogged,
+    async (loggedIn) => {
+      if (loggedIn) {
+        await dataProductsStore.getDataProducts()
+      }
+    },
+    { immediate: false } // don’t run until login changes
+  )
+
   onMounted(async() => {
-    await dataProductsStore.getDataProducts()
+    if (ddmStore.isLogged) {
+          await dataProductsStore.getDataProducts()
+
+    }
   })
   
   let confirmDelete = () => {}

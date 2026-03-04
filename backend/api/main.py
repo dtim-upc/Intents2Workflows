@@ -37,7 +37,7 @@ app = FastAPI(lifespan=lifespan)
 # Initialize Database
 init_db()
 
-app.add_middleware(middleware.SessionMiddleware)
+#app.add_middleware(middleware.SessionMiddleware)
 
 # Enable CORS for frontend requests
 app.add_middleware(

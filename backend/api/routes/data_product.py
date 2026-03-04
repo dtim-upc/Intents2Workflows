@@ -16,6 +16,9 @@ from dataset_annotator import annotator, namespaces
 from utils import tensor_preprocesser
 from models import DataProduct
 
+from utils.token_hasher import get_hashed_token
+
+
 router = APIRouter()
 
 MAX_FILENAME_LENGTH = 50
@@ -169,7 +172,7 @@ async def upload_file(request: Request, files: list[UploadFile] = File(...), ten
     #if not file.filename.endswith(".csv"):
         #raise HTTPException(status_code=400, detail="Only CSV files are allowed!")
     
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
@@ -220,14 +223,15 @@ async def upload_file(request: Request, files: list[UploadFile] = File(...), ten
 async def list_uploaded_files(request: Request, db: Session = Depends(get_db)):
     """Returns a list of all stored CSV files."""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)#auth_header if not auth_header is None else request.state.session_id
+
     data_products = db.query(DataProduct).filter_by(session_id=session_id).all()
     return JSONResponse(status_code=200, content={"files": [dp.to_dict() for dp in data_products]})
 
 @router.get("/data-products/{data_product}")
 async def  get_data_product(request: Request, data_product:str, db: Session = Depends(get_db)):
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     annotation_path = get_annotation_path(db,data_product, session_id)
     annotation_graph = load_graph(annotation_path)
@@ -240,7 +244,7 @@ async def  get_data_product(request: Request, data_product:str, db: Session = De
 async def get_annotations(request: Request, data_product:str, label: str = Form(...), db: Session = Depends(get_db)):
     """Get dataset annotations and add labels"""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     annotation_path = get_annotation_path(db,data_product, session_id)
     annotation_graph = load_graph(annotation_path)
@@ -262,7 +266,7 @@ async def get_annotations(request: Request, data_product:str, label: str = Form(
 async def delete_data_product(request:Request, data_product: str, db: Session = Depends(get_db)):
     """Deletes a data product by its name from the database and file system."""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     data_product_formatted = quote(data_product)
     data_product = db.query(DataProduct).filter(DataProduct.name == data_product_formatted, DataProduct.session_id==session_id).first()
@@ -296,6 +300,7 @@ class DDMClient:
         self.username = username
         self.password = password
         self.token = ""
+        self.userid
     
 
     def login(self):
@@ -307,7 +312,7 @@ class DDMClient:
 
         try:
             # Making the POST request
-            response = requests.post(f"{self.base_url}/person/login", json=login_body)
+            response = requests.post(f"{self.base_url}/extreme_auth/api/v1/person/login", json=login_body)
         
         except Exception as e:
             print("DDM error:", e)
@@ -325,6 +330,32 @@ class DDMClient:
         else:
             print("ERROR getting token:",response.text)
             raise HTTPException(status_code=500, detail="DDM server error")
+        
+    def userid(self):
+        try:
+            headers = {
+                'Authorization':f"Bearer {self.token}"
+            }
+            # Making the GET request
+            response = requests.get(f"{self.base_url}/ddm/users/user/profile/{self.username.lower()}", headers=headers)
+        
+        except Exception as e:
+            print("DDM error:", e)
+            raise HTTPException(status_code=500, detail="Internal server error")
+
+
+
+        # Check the response
+        if response.status_code == 200:
+            response_json = response.json()
+            self.userid = response_json.get("user",{}).get("sub", None)
+            return self.userid
+        elif response.status_code == 401:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        else:
+            print("ERROR getting token:",response.text)
+            raise HTTPException(status_code=500, detail="DDM server error")
+
 
 
 class LoginRequest(BaseModel):
@@ -334,6 +365,7 @@ class LoginRequest(BaseModel):
 @router.post("/ddm")
 async def  get_ddm_token(data: LoginRequest):
 
-    ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com/extreme_auth/api/v1/",data.username, data.password)
+    ddm = DDMClient("https://ddm.extremexp-icom.intracom-telecom.com",data.username, data.password)
+    token = ddm.login()
 
-    return {"token": ddm.login()}
+    return {"token": token, 'id': ddm.userid()}

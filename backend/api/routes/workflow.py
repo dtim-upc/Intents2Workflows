@@ -7,6 +7,7 @@ from typing import List, Union
 from models import Workflow, Intent  # Assuming models are in a file named models.py
 from database.database import SessionLocal  # Assuming database connection is defined in database.py
 from pydantic import BaseModel
+from utils.token_hasher import get_hashed_token
 
 # Create the router for workflows
 router = APIRouter()
@@ -31,7 +32,7 @@ def get_db():
 @router.post("/intent/{intent_name}/workflow")
 def create_workflow(request_session:Request, intent_name: str, request: WorkflowCreateRequest, db: Session = Depends(get_db)):
 
-    session_id = request_session.state.session_id
+    session_id = get_hashed_token(request_session)
 
     # Check if the intent exists
     intent = db.query(Intent).filter(Intent.name == intent_name, Intent.session_id==session_id).first()
@@ -76,7 +77,7 @@ def create_workflow(request_session:Request, intent_name: str, request: Workflow
 # Delete a workflow
 @router.delete("/intent/{intent_name}/workflow/{workflow_name}")
 def delete_workflow(request:Request, intent_name: str, workflow_name: str, db: Session = Depends(get_db)):
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     db_workflow = db.query(Workflow).filter(Workflow.name == workflow_name, Workflow.intent_name == intent_name, Workflow.session_id==session_id).first()
 

@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from database.database import SessionLocal
 from models import Intent, DataProduct
 
+from utils.token_hasher import get_hashed_token
+
 router = APIRouter()
 
 
@@ -23,7 +25,7 @@ async def create_intent(request:Request, intent_name: str = Form(...), problem: 
                         workflows: Optional[str] = Form(None), db: Session = Depends(get_db)):
     """Creates an intent object and saves it to the database."""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     # Fetch the related data product
     data_product = db.query(DataProduct).filter(DataProduct.name == data_product, DataProduct.session_id == session_id).first()
@@ -51,7 +53,7 @@ async def create_intent(request:Request, intent_name: str = Form(...), problem: 
 async def get_intents(request:Request, db: Session = Depends(get_db)):
     """Retrieves all stored intents."""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
     intents = db.query(Intent).filter_by(session_id=session_id).all()
     return JSONResponse(status_code=200, content={"intents": [intent.to_dict() for intent in intents]})
 
@@ -60,7 +62,7 @@ async def get_intents(request:Request, db: Session = Depends(get_db)):
 async def delete_intent(request:Request, intent_name: str, db: Session = Depends(get_db)):
     """Deletes an intent by its ID."""
 
-    session_id = request.state.session_id
+    session_id = get_hashed_token(request)
 
     # Fetch the intent by ID
     intent = db.query(Intent).filter(Intent.name == intent_name, Intent.session_id==session_id).first()

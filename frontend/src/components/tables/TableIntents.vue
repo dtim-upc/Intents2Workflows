@@ -89,8 +89,9 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useIntentsStore} from "src/stores/intentsStore.js";
+import { useDdmStore } from 'src/stores/ddmStore';
 import {useWorkflowsStore} from "src/stores/workflowsStore.js";
 import {useRouter} from "vue-router";
 import ConfirmDialog from "src/components/utils/ConfirmDialog.vue";
@@ -102,6 +103,7 @@ import FullScreenToggle from "./TableUtils/FullScreenToggle.vue";
 
 const intentsStore = useIntentsStore()
 const workflowsStore = useWorkflowsStore()
+const ddmStore = useDdmStore()
 const router = useRouter()
 
 const visualizedPlan = ref(null)
@@ -138,8 +140,21 @@ const columns = [
   {name: 'actions', label: 'Actions', align: 'center', field: 'actions', sortable: false,},
 ];
 
+watch(
+  () => ddmStore.isLogged,
+  async (loggedIn) => {
+    if (loggedIn) {
+      await intentsStore.getAllIntents()
+    }
+  },
+  { immediate: false } // don’t run until login changes
+)
+
 onMounted(async() => {
-  await intentsStore.getAllIntents()
+  if (ddmStore.isLogged) {
+        await intentsStore.getAllIntents()
+
+  }
 })
 
 const visualizeWorkflow = (visualRepresentation) => {

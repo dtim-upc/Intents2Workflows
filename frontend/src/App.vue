@@ -1,11 +1,10 @@
 <template>
+  <DDMLogin />
   <router-view/>
 </template>
 
-<script>
-import {defineComponent} from 'vue'
+<script setup>
+import DDMLogin from 'components/utils/DDMLogin.vue'
 
-export default defineComponent({
-  name: 'App'
-})
+
 </script>

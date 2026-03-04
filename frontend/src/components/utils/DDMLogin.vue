@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-dialog v-model="showDialog" @hide="onDialogClose">
+    <q-dialog :model-value="ddmStore.showLoginDialog" persistent> <!--@hide="onDialogClose"-->
       <q-card 
         class="q-pa-lg rounded-borders border shadow-2 custom-card-padding card-width">
 
@@ -77,29 +77,6 @@
   import { ref, watch, onMounted } from 'vue';
   import { useDdmStore } from 'src/stores/ddmStore';
 
-    const showDialog = ref(false); // Local dialog visibility state
-
-    // Prop to accept the v-model
-    const props = defineProps({
-    modelValue: {
-        type: Boolean,
-        default: false,
-    },
-    });
-
-    // Emit updates to parent when visibility changes
-    const emit = defineEmits(['update:modelValue']);
-
-    // Watch modelValue for changes from parent
-    watch(() => props.modelValue, (newValue) => {
-    showDialog.value = newValue;
-    });
-
-  // When the dialog is closed, emit an update to parent
-  const onDialogClose = () => {
-    showDialog.value = false;
-    emit('update:modelValue', false); // Close the dialog when it's hidden
-  };
   const ddmStore = useDdmStore();
 
   const username = ref('');
@@ -113,10 +90,7 @@
       // Perform login
       await ddmStore.login(username.value, password.value);
 
-      if (ddmStore.token) {
-        // Close the dialog after a successful login
-        showDialog.value = false
-      } else {
+      if (!ddmStore.token) {
         console.error('Login failed');
         // Handle login failure (e.g., show error message)
       }
@@ -125,14 +99,6 @@
     }
   };
 
-  // On mount, check if the dialog is to be shown
-  /*onMounted(() => {
-    if (ddmStore.token) {
-      showDialog.value = false;  // Hide dialog if already logged in
-    } else {
-      showDialog.value = true;  // Show dialog if not logged in
-    }
-  });*/
 </script>
 
 
