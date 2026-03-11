@@ -121,7 +121,7 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
     if len(unsatisfied_shapes) > 0 and depth >= MAX_PLAN_LENGTH:
         if log:
             tqdm.write('MAX_DEPTH achieved')
-        return None
+        return None, -1
 
     available_transformations = { shape: [] 
                                     for shape in unsatisfied_shapes}
@@ -175,21 +175,36 @@ def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, pla
         return elms, total_comb
 
 
-import time   
+import time
+
+#TODO refactor this function. hasapplier is checked twice
+def sort_combination(ontology, component_combination):
+    sorted_cc = []
+    for cc in component_combination:
+        applier = ontology_queries.get_applier(ontology, cc)
+
+        if applier is None:
+            sorted_cc.insert(0, cc)
+        else:
+            sorted_cc.append(cc)
+    return sorted_cc 
+
 
 def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], reader_component:URIRef, writer_component:URIRef):
     logical_plan = {}
     applier_list = []
-    component_list = list(component_combination)
+    component_list = sort_combination(ontology, component_combination)#list(component_combination)
     last_not_applier = component_list[0] if len(component_list) > 0 else None
+
+    print("CC", component_combination, component_list, reader_component, writer_component)
 
     logical_plan[reader_component] = [component_list[0]]
 
     for i, component in enumerate(component_list):
         dep = []
 
-        if (i+1) < len(component_combination):
-            next = component_combination[i+1]
+        if (i+1) < len(component_list):
+            next = component_list[i+1]
             dep.append(next)
 
         applier = ontology_queries.get_applier(ontology, component)
@@ -216,7 +231,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
     logical_plan[writer_component] = []
 
     return logical_plan
-
+ 
 
 def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Graph, data_graph:Graph, pot_impls, log: bool = False) -> Dict[str,Dict[URIRef,List[URIRef]]]:
     t = time.time()

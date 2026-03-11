@@ -8,13 +8,12 @@
     <!-- Folder Upload Button -->
     <q-btn label="Upload Folder" @click="triggerFolderInput" color="primary" style="margin-left: 20px;"/>
 
-    <q-btn label="Import from DDM" @click="triggerDDM" color="primary" icon="cloud_download" style="margin-left: 20px;"/>
+    <q-btn class="gradient-btn" label="Import from DDM" @click="triggerDDM" :icon="'img:' + xpIcon" style="margin-left: 20px;"/>
 
     <!-- File Input (Hidden, triggered by button) -->
     <input ref="fileInput" type="file" accept=".csv, .parquet, .zip, .npz, .las" style="display: none;" @change="handleFileUpload" multiple/>
     <input ref="folderInput" type="file" accept="*" style="display: none;" @change="handleFileUpload"  webkitdirectory = "true" directory/>
-
-
+  
   </q-page>
 </template>
 
@@ -26,12 +25,14 @@ import {odinApi} from 'boot/axios';
 import { useNotify } from 'src/use/useNotify.js';
 import {useQuasar} from 'quasar'
 import {useRoute, useRouter} from "vue-router";
+import xpIcon from 'assets/xp.svg'
 
 const router = useRouter()
 const route = useRoute()
 const dataProductsStore = useDataProductsStore()
 const notify = useNotify();
 const $q = useQuasar()
+//const id = route.query.experimentId
 
 // References
 const fileInput = ref(null);
@@ -95,4 +96,21 @@ const sendFileToBackend = async (file_list) => {
   
   dataProductsStore.getDataProducts()
 };
+
 </script>
+
+<style>
+.gradient-btn {
+  /* Use the global colors for the gradient */
+  --primary-color: #356AB1;
+  --secondary-color: #1FF19F;
+  
+  background: linear-gradient(270deg, var( --secondary-color ) -40%, var( --primary-color ) 100%);
+  color: white;
+  border: none;
+}
+
+.gradient-btn:hover {
+  background: linear-gradient(270deg, var(--secondary-color), var(--primary-color));
+}
+</style>

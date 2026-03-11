@@ -5,7 +5,7 @@ from typing import List
 def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus: URIRef) -> bool:
     conforms, g, report = validate(data_graph, shacl_graph=shacl_graph, validate_shapes=[shape], focus=focus)
     #if not conforms:
-    #    tqdm.write(report)
+    #    print(report)
     return conforms
         
 

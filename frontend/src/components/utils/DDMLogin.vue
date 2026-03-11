@@ -86,7 +86,7 @@
   // Handle Login
   const handleLogin = async () => {
 
-    if (ddmStore.token === '') {
+    if (ddmStore.token === null) {
       // Perform login
       await ddmStore.login(username.value, password.value);
 

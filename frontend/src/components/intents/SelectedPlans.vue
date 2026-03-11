@@ -8,14 +8,14 @@
             <div v-if="intentsStore.selectedPlans.length === 0">
               <h6 style="color: red;">No workflows selected</h6>
             </div>
-              <div v-else class="col-12 col-lg-8 text-left">
+              <div v-else class="col-12 col-lg-8 text-left"  style="width: 100%">
                 <q-list bordered separator>
                   <q-item v-for="(group, index) in intentsStore.selectedPlans" :key="index" class="q-my-sm">
-                    <q-item-section> 
+                    <q-item-section class="col-2"> 
                       <text-body1 style="font-size: 17px;"> {{ group.id }} </text-body1>
                     </q-item-section>
-                    <div >
-                      <q-expansion-item label="Individual plans" style="font-size: 17px; background-color: rgb(243, 241, 241);">
+                    <div class="col">
+                      <q-expansion-item label="Individual plans" style="font-size: 17px; background-color: rgb(243, 241, 241)">
                         <q-list bordered separator>
                           <q-item v-for="(plan, indexPlan) in group.plans" :key="indexPlan" class="q-my-sm">
                           <q-item-section> {{ plan.id }}</q-item-section>
@@ -48,8 +48,8 @@
             <div class="col-12">
               <q-btn label="Download all RDF representations" @click="intentsStore.downloadAllRDF()"/>
               <q-btn label="Download all KNIME representations" @click="intentsStore.downloadAllKNIME()" class="q-ml-sm"/>
-              <q-btn label="Download Intent to DSL" color="purple" class="q-ml-sm"@click="intentsStore.downloadAllDSL()"/>
-              <q-btn label="Export to Execution Engine" color="purple" class="q-ml-sm"@click="exportToFS()"/>
+              <q-btn label="Download Intent to DSL" class="q-ml-sm"@click="intentsStore.downloadAllDSL()"/>
+              <q-btn label="Export to Execution Engine" class="gradient-btn q-ml-sm" :icon="'img:' + xpIcon" @click="exportToFS()"/>
             </div>
         </div>
     </q-page>
@@ -80,6 +80,8 @@ import {intentsApi} from 'boot/axios';
 import FileSaver from 'file-saver';
 import { useDdmStore } from 'src/stores/ddmStore';
 import DDMLogin from "src/components/utils/DDMLogin.vue";
+import xpIcon from 'assets/xp.svg'
+
 
 const ddmStore = useDdmStore();
 const intentsStore = useIntentsStore()
@@ -152,3 +154,19 @@ const exportToFS = async () => {
 
 
 </script>
+
+<style>
+.gradient-btn {
+  /* Use the global colors for the gradient */
+  --primary-color: #356AB1;
+  --secondary-color: #1FF19F;
+  
+  background: linear-gradient(270deg, var( --secondary-color ) -40%, var( --primary-color ) 100%);
+  color: white;
+  border: none;
+}
+
+.gradient-btn:hover {
+  background: linear-gradient(270deg, var(--secondary-color), var(--primary-color));
+}
+</style>
