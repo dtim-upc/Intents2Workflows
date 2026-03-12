@@ -193,10 +193,10 @@ def sort_combination(ontology, component_combination):
 def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], reader_component:URIRef, writer_component:URIRef):
     logical_plan = {}
     applier_list = []
-    component_list = sort_combination(ontology, component_combination)#list(component_combination)
+    component_list = list(component_combination) #sort_combination(ontology, component_combination)
     last_not_applier = component_list[0] if len(component_list) > 0 else None
 
-    print("CC", component_combination, component_list, reader_component, writer_component)
+    #print("CC", component_combination, component_list, reader_component, writer_component)
 
     logical_plan[reader_component] = [component_list[0]]
 
