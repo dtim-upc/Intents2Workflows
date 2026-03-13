@@ -1,7 +1,7 @@
 import io
 from typing import Tuple
 from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from rdflib import RDF, Graph, Namespace, URIRef
 from sqlalchemy.orm import Session
@@ -182,7 +182,7 @@ async def upload_file(request: Request, files: list[UploadFile] = File(...), ten
         file = tensor_preprocesser.get_npz(path)
         name, size, upload_time, path = process_file(UploadFile(file, size=len(file.getbuffer()), filename=name+".npz"), session_id)
 
-        dp = create_data_product(db, name, size, upload_time, path, original_path, session_id)
+        dp = create_data_product(db, session_id, name, size, upload_time, path, original_path)
 
         return JSONResponse(status_code=200, content={
         "message": "File uploaded successfully",
