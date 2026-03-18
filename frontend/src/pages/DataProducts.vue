@@ -1,5 +1,11 @@
 <template>
   <q-page>
+    <q-toolbar v-if="ddmStore.experiment">
+      <q-toolbar-title class="text-center q-table__card" style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 600;">
+        {{ ddmStore.experiment}}
+      </q-toolbar-title>
+    </q-toolbar>
+    
     <TableDataProducts/>
 
     <!-- File Upload Button -->
@@ -18,9 +24,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import TableDataProducts from 'components/tables/TableDataProducts.vue';
 import { useDataProductsStore } from 'src/stores/dataProductsStore';
+import { useDdmStore } from 'src/stores/ddmStore';
 import {odinApi} from 'boot/axios';
 import { useNotify } from 'src/use/useNotify.js';
 import {useQuasar} from 'quasar'
@@ -32,7 +39,9 @@ const route = useRoute()
 const dataProductsStore = useDataProductsStore()
 const notify = useNotify();
 const $q = useQuasar()
-//const id = route.query.experimentId
+
+const ddmStore = useDdmStore()
+
 
 // References
 const fileInput = ref(null);
@@ -96,6 +105,14 @@ const sendFileToBackend = async (file_list) => {
   
   dataProductsStore.getDataProducts()
 };
+
+onMounted(async() => {
+  const experimentId = route.query.experimentId
+  console.log("ExperimentID", experimentId)
+  if (experimentId) {
+    ddmStore.getExperimentName(experimentId)
+  }
+})
 
 </script>
 

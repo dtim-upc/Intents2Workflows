@@ -10,7 +10,8 @@ export const useDdmStore = defineStore('ddm', {
   state: () => ({
     user: LocalStorage.getItem('user'),
     token: LocalStorage.getItem('token'),
-    userid: LocalStorage.getItem('userid')
+    userid: LocalStorage.getItem('userid'),
+    experiment: null
   }),
 
   getters: {
@@ -35,6 +36,15 @@ export const useDdmStore = defineStore('ddm', {
       }
 
     },
+    async getExperimentName(experimentId) {
+      try {
+        const response = await dataProductAPI.getExperimentName(experimentId, this.token)
+        this.experiment = response.data.experimentName
+      }catch (error) {
+        notify.negative("Error getting experiment name");
+        console.error("Error:", error);
+      }
+    }
   }
 });
 

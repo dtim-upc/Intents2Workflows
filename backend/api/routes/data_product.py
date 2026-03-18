@@ -1,6 +1,6 @@
 import io
 from typing import Tuple
-from fastapi import APIRouter, Form, Response, UploadFile, File, Depends, HTTPException, Request
+from fastapi import APIRouter, Form, Header, Response, UploadFile, File, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from rdflib import RDF, Graph, Namespace, URIRef
@@ -369,3 +369,33 @@ async def  get_ddm_token(data: LoginRequest):
     token = ddm.login()
 
     return {"token": token, 'id': ddm.userid()}
+
+
+
+@router.get("/experiments/{experiment_id}")
+async def get_experiment_id(experiment_id:str, X_Token_XXP: str = Header(None)):
+    
+    headers = {
+        'Authorization':f"{X_Token_XXP}"
+    }
+
+    try:
+        # Making the GET request
+        print(f"https://portal.extremexp-icom.intracom-telecom.com/portal-api/experiments/{experiment_id}")
+        response = requests.get(f"https://portal.extremexp-icom.intracom-telecom.com/portal-api/experiments/{experiment_id}", headers=headers)
+        
+    except Exception as e:
+        print("Portal error:", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+
+    # Check the response
+    if response.status_code == 200:
+        response_json = response.json()
+        return JSONResponse(status_code=200, content={"experimentName": response_json["name"]})
+    elif response.status_code == 401:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    else:
+        print("ERROR getting experiment name:",response.text)
+        raise HTTPException(status_code=500, detail="DDM server error")

@@ -41,6 +41,7 @@
 import {onMounted, computed, watch, ref} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
+import { useDdmStore } from 'src/stores/ddmStore';
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from 'quasar'
 
@@ -50,6 +51,7 @@ const $q = useQuasar()
 
 const intentsStore = useIntentsStore()
 const dataProductsStore = useDataProductsStore()
+const ddmStore = useDdmStore()
 
 const lockIntentName = ref(false)
 
@@ -120,11 +122,20 @@ const getAttributes = async() => {
 
 onMounted(async() => {
   const url = new URL(window.location.href)
+  console.log(window.location.href)
   const param1 = url.searchParams.get('experimentName')
+
+  if (ddmStore.experiment) {
+    intentName.value = ddmStore.experiment
+    lockIntentName.value = true
+  }
+
   if (param1) {
+    console.log("param1 yes", param1)
     intentsStore.intentName = param1
     lockIntentName.value = true
   }
+
 
   await dataProductsStore.getDataProducts()
   intentsStore.getProblems()

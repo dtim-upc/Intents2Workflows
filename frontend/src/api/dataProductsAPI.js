@@ -27,5 +27,11 @@ export default {
   },
   getDDMToken(data) {
     return odinApi.post('/ddm',data)
+  },
+  getExperimentName(experimentId, token) {
+    return odinApi.get('/experiments/'+experimentId, {
+  headers: {
+    "X-Token-XXP": `Bearer ${token}`
+  }}) 
   }
 }
