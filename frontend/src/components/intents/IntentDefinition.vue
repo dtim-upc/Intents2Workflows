@@ -5,7 +5,7 @@
                 <h4> Intent Definition </h4>
             </div>
             <div class="col-6" style="padding-top: 10px; padding-bottom: 10px;">
-                <q-input label="Intent name" outlined v-model="intentName" class="q-mb-sm"
+                <q-input label="Intent name" outlined v-model="intentName" :disable="lockIntentName" class="q-mb-sm"
                     :rules="[ val => val && val.length > 0 || 'Insert a name']"/>
 
                 <q-select label="Data product" outlined v-model="selectedDataProdutName" :options="dataProductsStore.dataProducts.map(dp => dp.name)" class="q-mb-sm"
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import {onMounted, computed, watch} from 'vue'
+import {onMounted, computed, watch, ref} from 'vue'
 import {useIntentsStore} from 'stores/intentsStore.js'
 import {useDataProductsStore} from 'stores/dataProductsStore.js'
 import {useRoute, useRouter} from "vue-router";
@@ -50,6 +50,8 @@ const $q = useQuasar()
 
 const intentsStore = useIntentsStore()
 const dataProductsStore = useDataProductsStore()
+
+const lockIntentName = ref(false)
 
 const intentName = computed({
   get: () => intentsStore.intentName,
@@ -117,6 +119,13 @@ const getAttributes = async() => {
 }
 
 onMounted(async() => {
+  const url = new URL(window.location.href)
+  const param1 = url.searchParams.get('experimentName')
+  if (param1) {
+    intentsStore.intentName = param1
+    lockIntentName.value = true
+  }
+
   await dataProductsStore.getDataProducts()
   intentsStore.getProblems()
   getAttributes()

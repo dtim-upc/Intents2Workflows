@@ -21,6 +21,7 @@ class OptionExplorerClient:
     mappings = {
         'RNN': cb.NN,
         'CNN': cb.NN,
+        'NN' : cb.NN,
         'Gradient Boosting': cb.XGBoost,
         'SVM': cb.SVM,
         "Random Forest": cb.DecisionTree
