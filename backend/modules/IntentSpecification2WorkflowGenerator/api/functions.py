@@ -18,7 +18,7 @@ def get_custom_ontology(path):
     graph = get_graph_xp()
     ontologies = [
         r'ontologies/tbox.ttl',
-        r'ontologies/cbox.ttl',
+        r'ontologies/cbox_deep.ttl',
         r'ontologies/abox.ttl',
         path
     ]
@@ -32,7 +32,7 @@ def get_custom_ontology_only_problems():
     graph = get_graph_xp()
     ontologies = [
         r'ontologies/tbox.ttl',
-        r'ontologies/cbox.ttl',
+        r'ontologies/cbox_deep.ttl',
         r'ontologies/abox.ttl',
     ]
     for o in ontologies:
@@ -80,12 +80,13 @@ def connect_algorithms(algos_list: List[URIRef]):
 
 
 
-def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph) -> Tuple[
+def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph, data: Graph) -> Tuple[
     Dict[Node, Dict[Node, List[Node]]], Dict[Node, List[Node]]]:
 
     intent_iri = get_intent_iri(intent)
     task = get_intent_task(intent, intent_iri)
-    scored_algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, ordered_algorithms=True, log=True)
+
+    scored_algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data, ordered_algorithms=True, log=True)
     algs_shapes = {}
     alg_plans = {alg: [] for alg in scored_algs.keys()}
     available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation

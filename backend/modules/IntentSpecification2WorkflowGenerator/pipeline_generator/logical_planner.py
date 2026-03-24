@@ -24,9 +24,12 @@ def get_writer_component(tensor_dataset:bool): #TODO dynamically obtain those co
     else:
         return cb["component-data_writer_component"]
 
+def get_partition_component():
+    return cb["component-data_partition_component"]
+
 def get_io_shapes(ontology: Graph,  ios: List[Tuple[URIRef,List[URIRef]]]):
     for i, (io_spec, io_shapes) in enumerate(ios):
-        for io_shape in io_shapes:
+        #for io_shape in io_shapes:
                     return io_shapes
         
 def find_implementations_to_satisfy_shape_constrained(ontology: Graph, shape_graph:Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
@@ -96,8 +99,17 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
             temporal_graph.remove(triple[:-1])
         return valid
 
+#TODO refactor this.
+# Sort shapes to avoid reevalutation. Generally, no component will generate missing values if they are not present in the input. Also, most of the transformers require not missings,
+# so it is wise to evaluate this shape first
+def sort_shapes(shape_list:List[URIRef]):
+    if cb.noMissingValuesPropertyShapeFeatureShape in shape_list:
+        shape_list.remove(cb.noMissingValuesPropertyShapeFeatureShape)
+        shape_list.insert(0, cb.noMissingValuesPropertyShapeFeatureShape)
+    return shape_list
 
-def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level, log: bool = False, depth = 0):
+def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level, log: bool = False, depth = 0, 
+                                    inherited_satisfied_shapes: List[URIRef] = []):
 
     if log:
         tqdm.write("Recursive: " + str(implementation))
@@ -112,8 +124,8 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
     if log:
         tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
 
-    unsatisfied_shapes = [shape for shape in shapes_to_satisfy if
-                            not shape_queries.satisfies_shape(data_graph, ontology, shape, dataset)]
+    unsatisfied_shapes = sort_shapes([shape for shape in shapes_to_satisfy if
+                            not shape_queries.satisfies_shape(data_graph, ontology, shape, dataset) and shape not in inherited_satisfied_shapes])
     
     if log:
         tqdm.write(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
@@ -133,14 +145,17 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
             if log:
                 tqdm.write(f'Suitable implementation for {shape}: {imp}')
 
-            transformations, num_comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, depth=depth+1)
+            transformations, num_comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, depth=depth+1, 
+                                                                        inherited_satisfied_shapes=inherited_satisfied_shapes)
             if transformations is not None:
                 available_transformations[shape].extend(transformations)
                 num_combs_impl += num_comb
+        inherited_satisfied_shapes.append(shape)
+
 
         if len(available_transformations[shape]) == 0:
             if log:
-                tqdm.write("implementations not found")
+                tqdm.write(f"implementations not found for shape {shape.fragment}")
             return None, 0
         total_num_comb = total_num_comb * num_combs_impl
         
@@ -177,28 +192,35 @@ def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, pla
 
 import time
 
-#TODO refactor this function. hasapplier is checked twice
-def sort_combination(ontology, component_combination):
-    sorted_cc = []
-    for cc in component_combination:
-        applier = ontology_queries.get_applier(ontology, cc)
+# #TODO refactor this function. hasapplier is checked twice
+# def sort_combination(ontology, component_combination):
+#     sorted_cc = []
+#     for cc in component_combination:
+#         applier = ontology_queries.get_applier(ontology, cc)
 
-        if applier is None:
-            sorted_cc.insert(0, cc)
-        else:
-            sorted_cc.append(cc)
-    return sorted_cc 
+#         if applier is None:
+#             sorted_cc.insert(0, cc)
+#         else:
+#             sorted_cc.append(cc)
+#     return sorted_cc 
 
 
-def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], reader_component:URIRef, writer_component:URIRef):
+def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], requires_partition:bool, reader_component:URIRef, writer_component:URIRef, partition_component:URIRef):
     logical_plan = {}
     applier_list = []
     component_list = list(component_combination) #sort_combination(ontology, component_combination)
-    last_not_applier = component_list[0] if len(component_list) > 0 else None
 
     #print("CC", component_combination, component_list, reader_component, writer_component)
+    #print("Partition required", requires_partition)
 
-    logical_plan[reader_component] = [component_list[0]]
+    if requires_partition:
+        logical_plan[reader_component] = [partition_component]
+        logical_plan[partition_component] = [component_list[0]]
+        last_not_applier = partition_component
+    
+    else:
+        logical_plan[reader_component] = [component_list[0]]
+        last_not_applier = None#component_list[0] if len(component_list) > 0 else None #Does not matter
 
     for i, component in enumerate(component_list):
         dep = []
@@ -209,7 +231,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
 
         applier = ontology_queries.get_applier(ontology, component)
 
-        if applier is not None:
+        if requires_partition and applier is not None:
             dep.append(applier)
             applier_list.append(applier)
         else:
@@ -224,7 +246,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
         else:
             logical_plan[a] = []
     
-    if not last_not_applier is None:
+    if not last_not_applier is None and len(applier_list) > 0:
         logical_plan[last_not_applier].append(applier_list[0])
 
     logical_plan[list(logical_plan.keys())[-1]].append(writer_component)
@@ -241,6 +263,8 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     dataset_format = data_queries.get_dataset_format(data_graph, dataset)
     reader_component = get_reader_component(is_tensor, dataset_format)
     writer_component = get_writer_component(is_tensor)
+    partition_component = get_partition_component()
+    requires_partition = task in  [cb.SupervisedLearning]
 
     component_threshold = intent_queries.get_component_threshold(intent_graph, intent_iri)
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_iri)
@@ -253,7 +277,7 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     options = []
     combs = 0
     for imp in pot_impls:
-        result, comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log)
+        result, comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, inherited_satisfied_shapes=[])
         if not result is None and result != []:
             options.append(result)
             combs += comb
@@ -275,7 +299,7 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
             for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1, leave=False):
 
                 if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
-                    logical_plan = component_comb_to_logical_plan(ontology, component_combination, reader_component, writer_component)
+                    logical_plan = component_comb_to_logical_plan(ontology, component_combination, requires_partition, reader_component, writer_component, partition_component)
                     main_component = URIRef(component_combination[-1]).fragment
 
                     if main_component not in counter:

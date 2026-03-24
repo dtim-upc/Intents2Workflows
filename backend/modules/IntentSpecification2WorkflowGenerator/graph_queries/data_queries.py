@@ -51,27 +51,6 @@ def get_dataset_feature_types(data_graph: Graph, dataset: URIRef) -> Set[Type]:
     }
     return set([mapping[x['type']] for x in columns])
 
-def get_datset_label_name(data_graph: Graph, dataset:URIRef) -> str:
-    label_query = f"""
-        PREFIX rdfs: <{RDFS}>
-        PREFIX dmop: <{dmop}>
-
-        SELECT ?label
-        WHERE {{
-            {dataset.n3()} dmop:hasColumn ?column .
-            ?column dmop:isLabel true ;
-                    dmop:hasColumnName ?label .
-
-        }}
-    """
-    
-    results = data_graph.query(label_query).bindings
-    
-    if results is not None and len(results) > 0:
-        return results[0]['label']
-    
-    return ""
-
 
 def get_dataset_numeric_columns(data_graph: Graph, dataset:URIRef) -> List[str]:
 
@@ -93,7 +72,7 @@ def get_dataset_numeric_columns(data_graph: Graph, dataset:URIRef) -> List[str]:
     return [x['label'].value for x in columns]
 
 
-def get_dataset_categorical_columns(data_graph: Graph, dataset: Graph) -> List[str]:
+def get_dataset_categorical_columns(data_graph: Graph, dataset: URIRef) -> List[str]:
     categ_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>
@@ -111,7 +90,7 @@ def get_dataset_categorical_columns(data_graph: Graph, dataset: Graph) -> List[s
 
     return [x['label'].value for x in columns]
 
-def get_dataset_target_column(data_graph: Graph, dataset: Graph) -> str:
+def get_dataset_target_column(data_graph: Graph, dataset: URIRef) -> str:
     label_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>
@@ -128,10 +107,30 @@ def get_dataset_target_column(data_graph: Graph, dataset: Graph) -> str:
     if len(columns) == 1:
         return columns[0]['label'].value 
     else:
-        print("WARNING: unusal target column resoinse:", list(columns))
+        print("WARNING: unusal target column response:", list(columns))
+        return ""
+    
+def get_dataset_target_type(data_graph: Graph, dataset: URIRef) -> str:
+    label_query = f"""
+        PREFIX rdfs: <{RDFS}>
+        PREFIX dmop: <{dmop}>
+
+        SELECT ?type
+        WHERE {{
+            {dataset.n3()} dmop:hasColumn ?column .
+            ?column dmop:isLabel true ;
+                    dmop:hasDataPrimitiveTypeColumn ?type .
+        }}
+    """
+    columns = data_graph.query(label_query).bindings
+
+    if len(columns) == 1:
+        return columns[0]['type'].fragment
+    else:
+        print("WARNING: unusal target column response:", list(columns))
         return ""
 
-def get_dataset_columns(data_graph:Graph, dataset:Graph)-> List[str]:
+def get_dataset_columns(data_graph:Graph, dataset:URIRef)-> List[str]:
     query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>

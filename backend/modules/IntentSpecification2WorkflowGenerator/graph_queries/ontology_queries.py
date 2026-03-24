@@ -83,9 +83,11 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
             }}
         }}
     """
+    #print(implementation_query)
     result = ontology.query(implementation_query).bindings
     implementations = [x['implementation'] for x in result]
-
+    #print(implementations) 
+    #assert 3 == 2  
     return implementations
 
 

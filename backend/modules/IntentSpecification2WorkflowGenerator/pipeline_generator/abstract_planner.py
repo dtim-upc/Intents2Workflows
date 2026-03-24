@@ -2,7 +2,7 @@ from rdflib import Graph, URIRef
 from typing import List
 from tqdm import tqdm
 
-from graph_queries import intent_queries, ontology_queries, shape_queries
+from graph_queries import intent_queries, ontology_queries, shape_queries, data_queries
 from common import *
 
 from .utils import option_explorer
@@ -20,10 +20,18 @@ def get_potential_implementations_constrained(ontology:Graph, shape_graph:Graph,
     pot_impl_unconstr = ontology_queries.get_potential_implementations(ontology, algorithm, exclude_appliers)
     return shape_queries.reinforce_constraint(shape_graph, ontology, ab.ImplementationConstraint, pot_impl_unconstr)
 
-def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_graph, intent_graph: Graph, ordered_algorithms=False, log: bool = False):
+def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_graph, intent_graph: Graph, data_graph:Graph, ordered_algorithms=False, log: bool = False):
     
     intent_iri = intent_queries.get_intent_iri(intent_graph=intent_graph)
-    dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri) 
+    dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri)
+
+    if task == cb.SupervisedLearning:
+        target_type = data_queries.get_dataset_target_type(data_graph, dataset)
+        print("Target_type",target_type)
+        if target_type == "Categorical":
+            task = cb.Classification
+        else:
+            task = cb.Regression
     
     if log:
         tqdm.write(f'Intent: {intent_iri.fragment}')

@@ -109,6 +109,8 @@ def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
 
         column_type = get_column_type(col_type, dataset[col])
         categorical = is_categorical(col_type, dataset[col])
+        if categorical:
+            column_type = dmop.Categorical
         unique = is_unique(col_type, dataset[col])
         nulls = has_nulls(dataset[col])
         position = dataset.columns.get_loc(col)

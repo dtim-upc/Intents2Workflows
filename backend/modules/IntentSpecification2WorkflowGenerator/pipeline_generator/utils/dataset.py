@@ -19,7 +19,7 @@ class Dataset:
     @property
     def label(self):
         if self._label is None:
-            self._label = data_queries.get_datset_label_name(self.data_graph, self.dataset)
+            self._label = data_queries.get_dataset_target_column(self.data_graph, self.dataset)
         return self._label
     
     @property

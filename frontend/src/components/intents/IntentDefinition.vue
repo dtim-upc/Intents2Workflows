@@ -24,7 +24,7 @@
                   <q-btn @click="predictIntentType()" label="Infer intent" color="pink" class="q-mb-sm" style="font-size: 10px;"/>
                 </div>
 
-                <q-select v-if="selectedDataProdutName && problem ==='Classification'" label="Target variable" outlined v-model="target" :options="attributes" class="q-mb-sm"
+                <q-select v-if="selectedDataProdutName && problem ==='SupervisedLearning'" label="Target variable" outlined v-model="target" :options="attributes" class="q-mb-sm"
                     :rules="[ val => val && val.length > 0 || 'Select a target variable']"/>
                 
             </div>

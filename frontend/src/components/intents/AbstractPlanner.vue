@@ -156,7 +156,7 @@ const handleSubmit = async() => {
   $q.loading.show({message: 'Running abstract planner...'}) // Finally, run the planner
   data = {
     'intent_name': intentName.value,
-    'dataset': dataProductsStore.selectedDataProductURI,
+    'dataset': dataProductsStore.selectedDataProductAnnotations,
     'problem': intentsStore.problems[problem.value],
     'experiment_constraints': [
         {'PU': "GPU"},

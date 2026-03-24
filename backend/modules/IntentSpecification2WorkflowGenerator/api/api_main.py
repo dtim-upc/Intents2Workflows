@@ -17,7 +17,7 @@ from pipeline_translator.knime import knime_pipeline_translator
 from pipeline_translator.python import python_pipeline_translator
 from pipeline_translator.xxp import xxp_pipeline_traslator
 from pipeline_generator import logical_planner, workflow_builder
-from graph_queries import ontology_queries, intent_queries
+from graph_queries import ontology_queries, intent_queries, data_queries
 from api.xxp_fs_api import FileSystemClient
 
 import requests
@@ -35,7 +35,8 @@ print("Ontology loaded!")
 
 @app.get('/problems')
 def get_problems():
-    problems = {n.fragment: n for n in ontology.subjects(RDF.type, tb.Task)}
+    #problems = {n.fragment: n for n in ontology.subjects(RDF.type, tb.Task)}
+    problems = {'SupervisedLearning': cb.SupervisedLearning, 'UnsupervisedLearning': cb.Clustering}
     return problems
 
 @app.post('/abstract_planner')
@@ -56,9 +57,13 @@ def run_abstract_planner():
     #ontology = get_custom_ontology_only_problems()#Graph().parse(data=request.json.get('ontology', ''), format='turtle')
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
+    data_graph = get_graph_with_tbox(dataset)
+
+    data_graph.serialize("./datagraph.ttl", format="turtle")
+    dataset_name = data_queries.get_dataset_uri(data_graph)
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))
-    intent_graph.add((ab.term(intent_name), tb.overData, URIRef(dataset)))
+    intent_graph.add((ab.term(intent_name), tb.overData, dataset_name))
     intent_graph.add((URIRef(task), tb.tackles, ab.term(intent_name)))
     if algorithm != "":
         intent_graph.add((ab.term(intent_name), tb.specifies, cb.term(algorithm)))
@@ -105,7 +110,7 @@ def run_abstract_planner():
     intent = intent_graph
     #intent.serialize('intent.ttl', format="turtle")
 
-    abstract_plans, algorithm_implementations, scores= abstract_planner(ontology, shape_graph, intent)
+    abstract_plans, algorithm_implementations, scores= abstract_planner(ontology, shape_graph, intent, data_graph)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
         "algorithm_implementations": algorithm_implementations, "scores":scores}
@@ -126,12 +131,12 @@ def run_logical_planner():
     intent_json = request.json.get('intent_graph', '')
     dataset = request.json.get('dataset', '')
 
-    data_graph = Graph().parse(data = dataset, format='turtle')
+    data_graph = get_graph_with_tbox(dataset)
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent = Graph().parse(data=intent_json, format='turtle')
-    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent) #TODO is this really needed?
+    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data_graph) #TODO is this really needed?
     logical_plans = logical_planner.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
 
     return logical_plans
