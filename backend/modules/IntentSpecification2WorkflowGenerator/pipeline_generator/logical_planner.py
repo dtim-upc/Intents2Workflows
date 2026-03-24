@@ -103,20 +103,31 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
 # Sort shapes to avoid reevalutation. Generally, no component will generate missing values if they are not present in the input. Also, most of the transformers require not missings,
 # so it is wise to evaluate this shape first
 def sort_shapes(shape_list:List[URIRef]):
+
+    def to_the_top(list:list, element):
+        list.remove(element)
+        list.insert(0, element)
+    if cb.isNumericDatatypePropertyShapeFeatureShape in shape_list:
+        to_the_top(shape_list, cb.isNumericDatatypePropertyShapeFeatureShape)
     if cb.noMissingValuesPropertyShapeFeatureShape in shape_list:
-        shape_list.remove(cb.noMissingValuesPropertyShapeFeatureShape)
-        shape_list.insert(0, cb.noMissingValuesPropertyShapeFeatureShape)
+        to_the_top(shape_list, cb.noMissingValuesPropertyShapeFeatureShape)
+    if cb.isCategoricalOrNumericPropertyShapeFeatureShape in shape_list:
+        to_the_top(shape_list, cb.isCategoricalOrNumericPropertyShapeFeatureShape)
+
     return shape_list
 
 def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level, log: bool = False, depth = 0, 
-                                    inherited_satisfied_shapes: List[URIRef] = []):
+                                    inherited_satisfied_shapes: List[URIRef] = [], loop_shapes = []):
 
     if log:
         tqdm.write("Recursive: " + str(implementation))
+        tqdm.write(f"Inherited {inherited_satisfied_shapes}")
     
     inputs = ontology_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
 
     shapes_to_satisfy = get_io_shapes(ontology, inputs)
+    already_satisfied_shapes = [] + inherited_satisfied_shapes
+    previous_shapes = [] + loop_shapes
 
     if shapes_to_satisfy is None:
         shapes_to_satisfy = {}
@@ -124,8 +135,15 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
     if log:
         tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
 
-    unsatisfied_shapes = sort_shapes([shape for shape in shapes_to_satisfy if
-                            not shape_queries.satisfies_shape(data_graph, ontology, shape, dataset) and shape not in inherited_satisfied_shapes])
+    unsatisfied_shapes = []
+    for shape in shapes_to_satisfy:
+        if not shape_queries.satisfies_shape(data_graph, ontology, shape, dataset) and shape not in already_satisfied_shapes:
+            unsatisfied_shapes.append(shape)
+        if shape in previous_shapes:
+            tqdm.write(f"Preventing a loop with shape Shape {shape}")
+            return None, -1
+        
+
     
     if log:
         tqdm.write(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
@@ -140,24 +158,26 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
     total_num_comb = 1
     for shape in unsatisfied_shapes:
         num_combs_impl = 0
+        previous_shapes.append(shape)
         for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
 
             if log:
                 tqdm.write(f'Suitable implementation for {shape}: {imp}')
 
             transformations, num_comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, depth=depth+1, 
-                                                                        inherited_satisfied_shapes=inherited_satisfied_shapes)
+                                                                        inherited_satisfied_shapes=already_satisfied_shapes, loop_shapes=previous_shapes)
             if transformations is not None:
                 available_transformations[shape].extend(transformations)
                 num_combs_impl += num_comb
-        inherited_satisfied_shapes.append(shape)
-
 
         if len(available_transformations[shape]) == 0:
             if log:
                 tqdm.write(f"implementations not found for shape {shape.fragment}")
             return None, 0
         total_num_comb = total_num_comb * num_combs_impl
+        already_satisfied_shapes.append(shape)
+        previous_shapes.remove(shape)
+        
         
     if log:
         tqdm.write(f'\tAvailable transformations: ')
@@ -212,14 +232,15 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
 
     #print("CC", component_combination, component_list, reader_component, writer_component)
     #print("Partition required", requires_partition)
+    #input(component_list)
 
     if requires_partition:
         logical_plan[reader_component] = [partition_component]
-        logical_plan[partition_component] = [component_list[0]]
+        logical_plan[partition_component] = [f"{0}-{component_list[0].fragment}"]
         last_not_applier = partition_component
     
     else:
-        logical_plan[reader_component] = [component_list[0]]
+        logical_plan[reader_component] = [f"{0}-{component_list[0].fragment}"]
         last_not_applier = None#component_list[0] if len(component_list) > 0 else None #Does not matter
 
     for i, component in enumerate(component_list):
@@ -227,17 +248,17 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
 
         if (i+1) < len(component_list):
             next = component_list[i+1]
-            dep.append(next)
+            dep.append(f"{i+1}-{next.fragment}")
 
         applier = ontology_queries.get_applier(ontology, component)
 
         if requires_partition and applier is not None:
-            dep.append(applier)
-            applier_list.append(applier)
+            dep.append(f"{i}-{applier.fragment}")
+            applier_list.append(f"{i}-{applier.fragment}")
         else:
-            last_not_applier = component
+            last_not_applier = f"{i}-{component.fragment}"
         
-        logical_plan[component] = dep #Assuming python 3.7+ to guarantee that dict order
+        logical_plan[f"{i}-{component.fragment}"] = dep #Assuming python 3.7+ to guarantee that dict order
 
 
     for i, a in enumerate(applier_list):

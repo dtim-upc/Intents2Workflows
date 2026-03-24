@@ -58,8 +58,6 @@ def run_abstract_planner():
     shape_graph = Graph().parse(data=request.json.get('shape_graph', ''), format='turtle')
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
     data_graph = get_graph_with_tbox(dataset)
-
-    data_graph.serialize("./datagraph.ttl", format="turtle")
     dataset_name = data_queries.get_dataset_uri(data_graph)
 
     intent_graph.add((ab.term(intent_name), RDF.type, tb.Intent))

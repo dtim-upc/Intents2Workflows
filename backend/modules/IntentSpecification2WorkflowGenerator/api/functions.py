@@ -108,7 +108,7 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph, data: G
     for alg in available_algs:
         if len(algs_shapes[alg]) <= 0:
             plans[alg] = connect_algorithms([alg])
-        elif cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
+        elif task == cb.SupervisedLearning: #cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms([cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         elif task == cb.Clustering:
             plans[alg] = connect_algorithms([cb.DataLoading, alg, cb.DataStoring])
