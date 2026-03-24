@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import TableDataProducts from 'components/tables/TableDataProducts.vue';
 import { useDataProductsStore } from 'src/stores/dataProductsStore';
 import { useDdmStore } from 'src/stores/ddmStore';
@@ -106,10 +106,28 @@ const sendFileToBackend = async (file_list) => {
   dataProductsStore.getDataProducts()
 };
 
+function waitForToken() {
+  return new Promise((resolve) => {
+    if (ddmStore.token) return resolve()
+
+    const stop = watch(
+      () => ddmStore.token,
+      (token) => {
+        if (token) {
+          stop()
+          resolve()
+        }
+      }
+    )
+  })
+}
+
 onMounted(async() => {
   const experimentId = route.query.experimentId
   console.log("ExperimentID", experimentId)
+
   if (experimentId) {
+    await waitForToken()
     ddmStore.getExperimentName(experimentId)
   }
 })
