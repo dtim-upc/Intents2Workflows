@@ -367,3 +367,17 @@ def is_shape_targeting_data(ontology:Graph, shape:URIRef):
 
 def is_shape_targeting_model(ontology:Graph, shape:URIRef):
     return is_shape_targeting_node(ontology, shape, tb.Model)
+
+def get_implementation_transformations(ontology:Graph, implementation:URIRef):
+    transf_query = f"""
+        PREFIX tb:<{tb}>
+        SELECT ?transformation
+        WHERE{{
+            {implementation.n3()} tb:has_transformation ?transformation .
+        }}
+    """
+    results = ontology.query(transf_query).bindings
+    transformations = [t['transformation'] for t in results]
+
+    return transformations
+
