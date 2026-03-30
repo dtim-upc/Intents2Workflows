@@ -1,0 +1,27 @@
+{
+    "KernelCenterer": {
+        "inputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:noMissingValuesPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:noMissingValuesPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "TransformerModel"
+        }
+    }
+}

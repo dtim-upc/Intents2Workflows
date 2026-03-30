@@ -1,0 +1,49 @@
+{
+"LinearDiscriminantAnalysis": {
+    "inputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape",
+                "cb:isScaledPropertyShape"
+            ],
+            "label_properties": [
+                "cb:isIntegerDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape",
+                "cb:exactlyOneColumnPropertyShape"
+            ],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [],
+            "label_properties": [
+                "cb:isIntegerDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:exactlyOneColumnPropertyShape"
+            ]
+        },
+        {
+            "feature_properties": [
+                "cb:isContinuousPropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:hasReducedDimensionality"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "ClassificationModel"
+    }
+}
+}

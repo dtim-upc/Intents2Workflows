@@ -1,0 +1,32 @@
+{
+"FeatureUnion": {
+    "inputs": [
+        {
+            "feature_properties": [
+                "cb:isCategoricalOrNumericPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "TransformerModel"
+    }
+}
+}

@@ -1,0 +1,46 @@
+{
+    "PLSRegression": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:hasReducedDimensionality"
+                ]
+            },
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "RegressionModel"
+        }
+    }
+}

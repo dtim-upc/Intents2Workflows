@@ -1,0 +1,37 @@
+{
+    "AdaBoostClassifier": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [
+                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:minTwoClustersPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isCategoricalPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:exactlyOneColumnPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "ClassificationModel"
+        }
+    }
+}

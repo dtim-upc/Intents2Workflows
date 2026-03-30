@@ -1,0 +1,34 @@
+{
+    "LabelEncoder": {
+        "inputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:exactlyOneColumnPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isIntegerDatatypePropertyShape",
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:exactlyOneColumnPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "TransformerModel"
+        }
+    }
+}

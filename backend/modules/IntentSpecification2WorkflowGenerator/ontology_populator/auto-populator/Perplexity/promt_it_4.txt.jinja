@@ -1,0 +1,164 @@
+
+#############################
+# Boolean Property Shapes
+#############################
+
+cb:noMissingValuesPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:containsNulls ;
+    sh:hasValue false ;
+    sh:datatype xsd:boolean .
+
+cb:isGaussianDistributed
+    a sh:PropertyShape ;
+    sh:path dmop:isGaussian ;
+    sh:hasValue true ;
+    sh:datatype xsd:boolean .
+
+#############################
+# Datatype Property Shape
+#############################
+
+cb:isNumericDatatypePropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:in ( dmop:Float dmop:Integer dmop:Binary) .
+
+cb:isIntegerDatatypePropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:hasValue dmop:Integer .
+
+cb:isBinaryDatatypePropertyShape
+    a sh:PropertyShape
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:hasValue dmop:Binary .
+
+cb:isStringDatatypePropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:hasValue dmop:String .
+
+cb:isCategoricalOrNumericPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:in ( dmop:Float dmop:Integer dmop:Categorical dmop:Binary) .
+
+cb:isCategoricalPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:hasValue dmop:Categorical .
+
+cb:isContinuousPropertyShape
+    a sh:PropertyShape ;
+    sh:description "Column contains continuous (real-valued) measurements." ;
+    sh:path dmop:hasStatisticalDataType ;
+    sh:hasValue dmop:Continuous .
+#############################
+# Non-Boolean Property Shapes
+#############################
+
+cb:TwoLevelsPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:numberOfDistinctValues ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 2 .
+
+cb:minZeroPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:minValue ;
+    sh:minInclusive 0 .
+
+cb:maxOnePropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:maxValue ;
+    sh:maxInclusive 1 .
+
+cb:minTwoClustersPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:numberOfDistinctValues ;
+    sh:minInclusive 2 .
+
+cb:containsMissingPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:containsNulls ;
+    sh:hasValue true ;
+    sh:datatype xsd:boolean .
+
+cb:isScaledPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:isScaled ;
+    sh:hasValue true .
+
+cb:StandardizedPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:isStandardized ;
+    sh:hasValue true ;
+    sh:datatype xsd:boolean .
+
+### Dataset shape properties
+
+cb:minOneComponentPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:numberOfColumns ;
+    sh:minInclusive 1 .
+
+cb:exactlyOneColumnPropertyShape
+    a sh:PropertyShape ;
+    sh:path dmop:numberOfColumns ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 1 .
+
+cb:isTabularDatasetShape
+    a sh:PropertyShape ;
+    sh:path a;
+    sh:hasValue dmop:TabularDataset .
+
+cb:isDictShape
+    a sh:PropertyShape ;
+    sh:path a;
+    sh:hasValue dmop:Dict .
+
+cb:isArrayShape
+    a sh:PropertyShape ;
+    sh:path a;
+    sh:hasValue dmop:Array .
+
+cb:isTextDocumentShape
+    a sh:PropertyShape ;
+    sh:path a;
+    sh:hasValue dmop:TextDocument .
+
+cb:hasReducedDimensionality ;
+    a sh:PropertyShape .
+
+cb:hasIncreasedDimensionality ;
+    a sh:PropertyShape .
+
+
+dmop:TabularDataset rdfs:subClassOf dmop:Array
+
+Given this property shapes, define the input and output charactheristics data of {{algorithm}} from sklearn library. Provide the answer using this format, were feature properties represents requisites each feature should fullfill, label properties represent properties each label must satisfy and dataset properties are properties that affect dataset as a whole (e.g istraindataset). Double check whether an output propoerty should also be present in the input.
+isArrayShape, isTabularDatasetShape, isDictShape and isTextDocumentShape must only appear as dataset properties and only one them can be present per property set. Consider using isCategoricalOrNumericPropertyShape when an algorithm accepts categorical, numeric and binary datatypes, instead of using the individual shapes for each datatype. Numeric, binary and text dataypes features don't overlap with categorical features.Dimensionality reduction algorithms should contain hasReducedDimensionality as output dataset shape. Specially consider missing values, data scaling and data normalization.
+For data outputs, consider only the outputs that contain transformed data in the case of transformation algorithms and the data perdictions (no probabilites) in the case of classification, regression and clustering
+
+{
+"algorithm_name": {
+    "inputs": [
+        {
+            "feature_properties": ["xPropertyShape", "yPropertyShape"],
+            "label_properties": ["xPropertyShape", "yPropertyShape"],
+            "dataset_properties": ["isTabularDatasetShape"],        
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": ["xPropertyShape", "yPropertyShape"],
+            "label_properties": ["xPropertyShape", "yPropertyShape"],
+            "dataset_properties": ["xPropertyShape"],        
+        }
+
+    ]
+    "model_output": {"model_type": "ClassificationModel" } 
+}
+}

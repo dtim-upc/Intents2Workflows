@@ -1,0 +1,35 @@
+{
+    "TSNE": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "noMissingValuesPropertyShape",
+                    "isScaledPropertyShape",
+                    "isNumericDatatypePropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "isTabularDatasetShape",
+                    "minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "isNumericDatatypePropertyShape",
+                    "isContinuousPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "isTabularDatasetShape",
+                    "hasReducedDimensionality",
+                    "minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "DimensionalityReductionModel"
+        }
+    }
+}

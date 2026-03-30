@@ -1,0 +1,37 @@
+{
+    "SelectPercentile": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [
+                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:minTwoClustersPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:hasReducedDimensionality"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "FeatureSelectionModel"
+        }
+    }
+}

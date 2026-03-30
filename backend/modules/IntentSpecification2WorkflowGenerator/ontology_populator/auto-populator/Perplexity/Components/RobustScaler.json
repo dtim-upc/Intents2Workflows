@@ -1,0 +1,34 @@
+{
+    "RobustScaler": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:isScaledPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "TransformerModel"
+        }
+    }
+}

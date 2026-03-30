@@ -1,0 +1,30 @@
+{
+    "DummyRegressor": {
+        "inputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isContinuousPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isContinuousPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "RegressionModel"
+        }
+    }
+}

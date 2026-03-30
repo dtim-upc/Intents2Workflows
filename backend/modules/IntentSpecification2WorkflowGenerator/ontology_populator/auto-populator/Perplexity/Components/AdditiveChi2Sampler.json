@@ -1,0 +1,30 @@
+{
+    "AdditiveChi2Sampler": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "isNumericDatatypePropertyShape",
+                    "minZeroPropertyShape",
+                    "isContinuousPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "isTabularDatasetShape",
+                    "minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "isArrayShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {}
+    }
+}

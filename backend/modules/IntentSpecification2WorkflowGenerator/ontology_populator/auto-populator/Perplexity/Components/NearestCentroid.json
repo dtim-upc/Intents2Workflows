@@ -1,0 +1,34 @@
+{
+    "NearestCentroid": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:isScaledPropertyShape"
+                ],
+                "label_properties": [
+                    "cb:isCategoricalPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isCategoricalPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "ClassificationModel"
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+"FunctionTransformer": {
+    "inputs": [
+        {
+            "feature_properties": [],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "TransformerModel"
+    }
+}
+}

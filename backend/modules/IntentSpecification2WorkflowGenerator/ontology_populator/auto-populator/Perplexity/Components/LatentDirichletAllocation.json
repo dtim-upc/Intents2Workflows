@@ -1,0 +1,36 @@
+{
+    "LatentDirichletAllocation": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:minZeroPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:minZeroPropertyShape",
+                    "cb:maxOnePropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:hasReducedDimensionality"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "DimensionalityReductionModel"
+        }
+    }
+}

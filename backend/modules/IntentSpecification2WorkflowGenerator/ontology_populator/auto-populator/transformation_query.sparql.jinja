@@ -1,0 +1,39 @@
+DELETE {
+
+    {% for predicate, object in insertions -%}
+    ?subject <{{ predicate }}> ?insVal_{{ loop.index }} .
+    {% endfor -%}
+    {% for dependence in dependences -%}
+    ?subject <{{ dependence }}> ?depVal_{{ loop.index }} .
+    {% endfor %}
+}
+INSERT {
+
+    {% for predicate, object in insertions -%}
+    ?subject <{{ predicate }}> {% if object is uri %}<{{ object }}> {%else%}{{object}}{%endif%}.
+    {% endfor -%}
+    {% for dependence in dependences -%}
+    ?subject {{ dependence }} cb:Undefined .
+    {% endfor %}
+}
+WHERE {
+
+    {% if columnarType -%}
+    ?base a dmop:TabularDataset .
+    ?base dmop:hasColumn ?subject .
+    {% else %}
+    ?subject a dmop:TabularDataset .
+    {% endif -%}
+
+    {% for predicate, object in insertions -%}
+    OPTIONAL { ?subject <{{ predicate }}> ?insVal_{{ loop.index }} . }
+    {% endfor -%}
+
+    {% for dependence in dependences -%}
+    OPTIONAL { ?subject <{{ dependence }}> ?depVal_{{ loop.index }} . }
+    {% endfor -%}
+
+    {% for predicate, object in conditions -%}
+    ?subject <{{ predicate }}> {% if object is uri %}<{{ object }}> {%else%}{{object}}{%endif%}.
+    {% endfor %}
+}

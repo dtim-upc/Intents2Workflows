@@ -1,0 +1,32 @@
+{
+    "LabelBinarizer": {
+        "inputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:exactlyOneColumnPropertyShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [                    
+                    "cb:isBinaryDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape"],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:minOneComponentPropertyShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "TransformerModel"
+        }
+    }
+}

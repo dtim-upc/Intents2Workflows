@@ -1,0 +1,44 @@
+{
+"BisectingKMeans": {
+    "inputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape",
+                "cb:isScaledPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [
+                "cb:isIntegerDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:exactlyOneColumnPropertyShape"
+            ]
+        },
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "ClusteringModel"
+    }
+}
+}

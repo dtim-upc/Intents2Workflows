@@ -1,0 +1,30 @@
+{
+"DictVectorizer": {
+    "inputs": [
+        {
+            "feature_properties": [],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isDictShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:isNumericDatatypePropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "VectorizerModel"
+    }
+}
+}

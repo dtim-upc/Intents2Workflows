@@ -1,0 +1,49 @@
+{
+    "CCA": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:isScaledPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape"
+                ]
+            },
+            {
+                "feature_properties": [
+                    "cb:isNumericDatatypePropertyShape",
+                    "cb:noMissingValuesPropertyShape",
+                    "cb:isScaledPropertyShape"
+                ],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:hasReducedDimensionality"
+                ]
+            },
+            {
+                "feature_properties": [],
+                "label_properties": [],
+                "dataset_properties": [
+                    "cb:isArrayShape",
+                    "cb:hasReducedDimensionality"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "TransformationModel"
+        }
+    }
+}

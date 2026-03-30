@@ -1,0 +1,37 @@
+{
+"GenericUnivariateSelect": {
+    "inputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape",
+                "cb:isScaledPropertyShape"
+            ],
+            "label_properties": [
+                "cb:isCategoricalOrNumericPropertyShape",
+                "cb:noMissingValuesPropertyShape",
+                "cb:exactlyOneColumnPropertyShape"
+            ],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape",
+                "cb:minOneComponentPropertyShape"
+            ]
+        }
+    ],
+    "data_outputs": [
+        {
+            "feature_properties": [
+                "cb:isNumericDatatypePropertyShape",
+                "cb:noMissingValuesPropertyShape"
+            ],
+            "label_properties": [],
+            "dataset_properties": [
+                "cb:isTabularDatasetShape"
+            ]
+        }
+    ],
+    "model_output": {
+        "model_type": "FeatureSelectorModel"
+    }
+}
+}

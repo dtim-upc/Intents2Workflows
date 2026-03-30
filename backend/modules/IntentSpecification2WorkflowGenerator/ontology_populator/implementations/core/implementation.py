@@ -4,7 +4,6 @@ import os
 import sys
 from .parameter import Parameter, FactorParameter
 from .iospec import InputIOSpec, OutputIOSpec
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 from common import *
 
 
@@ -17,6 +16,7 @@ class Implementation:
                  input: List[InputIOSpec] = None,
                  output: List[OutputIOSpec] = None,
                  implementation_type=tb.Implementation,
+                 transformations: List[str] = [],
                  counterpart: 'Implementation' = None,
                  namespace: Namespace = cb,
                  ) -> None:
@@ -29,6 +29,7 @@ class Implementation:
         self.algorithm = algorithm
         self.input = input or []
         self.output = output or []
+        self.transformations = transformations
         assert implementation_type in {tb.Implementation, tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
         self.implementation_type = implementation_type
         self.counterpart = counterpart
@@ -79,12 +80,17 @@ class Implementation:
 
             if isinstance(parameter, FactorParameter):
                 for level in parameter.levels:
-                    level_uri = parameter.uri_ref + '-'+ level
+                    level_uri = parameter.uri_ref + '-'+ level.replace(" ","")
                     g.add((level_uri, RDF.type, tb.FactorLevel))
                     g.add((level_uri, tb.hasValue, Literal(level)))
                     g.add((parameter.uri_ref, tb.hasLevel, level_uri))
 
             g.add((self.uri_ref, tb.hasParameter, parameter.uri_ref))
+
+        #transformations
+        for t in self.transformations:
+            g.add((self.uri_ref, tb.has_transformation, Literal(t)))
+
         return self.uri_ref
 
     def add_counterpart_relationship(self, g: Graph):
@@ -103,8 +109,11 @@ class Implementation:
             }}
             '''
             result = g.query(counterpart_query).bindings
-            assert len(result) == 1
+            assert len(result) == 1, result
             self_node = result[0][Variable('self')]
             relationship = tb.hasApplier if self.implementation_type == tb.LearnerImplementation else tb.hasLearner
             counterpart_node = result[0][Variable('counterpart')]
             g.add((self_node, relationship, counterpart_node))
+
+    def __repr__(self):
+        return f"{self.name} Implementation"

@@ -1,0 +1,36 @@
+{
+    "DecisionTreeClassifier": {
+        "inputs": [
+            {
+                "feature_properties": [
+                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "label_properties": [
+                    "cb:isCategoricalPropertyShape",
+                    "cb:minTwoClustersPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isTabularDatasetShape"
+                ]
+            }
+        ],
+        "data_outputs": [
+            {
+                "feature_properties": [],
+                "label_properties": [
+                    "cb:isCategoricalPropertyShape",
+                    "cb:minTwoClustersPropertyShape",
+                    "cb:noMissingValuesPropertyShape"
+                ],
+                "dataset_properties": [
+                    "cb:isArrayShape"
+                ]
+            }
+        ],
+        "model_output": {
+            "model_type": "ClassificationModel"
+        }
+    }
+}
