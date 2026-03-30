@@ -1,15 +1,18 @@
 from pathlib import Path
-import sys
+import sys, os
 import json
 from rdflib.collection import Collection
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from common import *
 from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component
+from implementations.python.python_implementation import PythonImplementation
 
-with open('./sklearn_miner.json') as f:
+with open('./auto_populator/sklearn_miner.json') as f:
     sklearn_dict = json.load(f)
 
-common_graph = Graph().parse("Perplexity/common_shapes.ttl", format="turtle")
+common_graph = Graph().parse("./auto_populator/Perplexity/common_shapes.ttl", format="turtle")
 
 
 def init_cbox() -> Graph:
@@ -106,7 +109,7 @@ def get_transformations(component):
 
 
 def add_components (cbox:Graph):
-    sahpesPath = Path("./Perplexity/clean/")
+    sahpesPath = Path("././auto_populator/Perplexity/clean/")
 
     for component in sahpesPath.iterdir():
         print("Generant", component.name)
@@ -119,23 +122,34 @@ def add_components (cbox:Graph):
         component_type = sklearn_dict[component.name]["estimator_type"]
         problem = problem_dict[component_type]
 
-        
+        needs_applier = component_type in ["classifier", "regressor"]
+        implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
+
+
         algorithm = add_algorithm(cbox, component.name, problem)
-        implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[], input=inputs, output = outputs, implementation_type=tb.LearnerImplementation, transformations = get_transformations(component))
+        implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[], input=inputs, output = outputs, 
+                                        implementation_type=implementation_type, transformations = get_transformations(component))
         impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
-        applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=inputs, output = outputs, 
-                                                implementation_type=tb.ApplierImplementation, counterpart=implementation)
-        appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component)
         
         implementation.add_to_graph(cbox)
-        applier_implementation.add_to_graph(cbox)
         impl_component.add_to_graph(cbox)
-        appl_component.add_to_graph(cbox)
 
-        implementation.add_counterpart_relationship(cbox)
-        applier_implementation.add_counterpart_relationship(cbox)
-        impl_component.add_counterpart_relationship(cbox)
-        appl_component.add_counterpart_relationship(cbox)
+
+        if needs_applier:
+            applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=inputs, output = outputs, 
+                                                    implementation_type=tb.ApplierImplementation, counterpart=implementation)
+            appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component)
+            
+            
+            applier_implementation.add_to_graph(cbox)
+            appl_component.add_to_graph(cbox)
+            implementation.add_counterpart_relationship(cbox)
+            applier_implementation.add_counterpart_relationship(cbox)
+            impl_component.add_counterpart_relationship(cbox)
+            appl_component.add_counterpart_relationship(cbox)
+
+        
+
 
 def add_partitioning(cbox:Graph):
     inputs = [InputIOSpec(io_tags=[])]
@@ -181,7 +195,7 @@ def add_sanitizer(cbox:Graph):
 
 
 
-def main(dest='./Ontology/cbox_deep.ttl'):
+def main(dest='../ontologies/cbox_deepv2.ttl'):
     cbox = init_cbox()
     add_operations(cbox)
     add_engines(cbox)
