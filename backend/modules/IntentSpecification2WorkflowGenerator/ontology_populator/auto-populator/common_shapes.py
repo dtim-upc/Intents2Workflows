@@ -1,7 +1,11 @@
 from rdflib import RDF, Literal
+import sys, os
+
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
 
 from base_shape import BaseShape
-from I2WG.common import sh, dmop, XSD
+from common import dmop
 
 BASE_SHAPES = [
     BaseShape("noMissingValuesPropertyShape", 'columnar', dependences=[], transformations=[(dmop.containsNulls, Literal(False))]),

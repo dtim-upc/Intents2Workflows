@@ -1,7 +1,13 @@
 from typing import List, Literal, Tuple
-
 from rdflib import Graph, Namespace, URIRef, RDF
-from I2WG.common import cb, sh
+import sys
+import os
+
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
+
+
+from common import cb, sh
 
 class BaseShape:
     def __init__(self, name: str, type:Literal['columnar', 'dataset'], dependences:List[URIRef], 

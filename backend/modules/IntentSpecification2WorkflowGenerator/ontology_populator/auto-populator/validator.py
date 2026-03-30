@@ -1,8 +1,15 @@
 from rdflib import Graph, Namespace
-SH = Namespace("http://www.w3.org/ns/shacl#")
+import sys, os
+
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
+
+
+from common import sh as SH
+
 
 shacl_graph = Graph()
-shacl_graph.parse("Ontology/cbox_gpt.ttl", format="turtle")  # your SHACL graph
+shacl_graph.parse("../ontologies/cbox_deep.ttl", format="turtle")  # your SHACL graph
 
 # Loop through all PropertyShapes
 for shape in shacl_graph.subjects(predicate=None, object=None):

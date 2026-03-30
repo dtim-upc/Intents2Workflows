@@ -6,6 +6,7 @@ tb = Namespace('https://extremexp.eu/ontology/tbox#')
 cb = Namespace('https://extremexp.eu/ontology/cbox#')
 ab = Namespace('https://extremexp.eu/ontology/abox#')
 dolce = Namespace('http://ontologydesignpatterns.org/ont/dul/DUL.owl#')
+sh = Namespace('http://www.w3.org/ns/shacl#')
 
 
 def get_graph_xp():

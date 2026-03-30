@@ -1,8 +1,12 @@
 import json
 from pathlib import Path
 import jinja2
-from rdflib import Graph, RDF, Literal, Namespace, URIRef
-from base_shape import BaseShape, ConditionalShape
+from rdflib import Literal, URIRef
+import os, sys
+
+root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
+sys.path.append(root_dir)
+
 from common_shapes import BASE_SHAPES
 from common import dmop
 
