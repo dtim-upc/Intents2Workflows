@@ -1,13 +1,16 @@
 from pathlib import Path
 import sys, os
 import json
-from rdflib.collection import Collection
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from common import *
-from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component
+from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter
 from implementations.python.python_implementation import PythonImplementation
+from implementations.python.python_parameter import PythonTextParameter
+from implementations.python.io import python_reader_implementation, python_writer_implementation
+from implementations.simple.io import data_reader_implementation, data_reader_components, data_writer_implementation, data_writer_component
+
 
 with open('./auto_populator/sklearn_miner.json') as f:
     sklearn_dict = json.load(f)
@@ -79,9 +82,11 @@ def get_shape_injected(shapePath: Path):
 def getIOPorts(cbox:Graph, component, input_ports=True):
     port_type = "input" if input_ports else "output"
     ports = []
+    model_ports = []
     for port in Path(component/port_type).iterdir():
         iotags = []
-        for element in port.iterdir():
+        model_iotags = []
+        for element in port.iterdir(): 
                 
                 if element.suffix == '.ttl':
                     shape = element
@@ -90,11 +95,16 @@ def getIOPorts(cbox:Graph, component, input_ports=True):
                         newshape = get_shape_injected(shape)
                         if not newshape is None:
                             cbox += newshape
-       
-                    iotags.append(IOSpecTag(cb.term(shape.stem)))
+
+
+                    if (cb.term(shape.stem), RDF.type, tb.ModelTag) in cbox: 
+                        model_iotags.append(IOSpecTag(cb.term(shape.stem)))
+                    else:    
+                        iotags.append(IOSpecTag(cb.term(shape.stem)))
             
         ports.append(InputIOSpec(iotags)) if input_ports else ports.append(OutputIOSpec(iotags))
-    return ports
+        model_ports.append(InputIOSpec(model_iotags)) if input_ports else model_ports.append(OutputIOSpec(model_iotags))
+    return ports, model_ports
 
 def get_transformations(component):
     port_type = "output"
@@ -114,53 +124,92 @@ def add_components (cbox:Graph):
     for component in sahpesPath.iterdir():
         print("Generant", component.name)
 
-        
-        inputs = getIOPorts(cbox, component, input_ports=True)
-        outputs = getIOPorts(cbox, component, input_ports=False)
-
-
         component_type = sklearn_dict[component.name]["estimator_type"]
         problem = problem_dict[component_type]
+        needs_applier = component_type in ["classifier", "regressor"] 
 
-        needs_applier = component_type in ["classifier", "regressor"]
+        
+        inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
+        outputs, model_outputs = getIOPorts(cbox, component, input_ports=False)
+
+        if needs_applier:
+            train_inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
+            for i in train_inputs:
+                i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
+
+
         implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
 
 
         algorithm = add_algorithm(cbox, component.name, problem)
-        implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[], input=inputs, output = outputs, 
-                                        implementation_type=implementation_type, transformations = get_transformations(component))
+        implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[
+            Parameter("Target Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
+        ], 
+        input=train_inputs if needs_applier else inputs, output = model_outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
         impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
         
         implementation.add_to_graph(cbox)
         impl_component.add_to_graph(cbox)
 
 
+        python_template = "sklearn_train" if needs_applier else "basic_sklearn_fittransform_function"
+        python_impl = PythonImplementation(name=f"{component.name}Python", baseImplementation=implementation, parameters=[
+                PythonTextParameter(key="Target", 
+                                    base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
+                                    default_value="target", control_parameter=True), 
+        ],python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
+        python_impl.add_to_graph(cbox)
+
+
         if needs_applier:
-            applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=inputs, output = outputs, 
+            applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
+            applier_data_inputs = model_inputs
+            for i in applier_data_inputs:
+                i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
+            applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
+                                                    output = [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
                                                     implementation_type=tb.ApplierImplementation, counterpart=implementation)
-            appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component)
+            appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component) 
             
             
-            applier_implementation.add_to_graph(cbox)
+            applier_implementation.add_to_graph(cbox) 
             appl_component.add_to_graph(cbox)
             implementation.add_counterpart_relationship(cbox)
             applier_implementation.add_counterpart_relationship(cbox)
             impl_component.add_counterpart_relationship(cbox)
             appl_component.add_counterpart_relationship(cbox)
 
+            python_impl = PythonImplementation(name=f"{component.name}TestPython", baseImplementation=applier_implementation, parameters=[],
+                                            python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template='sklearn_predict')
+            python_impl.add_to_graph(cbox)
+
         
 
 
 def add_partitioning(cbox:Graph):
-    inputs = [InputIOSpec(io_tags=[])]
+    inputs = [InputIOSpec(io_tags=[IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])]
     outputs = [OutputIOSpec(io_tags=[IOSpecTag(cb.isTrainDatasetShapeDatasetShape)]), OutputIOSpec(io_tags=[IOSpecTag(cb.isTestDatasetShapeDatasetShape)])]
 
-    algorithm = add_algorithm(cbox, "partition", cb.DataTransformation)
+    algorithm = add_algorithm(cbox, "partition", cb.DataTransformation) 
     implementation = Implementation("Data partition", algorithm, parameters=[], input=inputs, output=outputs)
     component = Component("Data partition component", implementation=implementation, transformations=[])
 
-    implementation.add_to_graph(cbox)
+    implementation.add_to_graph(cbox) 
     component.add_to_graph(cbox)
+
+    python_impl = PythonImplementation(name=f"PartitioningPython", baseImplementation=implementation, parameters=[],
+                                        python_module='sklearn.model_selection', python_dependences=[('scikit-learn', '1.7.2')], python_function='train_test_split',
+                                        template='basic_function')
+    python_impl.add_to_graph(cbox)
+
+    cbox.add((cb.isTrainDatasetShapeDatasetShape, RDF.type, sh.NodeShape))
+    cbox.add((cb.isTrainDatasetShapeDatasetShape, sh.property, cb.isTrainDatasetShape))
+    cbox.add((cb.isTrainDatasetShapeDatasetShape, sh.targetClass, dmop.TabularDataset))
+
+    cbox.add((cb.isTestDatasetShapeDatasetShape, RDF.type, sh.NodeShape))
+    cbox.add((cb.isTestDatasetShapeDatasetShape, sh.property, cb.isTestDatasetShape))
+    cbox.add((cb.isTestDatasetShapeDatasetShape, sh.targetClass, dmop.TabularDataset))
+
 
 def add_sanitizer(cbox:Graph):
     inputs = [InputIOSpec(io_tags=[])]
@@ -194,8 +243,27 @@ def add_sanitizer(cbox:Graph):
     component.add_to_graph(cbox)
 
 
+def add_io(cbox:Graph):
+    data_reader_implementation.add_to_graph(cbox)
 
-def main(dest='../ontologies/cbox_deepv2.ttl'):
+    for reader in data_reader_components:
+        reader.add_to_graph(cbox)
+
+    data_writer_implementation.add_to_graph(cbox)
+    data_writer_component.add_to_graph(cbox)
+
+    python_reader_implementation.add_to_graph(cbox)
+    python_writer_implementation.add_to_graph(cbox)
+    
+
+def add_datasets(cbox):
+    cbox.add((dmop.TabularDataset, RDF.type, tb.Dataset))
+
+    cbox.add((dmop.TensorDataset, RDF.type, tb.Dataset))
+
+
+
+def main(dest='../ontologies/cbox_deep.ttl'):
     cbox = init_cbox()
     add_operations(cbox)
     add_engines(cbox)
@@ -204,6 +272,8 @@ def main(dest='../ontologies/cbox_deepv2.ttl'):
     add_components(cbox)
     add_partitioning(cbox)
     add_sanitizer(cbox)
+    add_io(cbox)
+    add_datasets(cbox)
 
 
     #add_algorithms(cbox)

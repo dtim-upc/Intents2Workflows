@@ -13,7 +13,7 @@ data_reader_implementation = Implementation(
         InputIOSpec([IOSpecTag(cb.UnsatisfiableShape)]),
     ],
     output=[
-        OutputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
+        OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)]),
     ],
 )
 
@@ -39,7 +39,7 @@ data_writer_implementation = Implementation(
     parameters=[
         Parameter('Output path', XSD.string, r"./output.csv"),
     ],
-    input=[InputIOSpec([IOSpecTag(cb.TabularDatasetShape)])],
+    input=[InputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])],
     output=[],
 )
 

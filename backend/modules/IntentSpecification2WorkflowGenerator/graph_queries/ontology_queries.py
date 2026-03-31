@@ -366,7 +366,7 @@ def is_shape_targeting_data(ontology:Graph, shape:URIRef):
     return is_shape_targeting_node(ontology, shape, tb.Dataset)
 
 def is_shape_targeting_model(ontology:Graph, shape:URIRef):
-    return is_shape_targeting_node(ontology, shape, tb.Model)
+    return (shape, RDF.type, tb.ModelTag) in ontology#is_shape_targeting_node(ontology, shape, tb.Model) 
 
 def get_implementation_transformations(ontology:Graph, implementation:URIRef):
     transf_query = f"""

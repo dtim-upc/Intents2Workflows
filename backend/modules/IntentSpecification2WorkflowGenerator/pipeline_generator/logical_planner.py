@@ -300,7 +300,7 @@ def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, pla
         for element in plan:
             comp_list, num_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task,element)
             elms.extend(comp_list)
-            total_comb = total_comb * num_comb
+            total_comb = total_comb * num_comb 
         return elms, total_comb
 
 
@@ -323,24 +323,24 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
 
     
     # else:
-    logical_plan[reader_component] = [f"{0}-{component_list[0].fragment}"]
+    logical_plan[reader_component] = [f"{component_list[0]}"]
     last_not_applier = reader_component
     last_applier = None
     plan_order.append(reader_component)
 
     for i, component in enumerate(component_list):
         applier = ontology_queries.get_applier(ontology, component)
-        component_name = f"{i}-{component.fragment}"
+        component_name = f"{component}"
         dep = []
         
         if (i+1) < len(component_list):
             next = component_list[i+1]
-            dep.append(f"{i+1}-{next.fragment}")
+            dep.append(f"{next}")
 
         if requires_partition and applier is not None:
 
-            dep.append(f"{i}-{applier.fragment}")
-            applier_list.append(f"{i}-{applier.fragment}")
+            dep.append(f"{applier}")
+            applier_list.append(f"{applier}")
 
             logical_plan[component_name] = dep #Assuming python 3.7+ to guarantee that dict order
             plan_order.append(component_name)

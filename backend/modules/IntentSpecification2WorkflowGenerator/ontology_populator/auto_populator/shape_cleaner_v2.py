@@ -160,12 +160,12 @@ def main():
                     render_shapes_from_io(o, spec_path)
 
             else:
-                print("No data outputs")
+                print("No data outputs")  
                 num = 0
 
-            if "model_output" in component_json:
+            if "model_output" in component_json and component["estimator_type"] not in ["transformer", "cluster"]:
 
-                if component_json["model_output"] == {}:
+                if component_json["model_output"] == {}: 
                     model = "TransformerModel"
                 else:
                     model = component_json["model_output"]["model_type"]
@@ -174,7 +174,7 @@ def main():
 
                 spec_path = component_outputs / f"{len(component_json['data_outputs'])}"
                 spec_path.mkdir(exist_ok=True)
-                rendered_shape = render_model_shape(f"{model}", model)
+                rendered_shape = render_model_shape(f"{model}ModelShape", model)
                 with open( spec_path /f"{model}ModelShape.ttl", mode='w') as f:
                     f.write(rendered_shape)
 
