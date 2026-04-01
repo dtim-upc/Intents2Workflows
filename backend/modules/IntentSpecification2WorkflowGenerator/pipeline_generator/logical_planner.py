@@ -16,29 +16,24 @@ def transform(ontology, implementation, data_graph, dataset):
     tqdm.write(f"Executing transformations for {implementation}")
     for t in transformations:
         new_data_graph.update(t)
-    #new_data_graph.serialize(f'./{implementation.fragment}_data_transformation.ttl', format='turtle')
     return new_data_graph
 
 
  
 def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:URIRef, unsatisfied_shapes, max_imp_level, loop_shapes:List[URIRef]):
 
-
     if len(unsatisfied_shapes) == 0:
         yield [], data_graph
         return
     
-
     first = unsatisfied_shapes.pop(0)
 
     tqdm.write(f"Checking if {first} already present")
 
     if shape_queries.satisfies_shape(data_graph, ontology, first, dataset):
-        tqdm.write(f"Data ALREADY satisfies {first}. SOO LUCKY, you don't need an extra component")
+        tqdm.write(f"Data ALREADY satisfies {first}.")
         yield [], data_graph
         return
-    
-    tqdm.write(f"Producing plans in produce plans for element {first}")
 
     first_loop_shapes = loop_shapes + [first]
     implementations = find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, first, exclude_appliers=True)
@@ -47,22 +42,17 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
         first_plans_generator = new_get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, implementation, max_imp_level, loop_shapes=first_loop_shapes)
 
         for first_plan_generator in first_plans_generator:
-            
             if first_plan_generator is None:
                 continue
 
             first_plan, transformed_data = first_plan_generator
-            tqdm.write(f"first plan {first_plan}")
-
             rest_plans_generator = produce_plans(ontology, shape_graph, transformed_data, dataset, unsatisfied_shapes, max_imp_level, loop_shapes=loop_shapes)
 
             for rest_plan_generator in rest_plans_generator:
-
                 if rest_plan_generator is None:
                     continue
 
                 rest_plan, rest_data = rest_plan_generator
-                tqdm.write(f"rest_plan {rest_plan}")
                 complete_plan = [] + first_plan
                 complete_plan.extend(rest_plan)
                 yield complete_plan, rest_data
@@ -76,8 +66,6 @@ def new_get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dat
     shapes_to_satisfy = get_io_shapes(ontology, inputs)
     previous_shapes = [] + loop_shapes
 
-    tqdm.write(f"Getting implementation prerequisites for {implementation}")
-
     if shapes_to_satisfy is None:
         shapes_to_satisfy = []
  
@@ -90,7 +78,6 @@ def new_get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dat
             yield None
             return
     
-    tqdm.write(f"Unsatisfied shapes: {unsatisfied_shapes}")
     produced_plans = produce_plans(ontology, shape_graph, data_graph, dataset, unsatisfied_shapes, max_imp_level, loop_shapes=previous_shapes)
         
     for pp in produced_plans:
@@ -98,11 +85,11 @@ def new_get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dat
             continue
 
         plan, data = pp
-
-        tqdm.write(f"Returning a pp {plan}")
         yield plan + [implementation], transform(ontology, implementation, data, dataset)
 
     
+
+
 
 MAX_PLAN_LENGTH = 10
 
@@ -193,22 +180,6 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
             temporal_graph.remove(triple[:-1])
         return valid
 
-#TODO refactor this.
-# Sort shapes to avoid reevalutation. Generally, no component will generate missing values if they are not present in the input. Also, most of the transformers require not missings,
-# so it is wise to evaluate this shape first
-def sort_shapes(shape_list:List[URIRef]):
-
-    def to_the_top(list:list, element):
-        list.remove(element)
-        list.insert(0, element)
-    if cb.isNumericDatatypePropertyShapeFeatureShape in shape_list:
-        to_the_top(shape_list, cb.isNumericDatatypePropertyShapeFeatureShape)
-    if cb.noMissingValuesPropertyShapeFeatureShape in shape_list:
-        to_the_top(shape_list, cb.noMissingValuesPropertyShapeFeatureShape)
-    if cb.isCategoricalOrNumericPropertyShapeFeatureShape in shape_list:
-        to_the_top(shape_list, cb.isCategoricalOrNumericPropertyShapeFeatureShape)
-
-    return shape_list
 
 def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level, log: bool = False, depth = 0, 
                                     inherited_satisfied_shapes: List[URIRef] = [], loop_shapes = []):
@@ -309,20 +280,9 @@ import time
 def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple[URIRef], requires_partition:bool, reader_component:URIRef, writer_component:URIRef, partition_component:URIRef):
     logical_plan = {}
     applier_list = []
-    component_list = list(component_combination) #sort_combination(ontology, component_combination)
+    component_list = list(component_combination) 
     plan_order = []
 
-    #print("CC", component_combination, component_list, reader_component, writer_component)
-    #print("Partition required", requires_partition)
-    #input(component_list)
-
-    # if requires_partition:
-    #     logical_plan[reader_component] = [partition_component]
-    #     logical_plan[partition_component] = [f"{0}-{component_list[0].fragment}"]
-    #     last_not_applier = partition_component
-
-    
-    # else:
     logical_plan[reader_component] = [f"{component_list[0]}"]
     last_not_applier = reader_component
     last_applier = None
@@ -342,7 +302,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
             dep.append(f"{applier}")
             applier_list.append(f"{applier}")
 
-            logical_plan[component_name] = dep #Assuming python 3.7+ to guarantee that dict order
+            logical_plan[component_name] = dep 
             plan_order.append(component_name)
             last_applier=component_name
 
