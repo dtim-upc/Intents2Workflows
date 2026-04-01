@@ -126,7 +126,8 @@ def add_components (cbox:Graph):
 
         component_type = sklearn_dict[component.name]["estimator_type"]
         problem = problem_dict[component_type]
-        needs_applier = component_type in ["classifier", "regressor"] 
+        needs_applier = component_type in ["classifier", "regressor"]
+        module = sklearn_dict[component.name]["module"]
 
         
         inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
@@ -157,7 +158,7 @@ def add_components (cbox:Graph):
                 PythonTextParameter(key="Target", 
                                     base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
                                     default_value="target", control_parameter=True), 
-        ],python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
+        ],python_module=f'sklearn.{module}', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
         python_impl.add_to_graph(cbox)
 
 
@@ -185,7 +186,7 @@ def add_components (cbox:Graph):
 
         
 
-
+ 
 def add_partitioning(cbox:Graph):
     inputs = [InputIOSpec(io_tags=[IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])]
     outputs = [OutputIOSpec(io_tags=[IOSpecTag(cb.isTrainDatasetShapeDatasetShape)]), OutputIOSpec(io_tags=[IOSpecTag(cb.isTestDatasetShapeDatasetShape)])]
