@@ -14,7 +14,7 @@ python_decision_tree_implementation = PythonImplementation(
         PythonFactorParameter("split_method", levels={"Binary":"Binary"}, base_parameter=split_type, default_value="Binary", control_parameter=True),
         PythonNumericParameter("min_samples_leaf", XSD.int, 
                                expression=AlgebraicExpression(cb.COPY, min_samples), default_value=1),
-        PythonFactorParameter("splitter", levels={"best":"Best", "random":"Random"}, base_parameter=splitter, default_value="best"),
+        #PythonFactorParameter("splitter", levels={"best":"Best", "random":"Random"}, base_parameter=splitter, default_value="best"),
         PythonNumericParameter("max_depth", XSD.int, 
                                expression=AlgebraicExpression(cb.COPY, max_depth), default_value=None)
     ],

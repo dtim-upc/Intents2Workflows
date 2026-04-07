@@ -24,7 +24,7 @@ decision_tree_learner_implementation = Implementation(
         max_depth,         
     ],
     input=[
-        InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape)])
+        InputIOSpec([IOSpecTag(cb.LabeledTabularDatasetShape), IOSpecTag(cb.TrainTabularDatasetShape), IOSpecTag(cb.NumericCategoricalTabularDatasetShape)])
     ],
     output=[
         OutputIOSpec([IOSpecTag(cb.DecisionTreeModelShape)]),
