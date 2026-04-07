@@ -2,12 +2,14 @@ from ..core import *
 from common import *
 
 columns_parameter = Parameter("Columns to factorize", datatype=XSD.string, default_value="$$CATEGORICAL_COLUMNS$$")
+noncategorical_parameter = Parameter("NonCategorical columns", datatype=XSD.string, default_value="$$NONCATEGORICAL_COLUMNS$$")
 
 factorizer_implemenation = Implementation(
     name = "Factorizer",
     algorithm=cb.DataManagement,
     parameters = [
         columns_parameter,
+        noncategorical_parameter
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.TabularDatasetShape)]),
@@ -49,6 +51,7 @@ factorizer_applier_implementation = Implementation(
     algorithm=cb.DataManagement,
     parameters=[
         columns_parameter,
+        noncategorical_parameter
     ],
     input=[
         InputIOSpec([IOSpecTag(cb.NumericCategoricalModelShape)]),

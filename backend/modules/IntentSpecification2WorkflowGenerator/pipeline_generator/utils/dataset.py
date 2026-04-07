@@ -10,6 +10,7 @@ class Dataset:
         self._label = None
         self._numeric_columns = None
         self._categorical_columns = None
+        self._noncategorical_columns = None
         self._target = None
         self._format = None
         self._path = None
@@ -33,6 +34,12 @@ class Dataset:
         if self._categorical_columns is None:
             self._categorical_columns = data_queries.get_dataset_categorical_columns(self.data_graph, self.dataset)
         return self._categorical_columns
+    
+    @property
+    def noncategorical_columns(self):
+        if self._noncategorical_columns is None:
+            self._noncategorical_columns = data_queries.get_dataset_noncategorical_columns(self.data_graph, self.dataset)
+        return self._noncategorical_columns
     
     @property
     def target(self):

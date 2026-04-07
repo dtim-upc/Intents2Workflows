@@ -18,19 +18,19 @@ python_decision_tree_implementation = PythonImplementation(
         PythonNumericParameter("max_depth", XSD.int, 
                                expression=AlgebraicExpression(cb.COPY, max_depth), default_value=None)
     ],
-    python_module='sklearn.tree',
+    python_module='sklearn.ensemble',
     python_dependences=[('scikit-learn', '1.7.2')],
-    python_function='DecisionTreeClassifier',
+    python_function='RandomForestClassifier',
     template='sklearn_train'
-) 
+)  
  
 python_decision_tree_predictor_implementation = PythonImplementation(
     name= "Python decision tree predictor",
     baseImplementation= decision_tree_predictor_implementation,
     parameters=[],
-    python_module='sklearn.tree',
+    python_module='sklearn.ensemble',
     python_dependences=[('scikit-learn', '1.7.2')],
-    python_function='DecisionTreeClassifier',
+    python_function='RandomForestClassifier',
     template='sklearn_predict'
 )
 

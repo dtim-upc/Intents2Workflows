@@ -1,6 +1,9 @@
 import {{module}}
 
 def {{step_name}}({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %}):
+
+    input0 = input0.drop({{control["noncategorical_columns"]}}, axis=1)
+
     columns_to_factorize = {{control["columns"]}}
 
     stacked = input0[columns_to_factorize].stack()

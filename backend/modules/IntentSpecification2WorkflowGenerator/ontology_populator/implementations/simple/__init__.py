@@ -13,6 +13,7 @@ from .decision_tree import *
 from .scaling import scaling_learner_implementation, scaling_applier_implementation, z_score_scaling_component, min_max_scaling_component, decimal_scaling_component, scaling_applier_component
 from .factorizer import factorizer_component, factorizer_applier_component, factorizer_applier_implementation, factorizer_implemenation
 from .target_encoder_multidimensional import encoder_applier_component, encoder_applier_implementation, encoder_component, encoder_implemenation
+from .logistic import logistic_learner_component, logistic_learner_implementation, logistic_predictor_component, logistic_predictor_implementation
 
 
 implementations = [
@@ -42,7 +43,9 @@ implementations = [
     tensor_data_reader_implementation,
     tensor_data_writer_implementation,
     encoder_implemenation,
-    encoder_applier_implementation
+    encoder_applier_implementation,
+    logistic_predictor_implementation,
+    logistic_learner_implementation
 ]
 
 components = [
@@ -91,5 +94,7 @@ components = [
     *tensor_data_reader_components,
     tensor_data_writer_component,
     encoder_component,
-    encoder_applier_component
+    encoder_applier_component,
+    logistic_learner_component,
+    logistic_predictor_component
 ]

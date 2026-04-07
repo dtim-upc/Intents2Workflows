@@ -33,7 +33,7 @@ decision_tree_learner_implementation = Implementation(
 )
 
 binary_decision_tree_learner_component = Component(
-    name='Binary Decision Tree Learner',
+    name='Random Forest Learner',
     implementation=decision_tree_learner_implementation,
     transformations=[
     ],
@@ -62,7 +62,7 @@ decision_tree_predictor_implementation = Implementation(
 )
 
 decision_tree_predictor_component = Component(
-    name='Decision Tree Predictor',
+    name='Random Forest Predictor',
     implementation=decision_tree_predictor_implementation,
 
     transformations=[

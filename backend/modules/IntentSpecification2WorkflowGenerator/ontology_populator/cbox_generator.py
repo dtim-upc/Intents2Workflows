@@ -95,6 +95,7 @@ def add_algorithms(cbox):
         (cb.KNN, cb.Classification),
         (cb.XGBoost, cb.Classification),
         (cb.NN, cb.Classification),
+        (cb.LogisticRegression, cb.Classification),
 
         # Anomaly Detection
         (cb.OneClassSVM, cb.AnomalyDetection),
@@ -171,7 +172,8 @@ def add_models(cbox):
         'NumericCategoricalModel',
         'ProjectionModel',
         'EncoderModel',
-    ]
+        'LogisticModel',
+    ] 
 
     for model in models:
         cbox.add((cb.term(model), RDF.type, tb.Model))

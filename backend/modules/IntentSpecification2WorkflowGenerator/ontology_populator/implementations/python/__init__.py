@@ -12,6 +12,7 @@ from .partitioning_multidimensional import python_partitioning_tensor_implementa
 from .nn_multidimensional import python_nn_tensor_applier_implementation, python_nn_tensor_implementation
 from .io_multidimensional import python_reader_tensor_implementation
 from .target_encoder import python_target_encoder_applier_implementation, python_target_encoder_implementation
+from .logistic import python_logistic_learner_implementation, python_logistic_predictor_implementation 
 
 
 implementations = [
@@ -39,7 +40,9 @@ implementations = [
     python_nn_tensor_applier_implementation,
     python_reader_tensor_implementation,
     python_target_encoder_implementation,
-    python_target_encoder_applier_implementation
-] 
+    python_target_encoder_applier_implementation,
+    python_logistic_learner_implementation,
+    python_logistic_predictor_implementation,
+]  
 
  

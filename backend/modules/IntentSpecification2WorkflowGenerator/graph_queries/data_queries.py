@@ -111,6 +111,24 @@ def get_dataset_categorical_columns(data_graph: Graph, dataset: Graph) -> List[s
 
     return [x['label'].value for x in columns]
 
+def get_dataset_noncategorical_columns(data_graph: Graph, dataset: Graph) -> List[str]:
+    categ_query = f"""
+        PREFIX rdfs: <{RDFS}>
+        PREFIX dmop: <{dmop}>
+
+        SELECT ?label
+        WHERE {{
+            {dataset.n3()} dmop:hasColumn ?column .
+            ?column dmop:isCategorical false ;
+                    dmop:hasDataPrimitiveTypeColumn dmop:String ;
+                    dmop:isFeature true ;
+                    dmop:hasColumnName ?label .
+        }}
+    """
+    columns = data_graph.query(categ_query).bindings
+
+    return [x['label'].value for x in columns]
+
 def get_dataset_target_column(data_graph: Graph, dataset: Graph) -> str:
     label_query = f"""
         PREFIX rdfs: <{RDFS}>

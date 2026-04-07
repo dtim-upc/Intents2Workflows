@@ -27,8 +27,9 @@ def inject_value(dataset:Dataset, value:Literal):
                     ('$$NUMERIC_COLUMNS$$', f'{dataset.numeric_columns}'),
                     ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns + [dataset.target]}'),
                     ('$$CATEGORICAL_COLUMNS$$',f'{dataset.categorical_columns}'),
+                    ('$$NONCATEGORICAL_COLUMNS$$',f'{dataset.noncategorical_columns}'),
                     ('$$PATH$$',f'{dataset.path}'),
-                    ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'),
+                    ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'), 
                     ]
         
         for expression, newvalue in injections:
