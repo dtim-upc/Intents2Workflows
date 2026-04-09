@@ -42,9 +42,9 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
 
 
     scored_algs = {alg:order.get(alg,{}) for alg in algs}
-    print("scores", scored_algs)
+    #print("scores", scored_algs)
     
-    #scored_algs = sorted(scored_algs, key=lambda x: x[1])
+    #scored_algs =  {alg:option_explorer.get_placeholder_metrics() for alg in algs}
     
     pot_impls = []
     for al in algs:

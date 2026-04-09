@@ -159,14 +159,14 @@ class OptionExplorerClient:
         return
 
 
-# def get_placeholder_metrics():
-#         return {
-#                     'utility_value': round(random.random(),3),
-#                     'loss': round(random.random(),3),
-#                     'accuracy': round(random.random(),3),
-#                     'recall':round(random.random(),3),
-#                     "precision":round(random.random(),3),
-#                     "f1_score":round(random.random(),3),
-#                     "training_time":round(random.random(),3),
-#                 }
+def get_placeholder_metrics():
+        return {
+                    'utility_value': round(random.uniform(1,5),4),
+                    'loss': round(random.uniform(0.6,1),4),
+                    'accuracy': round(random.uniform(0.6,1),4),
+                    'recall':round(random.uniform(0.6,1),4),
+                    "precision":round(random.uniform(0.6,1),4),
+                    "f1_score":round(random.uniform(0.6,1),4),
+                    "training_time":round(random.uniform(50,500),4),
+                }
 
