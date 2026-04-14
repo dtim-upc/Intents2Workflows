@@ -66,7 +66,7 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
         SELECT ?implementation
         WHERE {{
             {{
-                ?implementation a tb:Implementation;
+                ?implementation a tb:AbstractImplementation;
                                 tb:specifiesOutput ?spec .
             }}
             FILTER NOT EXISTS {{

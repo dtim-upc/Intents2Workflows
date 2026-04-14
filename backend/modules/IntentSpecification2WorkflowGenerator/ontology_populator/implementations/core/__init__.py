@@ -1,5 +1,5 @@
 from .component import Component
-from .implementation import Implementation
+from .implementation import Implementation, AbstractImplementation
 from .parameter import Parameter, FactorParameter
 from .parameter_specification import ParameterSpecification
 from .transformation import Transformation, CopyTransformation, LoaderTransformation
@@ -16,5 +16,6 @@ __all__ = [
     'LoaderTransformation',
     'InputIOSpec',
     'OutputIOSpec',
-    'IOSpecTag'
+    'IOSpecTag',
+    'AbstractImplementation'
 ]

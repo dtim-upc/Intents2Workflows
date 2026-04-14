@@ -1,6 +1,11 @@
 from typing import List
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, BNode, RDF, Literal, Namespace
 from common import *
+
+#tb = Namespace('https://extremexp.eu/ontology/tbox#')
+#cb = Namespace('https://extremexp.eu/ontology/cbox#')
+
+
 
 class IOSpecTag:
     def __init__(self, shape:URIRef, importance_level = 0):
@@ -30,7 +35,7 @@ class IOSpec:
     
     def add_to_graph(self, g: Graph, implementation=URIRef):
         self.uri = self.get_uri(implementation)
-        print("Adding", self.specs, "to graph for imp", implementation.fragment, self.uri.fragment)
+        #print("Adding", self.specs, "to graph for imp", implementation.fragment, self.uri.fragment)
 
         if (self.uri, RDF.type, tb.DataSpec) not in g:
             g.add((self.uri, RDF.type, tb.DataSpec)) 
@@ -43,6 +48,18 @@ class IOSpec:
     
     def get_uri(self, implementation):
          return self.namespace[f"{implementation.fragment}-{self.url_name}"]
+    
+    def __eq__ (self, other):
+        if isinstance(other, IOSpec) and self.type == other.type:
+            own_shapes = set(s.shape.fragment for s in self.specs)
+            other_shapes = set(s.shape.fragment for s in other.specs)
+            #print("Igualant",own_shapes, other_shapes)
+            return own_shapes == other_shapes
+        return False
+    
+    def __hash__ (self):
+         return hash((self.type,frozenset([s.shape.fragment for s in self.specs])))
+
  
 class InputIOSpec(IOSpec):
      def __init__(self, io_tags:List[IOSpecTag], namespace = cb):
@@ -51,3 +68,13 @@ class InputIOSpec(IOSpec):
 class OutputIOSpec(IOSpec):
      def __init__(self, io_tags:List[IOSpecTag], namespace = cb):
           super().__init__(io_tags, 'Output', namespace)
+
+
+# tags = [IOSpecTag(cb.zzoneshape), IOSpecTag(cb.othershape)]
+# tags2 = [IOSpecTag(cb.othershape), IOSpecTag(cb.zzoneshape)]
+
+# i1 = InputIOSpec(tags)
+# i2 = InputIOSpec(tags2)
+
+# print(i1==i2)
+# print(hash(i1), hash(i2))

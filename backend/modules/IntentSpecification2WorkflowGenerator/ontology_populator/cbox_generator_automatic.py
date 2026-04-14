@@ -5,7 +5,7 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from common import *
-from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter
+from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter, AbstractImplementation
 from implementations.python.python_implementation import PythonImplementation
 from implementations.python.python_parameter import PythonTextParameter
 from implementations.python.io import python_reader_implementation, python_writer_implementation
@@ -91,7 +91,7 @@ def getIOPorts(cbox:Graph, component, input_ports=True):
                 if element.suffix == '.ttl':
                     shape = element
                     if (cb.term(shape.stem), RDF.type, SH.NodeShape) not in cbox:
-                        print(cb.term(shape.stem), RDF.type, SH.NodeShape)
+                        #print(cb.term(shape.stem), RDF.type, SH.NodeShape)
                         newshape = get_shape_injected(shape)
                         if not newshape is None:
                             cbox += newshape
@@ -119,7 +119,8 @@ def get_transformations(component):
 
 
 def add_components (cbox:Graph):
-    sahpesPath = Path("././auto_populator/Perplexity/clean/")
+    sahpesPath = Path("./auto_populator/Perplexity/clean/")
+    abstract_impls = {}
 
     for component in sahpesPath.iterdir():
         print("Generant", component.name)
@@ -135,8 +136,8 @@ def add_components (cbox:Graph):
 
         if needs_applier:
             train_inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
-            for i in train_inputs:
-                i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
+            #for i in train_inputs:
+                #i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
 
 
         implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
@@ -152,6 +153,14 @@ def add_components (cbox:Graph):
         implementation.add_to_graph(cbox)
         impl_component.add_to_graph(cbox)
 
+        #Dict for generating abstract implementations by grouping implementations with the same input and output data specs
+        for output in outputs:
+            key =frozenset([frozenset([hash(i) for i in inputs]),hash(output)])
+            if key in abstract_impls:
+                abstract_impls[key].append(implementation)
+            else:
+                abstract_impls[key] = [implementation]
+
 
         python_template = "sklearn_train" if needs_applier else "basic_sklearn_fittransform_function"
         python_impl = PythonImplementation(name=f"{component.name}Python", baseImplementation=implementation, parameters=[
@@ -165,8 +174,8 @@ def add_components (cbox:Graph):
         if needs_applier:
             applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
             applier_data_inputs = model_inputs
-            for i in applier_data_inputs:
-                i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
+            #for i in applier_data_inputs:
+            #    i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
             applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
                                                     output = [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
                                                     implementation_type=tb.ApplierImplementation, counterpart=implementation)
@@ -184,6 +193,17 @@ def add_components (cbox:Graph):
                                             python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template='sklearn_predict')
             python_impl.add_to_graph(cbox)
 
+    #Generate abstract implementations
+    for key, values in abstract_impls.items():
+        assert len(values) > 0
+        impl:Implementation = values[0]
+        inputs = impl.input
+        print(inputs)
+        outputs = impl.output
+        name = str(hash(key))#next(cbox.objects(impl.algorithm, tb.solves),cb.UnknownTask).fragment + " Aggregation"
+        abs = AbstractImplementation(name=name,implementations=values, input=inputs, output=outputs)
+        abs.add_to_graph(cbox)
+
         
 
  
@@ -193,10 +213,15 @@ def add_partitioning(cbox:Graph):
 
     algorithm = add_algorithm(cbox, "partition", cb.DataTransformation) 
     implementation = Implementation("Data partition", algorithm, parameters=[], input=inputs, output=outputs)
+    abs_implementation = AbstractImplementation("Data partitioners", implementations=[implementation], input=implementation.input, output=implementation.output)
     component = Component("Data partition component", implementation=implementation, transformations=[])
 
     implementation.add_to_graph(cbox) 
     component.add_to_graph(cbox)
+
+    abs_implementation.add_to_graph(cbox)
+
+
 
     python_impl = PythonImplementation(name=f"PartitioningPython", baseImplementation=implementation, parameters=[],
                                         python_module='sklearn.model_selection', python_dependences=[('scikit-learn', '1.7.2')], python_function='train_test_split',
@@ -238,10 +263,13 @@ def add_sanitizer(cbox:Graph):
 
     algorithm = add_algorithm(cbox, "cleaning", cb.DataTransformation)
     implementation = Implementation("Nonstandard column remover", algorithm, parameters=[], input=inputs, output=outputs, transformations= [transformation_query])
+    abs_implementation = AbstractImplementation("Column removers", implementations=[implementation], input=implementation.input, output=implementation.output)
     component = Component("Nonstandard column remover component", implementation=implementation, transformations=[])
         
     implementation.add_to_graph(cbox)
     component.add_to_graph(cbox)
+
+    abs_implementation.add_to_graph(cbox)
 
 
 def add_io(cbox:Graph):

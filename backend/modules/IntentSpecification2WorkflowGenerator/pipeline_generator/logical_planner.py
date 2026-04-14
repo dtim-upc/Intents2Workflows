@@ -28,7 +28,7 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
     
     first = unsatisfied_shapes.pop(0)
 
-    tqdm.write(f"Checking if {first} already present")
+    #tqdm.write(f"Creating plan for {first}")
 
     if shape_queries.satisfies_shape(data_graph, ontology, first, dataset):
         tqdm.write(f"Data ALREADY satisfies {first}.")
@@ -39,7 +39,7 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
     implementations = find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, first, exclude_appliers=True)
 
     for implementation in implementations:
-        first_plans_generator = new_get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, implementation, max_imp_level, loop_shapes=first_loop_shapes)
+        first_plans_generator = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, implementation, max_imp_level, loop_shapes=first_loop_shapes, log=True)
 
         for first_plan_generator in first_plans_generator:
             if first_plan_generator is None:
@@ -55,12 +55,16 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
                 rest_plan, rest_data = rest_plan_generator
                 complete_plan = [] + first_plan
                 complete_plan.extend(rest_plan)
+                #tqdm.write(f"Produced plan: {complete_plan}")
                 yield complete_plan, rest_data
      
 
 
-def new_get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level:int, log: bool = False, depth = 0, 
+def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level:int, log: bool = False, depth = 0, 
                                     loop_shapes = []):
+    
+    if log:
+        tqdm.write("Recursive: " + str(implementation))
     
     inputs = ontology_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
     shapes_to_satisfy = get_io_shapes(ontology, inputs)
@@ -85,6 +89,7 @@ def new_get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, dat
             continue
 
         plan, data = pp
+
         yield plan + [implementation], transform(ontology, implementation, data, dataset)
 
     
@@ -181,98 +186,28 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
         return valid
 
 
-def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_graph:Graph, dataset:URIRef, implementation, max_imp_level, log: bool = False, depth = 0, 
-                                    inherited_satisfied_shapes: List[URIRef] = [], loop_shapes = []):
-
-    if log:
-        tqdm.write("Recursive: " + str(implementation))
-        tqdm.write(f"Inherited {inherited_satisfied_shapes}")
-    
-    inputs = ontology_queries.get_implementation_input_specs(ontology, implementation, max_imp_level)
-
-    shapes_to_satisfy = get_io_shapes(ontology, inputs)
-    already_satisfied_shapes = [] + inherited_satisfied_shapes
-    previous_shapes = [] + loop_shapes
-
-    if shapes_to_satisfy is None:
-        shapes_to_satisfy = {}
-    
-    if log:
-        tqdm.write(f'\tData input: {[x.fragment for x in shapes_to_satisfy]}')
-
-    unsatisfied_shapes = []
-    for shape in shapes_to_satisfy:
-        if not shape_queries.satisfies_shape(data_graph, ontology, shape, dataset) and shape not in already_satisfied_shapes:
-            unsatisfied_shapes.append(shape)
-        if shape in previous_shapes:
-            tqdm.write(f"Preventing a loop with shape Shape {shape}")
-            return None, -1
+def materialize_plan(ontology, shape_graph, dataset, component_threshold, task, plan):
+    plan_comb = []
+    total_comb = 1
+    tqdm.write(f"Materializing {plan}")
+    for impl in plan:
+        if (impl, RDF.type, tb.AbstractImplementation) in ontology:
+            specific_implementations = ontology.objects(impl, tb.hasSpecificImplementation)
+        else:
+            specific_implementations = [impl]
         
-
-    
-    if log:
-        tqdm.write(f'UNSATISFIED SHAPES: {unsatisfied_shapes}')
-
-    if len(unsatisfied_shapes) > 0 and depth >= MAX_PLAN_LENGTH:
-        if log:
-            tqdm.write('MAX_DEPTH achieved')
-        return None, -1
-
-    available_transformations = { shape: [] 
-                                    for shape in unsatisfied_shapes}
-    total_num_comb = 1
-    for shape in unsatisfied_shapes:
-        num_combs_impl = 0
-        previous_shapes.append(shape)
-        for imp in find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, shape, exclude_appliers=True):
-
-            if log:
-                tqdm.write(f'Suitable implementation for {shape}: {imp}')
-
-            transformations, num_comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, depth=depth+1, 
-                                                                        inherited_satisfied_shapes=already_satisfied_shapes, loop_shapes=previous_shapes)
-            if transformations is not None:
-                available_transformations[shape].extend(transformations)
-                num_combs_impl += num_comb
-
-        if len(available_transformations[shape]) == 0:
-            if log:
-                tqdm.write(f"implementations not found for shape {shape.fragment}")
-            return None, 0
-        total_num_comb = total_num_comb * num_combs_impl
-        already_satisfied_shapes.append(shape)
-        previous_shapes.remove(shape)
+        components = []
+        for specific_impl in specific_implementations:
+            available_components = get_implementation_components_constrained(ontology, shape_graph, specific_impl)
+            best_components = list(get_best_components(ontology, task, available_components, dataset, component_threshold).keys())
+            components.extend(best_components)
         
-        
-    if log:
-        tqdm.write(f'\tAvailable transformations: ')
-        for shape, transformations in available_transformations.items():
-            tqdm.write(f'\t\t{shape.fragment}: {[x for x in transformations]}')
+        plan_comb.append(components)
+        total_comb *= len(components)
 
-    if len(unsatisfied_shapes) > 0 and len(available_transformations) > 0:
-        transformation_combinations =  itertools.product(*available_transformations.values(),[implementation])
-    elif len(unsatisfied_shapes) > 0:
-        return None, 0
-    else:  
-        transformation_combinations = [implementation]
-        total_num_comb = 1
+    return itertools.product(*plan_comb), total_comb
+
     
-    return transformation_combinations, total_num_comb
-    
-def get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, plan):
-    if isinstance(plan, URIRef):
-        available_components = get_implementation_components_constrained(ontology, shape_graph, plan)
-        #print(f"available_components of {plan}:",available_components)
-        best_components = get_best_components(ontology, task, available_components, dataset, component_threshold)
-        return [list(best_components.keys())], len(best_components.keys())
-    else: #tuple
-        elms = []
-        total_comb = 1
-        for element in plan:
-            comp_list, num_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task,element)
-            elms.extend(comp_list)
-            total_comb = total_comb * num_comb 
-        return elms, total_comb
 
 
 import time
@@ -320,7 +255,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
             last_not_applier = component_name
             plan_order.insert(component_index+1,component_name) 
 
-    print("sense partition", logical_plan, plan_order)
+    #print("sense partition", logical_plan, plan_order)
         
 
 
@@ -330,7 +265,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
         component_index = plan_order.index(last_not_applier)
         last_not_applier = partition_component
         plan_order.insert(component_index+1,partition_component)
-        print("amb partition", logical_plan, plan_order)
+        #print("amb partition", logical_plan, plan_order)
 
 
     for i, a in enumerate(applier_list):
@@ -373,28 +308,26 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     combs = 0
     for imp in pot_impls:
         #result, comb = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log, inherited_satisfied_shapes=[])
-        result = new_get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log)
+        result = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, imp, max_imp_level, log=log)
 
         if not result is None and result != []:
             options.append(result)
-            #combs += comb
+            combs += 1
    
     
     logical_plans = []
     counter = {}
-    t_comb = 0
-
 
     for transformation_combination in tqdm(options, total=combs,desc='Implementation combinations', position=0, leave=False):
         
-        for tc, data in transformation_combination:
+        for tc, data in tqdm(transformation_combination,desc='Implementation combinations', position=0, leave=False):
 
-            prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, tc)
-            t_comb += comp_comb
-            component_combinations = itertools.product(*prep_components)
-            
+            #prep_components, comp_comb = get_prep_comp(ontology, shape_graph, dataset, component_threshold, task, tc)
+            #t_comb += comp_comb
+            #component_combinations = itertools.product(*prep_components)
+            component_combinations, total_comb = materialize_plan(ontology, shape_graph, dataset, component_threshold, task, tc)
 
-            for component_combination in tqdm(component_combinations, total=comp_comb,desc='Component combinations', position=1, leave=False):
+            for component_combination in tqdm(component_combinations, total=total_comb, desc='Component combinations', position=1, leave=False):
 
                 if  is_valid_workflow_combination(ontology, shape_graph, component_combination):
                     logical_plan, order = component_comb_to_logical_plan(ontology, component_combination, requires_partition, reader_component, writer_component, partition_component)

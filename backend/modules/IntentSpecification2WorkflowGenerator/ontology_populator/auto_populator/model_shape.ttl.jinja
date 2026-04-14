@@ -11,4 +11,9 @@
 cb:{{shape_name}}
     a sh:NodeShape ;
     a tb:ModelTag ;
+    sh:property [
+        a sh:PropertyShape ;
+        sh:path rdf:type ;
+        sh:hasValue tb:ModelTag ;
+    ];
     sh:targetClass dmop:{{target}} .

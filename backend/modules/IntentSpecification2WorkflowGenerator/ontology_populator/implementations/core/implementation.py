@@ -30,7 +30,7 @@ class Implementation:
         self.input = input or []
         self.output = output or []
         self.transformations = transformations
-        assert implementation_type in {tb.Implementation, tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation}
+        assert implementation_type in {tb.Implementation, tb.LearnerImplementation, tb.ApplierImplementation, tb.VisualizerImplementation, tb.AbstractImplementation}
         self.implementation_type = implementation_type
         self.counterpart = counterpart
         if self.counterpart is not None:
@@ -117,3 +117,27 @@ class Implementation:
 
     def __repr__(self):
         return f"{self.name} Implementation"
+    
+class AbstractImplementation(Implementation):
+
+    def __init__(self, name: str, 
+                 implementations: List[Implementation],
+                 input: List[InputIOSpec] = None,
+                 output: List[OutputIOSpec] = None,
+                 namespace: Namespace = cb,
+                 ):
+        self.implementations = implementations
+        assert len(implementations) > 0
+
+        impl = implementations[0]
+        super().__init__(name, algorithm=cb.AbstractAlgorithm, parameters=[], input=input, output=output, implementation_type=tb.AbstractImplementation, 
+                         transformations=impl.transformations, namespace=namespace)
+
+    
+    def add_to_graph(self, g):
+        uri = super().add_to_graph(g)
+        for implementation in self.implementations:
+            #implementation.add_to_graph(g)
+            g.add((uri, tb.hasSpecificImplementation, implementation.uri_ref))
+        return uri
+            

@@ -139,3 +139,12 @@ cb:hasIncreasedDimensionality
     sh:path dmop:dimension;
     a sh:PropertyShape .
 
+cb:isTestDatasetShape a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:hasValue true ;
+    sh:path dmop:isTestDataset .
+
+cb:isTrainDatasetShape a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:hasValue true ;
+    sh:path dmop:isTrainDataset .
