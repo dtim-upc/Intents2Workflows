@@ -9,8 +9,7 @@
             ],
             "label_properties": [
                 "cb:isCategoricalOrNumericPropertyShape",
-                "cb:noMissingValuesPropertyShape",
-                "cb:exactlyOneColumnPropertyShape"
+                "cb:noMissingValuesPropertyShape"
             ],
             "dataset_properties": [
                 "cb:isTabularDatasetShape",

@@ -13,7 +13,7 @@ INSERT {
     ?subject <{{ predicate }}> {% if object is uri %}<{{ object }}> {%else%}{{object}}{%endif%}.
     {% endfor -%}
     {% for dependence in dependences -%}
-    ?subject {{ dependence }} cb:Undefined .
+    ?subject <{{ dependence }}> cb:Undefined .
     {% endfor %}
 }
 WHERE {

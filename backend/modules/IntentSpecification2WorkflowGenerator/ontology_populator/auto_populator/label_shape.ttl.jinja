@@ -12,6 +12,10 @@ cb:{{shape_name}}
     a sh:NodeShape ;
     sh:targetClass dmop:TabularDataset ;
 
+    {%for s in subshapes %}
+    cb:guaranteesShape cb:{{s}};
+    {%endfor%}
+
     sh:property [
         a sh:PropertyShape ;
         sh:path dmop:hasColumn ;

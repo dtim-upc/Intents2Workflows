@@ -1,14 +1,15 @@
 import json
 from pathlib import Path
 import jinja2
-from rdflib import Literal, URIRef
+from rdflib import Literal, URIRef, RDF, Graph
 import os, sys
 
 root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
 from common_shapes import BASE_SHAPES
-from common import dmop
+from common import dmop, tb, cb, get_graph_xp
+from graph_queries.shape_queries import satisfies_shape
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["./"]))
 
@@ -18,19 +19,19 @@ def uri(value):
 environment.tests['uri'] = uri
 
 
-def render_feature_shape(shape_name, base_shape):
+def render_feature_shape(shape_name, base_shape, subshapes):
     feature_shape_template = environment.get_template('feature_shape.ttl.jinja')
-    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape)
+    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape, subshapes = subshapes)
     return feature_shape
     
-def render_label_shape(shape_name, base_shape):
+def render_label_shape(shape_name, base_shape, subshapes):
     feature_shape_template = environment.get_template('label_shape.ttl.jinja')
-    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape)
+    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape, subshapes = subshapes)
     return feature_shape
 
-def render_dataset_shape(shape_name, base_shape):
+def render_dataset_shape(shape_name, base_shape, subshapes):
     feature_shape_template = environment.get_template('dataset_shape.ttl.jinja')
-    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape)
+    feature_shape = feature_shape_template.render(shape_name = shape_name, base_shape = base_shape, subshapes = subshapes)
     return feature_shape
 
 def render_model_shape(shape_name, target):
@@ -39,6 +40,9 @@ def render_model_shape(shape_name, target):
     return feature_shape
 
 def render_transformation(insertions, dependences, conditions, columnar_type = True):
+    if len(insertions) <= 0:
+        return None
+    
     transf_template = environment.get_template("transformation_query.sparql.jinja")
     transf = transf_template.render(insertions = insertions, dependences = dependences, conditions = conditions, columnarType = columnar_type)
     return transf
@@ -51,6 +55,64 @@ def open_file(file_path:Path):
 
 base_shape_dict = {s.name : s for s in BASE_SHAPES}|{"cb:"+s.name : s for s in BASE_SHAPES}
 
+
+def add_shapes_hierarchy():
+    common_graph = Graph().parse("./auto_populator/Perplexity/common_shapes.ttl", format="turtle")
+    subshapes = {}
+    
+    for b in BASE_SHAPES:
+        is_columnar = b.type=="columnar"
+        query = render_transformation(b.transformations, b.dependences, conditions=[], columnar_type=is_columnar)
+
+        g = get_graph_xp()
+        dataset = cb[b.name+"Dataset"]
+
+        g.add((dataset, RDF.type, dmop.TabularDataset))
+
+        if is_columnar:
+            g.add((dataset, dmop.hasColumn, cb.column))
+        
+        keyf = f"{b.name}FeatureShape"
+        keyl = f"{b.name}LabelShape"
+        keyd = f"{b.name}DatasetShape"
+        
+        #print(query)
+
+        if is_columnar:
+            subshapes[keyf] = []
+            subshapes[keyl] = []
+        else:
+            subshapes[keyd] = []
+
+        if not query is None:
+            g.update(query)
+            #print(g.serialize())
+
+            for b2 in BASE_SHAPES:
+                if b != b2 and satisfies_shape(g,common_graph,cb[b2.name],dataset if b2.type !="columnar" else cb.column):
+                    #print(b.name, "also satisfies", b2.name)
+
+                    if is_columnar:
+                        if b2.type == "columnar":
+                            subshapes[keyf].append(f"{b2.name}FeatureShape")
+                            subshapes[keyl].append(f"{b2.name}LabelShape")
+                        else:
+                            subshapes[keyf].append(f"{b2.name}DatasetShape")
+                            subshapes[keyl].append(f"{b2.name}DatasetShape")
+                    
+                    else:
+                        if b2.type == "columnar":
+                            subshapes[keyd].append(f"{b2.name}FeatureShape")
+                            subshapes[keyd].append(f"{b2.name}LabelShape")
+                        else:
+                            subshapes[keyd].append(f"{b2.name}DatasetShape")
+    return subshapes
+    
+
+SUBSHAPES = add_shapes_hierarchy()
+
+
+
 def render_shapes_from_io(io_port, spec_path):
 
     dependences = set()
@@ -59,18 +121,23 @@ def render_shapes_from_io(io_port, spec_path):
         assert feature in base_shape_dict, f"Property {feature} not in common shapes"
         if feature.find('cb:') != -1:
             feature = feature[3:]
+
+        feature_name = f"{feature}FeatureShape"
+
+        subshapes = SUBSHAPES[feature_name]
+
         print("feature", feature)
-        rendered_shape = render_feature_shape(f"{feature}FeatureShape", feature)
-        print("Guardant", spec_path /f"{feature}FeatureShape.ttl")
-        with open( spec_path /f"{feature}FeatureShape.ttl", mode='w') as f:
+        rendered_shape = render_feature_shape(feature_name, feature, subshapes)
+        print("Guardant", spec_path /f"{feature_name}.ttl")
+        with open( spec_path /f"{feature_name}.ttl", mode='w') as f:
             f.write(rendered_shape)
         
         bs = base_shape_dict[feature]
         transformations = transformations.union(bs.transformations) #we are assuming no contradiction here between transformations. 
         dependences = dependences.union(bs.dependences)
-    
-    feature_transformations = render_transformation(insertions=transformations, dependences=dependences.intersection([t[0] for t in transformations]), 
-                                           conditions=[(dmop.isFeature, Literal(True))]) #ensure that if triple is defined using transformations does not appear as dependence
+
+    feature_transformations = render_transformation(insertions=transformations, dependences=dependences.difference([t[0] for t in transformations]), 
+                                            conditions=[(dmop.isFeature, Literal(True))]) #ensure that if triple is defined using transformations does not appear as dependence
 
     dependences = set()
     transformations = set()
@@ -79,42 +146,49 @@ def render_shapes_from_io(io_port, spec_path):
         if label.find('cb:') != -1:
             label = label[3:]
         print("label", label)
-        rendered_shape = render_label_shape(f"{label}LabelShape", label)
-        with open( spec_path /f"{label}LabelShape.ttl", mode='w') as f:
+        label_name = f"{label}LabelShape" 
+        subshapes = SUBSHAPES[label_name]
+        rendered_shape = render_label_shape(f"{label_name}", label, subshapes)
+        with open( spec_path /f"{label_name}.ttl", mode='w') as f:
             f.write(rendered_shape)
         
         bs = base_shape_dict[label]
         transformations = transformations.union(bs.transformations) #we are assuming no contradiction here between transformations. 
         dependences = dependences.union(bs.dependences)
 
-    label_transformations = render_transformation(insertions=transformations, dependences=dependences.intersection([t[0] for t in transformations]), 
-                                           conditions=[(dmop.isLabel, Literal(True))]) 
+    label_transformations = render_transformation(insertions=transformations, dependences=dependences.difference([t[0] for t in transformations]), 
+                                            conditions=[(dmop.isLabel, Literal(True))]) 
             
-    dependences = set()
+    dependences = set() 
     transformations = set()
     for data in io_port["dataset_properties"]:
         assert data in base_shape_dict, f"Property {data} not in common shapes"
         if data.find('cb:') != -1:
             data = data[3:]
         print("data",data)
-        rendered_shape = render_dataset_shape(f"{data}DatasetShape", data)
-        with open( spec_path /f"{data}DatasetShape.ttl", mode='w') as f:
+        data_name = f"{data}DatasetShape"
+        subshapes = SUBSHAPES.get(data_name,[])
+        rendered_shape = render_dataset_shape(data_name, data, subshapes)
+        with open( spec_path /f"{data_name}.ttl", mode='w') as f:
             f.write(rendered_shape)
         
         bs = base_shape_dict[data]
         transformations = transformations.union(bs.transformations) #we are assuming no contradiction here between transformations. 
         dependences = dependences.union(bs.dependences)
 
-    dataset_transformations = render_transformation(insertions=transformations, dependences=dependences.intersection([t[0] for t in transformations]), 
-                                           conditions=[], columnar_type=False) 
+    dataset_transformations = render_transformation(insertions=transformations, dependences=dependences.difference([t[0] for t in transformations]), 
+                                            conditions=[], columnar_type=False) 
     
     
-    with open(spec_path /f"featureTransformations.sparql", mode='w') as f:
-            f.write(feature_transformations)
-    with open(spec_path /f"labelTransformations.sparql", mode='w') as f:
-            f.write(label_transformations)
-    with open(spec_path /f"datasetTransformations.sparql", mode='w') as f:
-            f.write(dataset_transformations)
+    if feature_transformations is not None:
+        with open(spec_path /f"featureTransformations.sparql", mode='w') as f:
+                f.write(feature_transformations)
+    if label_transformations is not None:
+        with open(spec_path /f"labelTransformations.sparql", mode='w') as f:
+                f.write(label_transformations)
+    if dataset_transformations is not None:
+        with open(spec_path /f"datasetTransformations.sparql", mode='w') as f:
+                f.write(dataset_transformations)
 
 def main():
     gpt = Path('./Perplexity/components')
@@ -124,9 +198,6 @@ def main():
         raw = f.read()
 
     sklearn_components = json.loads(raw)
-
-    with open('./Perplexity/common_shapes.ttl') as f:
-        raw = f.read()
 
 
     for component in sklearn_components.values():
@@ -144,7 +215,6 @@ def main():
             with open(component_path) as f:
                 component_json = json.load(f)[component["name"]]
             
-            print(component_json["inputs"])
 
             for num,i in enumerate(component_json["inputs"]):
                 spec_path = component_inputs / f"{num}"

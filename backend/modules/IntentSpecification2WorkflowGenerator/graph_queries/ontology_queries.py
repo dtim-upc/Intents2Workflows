@@ -69,6 +69,12 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
                 ?implementation a tb:AbstractImplementation;
                                 tb:specifiesOutput ?spec .
             }}
+            UNION
+            {{
+                ?implementation a tb:AbstractImplementation;
+                                tb:specifiesOutput ?spec2 .
+                ?spec tb:guaranteesShape ?spec2 .
+            }}
             FILTER NOT EXISTS {{
                 ?implementation a tb:{'Applier' if exclude_appliers else ''}Implementation .
                                 # tb:specifiesOutput ?spec .

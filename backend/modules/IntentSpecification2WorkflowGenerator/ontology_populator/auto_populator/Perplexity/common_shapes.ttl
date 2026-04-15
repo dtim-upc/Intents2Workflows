@@ -32,6 +32,7 @@ cb:isGaussianDistributed
 cb:isNumericDatatypePropertyShape
     a sh:PropertyShape ;
     sh:path dmop:hasDataPrimitiveTypeColumn ;
+    sh:minCount 1 ;
     sh:in ( dmop:Float dmop:Integer dmop:Binary dmop:Numeric) .
 
 cb:isIntegerDatatypePropertyShape
@@ -52,7 +53,8 @@ cb:isStringDatatypePropertyShape
 cb:isCategoricalOrNumericPropertyShape
     a sh:PropertyShape ;
     sh:path dmop:hasDataPrimitiveTypeColumn ;
-    sh:in ( dmop:Float dmop:Integer dmop:Categorical dmop:Binary dmop:CategoricalOrNumeric) .
+    sh:minCount 1 ;
+    sh:in ( dmop:Float dmop:Integer dmop:Categorical dmop:Binary dmop:CategoricalOrNumeric dmop:Numeric) .
 
 cb:isCategoricalPropertyShape
     a sh:PropertyShape ;
@@ -62,7 +64,8 @@ cb:isCategoricalPropertyShape
 cb:isContinuousPropertyShape
     a sh:PropertyShape ;
     sh:path dmop:hasDataPrimitiveTypeColumn ;
-    sh:hasValue dmop:Float .
+    sh:minCount 1 ;
+    sh:in ( dmop:Float dmop:Integer dmop:Binary dmop:Numeric) .
 
 #############################
 # Non-Boolean Property Shapes
@@ -71,15 +74,18 @@ cb:isContinuousPropertyShape
 cb:minZeroPropertyShape
     a sh:PropertyShape ;
     sh:path dmop:minValue ;
+    sh:minCount 1 ;
     sh:minInclusive 0 .
 
 cb:maxOnePropertyShape
     a sh:PropertyShape ;
     sh:path dmop:maxValue ;
+    sh:minCount 1 ;
     sh:maxInclusive 1 .
 
 cb:minTwoClustersPropertyShape
     a sh:PropertyShape ;
+    sh:minCount 1 ;
     sh:path dmop:numberOfDistinctValues ;
     sh:minInclusive 2 .
 
@@ -100,11 +106,13 @@ cb:StandardizedPropertyShape
 cb:minOneComponentPropertyShape
     a sh:PropertyShape ;
     sh:path dmop:numberOfColumns ;
+    sh:minCount 1 ;
     sh:minInclusive 1 .
 
 cb:exactlyOneColumnPropertyShape
     a sh:PropertyShape ;
     sh:path dmop:numberOfColumns ;
+    sh:minCount 1 ;
     sh:minInclusive 1 ;
     sh:maxInclusive 1 .
 
@@ -133,10 +141,12 @@ cb:isTextDocumentShape
 
 cb:hasReducedDimensionality
     sh:path dmop:dimension;
+    sh:minCount 1 ;
     a sh:PropertyShape .
 
 cb:hasIncreasedDimensionality
     sh:path dmop:dimension;
+    sh:minCount 1 ;
     a sh:PropertyShape .
 
 cb:isTestDatasetShape a sh:PropertyShape ;

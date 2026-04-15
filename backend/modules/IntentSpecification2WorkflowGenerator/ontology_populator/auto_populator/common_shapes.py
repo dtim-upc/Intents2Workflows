@@ -9,7 +9,7 @@ from common import dmop
 
 BASE_SHAPES = [
     BaseShape("noMissingValuesPropertyShape", 'columnar', dependences=[], transformations=[(dmop.containsNulls, Literal(False))]),
-    BaseShape("isNotGaussianDistributed", 'columnar', dependences=[], transformations=[( dmop.isGaussian, Literal(True))]),
+    BaseShape("isGaussianDistributed", 'columnar', dependences=[], transformations=[( dmop.isGaussian, Literal(True))]),
     BaseShape("isNumericDatatypePropertyShape", 'columnar', dependences=[], transformations=[( dmop.hasDataPrimitiveTypeColumn, dmop.Numeric)]),
     BaseShape("isIntegerDatatypePropertyShape", 'columnar', dependences=[], transformations=[( dmop.hasDataPrimitiveTypeColumn, dmop.Integer)]),
     BaseShape("isBinaryDatatypePropertyShape", 'columnar', dependences=[], transformations=[( dmop.hasDataPrimitiveTypeColumn, dmop.Binary)]),
@@ -24,7 +24,7 @@ BASE_SHAPES = [
     BaseShape("maxOnePropertyShape", 'columnar', dependences=[], transformations=[( dmop.maxValue, Literal(1))]),
     BaseShape("isScaledPropertyShape", 'columnar', dependences=[], transformations=[( dmop.isScaled, Literal(True))]),
     BaseShape("StandardizedPropertyShape", 'columnar', dependences=[], transformations=[( dmop.isStandardized, Literal(True))]),
-    BaseShape("minOneComponentPropertyShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( dmop.numberOfColumns, 1)]),
+    BaseShape("minOneComponentPropertyShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( dmop.numberOfColumns, 1),( dmop.numberOfColumns, 10000)]),
     BaseShape("exactlyOneColumnPropertyShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( dmop.numberOfColumns, 1)]),
     BaseShape("isTabularDatasetShape", 'dataset', dependences=[], transformations=[( RDF.type, dmop.TabularDataset)]),
     BaseShape("isDictShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( RDF.type, dmop.Dict)]),

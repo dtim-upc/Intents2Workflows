@@ -17,11 +17,11 @@
         "data_outputs": [
             {
                 "feature_properties": [
-                    "isArrayShape"
                 ],
                 "label_properties": [],
                 "dataset_properties": [
-                    "minOneComponentPropertyShape"
+                    "minOneComponentPropertyShape",
+                    "isArrayShape"
                 ]
             }
         ],
