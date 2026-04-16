@@ -22,7 +22,8 @@
                 ],
                 "label_properties": [],
                 "dataset_properties": [
-                    "cb:isArrayShape"
+                    "cb:isArrayShape",
+                    "cb:hasIncreasedDimensionality"
                 ]
             }
         ],

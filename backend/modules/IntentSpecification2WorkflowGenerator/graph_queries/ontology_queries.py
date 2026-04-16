@@ -65,35 +65,46 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
         PREFIX tb: <{tb}>
         SELECT ?implementation
         WHERE {{
-            {{
-                ?implementation a tb:AbstractImplementation;
+            ?implementation a tb:AbstractImplementation;
                                 tb:specifiesOutput ?spec .
-            }}
-            UNION
-            {{
-                ?implementation a tb:AbstractImplementation;
-                                tb:specifiesOutput ?spec2 .
-                ?spec tb:guaranteesShape ?spec2 .
-            }}
+
             FILTER NOT EXISTS {{
                 ?implementation a tb:{'Applier' if exclude_appliers else ''}Implementation .
                                 # tb:specifiesOutput ?spec .
             }}
+
             ?spec tb:hasSpecTag ?sptg .
-            ?sptg tb:hasDatatag {shape.n3()} .
+
+            {{
+                ?sptg tb:hasDatatag {shape.n3()} .
+            }}
+            UNION
+            {{
+                ?sptg tb:hasDatatag ?shape .
+                ?shape tb:guaranteesShape {shape.n3()} .
+            }}
+
             FILTER NOT EXISTS {{
                 ?implementation  tb:specifiesInput ?inpspec .
                 ?inpspec tb:hasSpecTag ?inpsptg .
-                ?inpsptg tb:hasDatatag {shape.n3()} .
 
+                {{
+                    ?inpsptg tb:hasDatatag {shape.n3()} .
+                }}
+                UNION
+                {{
+                    ?inpsptg tb:hasDatatag ?shape .
+                    ?shape tb:guaranteesShape {shape.n3()} .
+                }}
             }}
-        }}
+        }} 
     """
+    
     #print(implementation_query)
     result = ontology.query(implementation_query).bindings
     implementations = [x['implementation'] for x in result]
     #print(implementations) 
-    #assert 3 == 2  
+    #assert shape.n3().find("isContinuousProperty") == -1
     return implementations
 
 

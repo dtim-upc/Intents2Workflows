@@ -144,3 +144,17 @@ def get_dataset_columns(data_graph:Graph, dataset:URIRef)-> List[str]:
     columns = data_graph.query(query).bindings
 
     return [x['label'].value for x in columns]
+
+def get_dataset_columns_uri(data_graph:Graph, dataset:URIRef)-> List[URIRef]:
+    query = f"""
+        PREFIX rdfs: <{RDFS}>
+        PREFIX dmop: <{dmop}>
+
+        SELECT ?column
+        WHERE {{
+            {dataset.n3()} dmop:hasColumn ?column .
+        }}
+        """
+    columns = data_graph.query(query).bindings
+
+    return [x['column'] for x in columns]

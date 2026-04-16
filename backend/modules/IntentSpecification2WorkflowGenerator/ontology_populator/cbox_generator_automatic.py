@@ -200,7 +200,7 @@ def add_components (cbox:Graph):
         inputs = impl.input
         print(inputs)
         outputs = impl.output
-        name = str(hash(key))#next(cbox.objects(impl.algorithm, tb.solves),cb.UnknownTask).fragment + " Aggregation"
+        name = str(hash(key))+ "_" + impl.name + " Aggregation"
         abs = AbstractImplementation(name=name,implementations=values, input=inputs, output=outputs)
         abs.add_to_graph(cbox)
 

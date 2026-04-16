@@ -2,6 +2,9 @@ from rdflib import Graph, URIRef
 from pyshacl import validate
 from typing import List
 
+from common import SH, dmop
+  
+
 def satisfies_shape(data_graph: Graph, shacl_graph: Graph, shape: URIRef, focus: URIRef) -> bool:
     conforms, g, report = validate(data_graph, shacl_graph=shacl_graph, validate_shapes=[shape], focus=focus)
     #if not conforms:
@@ -17,3 +20,6 @@ def reinforce_constraint(shape_graph:Graph, ontology:Graph, node_shape:URIRef, u
             constrained_nodes.append(node)
     
     return constrained_nodes
+
+def iscolumnar(ontology:Graph, shape):
+    return (shape, SH.targetClass, dmop.Column) in ontology
