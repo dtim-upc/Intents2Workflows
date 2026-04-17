@@ -127,10 +127,7 @@ cb:isDictShape
     sh:hasValue dmop:Dict .
 
 cb:isArrayShape a sh:PropertyShape ;
-    sh:or (
-        #[ sh:hasValue dmop:Array ] TODO fix array inconsistences
-        [ sh:hasValue dmop:TabularDataset ]
-    ) ;
+    sh:hasValue dmop:TabularDataset ;
     sh:path rdf:type .
 
 

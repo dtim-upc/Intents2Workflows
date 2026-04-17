@@ -28,11 +28,11 @@ BASE_SHAPES = [
     BaseShape("exactlyOneColumnPropertyShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( dmop.numberOfColumns, 1)]),
     BaseShape("isTabularDatasetShape", 'dataset', dependences=[], transformations=[( RDF.type, dmop.TabularDataset)]),
     BaseShape("isDictShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( RDF.type, dmop.Dict)]),
-    BaseShape("isArrayShape", 'dataset', dependences=[dmop.hasColumns], transformations=[( RDF.type, dmop.TabularDataset)]),
+    BaseShape("isArrayShape", 'dataset', dependences=[], transformations=[( RDF.type, dmop.TabularDataset)]),
     BaseShape("isTextDocumentShape", 'dataset',dependences=[dmop.hasColumns], transformations=[( RDF.type, dmop.TextDocument)]),
     BaseShape("hasReducedDimensionality", 'dataset',dependences=[dmop.numberOfColumns], transformations=[]),
     BaseShape("hasIncreasedDimensionality", 'dataset',dependences=[dmop.numberOfColumns], transformations=[]),
-    BaseShape("isContinuousPropertyShape", 'columnar', dependences=[], transformations=[(dmop.hasDataPrimitiveTypeColumn, dmop.Float)])
+    BaseShape("isContinuousPropertyShape", 'columnar', dependences=[], transformations=[(dmop.hasDataPrimitiveTypeColumn, dmop.Float)]) 
 
 ]
 

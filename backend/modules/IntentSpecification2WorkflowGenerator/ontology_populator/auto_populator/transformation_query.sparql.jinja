@@ -21,6 +21,7 @@ WHERE {
     {% if columnarType -%}
     ?base a dmop:TabularDataset .
     ?base dmop:hasColumn ?subject .
+    VALUES ?subject { $$COLUMNS_TO_TRANSFORM$$ }
     {% else %}
     ?subject a dmop:TabularDataset .
     {% endif -%}
@@ -36,4 +37,6 @@ WHERE {
     {% for predicate, object in conditions -%}
     ?subject <{{ predicate }}> {% if object is uri %}<{{ object }}> {%else%}{{object}}{%endif%}.
     {% endfor %}
+
+
 }

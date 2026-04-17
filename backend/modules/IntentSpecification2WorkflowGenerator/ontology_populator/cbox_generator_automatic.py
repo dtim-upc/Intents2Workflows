@@ -238,24 +238,21 @@ def add_partitioning(cbox:Graph):
 
 
 def add_sanitizer(cbox:Graph):
-    inputs = [InputIOSpec(io_tags=[])]
+    inputs = [InputIOSpec(io_tags=[IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])]
     outputs = [OutputIOSpec(io_tags=[IOSpecTag(cb.isCategoricalOrNumericPropertyShapeFeatureShape)])]
 
 
     transformation_query = f""" 
     DELETE {{
 
-    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> ?insVal_1 .
-    
-    }}
-    INSERT {{
-
-    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#CategoricalOrNumeric> .
+    ?subject ?predicate ?object .
+    ?base dmop:hasColumn ?subject .
     
     }}
     WHERE {{
     ?base a dmop:TabularDataset .
     ?base dmop:hasColumn ?subject .
+    VALUES ?subject {{ $$COLUMNS_TO_TRANSFORM$$ }}
     OPTIONAL {{ ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> ?insVal_1 . }}
     ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#isFeature> true.
     }}

@@ -13,7 +13,7 @@ cb:{{shape_name}}
     sh:targetClass dmop:TabularDataset ;
 
     {%for s in subshapes %}
-    cb:guaranteesShape cb:{{s}};
+    tb:guaranteesShape cb:{{s}};
     {%endfor%}
     
     sh:property cb:{{base_shape}}.

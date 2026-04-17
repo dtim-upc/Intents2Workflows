@@ -63,7 +63,7 @@ def get_implementation_io_specs(ontology: Graph, implementation: URIRef, type = 
 def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclude_appliers: bool = False) -> List[URIRef]:
     implementation_query = f"""
         PREFIX tb: <{tb}>
-        SELECT ?implementation
+        SELECT DISTINCT ?implementation
         WHERE {{
             ?implementation a tb:AbstractImplementation;
                                 tb:specifiesOutput ?spec .
@@ -93,17 +93,16 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
                 }}
                 UNION
                 {{
-                    ?inpsptg tb:hasDatatag ?shape .
-                    ?shape tb:guaranteesShape {shape.n3()} .
+                    ?inpsptg tb:hasDatatag ?shape2 .
+                    ?shape2 tb:guaranteesShape {shape.n3()} .
                 }}
             }}
         }} 
     """
     
-    #print(implementation_query)
     result = ontology.query(implementation_query).bindings
     implementations = [x['implementation'] for x in result]
-    #print(implementations) 
+    print("Implementations that satift", shape,"are:",implementations) 
     #assert shape.n3().find("isContinuousProperty") == -1
     return implementations
 

@@ -61,8 +61,9 @@ def add_shapes_hierarchy():
     subshapes = {}
     
     for b in BASE_SHAPES:
-        is_columnar = b.type=="columnar"
+        is_columnar = b.type=="columnar" 
         query = render_transformation(b.transformations, b.dependences, conditions=[], columnar_type=is_columnar)
+        
 
         g = get_graph_xp()
         dataset = cb[b.name+"Dataset"]
@@ -71,12 +72,13 @@ def add_shapes_hierarchy():
 
         if is_columnar:
             g.add((dataset, dmop.hasColumn, cb.column))
+            query = query.replace("$$COLUMNS_TO_TRANSFORM$$", "cb:column")
         
         keyf = f"{b.name}FeatureShape"
         keyl = f"{b.name}LabelShape"
         keyd = f"{b.name}DatasetShape"
         
-        #print(query)
+        print(query)
 
         if is_columnar:
             subshapes[keyf] = []

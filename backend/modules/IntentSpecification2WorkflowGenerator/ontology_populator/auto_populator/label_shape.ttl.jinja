@@ -10,16 +10,13 @@
 
 cb:{{shape_name}}
     a sh:NodeShape ;
-    sh:targetClass dmop:TabularDataset ;
+    sh:targetClass dmop:Column ;
 
     {%for s in subshapes %}
-    cb:guaranteesShape cb:{{s}};
+    tb:guaranteesShape cb:{{s}};
     {%endfor%}
 
-    sh:property [
-        a sh:PropertyShape ;
-        sh:path dmop:hasColumn ;
-        sh:or (
+    sh:or (
             [
                 sh:property [
                     a sh:PropertyShape ;
@@ -30,6 +27,4 @@ cb:{{shape_name}}
             [
                 sh:property cb:{{base_shape}};
             ]
-        )
-        
-    ] .
+        ).
