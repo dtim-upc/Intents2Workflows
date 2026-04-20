@@ -10,7 +10,7 @@
       </div>
       <div v-else class="col-12 col-lg-8 text-left">
         <q-list bordered separator>
-          <q-item v-for="(group, index) in intentsStore.logicalPlans" :key="index" class="q-my-sm">
+          <q-item v-for="(group, index) in intentsStore.logicalPlans" :key="group.id" class="q-my-sm">
             <q-item-section avatar>
               <q-checkbox v-model="group.selected" @update:model-value="checkboxGroup(group, $event)"/>
             </q-item-section>
@@ -20,13 +20,13 @@
             <div class="col-6">
               <q-expansion-item label="Individual plans" style="font-size: 17px; background-color: rgb(243, 241, 241);">
                 <q-list bordered separator>
-                  <q-item v-for="(plan, indexPlan) in group.plans" :key="indexPlan" class="q-my-sm">
+                  <q-item v-for="(plan, indexPlan) in group.plans" :key="plan.id" class="q-my-sm">
                     <q-item-section avatar>
                       <q-checkbox v-model="plan.selected" @update:model-value="checkboxIndividualPlan(group, $event)"/>
                     </q-item-section>
                     <q-item-section> {{ plan.id }}</q-item-section>
                     <q-item-section avatar>
-                        <q-btn color="primary" icon="mdi-eye-outline" size="10px" @click="openDialog(plan.plan)">
+                        <q-btn color="primary" icon="mdi-eye-outline" size="10px" @click="openDialog(plan.plan, plan.cols)">
                         </q-btn>
                     </q-item-section>
                   </q-item>
@@ -36,7 +36,7 @@
           </q-item>
         </q-list>
 
-        <DialogWithVisualizedPlan v-model:dialog="dialog" :visualizedPlan="visualizedPlan"/>
+        <DialogWithVisualizedPlan v-model:dialog="dialog" :visualizedPlan="visualizedPlan" :visualizedPlanCols="visualizedPlanCols"/>
       
       </div>
       <div class="col-12">
@@ -67,11 +67,17 @@ const intentsStore = useIntentsStore()
 const dataProductsStore = useDataProductsStore()
 
 const visualizedPlan = ref(null)
+const visualizedPlanCols = ref(null)
 const dialog = ref(false)
 const countSelectedPlans = ref(intentsStore.countSelectedPlans)
 
-const openDialog = (plan) => {
+const selectedPlansOfGroup = (group) => {
+  return group.plans.filter(p => p.selected).length
+}
+
+const openDialog = (plan, cols) => {
   visualizedPlan.value = plan
+  visualizedPlanCols.value = cols
   dialog.value = true
 }
 
@@ -133,14 +139,14 @@ const handleSubmit = async() => {
   $q.loading.hide()
 }
 
-const selectedPlansOfGroup = (group) => {
+/**const selectedPlansOfGroup = (group) => {
   const totalNumberOfPlansOfGroup = group.plans.length
   let countSelectedPlansOfGroup = 0
   group.plans.map(plan => {
     if (plan.selected) countSelectedPlansOfGroup++
   })
   return "(" + countSelectedPlansOfGroup + "/" + totalNumberOfPlansOfGroup + ")"
-}
+}**/
 
 const selectAll = () => {
   intentsStore.logicalPlans.forEach(group => {

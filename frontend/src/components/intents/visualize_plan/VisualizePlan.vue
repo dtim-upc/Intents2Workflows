@@ -36,7 +36,7 @@ import CustomNode from './CustomNode.vue'
 import CustomEdge from './CustomEdge.vue'
 import ELK from 'elkjs/lib/elk.bundled.js'
 
-const props = defineProps(['plan'])
+const props = defineProps(['plan', 'cols'])
 const { onConnect, addEdges } = useVueFlow()
 
 /* Reference structure of the nodes and edges
@@ -77,81 +77,135 @@ function toTitleCase(str: string): string {
   );
 }
 
-async function plan_layout(plan: [[key: string],string[]]) {
-  let nodes_plan = [];
-  for (let component of plan){
-    let node_id = component[0].split('#').at(-1)!;
-    let label = toTitleCase(node_id.replaceAll('_', ' ').replaceAll('-', ' ').replace('component ', ''));
-    let width = 200;
-    let label_width = label.length * 12;
-    let height = label_width > width ? 30 * label_width / width : 30;
-    nodes_plan.push({
-      id: component[0],
-      node_id: node_id,
-      data: {
-          label: label,
-      },
-      width: width,
-      height: height,
-      sourcePosition: 'right',
-      targetPosition: 'left',
-    })
-  }
 
-  //console.log(nodes_plan)
 
-  let edges_plan = [];
-  let i = 0;
-  for (let source of plan) {
-    for (let target of source[1]) {
-      edges_plan.push({
-        id: 'e' + i,
-        sources: [source[0]],
-        targets: [target],
-        source: source[0],
-        target: target,
-        arrow: true,
-      });
-      i++;
+async function plan_layout(plan: Array<[string, string[]]>, cols: Record<string, string[]>) {
+  try {
+    let nodes_plan = [];
+    for (let component of plan){
+      let node_id = component[0].split('#').at(-1)!;
+      let label = toTitleCase(node_id.replaceAll('_', ' ').replaceAll('-', ' ').replace('component ', ''));
+      let width = 125;
+      let lines = measureTextLines(label, width)
+      let height = Math.max(40, 20+ lines * 20);
+      let description = cols[component[0]]
+      let result = description?.map((c: string) => c.split('#').pop() ?? c);
+      if (result == undefined) result = []
+      nodes_plan.push({
+        id: component[0],
+        node_id: node_id,
+        data: {
+            label: label,
+            description: result,
+            width: width,
+            height: height,
+            color: "#d8cece"
+        },
+        width: width,
+        height: height,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      })
     }
-  }
 
-  //console.log(edges_plan)
+    //console.log(nodes_plan)
 
-  const graph = {
-    id: "root",
-    children: nodes_plan,
-    edges: edges_plan
-  }
+    let edges_plan = [];
+    let i = 0;
+    for (let source of plan) {
+      for (let target of source[1]) {
+        edges_plan.push({
+          id: 'e' + i,
+          sources: [source[0]],
+          targets: [target],
+          source: source[0],
+          target: target,
+          arrow: true,
+        });
+        i++;
+      }
+    }
 
-  const layout = await elk.layout(graph);
+    //console.log(edges_plan)
 
-  layout.children!.map(node => {
-    let node_id = node.id.split('#').at(-1)!;
-    let label = toTitleCase(node_id.replaceAll('_', ' ').replaceAll('-', ' ').replace('component ', ''));
-    nodes.value.push({
-      id: node.id,
-      label: label,
-      position:{
+    const graph = {
+      id: "root",
+      children: nodes_plan,
+      edges: edges_plan
+    }
+    console.log("GRAPH:", graph)
+    const layout = await elk.layout(graph);
+    console.log("LAYOUT:", layout)
+
+    nodes.value = layout.children!.map(node => {
+    const nodeData = nodes_plan.find(n => n.id === node.id)?.data
+
+    return {
+      id: node.id, 
+      position: {
         x: node.x as number,
         y: node.y as number,
       },
+      data: {
+        label: nodeData?.label,
+        description: nodeData?.description,
+        width: nodeData?.width,
+        height: nodeData?.height,
+        color: nodeData?.color,
+        x : node.x as number,
+        y: node.y as number
+      },
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
-      class: 'grey-node'
-    })
-  });
-
-  layout.edges!.map(edge => {
-    edges.value.push({
-      id: edge.id,
-      source: edge.sources.at(0) as string,
-      target: edge.targets.at(0) as string,
-    })
+      class: 'grey-node',
+      type: 'custom'
+    }
   })
+
+    edges.value = layout.edges!.map(edge => ({
+    id: edge.id,
+    source: edge.sources[0] as string,
+    target: edge.targets[0] as string,
+    }))
+
+  }
+  catch (error) {
+    console.error('Layout failed:', error);
+    // Fallback to manual positioning
+  }
+
 }
 
-plan_layout(props.plan)
+function measureTextLines(label:string, width:number, fontSize = 12, fontFamily = 'Roboto', padding=10) {
+  // Create canvas context for accurate measurement
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const realWidth = width - 2*padding
+  if(ctx) ctx.font = `${fontSize}px ${fontFamily}`;
+  
+  const words = label.split(' ');
+  let lines = 1;
+  let currentLine = words[0];
+  
+  for (let i = 1; i < words.length; i++) {
+    const testLine = currentLine + ' ' + words[i];
+    const metrics = ctx? ctx.measureText(testLine): {width: 0}
+    
+    if (metrics.width > realWidth) {
+      lines++;
+      currentLine = words[i];
+    } else {
+      currentLine = testLine;
+    }
+  }
+
+  console.log("lines of", label, lines)
+  
+  return lines
+}
+
+
+plan_layout(props.plan, props.cols)
 
 onConnect((params) => {
   addEdges([params])
@@ -160,6 +214,6 @@ onConnect((params) => {
 
 <style>
 .grey-node {
-  background: rgb(216, 206, 206);
+  background: #d8cece;
 }
 </style>

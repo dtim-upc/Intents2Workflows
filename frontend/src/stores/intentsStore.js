@@ -145,6 +145,7 @@ export const useIntentsStore = defineStore('intents', {
               selected: true,
               plan: p.plan,
               graph: null,
+              cols: p.cols,
               KNIMECompatible: null,
               PythonCompatible: null,
             }

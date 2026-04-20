@@ -4,19 +4,40 @@
       <q-card class="text-black">
         <q-bar>
           <q-space />
-          <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
-            <q-tooltip v-if="maximizedToggle" class="bg-white text-primary">Minimize</q-tooltip>
-          </q-btn>
-          <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
-            <q-tooltip v-if="!maximizedToggle" class="bg-white text-primary">Maximize</q-tooltip>
-          </q-btn>
-          <q-btn dense flat icon="close" @click="close">
-            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-          </q-btn>
+          <q-btn 
+            dense 
+            flat 
+            icon="minimize" 
+            @click="maximizedToggle = false" 
+            :disable="!maximizedToggle"
+            tooltip="Minimize"
+            tooltip-class="bg-white text-primary"
+          />
+          <q-btn 
+            dense 
+            flat 
+            icon="crop_square" 
+            @click="maximizedToggle = true" 
+            :disable="maximizedToggle"
+            tooltip="Maximize"
+            tooltip-class="bg-white text-primary"
+          />
+          <q-btn 
+            dense 
+            flat 
+            icon="close" 
+            @click="close"
+            tooltip="Close"
+            tooltip-class="bg-white text-primary"
+          />
         </q-bar>
 
-        <q-card-section>
-          <VisualizePlan :plan="visualizedPlan"/> 
+        <q-card-section style="height: calc(100vh - 100px); overflow: auto;">
+          <VisualizePlan 
+            v-if="dialogVisible"
+            :plan="visualizedPlan" 
+            :cols="visualizedPlanCols"
+          /> 
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -25,25 +46,25 @@
 
 <script setup>
 
-import { ref, defineEmits, watch } from 'vue';
+import { computed, ref } from 'vue';
 import VisualizePlan from './VisualizePlan.vue';
 
 const props = defineProps({
-  dialog: {type: Boolean, required: true},
-  visualizedPlan: {type: Object, required: true}
+  dialog: { type: Boolean, required: true },
+  visualizedPlan: { type: Object, required: true },
+  visualizedPlanCols: { type: Object, required: false, default: () => ({}) }
 });
 
-const dialogVisible = ref(props.dialog);
-const maximizedToggle = ref(true)
+const emit = defineEmits(['update:dialog']);
 
-const emits = defineEmits(['update:dialog'])
+const dialogVisible = computed({
+  get: () => props.dialog,
+  set: (val) => emit('update:dialog', val)
+});
 
-watch(() => props.dialog, (newVal) => {
-  dialogVisible.value = newVal
-})
+const maximizedToggle = ref(true);
 
 const close = () => {
-  dialogVisible.value = false
-  emits('update:dialog', false)
-}
+  dialogVisible.value = false;
+};
 </script>
