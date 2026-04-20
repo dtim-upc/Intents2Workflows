@@ -127,9 +127,11 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
 
         plan, data = pp
 
-        tqdm.write(f"for transformation columns {affected_columns}")
+        dataset_cols = set(data_queries.get_dataset_columns_uri(data, dataset))
 
-        yield plan + [(implementation, affected_columns)], transform(ontology, implementation, data, dataset, affected_columns)
+        remaining_affected_colums = list(set(affected_columns) & dataset_cols)
+
+        yield plan + [(implementation, remaining_affected_colums)], transform(ontology, implementation, data, dataset, remaining_affected_colums)
 
     
 
