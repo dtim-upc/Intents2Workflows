@@ -133,9 +133,7 @@ async function plan_layout(plan: Array<[string, string[]]>, cols: Record<string,
       children: nodes_plan,
       edges: edges_plan
     }
-    console.log("GRAPH:", graph)
     const layout = await elk.layout(graph);
-    console.log("LAYOUT:", layout)
 
     nodes.value = layout.children!.map(node => {
     const nodeData = nodes_plan.find(n => n.id === node.id)?.data

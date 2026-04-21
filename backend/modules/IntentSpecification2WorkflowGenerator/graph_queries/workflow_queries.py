@@ -99,3 +99,12 @@ def get_step_parameters_agnostic(workflow_graph: Graph, step: URIRef) -> Dict[UR
         step_parameters[param] = value
 
     return step_parameters
+
+def get_step_columns(workflow_graph: Graph, step: URIRef) -> List[URIRef]:
+    cols = list(workflow_graph.objects(step, tb.over_column))
+    return cols
+
+def get_step_columns_ignored(workflow_graph: Graph, step: URIRef) -> List[URIRef]:
+    cols = list(workflow_graph.objects(step, tb.ignores_column))
+    return cols
+

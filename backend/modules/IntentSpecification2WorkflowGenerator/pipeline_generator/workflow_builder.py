@@ -20,12 +20,14 @@ def get_port_target_type(ontology:Graph, shapes:List[URIRef]):
 def inject_value(dataset:Dataset, value:Literal):
     
     raw_value = value.toPython()
+
+    label = dataset.label[0].fragment if len(dataset.label) > 0 else '' #TODO allow multilabel problems
     
     if isinstance(raw_value,str):
-        injections= [("$$LABEL$$", dataset.label),
-                    ('$$LABEL_CATEGORICAL$$', dataset.label),
+        injections= [("$$LABEL$$", label ),
+                    ('$$LABEL_CATEGORICAL$$', label),
                     ('$$NUMERIC_COLUMNS$$', f'{dataset.numeric_columns}'),
-                    ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns + [dataset.target]}'),
+                    ('$$NUMERIC_AND_TARGET_COLUMNS$$',f'{dataset.numeric_columns + dataset.targets}'),
                     ('$$CATEGORICAL_COLUMNS$$',f'{dataset.categorical_columns}'),
                     ('$$PATH$$',f'{dataset.path}'),
                     ('$$DATA_RAW_FORMAT$$',f'{dataset.format}'),
@@ -61,7 +63,7 @@ def get_workflow_parameters(ontology:Graph, dataset:Dataset, implementation: URI
 
 
 
-def get_most_suitable_predecessor(input_port:Tuple[Set[URIRef],Tuple[bool,bool]], candidates: List[Tuple[URIRef,List[URIRef],Tuple[bool,bool]]]): #TODO create candidate class
+def get_most_suitable_predecessor(ontology:Graph, input_port:Tuple[Set[URIRef],Tuple[bool,bool]], candidates: List[Tuple[URIRef,List[URIRef],Tuple[bool,bool]]]): #TODO create candidate class
     """Get the most plausible component to connect to input_port. 
     This is infered based on the input shapes of each port candidate port and the target type.
     The returned candidate is ideally the one that contain all the shapes of the input port. 
@@ -74,29 +76,44 @@ def get_most_suitable_predecessor(input_port:Tuple[Set[URIRef],Tuple[bool,bool]]
     
     best_score = -1 #if shapes don't match, at least select a data/model candidate port that matches the input
     best_candidate = cb.NONE
-    input_shapes, (input_targets_data, input_targets_model) = input_port
+    input_shapes, (input_targets_data, input_targets_model), input_component = input_port
 
-    for port, shapes, (port_targets_data, port_tarets_model)  in reversed(candidates): #it is more likely to connect to the immediately precedent step
+    for port, shapes, (port_targets_data, port_tarets_model), component  in reversed(candidates): #it is more likely to connect to the immediately precedent step
+        print(port, shapes, port_targets_data, port_tarets_model)
         
-        if (port_targets_data and input_targets_data) or (port_tarets_model and input_targets_model): #do not consider a viable candidate if port_targets differ 
-            intersection = input_shapes & set(shapes)
+        if (port_targets_data and input_targets_data):
+            print(input_component, component, list(ontology.subjects(tb.hasApplier, input_component)))
+            if component not in list(ontology.subjects(tb.hasApplier, input_component)):
+                return port
+        
+        if(port_tarets_model and input_targets_model): #do not consider a viable candidate if port_targets differ 
+            return port
+            # intersection = input_shapes & set(shapes)
+            # print("intersection", intersection)
 
-            if len(intersection) == len(input_shapes):
-                return port # Best possible match
+            # if len(intersection) == len(input_shapes):
+            #     return port # Best possible match
             
-            if len(intersection) > best_score:
-                best_candidate = port
-                best_score = len(intersection)
+            # if len(intersection) > best_score:
+            #     best_candidate = port
+            #     best_score = len(intersection)
 
     return best_candidate
 
 def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:int, step_component: URIRef, 
-             input_specs: List[URIRef], output_specs: List[URIRef], parameters:Dict[URIRef,Tuple[URIRef, URIRef, URIRef]], last_steps:List[URIRef]) -> URIRef:
+             input_specs: List[URIRef], output_specs: List[URIRef], parameters:Dict[URIRef,Tuple[URIRef, URIRef, URIRef]], last_steps:List[URIRef], 
+             step_columns: List[URIRef], step_columns_to_ignore: List[URIRef]) -> URIRef:
     step = ab.term(task_name)
     workflow_graph.add((workflow, tb.hasStep, step))
     workflow_graph.add((step, RDF.type, tb.Step))
     workflow_graph.add((step, tb.runs, step_component))
     workflow_graph.add((step, tb.has_position, Literal(step_order)))
+
+    for column in step_columns:
+        workflow_graph.add((step, tb.over_column, column))
+
+    for column in step_columns_to_ignore:
+        workflow_graph.add((step, tb.ignores_column, column))
 
     for i, (port, spec) in enumerate(input_specs):
         in_node = BNode()
@@ -126,38 +143,45 @@ def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:
     return step
 
 
-def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]], run_transformations = False):
-    prev_output_ports = {URIRef(c) : [] for (c, follows) in logical_plan}
-    prev_steps = {URIRef(c) : [] for (c, follows) in logical_plan}
+def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]], transformer_columns = {}, run_transformations = False):
+    prev_output_ports = {URIRef(c.split('--')[-1]) : [] for (c, follows) in logical_plan}
+    prev_steps = {URIRef(c.split('--')[-1]) : [] for (c, follows) in logical_plan}
 
     workflow_graph = get_graph_xp()
     workflow_uri = ab.term(workflow_name)
     workflow_graph.add((workflow_uri, RDF.type, tb.Workflow))
 
     compatibility = set(ontology_queries.get_engines(ontology))
-    
+    target_cols = dataset.targets
 
+    
     for step_order, (step_component, follows) in enumerate(logical_plan):
+        component_uri = URIRef(step_component.split('--')[-1])
         #intent_parameters = get_intent_parameters()
-        step_component = URIRef(step_component)
+        step_columns = transformer_columns.get(step_component, dataset.columns)
+        step_columns = [URIRef(c) for c in step_columns]
+
+        step_columns_to_ignore = [t for t in target_cols if t not in step_columns] #Columns to ignore are target columns, except if they are explicitly considered as a column to transform for this component
         
-        step_implementation = ontology_queries.get_component_implementation(ontology, step_component)
+        step_implementation = ontology_queries.get_component_implementation(ontology, component_uri)
         step_name = f'{workflow_name}-step_{step_order}_{step_implementation.fragment.replace("-", "_")}'
 
-        step_parameters = get_workflow_parameters(ontology, dataset, step_implementation, step_component)
+        step_parameters = get_workflow_parameters(ontology, dataset, step_implementation, component_uri)
 
         input_specs  = ontology_queries.get_implementation_input_specs(ontology, step_implementation, max_imp_level) 
         output_specs = ontology_queries.get_implementation_output_specs(ontology, step_implementation, max_imp_level)
 
         inputs = []
-        prev_out_step_ports = prev_output_ports.get(step_component, [])
+        prev_out_step_ports = prev_output_ports.get(component_uri, [])
+
 
 
         for i, (spec, shapes) in enumerate(input_specs):
             if cb.UnsatisfiableShape not in shapes: #ignore port if unsatisfiable
 
                 input_target = get_port_target_type(ontology,shapes)
-                input_port = get_most_suitable_predecessor((set(shapes),input_target), prev_out_step_ports)
+                input_port = get_most_suitable_predecessor(ontology,(set(shapes),input_target, component_uri), prev_out_step_ports)
+                assert input_port != cb.NONE, f"{step_component}, {spec}"
                 inputs.append((input_port,spec))
   
         outputs = []
@@ -170,29 +194,31 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
                 output_i = ab[f'{step_name}-output_{i}']
 
             outputs.append((output_i,spec))
-            output_ports.append((output_i, shapes, get_port_target_type(ontology,shapes)))
+            output_ports.append((output_i, shapes, get_port_target_type(ontology,shapes),component_uri))
 
 
-        step_uri = add_step(workflow_graph,workflow_uri,step_name, step_order, step_component, inputs, outputs, step_parameters, prev_steps[step_component])
+        step_uri = add_step(workflow_graph,workflow_uri,step_name, step_order, component_uri, inputs, outputs, step_parameters, prev_steps[component_uri], step_columns, step_columns_to_ignore)
 
         for f in follows:
-            prev_output_ports[URIRef(f)].extend(output_ports)
-            prev_steps[URIRef(f)].append(step_uri)
+            f_uri = URIRef(f.split('--')[-1])
+            prev_output_ports[f_uri].extend(output_ports)
+            prev_steps[f_uri].append(step_uri)
 
         if run_transformations:
-            component_transformations = ontology_queries.get_component_transformations(ontology, step_component)
+            component_transformations = ontology_queries.get_component_transformations(ontology, component_uri)
             run_component_transformation(ontology, dataset, component_transformations, inputs, outputs, step_parameters)
 
         engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation) #TODO: Check translation condition
+        print("engine compatibility for", step_implementation, engine_compatibility)
         compatibility = compatibility & engine_compatibility
 
     for engine in compatibility:
-        workflow_graph.add((workflow_uri, tb.compatibleWith, engine))  
+        workflow_graph.add((workflow_uri, tb.compatibleWith, engine)) 
 
     return workflow_graph, workflow_uri
 
 
-def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
+def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], transformer_columns = [], run_transformations=False):
     t = time.time()
     workflows = {}
 
@@ -202,10 +228,9 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_uri)
     dataset = Dataset(data_graph, dataset_uri)
 
-
-    for i, (name, plan) in enumerate(logical_plans.items()):
+    for i, (name, (plan, cols)) in enumerate(logical_plans.items()):
         workflow_name = f'workflow_{i}_{intent_uri.fragment}_{uuid.uuid4()}'.replace('-', '_')
-        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan,run_transformations) #TODO fix transformations
+        workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan, cols, run_transformations) #TODO fix transformations
         
         workflow_graph.add((workflow_uri, tb.generatedFor, intent_uri))
         workflow_graph.add((intent_uri, RDF.type, tb.Intent))

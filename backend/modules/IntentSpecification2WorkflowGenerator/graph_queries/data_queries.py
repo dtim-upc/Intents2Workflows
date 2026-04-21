@@ -48,6 +48,8 @@ def get_dataset_feature_types(data_graph: Graph, dataset: URIRef) -> Set[Type]:
         dmop.Double: float,
         dmop.String: str,
         dmop.Boolean: bool,
+        dmop.Categorical: str,
+        dmop.CategorcalOrNumeric: str
     }
     return set([mapping[x['type']] for x in columns])
 
@@ -90,25 +92,20 @@ def get_dataset_categorical_columns(data_graph: Graph, dataset: URIRef) -> List[
 
     return [x['label'].value for x in columns]
 
-def get_dataset_target_column(data_graph: Graph, dataset: URIRef) -> str:
+def get_dataset_target_columns(data_graph: Graph, dataset: URIRef) -> List[URIRef]:
     label_query = f"""
         PREFIX rdfs: <{RDFS}>
         PREFIX dmop: <{dmop}>
 
-        SELECT ?label
+        SELECT ?column
         WHERE {{
             {dataset.n3()} dmop:hasColumn ?column .
             ?column dmop:isLabel true ;
-                    dmop:hasColumnName ?label .
         }}
     """
     columns = data_graph.query(label_query).bindings
 
-    if len(columns) == 1:
-        return columns[0]['label'].value 
-    else:
-        print("WARNING: unusal target column response:", list(columns))
-        return ""
+    return [x['column'] for x in columns]
     
 def get_dataset_target_type(data_graph: Graph, dataset: URIRef) -> str:
     label_query = f"""

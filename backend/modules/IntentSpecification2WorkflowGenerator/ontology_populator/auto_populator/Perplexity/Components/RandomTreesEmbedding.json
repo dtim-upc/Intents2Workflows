@@ -3,7 +3,7 @@
         "inputs": [
             {
                 "feature_properties": [
-                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:isNumericDatatypePropertyShape",
                     "cb:noMissingValuesPropertyShape"
                 ],
                 "label_properties": [],

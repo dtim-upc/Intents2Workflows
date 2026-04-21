@@ -127,7 +127,8 @@ def add_components (cbox:Graph):
 
         component_type = sklearn_dict[component.name]["estimator_type"]
         problem = problem_dict[component_type]
-        needs_applier = component_type in ["classifier", "regressor"]
+        needs_applier = True #component_type in ["classifier", "regressor"]
+        is_transformer = component_type == 'transformer'
         module = sklearn_dict[component.name]["module"]
 
         
@@ -147,7 +148,7 @@ def add_components (cbox:Graph):
         implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[
             Parameter("Target Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
         ], 
-        input=train_inputs if needs_applier else inputs, output = model_outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
+        input=train_inputs if needs_applier else inputs, output = model_outputs + outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
         impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
         
         implementation.add_to_graph(cbox)
@@ -161,8 +162,15 @@ def add_components (cbox:Graph):
             else:
                 abstract_impls[key] = [implementation]
 
+        if needs_applier:
+            if is_transformer:
+                python_template = 'sklearn_train_transform'
+            else:
+                python_template = "sklearn_train"
+        else:
+            python_template = "basic_sklearn_fittransform_function"
 
-        python_template = "sklearn_train" if needs_applier else "basic_sklearn_fittransform_function"
+
         python_impl = PythonImplementation(name=f"{component.name}Python", baseImplementation=implementation, parameters=[
                 PythonTextParameter(key="Target", 
                                     base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
@@ -173,11 +181,11 @@ def add_components (cbox:Graph):
 
         if needs_applier:
             applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
-            applier_data_inputs = model_inputs
+            applier_data_inputs = train_inputs
             #for i in applier_data_inputs:
             #    i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
             applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
-                                                    output = [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
+                                                    output = outputs if is_transformer else [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
                                                     implementation_type=tb.ApplierImplementation, counterpart=implementation)
             appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component) 
             
@@ -189,8 +197,13 @@ def add_components (cbox:Graph):
             impl_component.add_counterpart_relationship(cbox)
             appl_component.add_counterpart_relationship(cbox)
 
+            if is_transformer:
+                applier_template = 'sklearn_test_transform'
+            else:
+                applier_template = 'sklearn_predict'
+
             python_impl = PythonImplementation(name=f"{component.name}TestPython", baseImplementation=applier_implementation, parameters=[],
-                                            python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template='sklearn_predict')
+                                            python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template=applier_template)
             python_impl.add_to_graph(cbox)
 
     #Generate abstract implementations
@@ -268,6 +281,11 @@ def add_sanitizer(cbox:Graph):
 
     abs_implementation.add_to_graph(cbox)
 
+    python_impl = PythonImplementation(name=f"ColumnRemoverPython", baseImplementation=implementation, parameters=[],
+                                        python_module='pandas', python_dependences=[('pandas', '3.0.2')], python_function='',
+                                        template='column_remover')
+    python_impl.add_to_graph(cbox)
+
 
 def add_io(cbox:Graph):
     data_reader_implementation.add_to_graph(cbox)
@@ -286,6 +304,8 @@ def add_datasets(cbox):
     cbox.add((dmop.TabularDataset, RDF.type, tb.Dataset))
 
     cbox.add((dmop.TensorDataset, RDF.type, tb.Dataset))
+
+    cbox.add((dmop.Column, RDF.type, tb.Column))
 
 
 

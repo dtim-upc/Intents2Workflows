@@ -17,7 +17,6 @@
             {
                 "feature_properties": [
                     "cb:isBinaryDatatypePropertyShape",
-                    "cb:isNumericDatatypePropertyShape",
                     "cb:noMissingValuesPropertyShape"
                 ],
                 "label_properties": [],

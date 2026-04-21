@@ -2,8 +2,22 @@
 import {{module}}
 
 def {{step_name}}({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %}):
+
+    {% if inputs | length == 1 %}
+    columns = {{control["columns"]}}
+    {%endif%}
+
     model={{module}}.{{function}}(
 {%- for param, value in parameters %}{{param}}={% if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %})
-    return model.fit_transform({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %})
+
+    transformed_data = model.fit_transform({% for input in inputs%}input{{input}}{% if not loop.last %}, {% endif %}{% endfor %})
+
+    {%if inputs | length == 1 %}
+    transformed_df = pd.DataFrame(transformed_data[columns], index=input0.index, columns=columns)
+    output0 = input0.drop(columns=columns)
+    output0 = pd.concat([output0, transformed_df], axis=1)
+    {%else%}output0=transformed_data{%endif%}
+
+    return output0
 
 

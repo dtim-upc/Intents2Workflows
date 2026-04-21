@@ -260,23 +260,23 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
     plan_order = []
     component_cols = {}
 
-    logical_plan[reader_component] = [f"{0}-{component_list[0][0]}"]
+    logical_plan[reader_component] = [f"{0}--{component_list[0][0]}"]
     last_not_applier = reader_component
     last_applier = None
     plan_order.append(reader_component)
 
     for i, (component, cols) in enumerate(component_list):
         applier = ontology_queries.get_applier(ontology, component)
-        component_name = f"{i}-{component}"
+        component_name = f"{i}--{component}"
         dep = []
         
         if (i+1) < len(component_list):
             next = component_list[i+1][0]
-            dep.append(f"{i+1}-{next}")
+            dep.append(f"{i+1}--{next}")
 
         if requires_partition and applier is not None:
 
-            applier_name = f"{i}-{applier}"
+            applier_name = f"{i}--{applier}"
 
             dep.append(applier_name)
             applier_list.append(applier_name)

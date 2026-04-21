@@ -129,7 +129,7 @@ const handleSubmit = async() => {
   const plans = {}
   intentsStore.selectedPlans.forEach(plangroup => {
     plangroup.plans.forEach(p => {
-      plans[p.id] = p.plan
+      plans[p.id] = [p.plan, p.cols]
     })
     
   })

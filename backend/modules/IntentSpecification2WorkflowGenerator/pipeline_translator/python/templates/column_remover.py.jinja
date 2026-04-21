@@ -1,0 +1,10 @@
+import pandas as pd
+
+def {{step_name}}(X):
+    """
+    Returns a new DataFrame without the specified columns.
+
+    :param X: pandas DataFrame
+    :return: new DataFrame
+    """
+    return X.drop(columns={{control["columns"]}}, errors='ignore')

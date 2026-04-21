@@ -379,7 +379,7 @@ def is_shape_targeting_node(ontology:Graph, shape:URIRef, target_node:URIRef):
     return ontology.query(query).askAnswer
 
 def is_shape_targeting_data(ontology:Graph, shape:URIRef):
-    return is_shape_targeting_node(ontology, shape, tb.Dataset)
+    return is_shape_targeting_node(ontology, shape, tb.Dataset) or is_shape_targeting_node(ontology, shape, tb.Column)
 
 def is_shape_targeting_model(ontology:Graph, shape:URIRef):
     return (shape, RDF.type, tb.ModelTag) in ontology#is_shape_targeting_node(ontology, shape, tb.Model) 

@@ -1,0 +1,18 @@
+
+import {{module}}
+
+def {{step_name}}(X):
+
+    columns = {{control["columns"]}}
+    Xt = X.drop({{control["columns_to_ignore"]}},axis=1)
+
+    model = {{module}}.{{function}}({%- for param, value in parameters -%}{{param}}={%- if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif -%}{%- endfor -%})
+    
+    transformed_data = model.fit_transform(Xt)
+
+    transformed_df = pd.DataFrame(transformed_data, index=Xt.index, columns=Xt.columns)
+    output0 = X.drop(columns=columns)
+    output0 = pd.concat([output0, transformed_df[columns]], axis=1)
+    
+    return model, output0
+

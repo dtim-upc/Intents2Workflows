@@ -15,12 +15,19 @@ class Dataset:
         self._path = None
         self._feat_types = None
         self._graph_lite = None
+        self._columns = None
     
     @property
     def label(self):
         if self._label is None:
-            self._label = data_queries.get_dataset_target_column(self.data_graph, self.dataset)
+            self._label = data_queries.get_dataset_target_columns(self.data_graph, self.dataset)
         return self._label
+    
+    @property
+    def columns(self):
+        if self._columns is None:
+            self._columns = data_queries.get_dataset_columns_uri(self.data_graph, self.dataset)
+        return self._columns
     
     @property
     def numeric_columns(self):
@@ -35,9 +42,9 @@ class Dataset:
         return self._categorical_columns
     
     @property
-    def target(self):
+    def targets(self):
         if self._target is None:
-            self._target = data_queries.get_dataset_target_column(self.data_graph, self.dataset)
+            self._target = data_queries.get_dataset_target_columns(self.data_graph, self.dataset)
         return self._target
     
     @property

@@ -235,7 +235,7 @@ def main():
                 print("No data outputs")  
                 num = 0
 
-            if "model_output" in component_json and component["estimator_type"] not in ["transformer", "cluster"]:
+            if "model_output" in component_json and component["estimator_type"] not in ["cluster"]: 
 
                 if component_json["model_output"] == {}: 
                     model = "TransformerModel"

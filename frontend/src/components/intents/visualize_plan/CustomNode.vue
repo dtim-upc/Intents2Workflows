@@ -50,6 +50,7 @@ defineProps(['id', 'data', 'label'])
   position: relative;
   font-family: Roboto;
   font-size: 12px;
+  background-color: black;
 }
 
 .tooltip-content {
@@ -76,7 +77,7 @@ defineProps(['id', 'data', 'label'])
   display: inline-block;
   padding: 4px 8px;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 

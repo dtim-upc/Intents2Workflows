@@ -16,13 +16,14 @@ sys.path.append(root_dir)
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/python/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
 from ..core.translator_common_functions import *
 from ..core.parameter_translator import translate_parameters
-from graph_queries.workflow_queries import get_step_component, get_workflow_steps, get_step_parameters_agnostic, get_step_input_data, get_step_output_data, get_workflow_connections
+from graph_queries.workflow_queries import get_step_component, get_workflow_steps, get_step_parameters_agnostic, get_step_input_data, get_step_output_data, \
+    get_workflow_connections, get_step_columns, get_step_columns_ignored
 from graph_queries.ontology_queries import get_component_implementation, get_implementation_task, is_predictor
 from ..core.translator_common_functions import get_implementation_engine_conditional
 
 
 try:
-    import easygui # type: ignore
+    import easygui # type: ignore 
 except ImportError:
     easygui = None
 
@@ -57,11 +58,16 @@ def translate_step(ontology: Graph, workflow_graph:Graph, step:URIRef, inherited
     if is_predictor(ontology, implementation):
         task += '_predictor'
 
+    step_columns = get_step_columns(workflow_graph, step)
+    step_ignored_columns = get_step_columns_ignored(workflow_graph,step)
+
     step_parameters = get_step_parameters_agnostic(workflow_graph, step)
     engine_implementation = get_implementation_engine_conditional(ontology, implementation, cb.Python, step_parameters)
     python_step_parameters = translate_parameters(ontology, step_parameters, engine_implementation)
     cp, function_params = split_parameters(ontology, python_step_parameters)
     inherited_params.update(cp)
+    inherited_params["columns"] = [c.fragment for c in step_columns]
+    inherited_params["columns_to_ignore"] = [c.fragment for c in step_ignored_columns]
     #print("Control:",control_params) 
     #print("Function:",function_params)
 

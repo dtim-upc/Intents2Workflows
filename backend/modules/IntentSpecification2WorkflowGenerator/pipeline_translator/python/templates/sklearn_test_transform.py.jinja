@@ -1,0 +1,17 @@
+
+import {{module}}
+
+def {{step_name}}(model,X):
+
+    columns = {{control["columns"]}}
+    Xt = X.drop({{control["columns_to_ignore"]}},axis=1)
+
+    transformed_data = model.transform(Xt)
+
+    transformed_df = pd.DataFrame(transformed_data, index=Xt.index, columns=Xt.columns)
+    output0 = X.drop(columns=columns)
+    output0 = pd.concat([output0, transformed_df[columns]], axis=1)
+
+    return output0
+
+
