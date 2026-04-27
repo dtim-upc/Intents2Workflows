@@ -1,0 +1,28 @@
+DELETE {
+
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> ?insVal_1 .
+    ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?insVal_2 .
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> ?insVal_3 .
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasColumns> ?depVal_1 .
+    
+}
+INSERT {
+
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> 10000.
+    ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#TabularDataset> .
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> 1.
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasColumns> cb:Undefined .
+    
+}
+WHERE {
+
+    
+    ?subject a dmop:TabularDataset .
+    OPTIONAL { ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> ?insVal_1 . }
+    OPTIONAL { ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?insVal_2 . }
+    OPTIONAL { ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#numberOfColumns> ?insVal_3 . }
+    OPTIONAL { ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasColumns> ?depVal_1 . }
+    
+
+
+}

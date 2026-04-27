@@ -3,7 +3,7 @@
         "inputs": [
             {
                 "feature_properties": [
-                    "cb:isCategoricalOrNumericPropertyShape"
+                    "cb:isNumericDatatypePropertyShape"
                 ],
                 "label_properties": [],
                 "dataset_properties": [
@@ -15,7 +15,7 @@
         "data_outputs": [
             {
                 "feature_properties": [
-                    "cb:isCategoricalOrNumericPropertyShape",
+                    "cb:isNumericDatatypePropertyShape",
                     "cb:noMissingValuesPropertyShape"
                 ],
                 "label_properties": [],

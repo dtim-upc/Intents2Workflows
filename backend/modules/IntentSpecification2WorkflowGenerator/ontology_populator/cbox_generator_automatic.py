@@ -5,9 +5,9 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from common import *
-from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter, AbstractImplementation
+from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter, AbstractImplementation, FactorParameter
 from implementations.python.python_implementation import PythonImplementation
-from implementations.python.python_parameter import PythonTextParameter
+from implementations.python.python_parameter import PythonTextParameter, PythonFactorParameter
 from implementations.python.io import python_reader_implementation, python_writer_implementation
 from implementations.simple.io import data_reader_implementation, data_reader_components, data_writer_implementation, data_writer_component
 
@@ -15,7 +15,22 @@ from implementations.simple.io import data_reader_implementation, data_reader_co
 with open('./auto_populator/sklearn_miner.json') as f:
     sklearn_dict = json.load(f)
 
+sklearn_dict['SimpleImputerGeneric'] = sklearn_dict["SimpleImputer"]
+sklearn_dict['SimpleImputerGeneric']['name'] = 'SklearnImputer (generic)'
+
 common_graph = Graph().parse("./auto_populator/Perplexity/common_shapes.ttl", format="turtle")
+
+custom_parameters = {}
+custom_parameters['SimpleImputerGeneric'] = [
+    FactorParameter("strategy", levels=["most_frequent", "constant"], default_value="most_frequent")
+]
+
+custom_python_parameters = {}
+custom_python_parameters['SimpleImputerGeneric'] = [
+    PythonFactorParameter("strategy", levels={"most_frequent": "most_frequent", "constant":"constant"}, 
+                          base_parameter= next((param for param in custom_parameters['SimpleImputerGeneric'] if param.label == 'strategy'),None),
+                          default_value="most_frequent")
+]
 
 
 def init_cbox() -> Graph:
@@ -120,104 +135,106 @@ def get_transformations(component):
 
 def add_components (cbox:Graph):
     sahpesPath = Path("./auto_populator/Perplexity/clean/")
+    manual_path = Path("./auto_populator/manual/")
     abstract_impls = {}
 
-    for component in sahpesPath.iterdir():
-        print("Generant", component.name)
+    for iterator in (sahpesPath.iterdir(), manual_path.iterdir()):
+        for component in iterator:
+            print("Generant", component.name)
 
-        component_type = sklearn_dict[component.name]["estimator_type"]
-        problem = problem_dict[component_type]
-        needs_applier = True #component_type in ["classifier", "regressor"]
-        is_transformer = component_type == 'transformer'
-        module = sklearn_dict[component.name]["module"]
+            component_type = sklearn_dict[component.name]["estimator_type"]
+            problem = problem_dict[component_type]
+            needs_applier = True #component_type in ["classifier", "regressor"]
+            is_transformer = component_type == 'transformer'
+            module = sklearn_dict[component.name]["module"]
 
-        
-        inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
-        outputs, model_outputs = getIOPorts(cbox, component, input_ports=False)
-
-        if needs_applier:
-            train_inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
-            #for i in train_inputs:
-                #i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
-
-
-        implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
-
-
-        algorithm = add_algorithm(cbox, component.name, problem)
-        implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[
-            Parameter("Target Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
-        ], 
-        input=train_inputs if needs_applier else inputs, output = model_outputs + outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
-        impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
-        
-        implementation.add_to_graph(cbox)
-        impl_component.add_to_graph(cbox)
-
-        #Dict for generating abstract implementations by grouping implementations with the same input and output data specs
-        for output in outputs:
-            key =frozenset([frozenset([hash(i) for i in inputs]),hash(output)])
-            if key in abstract_impls:
-                abstract_impls[key].append(implementation)
-            else:
-                abstract_impls[key] = [implementation]
-
-        if needs_applier:
-            if is_transformer:
-                python_template = 'sklearn_train_transform'
-            else:
-                python_template = "sklearn_train"
-        else:
-            python_template = "basic_sklearn_fittransform_function"
-
-
-        python_impl = PythonImplementation(name=f"{component.name}Python", baseImplementation=implementation, parameters=[
-                PythonTextParameter(key="Target", 
-                                    base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
-                                    default_value="target", control_parameter=True), 
-        ],python_module=f'sklearn.{module}', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
-        python_impl.add_to_graph(cbox)
-
-
-        if needs_applier:
-            applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
-            applier_data_inputs = train_inputs
-            #for i in applier_data_inputs:
-            #    i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
-            applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
-                                                    output = outputs if is_transformer else [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
-                                                    implementation_type=tb.ApplierImplementation, counterpart=implementation)
-            appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component) 
             
+            inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
+            outputs, model_outputs = getIOPorts(cbox, component, input_ports=False)
+
+            if needs_applier:
+                train_inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
+                #for i in train_inputs:
+                    #i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
+
+
+            implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
+
+
+            algorithm = add_algorithm(cbox, component.name, problem)
+            implementation = Implementation(name=component.name, algorithm=algorithm, parameters=[
+                Parameter("Target Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
+                *custom_parameters.get(component.name, [])
+            ], 
+            input=train_inputs if needs_applier else inputs, output = model_outputs + outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
+            impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
             
-            applier_implementation.add_to_graph(cbox) 
-            appl_component.add_to_graph(cbox)
-            implementation.add_counterpart_relationship(cbox)
-            applier_implementation.add_counterpart_relationship(cbox)
-            impl_component.add_counterpart_relationship(cbox)
-            appl_component.add_counterpart_relationship(cbox)
+            implementation.add_to_graph(cbox)
+            impl_component.add_to_graph(cbox)
 
-            if is_transformer:
-                applier_template = 'sklearn_test_transform'
+            #Dict for generating abstract implementations by grouping implementations with the same input and output data specs
+            for output in outputs:
+                key =frozenset([frozenset([hash(i) for i in inputs]),hash(output)])
+                if key in abstract_impls:
+                    abstract_impls[key].append(implementation)
+                else:
+                    abstract_impls[key] = [implementation]
+
+            if needs_applier:
+                if is_transformer:
+                    python_template = 'sklearn_train_transform'
+                else:
+                    python_template = "sklearn_train"
             else:
-                applier_template = 'sklearn_predict'
+                python_template = "basic_sklearn_fittransform_function"
 
-            python_impl = PythonImplementation(name=f"{component.name}TestPython", baseImplementation=applier_implementation, parameters=[],
-                                            python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template=applier_template)
+
+            python_impl = PythonImplementation(name=f"{component.name}Python", baseImplementation=implementation, parameters=[
+                    PythonTextParameter(key="Target", 
+                                        base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
+                                        default_value="target", control_parameter=True),
+                    *custom_python_parameters.get(component.name, [])
+            ],python_module=f'sklearn.{module}', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
             python_impl.add_to_graph(cbox)
 
-    #Generate abstract implementations
-    for key, values in abstract_impls.items():
-        assert len(values) > 0
-        impl:Implementation = values[0]
-        inputs = impl.input
-        print(inputs)
-        outputs = impl.output
-        name = str(hash(key))+ "_" + impl.name + " Aggregation"
-        abs = AbstractImplementation(name=name,implementations=values, input=inputs, output=outputs)
-        abs.add_to_graph(cbox)
 
-        
+            if needs_applier:
+                applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
+                applier_data_inputs = train_inputs
+                #for i in applier_data_inputs:
+                #    i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
+                applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
+                                                        output = outputs if is_transformer else [OutputIOSpec([IOSpecTag(cb.isTabularDatasetShapeDatasetShape)])], 
+                                                        implementation_type=tb.ApplierImplementation, counterpart=implementation)
+                appl_component = Component(name=component.name+" Applier Component", implementation=applier_implementation, transformations=[], counterpart=impl_component) 
+                
+                
+                applier_implementation.add_to_graph(cbox) 
+                appl_component.add_to_graph(cbox)
+                implementation.add_counterpart_relationship(cbox)
+                applier_implementation.add_counterpart_relationship(cbox)
+                impl_component.add_counterpart_relationship(cbox)
+                appl_component.add_counterpart_relationship(cbox)
+
+                if is_transformer:
+                    applier_template = 'sklearn_test_transform'
+                else:
+                    applier_template = 'sklearn_predict'
+
+                python_impl = PythonImplementation(name=f"{component.name}TestPython", baseImplementation=applier_implementation, parameters=[],
+                                                python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template=applier_template)
+                python_impl.add_to_graph(cbox)
+
+        #Generate abstract implementations
+        for key, values in abstract_impls.items():
+            assert len(values) > 0
+            impl:Implementation = values[0]
+            inputs = impl.input
+            print(inputs)
+            outputs = impl.output
+            name = str(hash(key))+ "_" + impl.name + " Aggregation"
+            abs = AbstractImplementation(name=name,implementations=values, input=inputs, output=outputs)
+            abs.add_to_graph(cbox)
 
  
 def add_partitioning(cbox:Graph):
@@ -285,6 +302,7 @@ def add_sanitizer(cbox:Graph):
                                         python_module='pandas', python_dependences=[('pandas', '3.0.2')], python_function='',
                                         template='column_remover')
     python_impl.add_to_graph(cbox)
+
 
 
 def add_io(cbox:Graph):

@@ -1,0 +1,24 @@
+DELETE {
+
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> ?insVal_1 .
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#containsNulls> ?insVal_2 .
+    
+}
+INSERT {
+
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#CategoricalOrNumeric> .
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#containsNulls> false.
+    
+}
+WHERE {
+
+    ?base a dmop:TabularDataset .
+    ?base dmop:hasColumn ?subject .
+    VALUES ?subject { $$COLUMNS_TO_TRANSFORM$$ }
+    OPTIONAL { ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#hasDataPrimitiveTypeColumn> ?insVal_1 . }
+    OPTIONAL { ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#containsNulls> ?insVal_2 . }
+    ?subject <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#isFeature> true.
+    
+
+
+}

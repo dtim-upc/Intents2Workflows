@@ -1,0 +1,19 @@
+DELETE {
+
+    ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?insVal_1 .
+    
+}
+INSERT {
+
+    ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#TabularDataset> .
+    
+}
+WHERE {
+
+    
+    ?subject a dmop:TabularDataset .
+    OPTIONAL { ?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?insVal_1 . }
+    
+
+
+}
