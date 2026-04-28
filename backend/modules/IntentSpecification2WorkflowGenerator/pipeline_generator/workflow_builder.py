@@ -218,7 +218,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
     return workflow_graph, workflow_uri
 
 
-def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], transformer_columns = [], run_transformations=False):
+def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
     t = time.time()
     workflows = {}
 

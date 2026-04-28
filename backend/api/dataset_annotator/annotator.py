@@ -2,6 +2,8 @@
 from pathlib import Path
 from typing import Tuple
 from urllib.parse import quote
+
+import pandas as pd
 #sys.path.append(str(Path('..').resolve()))
 
 from utils import dataLoaders
@@ -9,11 +11,18 @@ from .namespaces import *
 from .tabular_annotator import add_dataframe_info
 from .tensor_annotator import add_tensor_info
 
-def add_dataset_info(dataset_path, graph, label, local_path):
-    dataset_node = ab.term(quote(Path(dataset_path).with_suffix('').name))
-    data_loader: dataLoaders.DataLoader = dataLoaders.get_loader(dataset_path,local_path)
+def load_dataset(dataset: pd.DataFrame=None, path:Path=None, local_path=None, name=None) -> dataLoaders.DataLoader:
+    if path is not None:
+        return dataLoaders.get_loader(path,local_path)
+
+    return dataLoaders.DataframeLoader(data=dataset, name=name)
+
+
+def add_dataset_info(data_loader:dataLoaders.DataLoader, graph, label):
+    metadata = data_loader.getFileMetadata()
+    dataset_node = ab.term(metadata.get("name"))
     #dataset = data_loader.getDataFrame()#pd.read_csv(dataset_path, encoding='utf-8', delimiter=",")
-    add_metadata_info(data_loader.getFileMetadata(), dataset_node, graph)
+    add_metadata_info(metadata, dataset_node, graph)
 
     if data_loader.fileFormat in ["NumpyZip"]:
         print('Adding tensor info ... ')
@@ -31,19 +40,24 @@ def add_metadata_info(metadata, dataset_node, graph:Graph):
         graph.add((dataset_node,dmop[key],Literal(value)))
     print('Done!')
 
-def annotate_dataset(source_path, label="",local_path=None) -> Tuple[URIRef,Graph]:
-    print(f'Annotating {source_path}')
+
+def annotate_dataset(data_loader, label="") -> Tuple[URIRef,Graph]:
+    print(f'Annotating {data_loader}')
 
     dataset_graph = get_annotator_base_graph()
-    dataset_node = add_dataset_info(source_path, dataset_graph, label, local_path)
+    dataset_node = add_dataset_info(data_loader, dataset_graph, label)
 
     return dataset_node, dataset_graph
+
+
+
 
 
 def main():
     for file in Path('./datasets').iterdir():
         #if file.endswith('.csv'):
-        d = annotate_dataset(file)
+        dl = load_dataset(path=file)
+        d = annotate_dataset(dl)
         with open(f'./annotated_datasets/{file.name}_annotated.ttl', mode='w') as f:
             f.write(d)
 

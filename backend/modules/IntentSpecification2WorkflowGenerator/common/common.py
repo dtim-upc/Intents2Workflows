@@ -22,7 +22,7 @@ def get_ontology_graph():
     graph = get_graph_xp()
     ontologies = [
         r'ontologies/tbox.ttl',
-        r'ontologies/cbox.ttl',
+        r'ontologies/cbox_deep.ttl',
         r'ontologies/abox.ttl',
         # r'dataset_annotator/penguins_annotated.ttl',
         #r'dataset_annotator/annotated_datasets/titanic_annotated.ttl',
@@ -38,5 +38,11 @@ def get_graph_with_tbox(turtle_graph):
     graph = get_graph_xp()
     graph.parse(r'ontologies/tbox.ttl', format="turtle")
     graph.parse(data=turtle_graph, format="turtle")
+    DeductiveClosure(OWLRL_Semantics).expand(graph)
+    return graph
+
+def get_tbox():
+    graph = get_graph_xp()
+    graph.parse(r'ontologies/tbox.ttl', format="turtle")
     DeductiveClosure(OWLRL_Semantics).expand(graph)
     return graph

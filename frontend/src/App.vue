@@ -1,5 +1,5 @@
 <template>
-  <DDMLogin />
+  <!--<DDMLogin />-->
   <router-view/>
 </template>
 

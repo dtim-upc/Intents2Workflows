@@ -13,7 +13,7 @@ sys.path.append(translator_dir)
 root_dir = os.path.join(os.path.abspath(os.path.join('../..')))
 sys.path.append(root_dir)
 
-environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/python/templates", "templates"])) #the double path ensures expected performance on terminal and api execution
+environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["pipeline_translator/python/templates", "templates", "../pipeline_translator/python/templates"])) #the double path ensures expected performance on terminal and api execution
 from ..core.translator_common_functions import *
 from ..core.parameter_translator import translate_parameters
 from graph_queries.workflow_queries import get_step_component, get_workflow_steps, get_step_parameters_agnostic, get_step_input_data, get_step_output_data, \
@@ -141,8 +141,9 @@ def translate_graph_folder(ontology:Graph, source_folder: str, destination_folde
 
     workflows = [f for f in os.listdir(source_folder) if f.endswith('.ttl')]
     for workflow in tqdm(workflows):
+        workflow_name = workflow.split('.ttl')[0]+'.py'
         source_path = os.path.join(source_folder, workflow)
-        destination_path = destination_folder
+        destination_path =  os.path.join(destination_folder, workflow_name)
         translate_graph(ontology, source_path, destination_path)
 
 

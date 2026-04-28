@@ -25,7 +25,7 @@ def satisfies_shape(data_graph, ontology, shape, dataset):
     satisfies = True
     cols = []
 
-    print("Does",dataset, "satsify", shape,"?")
+    #print("Does",dataset, "satsify", shape,"?")
 
     if shape_queries.iscolumnar(ontology, shape):
         #print("columnar shape")
@@ -44,7 +44,7 @@ def satisfies_shape(data_graph, ontology, shape, dataset):
             print(data_graph.serialize())
             assert 3 == 2
         #cols = data_queries.get_dataset_columns_uri(data_graph, dataset)
-    print("returning",satisfies, cols)
+    #print("returning",satisfies, cols)
     
     return satisfies, cols
         

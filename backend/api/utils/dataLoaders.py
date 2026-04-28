@@ -2,6 +2,7 @@ from abc import abstractmethod
 import csv
 from pathlib import Path
 from typing import Dict
+from urllib.parse import quote
 import pandas as pd
 import numpy as np
 import zipfile
@@ -33,7 +34,8 @@ class DataLoader:
         self.metadata = {
             "fileFormat": self.fileFormat,
             "path": self.file_path,
-            "local_path":displayed_path
+            "local_path":displayed_path,
+            "name":quote(Path(self.file_path).with_suffix('').name)
         }
 
     @abstractmethod
@@ -42,6 +44,18 @@ class DataLoader:
 
     def getFileMetadata(self) -> Dict:
         return self.metadata
+
+class DataframeLoader(DataLoader): #Class to load directly pandas dataframes. I shuld be never use when the input is a file
+    def __init__(self, data: pd.DataFrame, name:str=None):
+        self.data = data
+        self.metadata = {
+            "name": name if name is not None else "DataFrame",
+            "fileFormat": "CSV", #TODO this may not be true,
+            "path": f'../data/{name}.csv'
+        }
+    
+    def getDataFrame(self):
+        return self.data
     
     
 class CSVLoader(DataLoader):

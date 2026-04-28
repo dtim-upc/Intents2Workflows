@@ -89,7 +89,8 @@ def get_potential_targets(dataset_node:URIRef, annotated_dataset:Graph):
 
 def create_data_product(db: Session, session_id, filename, size, upload_time, file_path:Path, source_path:str)-> DataProduct:
 
-    dataset_node, annotations = annotator.annotate_dataset(file_path,local_path=source_path)
+    dataLoader = annotator.load_dataset(path = file_path, local_path=source_path)
+    dataset_node, annotations = annotator.annotate_dataset(dataLoader)
     annotation_name = file_path.with_suffix('.ttl').name
     session_path = Path(ANNOTATOR_DIR).joinpath(session_id)
     session_path.mkdir(exist_ok=True)
