@@ -14,10 +14,10 @@ def transform(ontology, implementation, data_graph, dataset, affected_columns:Li
     new_data_graph = Graph() +data_graph
     transformations = ontology_queries.get_implementation_transformations(ontology, implementation)
     colunm_str = " ".join(f"<{str(u)}>" for u in affected_columns)
-    tqdm.write(f"Executing transformations for {implementation} with columns {affected_columns}")
+    #tqdm.write(f"Executing transformations for {implementation} with columns {affected_columns}")
     for t in transformations:
         rendered_t = t.replace("$$COLUMNS_TO_TRANSFORM$$", colunm_str)
-        print(rendered_t)
+        #print(rendered_t)
         new_data_graph.update(rendered_t)
     return new_data_graph
 

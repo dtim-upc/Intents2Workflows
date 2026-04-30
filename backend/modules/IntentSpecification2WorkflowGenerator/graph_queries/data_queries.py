@@ -49,7 +49,8 @@ def get_dataset_feature_types(data_graph: Graph, dataset: URIRef) -> Set[Type]:
         dmop.String: str,
         dmop.Boolean: bool,
         dmop.Categorical: str,
-        dmop.CategorcalOrNumeric: str
+        dmop.CategorcalOrNumeric: str,
+        dmop.Garbage: None
     }
     return set([mapping[x['type']] for x in columns])
 

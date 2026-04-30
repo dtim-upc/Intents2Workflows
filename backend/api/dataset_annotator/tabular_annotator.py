@@ -35,6 +35,8 @@ def is_categorical(column_type, column):
         #columns should be categorical if values are repeated accross the column. Otherwise it's text.
         #Categorical variable with more than 20 levels is rare
         return True
+    elif column.nunique() == 2:
+        return True
     return False
 
 def get_distinct_values(column):
@@ -144,6 +146,8 @@ def add_dataframe_info(dataset, dataset_node, graph: Graph, label):
         if categorical:
             column_type = dmop.Categorical
         distinct_values = get_distinct_values(dataset[col])
+        if distinct_values <= 0:
+            column_type = dmop.Garbage
         nulls = has_nulls(dataset[col])
         position = dataset.columns.get_loc(col)
         normality = is_normal(column_type, dataset[col])

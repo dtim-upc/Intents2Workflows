@@ -73,6 +73,14 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
                                 # tb:specifiesOutput ?spec .
             }}
 
+            FILTER NOT EXISTS {{
+                ?implementation  tb:specifiesInput ?inpspec .
+                ?inpspec tb:hasSpecTag ?inpsptg .
+                ?inpsptg tb:hasDatatag cb:hasIncreasedDimensionalityDatasetShape .
+            }}
+
+
+
             ?spec tb:hasSpecTag ?sptg .
 
             {{

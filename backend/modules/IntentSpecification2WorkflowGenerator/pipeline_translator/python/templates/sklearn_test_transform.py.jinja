@@ -1,17 +1,34 @@
 
 import {{module}}
+import scipy
 
 def {{step_name}}(model,X):
 
     columns = {{control["columns"]}}
     Xt = X.drop({{control["columns_to_ignore"]}},axis=1)
 
-    transformed_data = model.transform(Xt)
+    transformed_data = model.fit_transform(Xt)
 
-    transformed_df = pd.DataFrame(transformed_data, index=Xt.index, columns=Xt.columns)
-    output0 = X.drop(columns=columns)
-    output0 = pd.concat([output0, transformed_df[columns]], axis=1)
+    feature_names = model.get_feature_names_out(Xt.columns)
 
-    return output0
+    # Handle sparse vs dense output explicitly
+    if scipy.sparse.issparse(transformed_data):
+        transformed_df = pd.DataFrame.sparse.from_spmatrix(
+            transformed_data,
+            columns=feature_names,
+            index=Xt.index
+        )
+        # Ensure fill_value = 0 (avoid NaN semantics)
+        transformed_df = transformed_df.astype(pd.SparseDtype("float64", fill_value=0))
+    else:
+        transformed_df = pd.DataFrame(
+            transformed_data,
+            columns=feature_names,
+            index=Xt.index
+        )
 
+    # Replace original columns
+    X = X.drop(columns=Xt.columns)
+    X = pd.concat([X, transformed_df], axis=1)
+    return X
 

@@ -32,7 +32,7 @@ for task_id in s.tasks:
     X, y, categorical_indicator, attribute_names= data.get_data()
     df = pd.DataFrame(X, columns=attribute_names)
 
-    df.to_csv(f"./autoOntology/data/{data.name}.csv")
+    df.to_csv(f"./autoOntology/data/{data.name}.csv", index=False)
 
     dl = annotator.load_dataset(df,name=f"{data.name}")
 

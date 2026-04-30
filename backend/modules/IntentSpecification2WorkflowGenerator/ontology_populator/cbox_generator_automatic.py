@@ -98,9 +98,9 @@ def getIOPorts(cbox:Graph, component, input_ports=True):
     port_type = "input" if input_ports else "output"
     ports = []
     model_ports = []
+    is_model_port = False
     for port in Path(component/port_type).iterdir():
         iotags = []
-        model_iotags = []
         for element in port.iterdir(): 
                 
                 if element.suffix == '.ttl':
@@ -110,15 +110,17 @@ def getIOPorts(cbox:Graph, component, input_ports=True):
                         newshape = get_shape_injected(shape)
                         if not newshape is None:
                             cbox += newshape
-
-
+ 
+                    iotags.append(IOSpecTag(cb.term(shape.stem)))
                     if (cb.term(shape.stem), RDF.type, tb.ModelTag) in cbox: 
-                        model_iotags.append(IOSpecTag(cb.term(shape.stem)))
-                    else:    
-                        iotags.append(IOSpecTag(cb.term(shape.stem)))
+                        is_model_port = True #on coincidence is enough to consider a port of model type    
+                           
+        if is_model_port:
+            model_ports.append(InputIOSpec(iotags)) if input_ports else model_ports.append(OutputIOSpec(iotags))
+            is_model_port=False
+        else:
+            ports.append(InputIOSpec(iotags)) if input_ports else ports.append(OutputIOSpec(iotags))
             
-        ports.append(InputIOSpec(iotags)) if input_ports else ports.append(OutputIOSpec(iotags))
-        model_ports.append(InputIOSpec(model_iotags)) if input_ports else model_ports.append(OutputIOSpec(model_iotags))
     return ports, model_ports
 
 def get_transformations(component):
@@ -152,12 +154,6 @@ def add_components (cbox:Graph):
             inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
             outputs, model_outputs = getIOPorts(cbox, component, input_ports=False)
 
-            if needs_applier:
-                train_inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
-                #for i in train_inputs:
-                    #i.specs.append(IOSpecTag(cb.isTrainDatasetShapeDatasetShape))
-
-
             implementation_type= tb.LearnerImplementation if needs_applier  else tb.Implementation
 
 
@@ -166,7 +162,7 @@ def add_components (cbox:Graph):
                 Parameter("Target Class column", XSD.string, default_value="$$LABEL_CATEGORICAL$$"),
                 *custom_parameters.get(component.name, [])
             ], 
-            input=train_inputs if needs_applier else inputs, output = model_outputs + outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
+            input=inputs, output = model_outputs + outputs if needs_applier else outputs, implementation_type=implementation_type, transformations = get_transformations(component))
             impl_component = Component(name=implementation.name+" Component", implementation=implementation, transformations=[])
             
             implementation.add_to_graph(cbox)
@@ -176,9 +172,12 @@ def add_components (cbox:Graph):
             for output in outputs:
                 key =frozenset([frozenset([hash(i) for i in inputs]),hash(output)])
                 if key in abstract_impls:
-                    abstract_impls[key].append(implementation)
+                    abstract_impls[key]['implementations'].append(implementation)
                 else:
-                    abstract_impls[key] = [implementation]
+                    abstract_impls[key] = {
+                        'implementations':[implementation],
+                        'output': [output]
+                    }
 
             if needs_applier:
                 if is_transformer:
@@ -200,7 +199,7 @@ def add_components (cbox:Graph):
 
             if needs_applier:
                 applier_model_inputs = [InputIOSpec(m.specs) for m in model_outputs] 
-                applier_data_inputs = train_inputs
+                applier_data_inputs = inputs
                 #for i in applier_data_inputs:
                 #    i.specs.append(IOSpecTag(cb.isTestDatasetShapeDatasetShape))
                 applier_implementation = Implementation(name=component.name+" Applier", algorithm=algorithm, parameters=[], input=applier_model_inputs+applier_data_inputs, 
@@ -227,13 +226,15 @@ def add_components (cbox:Graph):
 
         #Generate abstract implementations
         for key, values in abstract_impls.items():
-            assert len(values) > 0
-            impl:Implementation = values[0]
+        
+            implementations = values['implementations']
+            assert len(implementations) > 0
+            impl:Implementation = implementations[0]
             inputs = impl.input
             print(inputs)
-            outputs = impl.output
+            outputs = values['output']
             name = str(hash(key))+ "_" + impl.name + " Aggregation"
-            abs = AbstractImplementation(name=name,implementations=values, input=inputs, output=outputs)
+            abs = AbstractImplementation(name=name,implementations=implementations, input=inputs, output=outputs)
             abs.add_to_graph(cbox)
 
  
