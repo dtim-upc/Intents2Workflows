@@ -51,7 +51,7 @@ class DataframeLoader(DataLoader): #Class to load directly pandas dataframes. I 
         self.metadata = {
             "name": name if name is not None else "DataFrame",
             "fileFormat": "CSV", #TODO this may not be true,
-            "path": f'../data/{name}.csv'
+            "path": f'./autoOntology/data/{name}.csv'
         }
     
     def getDataFrame(self):

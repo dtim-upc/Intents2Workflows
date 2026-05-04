@@ -16,7 +16,7 @@ with open('./auto_populator/sklearn_miner.json') as f:
     sklearn_dict = json.load(f)
 
 sklearn_dict['SimpleImputerGeneric'] = sklearn_dict["SimpleImputer"]
-sklearn_dict['SimpleImputerGeneric']['name'] = 'SklearnImputer (generic)'
+sklearn_dict['SimpleImputerGeneric']['name'] = 'SklearnImputer'
 
 common_graph = Graph().parse("./auto_populator/Perplexity/common_shapes.ttl", format="turtle")
 
@@ -149,6 +149,7 @@ def add_components (cbox:Graph):
             needs_applier = True #component_type in ["classifier", "regressor"]
             is_transformer = component_type == 'transformer'
             module = sklearn_dict[component.name]["module"]
+            function = sklearn_dict[component.name]["name"]
 
             
             inputs, model_inputs = getIOPorts(cbox, component, input_ports=True)
@@ -193,7 +194,7 @@ def add_components (cbox:Graph):
                                         base_parameter= next((param for param in implementation.parameters.keys() if param.label == 'Target Class column'),None),
                                         default_value="target", control_parameter=True),
                     *custom_python_parameters.get(component.name, [])
-            ],python_module=f'sklearn.{module}', python_dependences=[('scikit-learn', '1.7.2')], python_function=component.name, template=python_template)
+            ],python_module=f'sklearn.{module}', python_dependences=[('scikit-learn', '1.7.2')], python_function=function, template=python_template)
             python_impl.add_to_graph(cbox)
 
 
@@ -221,7 +222,7 @@ def add_components (cbox:Graph):
                     applier_template = 'sklearn_predict'
 
                 python_impl = PythonImplementation(name=f"{component.name}TestPython", baseImplementation=applier_implementation, parameters=[],
-                                                python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=f"{component.name}Predict", template=applier_template)
+                                                python_module='sklearn', python_dependences=[('scikit-learn', '1.7.2')], python_function=function, template=applier_template)
                 python_impl.add_to_graph(cbox)
 
         #Generate abstract implementations

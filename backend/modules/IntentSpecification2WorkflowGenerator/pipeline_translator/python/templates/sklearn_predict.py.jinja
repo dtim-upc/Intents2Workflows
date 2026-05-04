@@ -1,12 +1,31 @@
 
 import {{module}}
+from sklearn.metrics import roc_auc_score, log_loss
+import json
 
 def {{step_name}}(model,X):
     Xv = X.drop(["{{control['Target']}}"],axis=1)
+
+    has_probs = callable(getattr(model, "predict_proba", None))
+
+    if has_probs:
+        probs = model.predict_proba(Xv)
+
     yp = model.predict(Xv)
     Xv["{{control['Target']}}(Predicted)"] = yp
     Xv["{{control['Target']}}"] = X["{{control['Target']}}"]
-    accuracy = (Xv["{{control['Target']}}"] == Xv["{{control['Target']}}(Predicted)"]).mean()
-    print("accuracy", accuracy)
+
+
+
+    stats = {
+        "accuracy": (Xv["{{control['Target']}}"] == Xv["{{control['Target']}}(Predicted)"]).mean(),
+        "AUC": roc_auc_score(Xv["{{control['Target']}}"],   probs, multi_class="ovr") if has_probs else -1,
+        "logloss": log_loss(Xv["{{control['Target']}}"],  probs) if has_probs else -1,
+    }
+    
+    with open('./stats.json', mode='w') as f:
+        json.dump(stats, f)
+
+
     return Xv
 
