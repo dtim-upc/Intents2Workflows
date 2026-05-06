@@ -42,9 +42,10 @@ print("Ontology loaded!")
 
 
 s = study.get_suite(271)
+print(s.tasks)
 for i, task_id in enumerate(s.tasks):
 
-    if i == 1:
+    if i in [2, 3, 10, 11, 12, 14, 15, 16] or i <= 17:
         continue
 
     task:OpenMLClassificationTask = tasks.get_task(task_id)
@@ -89,13 +90,13 @@ for i, task_id in enumerate(s.tasks):
 
 
     pot_impls=[
-        cb["implementation-svc"],
+        #cb["implementation-svc"],
         cb["implementation-randomforestclassifier"],]
 
 
     print("Executing logical planner")
     start = time.perf_counter()
-    logical_plans = logical_planner.generate_logical_plans(ontology=ontology, shape_graph=None, intent_graph = intent_graph, data_graph=data_graph, pot_impls=pot_impls)
+    logical_plans = logical_planner.generate_logical_plans(ontology=ontology, shape_graph=None, intent_graph = intent_graph, data_graph=data_graph, pot_impls=algorithms)
     end = time.perf_counter()
     lp_time = end - start
     print(f"Execution of logical planner finished in {lp_time}s")
@@ -106,7 +107,7 @@ for i, task_id in enumerate(s.tasks):
 
     first_logical_plan = {
         plan['name']: (plan['plan'], plan['cols']),
-        lastplan['name']: (lastplan['plan'], lastplan['cols'])
+        #lastplan['name']: (lastplan['plan'], lastplan['cols'])
     }
 
     logical_plans_dict = {
@@ -116,7 +117,7 @@ for i, task_id in enumerate(s.tasks):
 
     print("Executing workflow builder")
     start = time.perf_counter()
-    workflows = workflow_builder.generate_workflows(ontology=ontology, intent_graph=intent_graph, data_graph=data_graph, logical_plans=first_logical_plan)
+    workflows = workflow_builder.generate_workflows(ontology=ontology, intent_graph=intent_graph, data_graph=data_graph, logical_plans=logical_plans_dict)
     end = time.perf_counter()
     wb_time = end - start
     print(f"Execution of workflow builder finished in {wb_time}s")
@@ -168,7 +169,7 @@ for i, task_id in enumerate(s.tasks):
                 writer.writerow([script.stem, plan_stats['accuracy'], plan_stats['AUC'], plan_stats['logloss'], an_time, ap_time, lp_time, wb_time, tr_time, ex_time, str(get_component_plan(workflows[script.stem]))])
         script.unlink()
     
-    if i >= 6:
+    if i >= 18:
         break
 
 

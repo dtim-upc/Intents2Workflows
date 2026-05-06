@@ -110,7 +110,7 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
     
     result = ontology.query(implementation_query).bindings
     implementations = [x['implementation'] for x in result]
-    print("Implementations that satift", shape,"are:",implementations) 
+    #print("Implementations that satift", shape,"are:",implementations) 
     #assert shape.n3().find("isContinuousProperty") == -1
     return implementations
 

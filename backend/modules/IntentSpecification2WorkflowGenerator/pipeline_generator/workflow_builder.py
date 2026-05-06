@@ -78,15 +78,15 @@ def get_most_suitable_predecessor(ontology:Graph, input_port:Tuple[Set[URIRef],T
     best_candidate = cb.NONE
     input_shapes, (input_targets_data, input_targets_model), input_component = input_port
 
-    for port, shapes, (port_targets_data, port_tarets_model), component  in reversed(candidates): #it is more likely to connect to the immediately precedent step
-        print(port, shapes, port_targets_data, port_tarets_model)
+    for port, shapes, (port_targets_data, port_targets_model), component  in reversed(candidates): #it is more likely to connect to the immediately precedent step
+        #print(port, shapes, port_targets_data, port_tarets_model)
         
         if (port_targets_data and input_targets_data):
-            print(input_component, component, list(ontology.subjects(tb.hasApplier, input_component)))
+            #print(input_component, component, list(ontology.subjects(tb.hasApplier, input_component)))
             if component not in list(ontology.subjects(tb.hasApplier, input_component)):
                 return port
         
-        if(port_tarets_model and input_targets_model): #do not consider a viable candidate if port_targets differ 
+        if(port_targets_model and input_targets_model): #do not consider a viable candidate if port_targets differ 
             return port
             # intersection = input_shapes & set(shapes)
             # print("intersection", intersection)
@@ -181,7 +181,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
                 input_target = get_port_target_type(ontology,shapes)
                 input_port = get_most_suitable_predecessor(ontology,(set(shapes),input_target, component_uri), prev_out_step_ports)
-                assert input_port != cb.NONE, f"{step_component}, {spec}"
+                assert input_port != cb.NONE, f"{step_component}, {spec}\n{logical_plan}"
                 inputs.append((input_port,spec))
   
         outputs = []
@@ -209,7 +209,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
             run_component_transformation(ontology, dataset, component_transformations, inputs, outputs, step_parameters)
 
         engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation) #TODO: Check translation condition
-        print("engine compatibility for", step_implementation, engine_compatibility)
+        #print("engine compatibility for", step_implementation, engine_compatibility)
         compatibility = compatibility & engine_compatibility
 
     for engine in compatibility:
@@ -219,7 +219,7 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
 
 
 def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
-    t = time.time()
+    #t = time.time()
     workflows = {}
 
     intent_uri = intent_queries.get_intent_iri(intent_graph)
@@ -239,8 +239,8 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
         workflows[name] = workflow_graph
         dataset.clear_node_graph()
 
-    t2 = time.time()
-    print("Temps total:", t2-t)
+    #t2 = time.time()
+    #print("Temps total:", t2-t)
 
     return workflows
 

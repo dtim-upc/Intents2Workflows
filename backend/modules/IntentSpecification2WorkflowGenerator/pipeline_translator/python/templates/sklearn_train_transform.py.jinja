@@ -1,36 +1,28 @@
 
 import {{module}}
 import scipy
+import re
 
 def {{step_name}}(X):
 
     columns = {{control["columns"]}}
+    pattern = rf"^({'|'.join(columns)})(_.+)?$"
+    selected_cols = [c for c in X.columns if re.match(pattern, c)]
+
     Xt = X.drop({{control["columns_to_ignore"]}},axis=1)
+    yt = X['{{control["Target"]}}']
 
-    model = {{module}}.{{function}}({%- for param, value in parameters -%}{{param}}={%- if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif -%}{%- endfor -%})
+    model = {{module}}.{{function}}({%- for param, value in parameters -%}{{param}}={%- if value is string -%}"{{value}}"{% else %}{{value}}{% endif %}{% if not loop.last %}, {% endif -%}{%- endfor -%}).set_output(transform="pandas")
     
-    transformed_data = model.fit_transform(Xt)
+    transformed_data = model.fit_transform(Xt, yt)
 
-    feature_names = model.get_feature_names_out(Xt.columns)
+    feature_names = model.get_feature_names_out()
 
-    # Handle sparse vs dense output explicitly
-    if scipy.sparse.issparse(transformed_data):
-        transformed_df = pd.DataFrame.sparse.from_spmatrix(
-            transformed_data,
-            columns=feature_names,
-            index=Xt.index
-        )
-        # Ensure fill_value = 0 (avoid NaN semantics)
-        transformed_df = transformed_df.astype(pd.SparseDtype("float64", fill_value=0))
-    else:
-        transformed_df = pd.DataFrame(
-            transformed_data,
-            columns=feature_names,
-            index=Xt.index
-        )
+    projection_columns = [c for c in feature_names if re.match(pattern, c)]
+
 
     # Replace original columns
-    X = X.drop(columns=Xt.columns)
-    X = pd.concat([X, transformed_df], axis=1)
+    X = X.drop(columns=selected_cols)
+    X = pd.concat([X, transformed_data[projection_columns]], axis=1)
     
     return model, X

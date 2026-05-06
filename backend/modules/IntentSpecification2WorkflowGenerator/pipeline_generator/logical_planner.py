@@ -59,14 +59,14 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
     
     first = unsatisfied_shapes.pop(0)
 
-    tqdm.write(f"Creating plan for {first}") 
+    #tqdm.write(f"Creating plan for {first}") 
 
     satisfied_shape, cols = satisfies_shape(data_graph, ontology, first, dataset)
 
     transformer_cols = [] + cols
 
     if satisfied_shape:
-        tqdm.write(f"Data ALREADY satisfies {first}.")
+        #tqdm.write(f"Data ALREADY satisfies {first}.")
         yield [], data_graph
         return
 
@@ -74,7 +74,7 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
     implementations = find_implementations_to_satisfy_shape_constrained(ontology, shape_graph, first, exclude_appliers=True)
 
     for implementation in implementations:
-        first_plans_generator = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, implementation, max_imp_level, affected_columns=transformer_cols, loop_shapes=first_loop_shapes, log=True)
+        first_plans_generator = get_implementation_prerquisites(ontology, shape_graph, data_graph, dataset, implementation, max_imp_level, affected_columns=transformer_cols, loop_shapes=first_loop_shapes)
         
         for first_plan_generator in first_plans_generator:
             if first_plan_generator is None:
@@ -90,7 +90,7 @@ def produce_plans(ontology:Graph, shape_graph:Graph, data_graph:Graph, dataset:U
                 rest_plan, rest_data = rest_plan_generator
                 complete_plan = [] + first_plan
                 complete_plan.extend(rest_plan)
-                tqdm.write(f"Produced plan: {complete_plan}")
+                #tqdm.write(f"Produced plan: {complete_plan}")
                 yield complete_plan, rest_data
      
 
@@ -114,10 +114,10 @@ def get_implementation_prerquisites(ontology: Graph, shape_graph: Graph, data_gr
         if not shape_satisfied:
             unsatisfied_shapes.append(shape)
         if shape in loop_shapes:
-            tqdm.write(f"Preventing a loop with shape Shape {shape}, returning")
+            #tqdm.write(f"Preventing a loop with shape Shape {shape}, returning")
             yield None
             return
-    tqdm.write(f"{implementation.fragment}- Unsatisfied shapes {unsatisfied_shapes}")
+    #tqdm.write(f"{implementation.fragment}- Unsatisfied shapes {unsatisfied_shapes}")
     
     produced_plans = produce_plans(ontology, shape_graph, data_graph, dataset, unsatisfied_shapes, max_imp_level, loop_shapes=previous_shapes)
         
@@ -230,7 +230,7 @@ def is_valid_workflow_combination(ontology:Graph, shape_graph:Graph, combination
 def materialize_plan(ontology, shape_graph, dataset, component_threshold, task, plan):
     plan_comb = []
     total_comb = 1
-    tqdm.write(f"Materializing {plan}")
+    #tqdm.write(f"Materializing {plan}")
     for (impl, cols) in plan:
         if (impl, RDF.type, tb.AbstractImplementation) in ontology:
             specific_implementations = ontology.objects(impl, tb.hasSpecificImplementation)
@@ -334,7 +334,7 @@ def component_comb_to_logical_plan(ontology: Graph, component_combination: Tuple
  
 
 def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Graph, data_graph:Graph, pot_impls, log: bool = False) -> Dict[str,Dict[URIRef,List[URIRef]]]:
-    t = time.time()
+    #t = time.time()
     intent_iri = intent_queries.get_intent_iri(intent_graph=intent_graph)
     dataset, task, algorithm = intent_queries.get_intent_dataset_task(intent_graph, intent_iri) 
     is_tensor = data_queries.isTensor_data(data_graph, dataset)
@@ -342,7 +342,7 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
     reader_component = get_reader_component(is_tensor, dataset_format)
     writer_component = get_writer_component(is_tensor)
     partition_component = get_partition_component()
-    requires_partition = task in  [cb.SupervisedLearning]
+    requires_partition = task in  [cb.SupervisedLearning, cb.Classification, cb.Regression]
 
     component_threshold = intent_queries.get_component_threshold(intent_graph, intent_iri)
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_iri)
@@ -391,7 +391,7 @@ def generate_logical_plans(ontology: Graph, shape_graph: Graph, intent_graph: Gr
                     
                     counter[main_component] += 1
 
-    t2 = time.time()
-    print("Temps total",t2-t)
+    #t2 = time.time()
+    #print("Temps total",t2-t)
     return {"logical_plans": logical_plans}
     

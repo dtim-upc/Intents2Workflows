@@ -27,7 +27,7 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
 
     if task == cb.SupervisedLearning:
         target_type = data_queries.get_dataset_target_type(data_graph, dataset)
-        print("Target_type",target_type)
+        #print("Target_type",target_type)
         if target_type == "Categorical":
             task = cb.Classification
         else:
@@ -50,7 +50,7 @@ def get_algorithms_and_implementations_to_solve_task(ontology: Graph, shape_grap
 
 
     scored_algs = {alg:order.get(alg,{}) for alg in algs}
-    print("scores", scored_algs)
+    #print("scores", scored_algs)
     
     #scored_algs = sorted(scored_algs, key=lambda x: x[1])
     

@@ -7,29 +7,33 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import *
 from implementations.core import Implementation, IOSpecTag, OutputIOSpec, InputIOSpec, Component, Parameter, AbstractImplementation, FactorParameter
 from implementations.python.python_implementation import PythonImplementation
-from implementations.python.python_parameter import PythonTextParameter, PythonFactorParameter
+from implementations.python.python_parameter import PythonTextParameter, PythonFactorParameter, PythonNumericParameter
 from implementations.python.io import python_reader_implementation, python_writer_implementation
 from implementations.simple.io import data_reader_implementation, data_reader_components, data_writer_implementation, data_writer_component
+from implementations.core.expression import AlgebraicExpression
 
 
 with open('./auto_populator/sklearn_miner.json') as f:
     sklearn_dict = json.load(f)
 
 sklearn_dict['SimpleImputerGeneric'] = sklearn_dict["SimpleImputer"]
-sklearn_dict['SimpleImputerGeneric']['name'] = 'SklearnImputer'
+#sklearn_dict['SimpleImputerGeneric']['name'] = 'SklearnImputer'
 
 common_graph = Graph().parse("./auto_populator/Perplexity/common_shapes.ttl", format="turtle")
-
+  
 custom_parameters = {}
 custom_parameters['SimpleImputerGeneric'] = [
     FactorParameter("strategy", levels=["most_frequent", "constant"], default_value="most_frequent")
 ]
-
+  
 custom_python_parameters = {}
 custom_python_parameters['SimpleImputerGeneric'] = [
     PythonFactorParameter("strategy", levels={"most_frequent": "most_frequent", "constant":"constant"}, 
                           base_parameter= next((param for param in custom_parameters['SimpleImputerGeneric'] if param.label == 'strategy'),None),
                           default_value="most_frequent")
+]
+custom_python_parameters['OneHotEncoder'] = [
+    PythonNumericParameter("sparse_output",datatype=XSD.boolean, expression=AlgebraicExpression(cb.COPY, False), default_value=False)
 ]
 
 
