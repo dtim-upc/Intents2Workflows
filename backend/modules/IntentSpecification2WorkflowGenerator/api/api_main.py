@@ -108,10 +108,10 @@ def run_abstract_planner():
     intent = intent_graph
     #intent.serialize('intent.ttl', format="turtle")
 
-    abstract_plans, algorithm_implementations, scores= abstract_planner(ontology, shape_graph, intent, data_graph)
+    abstract_plans, algorithm_implementations = abstract_planner(ontology, shape_graph, intent, data_graph)
 
     return {"abstract_plans": abstract_plans, "intent": intent.serialize(format="turtle"),
-        "algorithm_implementations": algorithm_implementations, "scores":scores}
+        "algorithm_implementations": algorithm_implementations, "scores":{}}
 
 
 def convert_strings_to_uris(obj):
@@ -134,7 +134,7 @@ def run_logical_planner():
     #shape_graph = Graph().parse(Path(__file__).resolve().parent.parent / 'pipeline_generator' / 'shapeGraph.ttl')
 
     intent = Graph().parse(data=intent_json, format='turtle')
-    algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data_graph) #TODO is this really needed?
+    impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data_graph) #TODO is this really needed?
     logical_plans = logical_planner.generate_logical_plans(ontology, shape_graph, intent, data_graph, impls, log=True)
 
     return logical_plans

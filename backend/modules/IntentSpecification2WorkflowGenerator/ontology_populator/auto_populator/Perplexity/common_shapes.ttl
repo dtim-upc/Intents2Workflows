@@ -38,7 +38,8 @@ cb:isNumericDatatypePropertyShape
 cb:isIntegerDatatypePropertyShape
     a sh:PropertyShape ;
     sh:path dmop:hasDataPrimitiveTypeColumn ;
-    sh:hasValue dmop:Integer .
+    sh:minCount 1 ;
+    sh:in (dmop:Integer dmop:Binary) .
 
 cb:isBinaryDatatypePropertyShape
     a sh:PropertyShape ;

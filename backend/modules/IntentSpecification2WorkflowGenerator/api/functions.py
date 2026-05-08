@@ -1,3 +1,4 @@
+from collections import defaultdict
 import zipfile
 import sys
 import os
@@ -86,37 +87,25 @@ def abstract_planner(ontology: Graph, shape_graph: Graph, intent: Graph, data: G
     intent_iri = get_intent_iri(intent)
     task = get_intent_task(intent, intent_iri)
 
-    scored_algs, impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data, ordered_algorithms=True, log=True)
-    algs_shapes = {}
-    alg_plans = {alg: [] for alg in scored_algs.keys()}
-    available_algs = [] # to make sure abstract plans are only made for algorithms with at least one available implementation
-    for impl in impls:
-        alg = next(ontology.objects(impl, tb.implements)), 
-        (impl, RDF.type, tb.Implementation) in ontology and (tb.ApplierImplementation not in ontology.objects(impl, RDF.type))
+    impls = abstractPlannerModule.get_algorithms_and_implementations_to_solve_task(ontology, shape_graph, intent, data, log=True)
+    alg_plans = defaultdict(list)
 
-        input_specs = get_implementation_io_specs(ontology, impl, "Input")
-        if len(input_specs) > 0:
-            algs_shapes[alg[0]] = input_specs[0][1] #assuming data shapes is on input 0 
-        else:
-            algs_shapes[alg[0]] = []
-       
+    for impl in impls:
+        alg = next(ontology.objects(impl, tb.implements)),
         alg_plans[alg[0]].append(impl)
-        available_algs.append(alg[0])
     
     plans = {}
 
-    for alg in available_algs:
-        if len(algs_shapes[alg]) <= 0:
-            plans[alg] = connect_algorithms([alg])
-        elif task == cb.SupervisedLearning: #cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
+    for alg in alg_plans.keys():
+        if task == cb.SupervisedLearning: #cb.TrainTabularDatasetShape in algs_shapes[alg] or cb.TrainTensorDatasetShape in algs_shapes[alg]:
             plans[alg] = connect_algorithms([cb.DataLoading, cb.Partitioning, alg, cb.DataStoring])
         elif task == cb.Clustering:
             plans[alg] = connect_algorithms([cb.DataLoading, alg, cb.DataStoring])
         else:
             plans[alg] = connect_algorithms([cb.DataLoading, alg])
 
-    scores = {alg: scores for (alg, scores) in scored_algs.items()}
-    return plans, alg_plans, scores
+    #scores = {alg: scores for (alg, scores) in scored_algs.items()}
+    return plans, alg_plans, #scores
     
 
 def getCompatibility(workflow_graph: Graph, engine:URIRef):

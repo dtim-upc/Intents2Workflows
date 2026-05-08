@@ -45,7 +45,7 @@ s = study.get_suite(271)
 print(s.tasks)
 for i, task_id in enumerate(s.tasks):
 
-    if i in [2, 3, 10, 11, 12, 14, 15, 16] or i <= 17:
+    if i in [2, 3, 10, 11, 12, 14, 15, 16]  or i <= 0:
         continue
 
     task:OpenMLClassificationTask = tasks.get_task(task_id)
@@ -83,7 +83,7 @@ for i, task_id in enumerate(s.tasks):
 
     print("Executing abstract planner")
     start = time.perf_counter()
-    scores, algorithms = abstract_planner.get_algorithms_and_implementations_to_solve_task(ontology=ontology, shape_graph=None, intent_graph=intent_graph, data_graph=data_graph)
+    algorithms = abstract_planner.get_algorithms_and_implementations_to_solve_task(ontology=ontology, shape_graph=None, intent_graph=intent_graph, data_graph=data_graph)
     end = time.perf_counter()
     ap_time = end - start
     print(f"Execution of abstract planner finished in {ap_time}s")

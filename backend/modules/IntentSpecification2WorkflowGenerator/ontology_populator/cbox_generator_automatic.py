@@ -331,6 +331,9 @@ def add_datasets(cbox):
 
     cbox.add((dmop.Column, RDF.type, tb.Column))
 
+def add_base_properties(cbox:Graph):
+    return
+
 
 
 def main(dest='../ontologies/cbox_deep.ttl'):
@@ -339,6 +342,7 @@ def main(dest='../ontologies/cbox_deep.ttl'):
     add_engines(cbox)
     add_problems(cbox)
     cbox += common_graph
+    add_base_properties(cbox)
     add_components(cbox)
     add_partitioning(cbox)
     add_sanitizer(cbox)

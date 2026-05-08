@@ -9,7 +9,7 @@ sys.path.append(root_dir)
 
 from common_shapes import BASE_SHAPES
 from common import dmop, tb, cb, get_graph_xp
-from graph_queries.shape_queries import satisfies_shape
+from graph_queries.shape_queries import get_nodes_that_satisfy_shape
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(["./"]))
 
@@ -76,7 +76,7 @@ def add_shapes_hierarchy():
         
         keyf = f"{b.name}FeatureShape"
         keyl = f"{b.name}LabelShape"
-        keyd = f"{b.name}DatasetShape"
+        keyd = f"{b.name}DatasetShape"  
         
         print(query)
 
@@ -91,7 +91,7 @@ def add_shapes_hierarchy():
             #print(g.serialize())
 
             for b2 in BASE_SHAPES:
-                if b != b2 and satisfies_shape(g,common_graph,cb[b2.name],dataset if b2.type !="columnar" else cb.column):
+                if len(get_nodes_that_satisfy_shape(g,common_graph,cb[b2.name],[dataset] if b2.type !="columnar" else [cb.column])) > 0:
                     #print(b.name, "also satisfies", b2.name)
 
                     if is_columnar:

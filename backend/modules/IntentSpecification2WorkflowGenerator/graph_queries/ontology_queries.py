@@ -68,42 +68,15 @@ def find_implementations_to_satisfy_shape(ontology: Graph, shape: URIRef, exclud
             ?implementation a tb:AbstractImplementation;
                                 tb:specifiesOutput ?spec .
 
-            FILTER NOT EXISTS {{
-                ?implementation a tb:{'Applier' if exclude_appliers else ''}Implementation .
-                                # tb:specifiesOutput ?spec .
-            }}
-
-            FILTER NOT EXISTS {{
-                ?implementation  tb:specifiesInput ?inpspec .
-                ?inpspec tb:hasSpecTag ?inpsptg .
-                ?inpsptg tb:hasDatatag cb:hasIncreasedDimensionalityDatasetShape .
-            }}
-
-
-
             ?spec tb:hasSpecTag ?sptg .
-
-            {{
-                ?sptg tb:hasDatatag {shape.n3()} .
-            }}
-            UNION
-            {{
-                ?sptg tb:hasDatatag ?shape .
-                ?shape tb:guaranteesShape {shape.n3()} .
-            }}
+            ?sptg tb:hasDatatag ?shape .
+            ?shape tb:guaranteesShape {shape.n3()} .
 
             FILTER NOT EXISTS {{
                 ?implementation  tb:specifiesInput ?inpspec .
                 ?inpspec tb:hasSpecTag ?inpsptg .
-
-                {{
-                    ?inpsptg tb:hasDatatag {shape.n3()} .
-                }}
-                UNION
-                {{
-                    ?inpsptg tb:hasDatatag ?shape2 .
-                    ?shape2 tb:guaranteesShape {shape.n3()} .
-                }}
+                ?inpsptg tb:hasDatatag ?shape2 .
+                ?shape2 tb:guaranteesShape {shape.n3()} .
             }}
         }} 
     """
@@ -399,9 +372,21 @@ def get_implementation_transformations(ontology:Graph, implementation:URIRef):
         WHERE{{
             {implementation.n3()} tb:has_transformation ?transformation .
         }}
+        ORDER BY ?transformation
     """
     results = ontology.query(transf_query).bindings
     transformations = [t['transformation'] for t in results]
 
     return transformations
 
+def get_components_from_abstract_implementation(ontology:Graph, abstract_implementation:URIRef):
+    query = f"""
+        PREFIX tb:<{tb}>
+        SELECT ?component
+        WHERE {{
+            {abstract_implementation.n3()} tb:hasSpecificImplementation ?impl .
+            ?component tb:hasImplementation ?impl .
+        }}
+        """
+    results = ontology.query(query).bindings
+    return [r['component'] for r in results]

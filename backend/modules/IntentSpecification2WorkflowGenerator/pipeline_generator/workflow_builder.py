@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple, Set
 import uuid
 from rdflib import Graph, URIRef, Literal, BNode
+from tqdm import tqdm
 from graph_queries import ontology_queries, intent_queries, data_queries
 from .utils.dataset import Dataset
 from .utils.transformation_engine import run_component_transformation
@@ -103,46 +104,50 @@ def get_most_suitable_predecessor(ontology:Graph, input_port:Tuple[Set[URIRef],T
 def add_step(workflow_graph: Graph, workflow:URIRef, task_name: str, step_order:int, step_component: URIRef, 
              input_specs: List[URIRef], output_specs: List[URIRef], parameters:Dict[URIRef,Tuple[URIRef, URIRef, URIRef]], last_steps:List[URIRef], 
              step_columns: List[URIRef], step_columns_to_ignore: List[URIRef]) -> URIRef:
+    
+    triplets = []
     step = ab.term(task_name)
-    workflow_graph.add((workflow, tb.hasStep, step))
-    workflow_graph.add((step, RDF.type, tb.Step))
-    workflow_graph.add((step, tb.runs, step_component))
-    workflow_graph.add((step, tb.has_position, Literal(step_order)))
+    triplets.append((workflow, tb.hasStep, step, workflow_graph))
+    triplets.append((step, RDF.type, tb.Step, workflow_graph))
+    triplets.append((step, tb.runs, step_component, workflow_graph))
+    triplets.append((step, tb.has_position, Literal(step_order), workflow_graph))
 
     for column in step_columns:
-        workflow_graph.add((step, tb.over_column, column))
+        triplets.append((step, tb.over_column, column, workflow_graph))
 
     for column in step_columns_to_ignore:
-        workflow_graph.add((step, tb.ignores_column, column))
+        triplets.append((step, tb.ignores_column, column, workflow_graph))
 
     for i, (port, spec) in enumerate(input_specs):
         in_node = BNode()
-        workflow_graph.add((in_node, RDF.type, tb.Data))
-        workflow_graph.add((in_node, tb.has_data, port))
-        workflow_graph.add((in_node, tb.has_spec, spec))
-        workflow_graph.add((in_node, tb.has_position, Literal(i)))
-        workflow_graph.add((step, tb.hasInput, in_node))
+        triplets.append((in_node, RDF.type, tb.Data, workflow_graph))
+        triplets.append((in_node, tb.has_data, port, workflow_graph))
+        triplets.append((in_node, tb.has_spec, spec, workflow_graph))
+        triplets.append((in_node, tb.has_position, Literal(i), workflow_graph))
+        triplets.append((step, tb.hasInput, in_node, workflow_graph))
 
     for o, (port, spec) in enumerate(output_specs):
         out_node = BNode()
-        workflow_graph.add((out_node, RDF.type, tb.Data))
-        workflow_graph.add((out_node, tb.has_data, port))
-        workflow_graph.add((out_node, tb.has_spec, spec))
-        workflow_graph.add((out_node, tb.has_position, Literal(o)))
-        workflow_graph.add((step, tb.hasOutput, out_node))
+        triplets.append((out_node, RDF.type, tb.Data, workflow_graph))
+        triplets.append((out_node, tb.has_data, port, workflow_graph))
+        triplets.append((out_node, tb.has_spec, spec, workflow_graph))
+        triplets.append((out_node, tb.has_position, Literal(o), workflow_graph))
+        triplets.append((step, tb.hasOutput, out_node, workflow_graph))
 
     for param, value in parameters.items():
         parameterSpec = ab.term(f'{param.fragment}_{step.fragment}_specification')
-        workflow_graph.add((parameterSpec, RDF.type, tb.ParameterSpecification))
-        workflow_graph.add((param, tb.specifiedBy, parameterSpec))
-        workflow_graph.add((parameterSpec, tb.hasValue, Literal(value)))
-        workflow_graph.add((step, tb.usesParameter, param))
+        triplets.append((parameterSpec, RDF.type, tb.ParameterSpecification, workflow_graph))
+        triplets.append((param, tb.specifiedBy, parameterSpec, workflow_graph))
+        triplets.append((parameterSpec, tb.hasValue, Literal(value), workflow_graph))
+        triplets.append((step, tb.usesParameter, param, workflow_graph))
 
     for previous in last_steps:
-        workflow_graph.add((previous, tb.followedBy, step))
+        triplets.append((previous, tb.followedBy, step, workflow_graph))
+
+    workflow_graph.addN(triplets)
     return step
 
-
+step_cache = {} 
 def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflow_name:str, logical_plan:List[Tuple[URIRef,List[URIRef]]], transformer_columns = {}, run_transformations = False):
     prev_output_ports = {URIRef(c.split('--')[-1]) : [] for (c, follows) in logical_plan}
     prev_steps = {URIRef(c.split('--')[-1]) : [] for (c, follows) in logical_plan}
@@ -152,24 +157,52 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
     workflow_graph.add((workflow_uri, RDF.type, tb.Workflow))
 
     compatibility = set(ontology_queries.get_engines(ontology))
-    target_cols = dataset.targets
+    target_cols = set(dataset.targets)
 
     
     for step_order, (step_component, follows) in enumerate(logical_plan):
-        component_uri = URIRef(step_component.split('--')[-1])
-        #intent_parameters = get_intent_parameters()
-        step_columns = transformer_columns.get(step_component, dataset.columns)
-        step_columns = [URIRef(c) for c in step_columns]
 
-        step_columns_to_ignore = [t for t in target_cols if t not in step_columns] #Columns to ignore are target columns, except if they are explicitly considered as a column to transform for this component
-        
-        step_implementation = ontology_queries.get_component_implementation(ontology, component_uri)
+        step_data = step_cache.get(step_component)
+        if step_data is None:
+            start = time.perf_counter()
+            component_uri = URIRef(step_component.split('--')[-1])
+            #intent_parameters = get_intent_parameters()
+            step_columns = transformer_columns.get(step_component, dataset.columns)
+            step_columns = set([URIRef(c) for c in step_columns])
+
+            step_columns_to_ignore = target_cols - step_columns #Columns to ignore are target columns, except if they are explicitly considered as a column to transform for this component
+            
+            startb = time.perf_counter()
+            step_implementation = ontology_queries.get_component_implementation(ontology, component_uri)
+            step_name = f'{workflow_name}-step_{step_order}_{step_implementation.fragment.replace("-", "_")}'
+            endp = time.perf_counter()
+            tqdm.write(f"ci: {endp-startb}")
+
+            startb = time.perf_counter()
+            step_parameters = get_workflow_parameters(ontology, dataset, step_implementation, component_uri)
+            endp = time.perf_counter()
+            tqdm.write(f"parameter: {endp-startb}")
+
+            startb = time.perf_counter()
+            input_specs  = ontology_queries.get_implementation_input_specs(ontology, step_implementation, max_imp_level) 
+            output_specs = ontology_queries.get_implementation_output_specs(ontology, step_implementation, max_imp_level)
+
+            step_cache[step_component] = (component_uri, step_implementation, input_specs, output_specs, step_columns, step_columns_to_ignore, step_parameters)
+            endp = time.perf_counter()
+            tqdm.write(f"specs: {endp-startb}")
+
+        else:
+            starthit = time.perf_counter()
+            component_uri, step_implementation, input_specs, output_specs, step_columns, step_columns_to_ignore, step_parameters = step_data
+            endp = time.perf_counter()
+            tqdm.write(f"HIT with component: {step_component}, {endp-starthit}")
+
+
+
         step_name = f'{workflow_name}-step_{step_order}_{step_implementation.fragment.replace("-", "_")}'
 
-        step_parameters = get_workflow_parameters(ontology, dataset, step_implementation, component_uri)
-
-        input_specs  = ontology_queries.get_implementation_input_specs(ontology, step_implementation, max_imp_level) 
-        output_specs = ontology_queries.get_implementation_output_specs(ontology, step_implementation, max_imp_level)
+    
+        startb = time.perf_counter()
 
         inputs = []
         prev_out_step_ports = prev_output_ports.get(component_uri, [])
@@ -180,7 +213,10 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
             if cb.UnsatisfiableShape not in shapes: #ignore port if unsatisfiable
 
                 input_target = get_port_target_type(ontology,shapes)
+                startp = time.perf_counter()
                 input_port = get_most_suitable_predecessor(ontology,(set(shapes),input_target, component_uri), prev_out_step_ports)
+                endp = time.perf_counter()
+                tqdm.write(f"stepSuitablePredecessor: {endp-startp}")
                 assert input_port != cb.NONE, f"{step_component}, {spec}\n{logical_plan}"
                 inputs.append((input_port,spec))
   
@@ -196,9 +232,17 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
             outputs.append((output_i,spec))
             output_ports.append((output_i, shapes, get_port_target_type(ontology,shapes),component_uri))
 
+        endp = time.perf_counter()
+        tqdm.write(f"ports: {endp-startb}")
 
+        start = time.perf_counter()
         step_uri = add_step(workflow_graph,workflow_uri,step_name, step_order, component_uri, inputs, outputs, step_parameters, prev_steps[component_uri], step_columns, step_columns_to_ignore)
+        end = time.perf_counter()
+        tqdm.write(f"step adding: {end-start}")
+        start = time.perf_counter()
 
+        
+        
         for f in follows:
             f_uri = URIRef(f.split('--')[-1])
             prev_output_ports[f_uri].extend(output_ports)
@@ -211,24 +255,35 @@ def build_workflow(ontology: Graph, dataset: Dataset, max_imp_level:int, workflo
         engine_compatibility = ontology_queries.get_implementation_engine_compatibility(ontology, step_implementation) #TODO: Check translation condition
         #print("engine compatibility for", step_implementation, engine_compatibility)
         compatibility = compatibility & engine_compatibility
+        end = time.perf_counter()
+        tqdm.write(f"stepB: {end-start}")
+
+
 
     for engine in compatibility:
         workflow_graph.add((workflow_uri, tb.compatibleWith, engine)) 
-
+    
     return workflow_graph, workflow_uri
 
 
 def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, logical_plans:Dict[str,Dict[URIRef,List[URIRef]]], run_transformations=False):
-    #t = time.time()
+    t = time.time()
     workflows = {}
+    
+    global step_cache 
+    step_cache = {} #clear cache
 
     intent_uri = intent_queries.get_intent_iri(intent_graph)
     dataset_uri = data_queries.get_dataset_uri(data_graph)
     
     max_imp_level = intent_queries.get_max_importance_level(intent_graph, intent_uri)
     dataset = Dataset(data_graph, dataset_uri)
+    end = time.perf_counter()
+    tqdm.write(f"Previa: {end-t}")
+
 
     for i, (name, (plan, cols)) in enumerate(logical_plans.items()):
+        start = time.perf_counter()
         workflow_name = f'workflow_{i}_{intent_uri.fragment}_{uuid.uuid4()}'.replace('-', '_')
         workflow_graph, workflow_uri = build_workflow(ontology, dataset, max_imp_level, workflow_name, plan, cols, run_transformations) #TODO fix transformations
         
@@ -238,6 +293,8 @@ def generate_workflows(ontology:Graph, intent_graph:Graph, data_graph:Graph, log
         workflow_graph += dataset.data_node_graph
         workflows[name] = workflow_graph
         dataset.clear_node_graph()
+        end = time.perf_counter()
+        tqdm.write(f"Logical plan built in: {end-start}")
 
     #t2 = time.time()
     #print("Temps total:", t2-t)
